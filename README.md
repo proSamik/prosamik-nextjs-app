@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GitHub README Blog Renderer
 
-## Getting Started
+A Next.js application that renders GitHub README content in a Medium-style blog format. This project can fetch and display README files from GitHub repositories, handling various content types including text, images, and embedded videos.
 
-First, run the development server:
+## Features
 
+- Renders markdown content in a clean, blog-style layout
+- Supports various content types:
+  - Headings
+  - Paragraphs
+  - Images (including SVGs)
+  - YouTube video embeds
+- Optimized image loading using Next.js Image component
+- Responsive design
+- TypeScript support
+- Tailwind CSS styling
+
+## Prerequisites
+
+- Node.js 16.8 or later
+- npm or yarn
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd [project-name]
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Start the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── components/
+│   └── Article.tsx
+├── pages/
+│   ├── _app.tsx
+│   └── index.tsx
+├── styles/
+│   └── globals.css
+└── types/
+    └── article.ts
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+### Next.js Image Configuration
 
-To learn more about Next.js, take a look at the following resources:
+The project is configured to handle GitHub images. Check `next.config.ts`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```typescript
+const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'github.com',
+                pathname: '/**',
+            }
+        ],
+        dangerouslyAllowSVG: true,
+        contentDispositionType: 'attachment',
+        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    },
+};
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Tailwind Configuration
 
-## Deploy on Vercel
+Tailwind is configured with typography and aspect-ratio plugins. Check `tailwind.config.ts`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```typescript
+export default {
+    content: [
+        "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
+    theme: {
+        extend: {
+            colors: {
+                background: "var(--background)",
+                foreground: "var(--foreground)",
+            },
+        },
+    },
+    plugins: [
+        require('@tailwindcss/typography'),
+        require('@tailwindcss/aspect-ratio'),
+    ],
+} satisfies Config;
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Data Structure
+
+The application expects README content in the following format:
+
+```typescript
+interface ArticleData {
+  metadata: {
+    title: string;
+    repo: string;
+    lastUpdated: string;
+  };
+  content: {
+    sections: Array<{
+      type: string;
+      level?: number;
+      content?: string;
+      alt?: string;
+      url?: string;
+      dimensions?: {
+        width: number | null;
+        height: number | null;
+      } | null;
+      platform?: string;
+      embedUrl?: string;
+    }>;
+  };
+}
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a new branch
+3. Make your changes
+4. Submit a pull request
+
+## Future Improvements
+
+- Add database integration
+- Implement admin dashboard for managing repos
+- Add caching mechanism
+- Implement error boundaries
+- Add loading states
+- Add image zoom functionality
+
