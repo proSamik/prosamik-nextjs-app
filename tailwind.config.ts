@@ -14,6 +14,27 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            h1: {
+              marginBottom: '1rem',
+            },
+            h2: {
+              marginTop: '2rem',
+              marginBottom: '1rem',
+            },
+            p: {
+              marginBottom: '1rem',
+            },
+            img: {
+              marginTop: '0.5rem',
+              marginBottom: '0.5rem',
+            }
+          },
+        },
+      },
     },
   },
   plugins: [
