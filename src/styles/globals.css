@@ -2,7 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --background: #ffffff;
-    --foreground: #000000;
+.github-markdown {
+    @apply text-gray-900;
+}
+
+.github-markdown h1 {
+    @apply text-3xl font-bold mb-6 font-serif;
+}
+
+.github-markdown h2 {
+    @apply text-2xl font-bold mb-4 font-serif;
+}
+
+.github-markdown h3 {
+    @apply text-xl font-bold mb-4 font-serif;
+}
+
+.github-markdown p {
+    @apply mb-4 leading-relaxed;
+}
+
+.github-markdown img {
+    @apply my-6 rounded-lg mx-auto;
+}
+
+.github-markdown a {
+    @apply text-blue-600 hover:text-blue-800;
+}
+
+.github-markdown table {
+    @apply w-full my-6;
+}
+
+.github-markdown table td {
+    @apply p-2;
+}
+
+/* Ensuring center alignment works as expected */
+.github-markdown div[align="center"] {
+    @apply text-center;
+}
+
+.github-markdown div[align="right"] {
+    @apply text-right;
+}
+
+/* Handling the button and links to adjust styles as needed */
+.github-markdown a:hover {
+    @apply underline;
+}
+
+.github-markdown p {
+    @apply mb-4 text-base leading-relaxed;
+}
+
+.github-markdown p img {
+    @apply my-4 mx-auto;
+}
+
+.github-markdown iframe {
+    @apply my-4;
 }
