@@ -1,21 +1,21 @@
 .
 |-- app
 |-- components
-|   |-- Article.tsx
+|   |-- ArticleItem.tsx
 |   |-- ArticleLayout.tsx
-|   `-- Loading.tsx
-|-- global.css
+|   |-- ErrorMessage.tsx
+|   |-- Loading.tsx
+|   `-- NavBar.tsx
 |-- hooks
 |   `-- useReadmeData.ts
 |-- pages
 |   |-- _app.tsx
+|   |-- about.tsx
 |   `-- index.tsx
 |-- project_structure.txt
 |-- styles
 |   `-- globals.css
-|-- types
-|   `-- article.ts
-`-- utils
-    `-- elementConverter.ts
+`-- types
+    `-- article.ts
 
-8 directories, 11 files
+7 directories, 12 files
