@@ -1,5 +1,3 @@
-"use client"; // Mark as a client-side component
-
 import { BackendResponse } from '@/types/article';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,10 +8,11 @@ interface ArticleLayoutProps {
 }
 
 const ArticleLayout = ({ data }: ArticleLayoutProps) => {
-    const [processedContent, setProcessedContent] = useState<string>("");
+    const [processedContent, setProcessedContent] = useState("");
+
 
     // Updated formatDate function to handle ISO string with timezone
-    const formatDate = (dateString: string): string => {
+    const formatDate = (dateString: string) => {
         try {
             const date = new Date(dateString);
 
@@ -38,17 +37,16 @@ const ArticleLayout = ({ data }: ArticleLayoutProps) => {
     };
 
     // Remove HTML comments from content
-    const removeHtmlComments = (html: string): string => {
+    const removeHtmlComments = (html: string) => {
         return html.replace(/<!--[\s\S]*?-->/g, '');
     };
 
-    // Process YouTube links and embed them
-    const processYouTubeLinks = (html: string): string => {
+    const processYouTubeLinks = (html: string) => {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
 
         const paragraphs = tempDiv.getElementsByTagName('p');
-        Array.from(paragraphs).forEach((p) => {
+        Array.from(paragraphs).forEach(p => {
             const youtubeLink = p.querySelector('a[href*="youtu"]');
             if (youtubeLink) {
                 const url = youtubeLink.getAttribute('href');
@@ -77,17 +75,15 @@ const ArticleLayout = ({ data }: ArticleLayoutProps) => {
         return tempDiv.innerHTML;
     };
 
-    // Process content when component mounts or when content changes
+    // Process content when component mounts
     useEffect(() => {
         const cleanContent = removeHtmlComments(data.content);
-
-        // Ensure we're working in a client-side environment before modifying DOM
         if (typeof window !== 'undefined') {
             setProcessedContent(processYouTubeLinks(cleanContent));
         } else {
             setProcessedContent(cleanContent);
         }
-    }, [data.content]); // Depend on content to reprocess if it changes
+    }, [data.content]);
 
     return (
         <main className="max-w-[728px] mx-auto px-4 py-8">
@@ -131,7 +127,7 @@ const ArticleLayout = ({ data }: ArticleLayoutProps) => {
             {/* Article Content */}
             <article className="prose prose-lg max-w-none">
                 <div
-                    dangerouslySetInnerHTML={{ __html: processedContent }}
+                    dangerouslySetInnerHTML={{__html: processedContent}}
                     className="github-markdown"
                 />
             </article>
