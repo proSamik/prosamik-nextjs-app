@@ -1,24 +1,23 @@
 import { useState, useEffect } from 'react';
 import { BackendResponse } from '@/types/article';
 
-export const useReadmeData = (owner: string, repo: string) => {
+export const useReadmeData = (owner: string, repo: string, skip = false) => {
     const [data, setData] = useState<BackendResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!skip);
 
     useEffect(() => {
+        if (skip) {
+            setLoading(false);
+            return;
+        }
+
         let isMounted = true;
 
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:10000/readme?owner=${owner}&repo=${repo}`,
-                    {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                    }
+                    `http://localhost:10000/readme?owner=${owner}&repo=${repo}`
                 );
 
                 if (!response.ok) {
@@ -33,11 +32,7 @@ export const useReadmeData = (owner: string, repo: string) => {
                 }
             } catch (err) {
                 if (isMounted) {
-                    if (err instanceof TypeError && err.message === 'Failed to fetch') {
-                        setError('Cannot connect to server. Please check if the backend server is running on port 8080.');
-                    } else {
-                        setError(err instanceof Error ? err.message : 'An error occurred while fetching data');
-                    }
+                    setError(err instanceof Error ? err.message : 'An error occurred');
                     setData(null);
                 }
             } finally {
@@ -52,7 +47,7 @@ export const useReadmeData = (owner: string, repo: string) => {
         return () => {
             isMounted = false;
         };
-    }, [owner, repo]);
+    }, [owner, repo, skip]);
 
     return { data, error, loading };
 };

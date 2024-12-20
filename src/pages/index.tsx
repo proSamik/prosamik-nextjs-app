@@ -1,14 +1,21 @@
-import { useReadmeData } from '@/hooks/useReadmeData';
-import ArticleLayout from '@/components/ArticleLayout';
-import Loading from '@/components/Loading';
-import ErrorMessage from '@/components/ErrorMessage';
+import Link from 'next/link';
+import { repoMap } from '@/data/repos';
 
 export default function Home() {
-    const { data, error, loading } = useReadmeData('proSamik', 'AiReceipt');
-
-    if (loading) return <Loading />;
-    if (error) return <ErrorMessage message={error} />;
-    if (!data) return <div>No content available</div>;
-
-    return <ArticleLayout data={data} />;
+    return (
+        <main className="max-w-[728px] mx-auto px-4 py-8">
+            <h1 className="text-3xl font-serif mb-8">My Blog Posts</h1>
+            <div className="space-y-4">
+                {Object.entries(repoMap).map(([title, _]) => (
+                    <Link
+                        key={title}
+                        href={`/blog/${encodeURIComponent(title)}`}
+                        className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+                    >
+                        <h2 className="text-xl font-semibold">{title}</h2>
+                    </Link>
+                ))}
+            </div>
+        </main>
+    );
 }
