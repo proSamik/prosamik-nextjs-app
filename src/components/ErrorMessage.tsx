@@ -2,7 +2,7 @@ interface ErrorMessageProps {
     message: string;
 }
 
-const ErrorMessage = ({ message }: ErrorMessageProps) => {
+const ErrorMessage = ({ message = 'An error occurred' }: ErrorMessageProps) => {
     return (
         <div className="max-w-[728px] mx-auto px-4 py-8">
             <div className="bg-red-50 border-l-4 border-red-500 p-4">
@@ -23,7 +23,7 @@ const ErrorMessage = ({ message }: ErrorMessageProps) => {
                         <p className="font-medium text-red-800">Troubleshooting steps:</p>
                         <ul className="mt-2 list-disc list-inside text-red-700">
                             <li>Ensure the backend server is running</li>
-                            <li>Check if the server is running on port 8080</li>
+                            <li>Check if the server is running on port 10000</li>
                             <li>Verify your network connection</li>
                             <li>Try refreshing the page</li>
                         </ul>

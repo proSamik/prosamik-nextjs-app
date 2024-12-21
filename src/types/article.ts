@@ -9,3 +9,13 @@ export interface BackendResponse {
         description: string;
     };
 }
+
+export interface RepoListItem {
+    title: string;
+    repoPath: string;  // format: "owner/repo"
+    description?: string;
+}
+
+export interface RepoListResponse {
+    repos: RepoListItem[];
+}

@@ -1,43 +1,68 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { repoMap } from '@/data/repos';
-import { isValidSlug } from '@/utils/typeGuards';
+import { useEffect, useState } from 'react';
+import { RepoListItem } from '@/types/article';
+import { isValidRepoPath, getErrorMessage } from '@/utils/typeGuards';
 import ArticleLayout from '@/components/ArticleLayout';
 import { useReadmeData } from '@/hooks/useReadmeData';
+import { useRepoList } from '@/hooks/useRepoList';
 import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
 
 export default function BlogPost() {
     const router = useRouter();
     const { slug } = router.query;
+    const { data: repoList, error: repoError, loading: repoLoading } = useRepoList();
+    const [repoInfo, setRepoInfo] = useState<RepoListItem | null>(null);
+    const [notFound, setNotFound] = useState(false);
 
-    const decodedSlug = typeof slug === 'string' ? decodeURIComponent(slug) : null;
-    const repoPath = decodedSlug && isValidSlug(decodedSlug) ? repoMap[decodedSlug] : null;
-    const [owner, repo] = repoPath?.split('/') ?? [null, null];
-
-    const { data, error, loading } = useReadmeData(
-        owner || '',
-        repo || '',
-        !owner || !repo
-    );
-
+    // Find matching repo when data is available
     useEffect(() => {
-        async function handleInvalidSlug() {
-            if (decodedSlug && !repoPath) {
-                try {
-                    await router.push('/404');
-                } catch (error) {
-                    console.error('Navigation error:', error);
-                }
+        if (slug && repoList?.repos) {
+            const decodedSlug = decodeURIComponent(slug as string);
+            const repo = repoList.repos.find(r => r.title === decodedSlug);
+
+            if (repo) {
+                setRepoInfo(repo);
+                setNotFound(false);
+            } else {
+                setRepoInfo(null);
+                setNotFound(true);
             }
         }
+    }, [slug, repoList]);
 
-        handleInvalidSlug();
-    }, [decodedSlug, repoPath, router]);
+    const repoPath = repoInfo?.repoPath || null;
+    const [owner, repo] = isValidRepoPath(repoPath) ? repoPath.split('/') : [null, null];
 
-    if (loading) return <Loading />;
-    if (error) return <ErrorMessage message={error} />;
-    if (!data) return null;
+    // Fetch README data
+    const { data, error, loading } = useReadmeData({
+        owner,
+        repo
+    });
 
+    // Redirect to 404 if repo not found
+    useEffect(() => {
+        if (notFound && !repoLoading) {
+            router.push('/404');
+        }
+    }, [notFound, repoLoading, router]);
+
+    // Show loading state while fetching data
+    if (repoLoading || loading) {
+        return <Loading />;
+    }
+
+    // Handle errors
+    if (repoError || error) {
+        const errorMessage = getErrorMessage(repoError || error);
+        return <ErrorMessage message={errorMessage} />;
+    }
+
+    // Return null if no data yet
+    if (!data || !repoInfo) {
+        return null;
+    }
+
+    // Render the article if we have all required data
     return <ArticleLayout data={data} />;
 }

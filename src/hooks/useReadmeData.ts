@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
 import { BackendResponse } from '@/types/article';
 
-export const useReadmeData = (owner: string, repo: string, skip = false) => {
+interface UseReadmeDataParams {
+    owner: string | null;
+    repo: string | null;
+}
+
+export const useReadmeData = ({ owner, repo }: UseReadmeDataParams) => {
     const [data, setData] = useState<BackendResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(!skip);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (skip) {
+        // If owner or repo is null, skip the fetch
+        if (!owner || !repo) {
             setLoading(false);
             return;
         }
@@ -47,7 +53,7 @@ export const useReadmeData = (owner: string, repo: string, skip = false) => {
         return () => {
             isMounted = false;
         };
-    }, [owner, repo, skip]);
+    }, [owner, repo]);
 
     return { data, error, loading };
 };
