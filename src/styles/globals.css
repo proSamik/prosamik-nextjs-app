@@ -2,64 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base prose styling */
 .github-markdown {
-    @apply text-gray-900;
+    @apply text-gray-800 leading-relaxed;
 }
 
-.github-markdown h1 {
-    @apply text-3xl font-bold mb-6 font-serif;
+/* Table of Contents */
+.toc-list {
+    @apply my-6 p-4 bg-gray-50 rounded-lg border border-gray-200;
 }
 
-.github-markdown h2 {
-    @apply text-2xl font-bold mb-4 font-serif;
+.toc-list a {
+    @apply text-blue-600 hover:text-blue-800 no-underline;
 }
 
-.github-markdown h3 {
-    @apply text-xl font-bold mb-4 font-serif;
+/* Code blocks */
+.code-block {
+    @apply relative my-6;
 }
 
-.github-markdown p {
-    @apply mb-4 leading-relaxed;
+.code-block pre {
+    @apply bg-gray-800 text-white p-4 rounded-lg overflow-x-auto;
 }
 
-.github-markdown img {
-    @apply my-6 rounded-lg mx-auto;
+.code-block .copy-button {
+    @apply absolute right-2 top-2 bg-gray-700 text-white px-2 py-1 rounded text-sm opacity-0 transition-opacity;
 }
 
-.github-markdown a {
-    @apply text-blue-600 hover:text-blue-800;
+.code-block:hover .copy-button {
+    @apply opacity-100;
 }
 
+/* Lists */
+.github-markdown ul {
+    @apply list-disc pl-6 my-4 space-y-2;
+}
+
+.github-markdown ol {
+    @apply list-decimal pl-6 my-4 space-y-2;
+}
+
+/* Blockquotes */
+.github-markdown blockquote {
+    @apply border-l-4 border-gray-300 pl-4 my-4 italic;
+}
+
+/* Inline code */
+.github-markdown code:not(pre code) {
+    @apply bg-gray-100 px-1.5 py-0.5 rounded text-red-600 text-sm;
+}
+
+/* Tables */
 .github-markdown table {
-    @apply w-full my-6;
+    @apply w-full border-collapse my-6;
 }
 
-.github-markdown table td {
-    @apply p-2;
+.github-markdown th {
+    @apply bg-gray-100 border border-gray-300 px-4 py-2 text-left font-semibold;
 }
 
-/* Ensuring center alignment works as expected */
-.github-markdown div[align="center"] {
-    @apply text-center;
+.github-markdown td {
+    @apply border border-gray-300 px-4 py-2;
 }
 
-.github-markdown div[align="right"] {
-    @apply text-right;
+/* Footnotes */
+.footnotes {
+    @apply mt-12 pt-8 border-t border-gray-200;
 }
 
-/* Handling the button and links to adjust styles as needed */
-.github-markdown a:hover {
-    @apply underline;
+/* Social Share buttons */
+.social-share {
+    @apply flex gap-2 mt-4;
 }
 
-.github-markdown p {
-    @apply mb-4 text-base leading-relaxed;
+.social-share button {
+    @apply p-2 rounded-full transition-colors;
 }
 
-.github-markdown p img {
-    @apply my-4 mx-auto;
+/* Share buttons hover effect */
+.social-button {
+    @apply transition-transform duration-200 ease-in-out;
 }
 
-.github-markdown iframe {
-    @apply my-4;
+.social-button:hover {
+    @apply transform scale-110;
 }

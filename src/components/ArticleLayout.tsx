@@ -1,136 +1,212 @@
 import { BackendResponse } from '@/types/article';
-import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import ReactDOM from 'react-dom/client';
+import {
+    TwitterShareButton,
+    LinkedinShareButton,
+    FacebookShareButton
+} from 'react-share';
+import {
+    Share2 as ShareIcon,
+    Linkedin,
+    Twitter as TwitterIcon,
+    Facebook as FacebookIcon
+} from 'react-feather';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+
+import { formatDate } from '@/utils/dateUtils';
+import { processYouTubeLinks } from '@/utils/contentProcessors/youtubeProcessor';
+import { processCodeBlocks } from '@/utils/contentProcessors/codeBlockProcessor';
+import { processSVGs } from '@/utils/contentProcessors/svgProcessor';
+import { processInlineCode } from '@/utils/contentProcessors/inlineCodeProcessor';
+import { processBlockquotes } from '@/utils/contentProcessors/blockquoteProcessor';
+import { processListItems } from '@/utils/contentProcessors/listItemProcessor';
+import { processCenteredMedia } from '@/utils/contentProcessors/mediaCenterProcessor';
 
 interface ArticleLayoutProps {
     data: BackendResponse;
+    content?: string;
 }
 
-const ArticleLayout = ({ data }: ArticleLayoutProps) => {
+const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
     const [processedContent, setProcessedContent] = useState("");
+    const contentRef = useRef<HTMLDivElement>(null);
 
+    const addCodeBlockSyntaxHighlighting = () => {
+        if (!contentRef.current) return;
 
-    // Updated formatDate function to handle ISO string with timezone
-    const formatDate = (dateString: string) => {
-        try {
-            const date = new Date(dateString);
+        const codeBlocks = contentRef.current.querySelectorAll('pre code');
+        codeBlocks.forEach((codeBlock) => {
+            // Skip SVG blocks
+            if (codeBlock.textContent?.trim().startsWith('<svg')) return;
 
-            // Check if date is valid
-            if (isNaN(date.getTime())) {
-                console.error('Invalid date:', dateString);
-                return '';
-            }
+            // Determine language
+            const languageClass = Array.from(codeBlock.classList).find(cls => cls.startsWith('language-'));
+            const language = languageClass ? languageClass.replace('language-', '') : 'plaintext';
 
-            return new Intl.DateTimeFormat('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZoneName: 'short'
-            }).format(date);
-        } catch (error) {
-            console.error('Error formatting date:', error);
-            return dateString; // Return original string if formatting fails
-        }
-    };
+            // Get original HTML content
+            const originalHtml = codeBlock.getAttribute('data-original-html') || codeBlock.textContent || '';
 
-    // Remove HTML comments from content
-    const removeHtmlComments = (html: string) => {
-        return html.replace(/<!--[\s\S]*?-->/g, '');
-    };
+            // Skip HTML blocks
+            if (language === 'html') return;
 
-    const processYouTubeLinks = (html: string) => {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
+            // Create wrapper for syntax highlighter and copy button
+            const wrapper = document.createElement('div');
+            wrapper.className = 'relative group my-4';
 
-        const paragraphs = tempDiv.getElementsByTagName('p');
-        Array.from(paragraphs).forEach(p => {
-            const youtubeLink = p.querySelector('a[href*="youtu"]');
-            if (youtubeLink) {
-                const url = youtubeLink.getAttribute('href');
-                const videoId = url?.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&\s]+)/)?.[1];
+            // Create a container for the syntax highlighter
+            const syntaxHighlighterContainer = document.createElement('div');
+            wrapper.appendChild(syntaxHighlighterContainer);
 
-                if (videoId) {
-                    const textBefore = p.childNodes[0].textContent || '';
+            // Create copy button
+            const copyButton = document.createElement('button');
+            copyButton.className = 'absolute top-2 right-2 z-10 p-1 bg-white border rounded hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100';
+            copyButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            `;
+            wrapper.appendChild(copyButton);
 
-                    p.innerHTML = `
-                    ${textBefore}
-                    <div class="aspect-w-16 aspect-h-9 my-4">
-                        <iframe 
-                            src="https://www.youtube.com/embed/${videoId}"
-                            title="YouTube video player"
-                            style="border: 0;"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                            class="w-full h-[400px] rounded-lg"
-                        ></iframe>
-                    </div>
-                `;
-                }
+            // Replace original code block
+            if (codeBlock.parentElement) {
+                codeBlock.parentElement.parentNode?.replaceChild(wrapper, codeBlock.parentElement);
+
+                // Render syntax highlighter
+                const root = ReactDOM.createRoot(syntaxHighlighterContainer);
+                root.render(
+                    <SyntaxHighlighter
+                        language={language}
+                        style={oneDark}
+                        customStyle={{
+                            margin: '0',
+                            borderRadius: '0.5rem',
+                            padding: '1rem',
+                            maxWidth: '100%',
+                            overflowX: 'auto'
+                        }}
+                    >
+                        {originalHtml}
+                    </SyntaxHighlighter>
+                );
+
+                // Add copy functionality
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(originalHtml).then(() => {
+                        copyButton.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        `;
+
+                        setTimeout(() => {
+                            copyButton.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            `;
+                        }, 2000);
+                    });
+                });
             }
         });
-
-        return tempDiv.innerHTML;
     };
 
-    // Process content when component mounts
     useEffect(() => {
-        const cleanContent = removeHtmlComments(data.content);
-        if (typeof window !== 'undefined') {
-            setProcessedContent(processYouTubeLinks(cleanContent));
-        } else {
-            setProcessedContent(cleanContent);
+        if (typeof window === 'undefined') return;
+
+        const processContent = () => {
+            const sourceContent = content || data.content;
+            let processedHtml = sourceContent;
+            processedHtml = processYouTubeLinks(processedHtml);
+            processedHtml = processCodeBlocks(processedHtml);
+            processedHtml = processSVGs(processedHtml);
+            processedHtml = processInlineCode(processedHtml);
+            processedHtml = processBlockquotes(processedHtml);
+            processedHtml = processListItems(processedHtml);
+            processedHtml = processCenteredMedia(processedHtml);
+            setProcessedContent(processedHtml);
+        };
+
+        processContent();
+    }, [data.content, content]);
+
+    useEffect(() => {
+        if (processedContent) {
+            addCodeBlockSyntaxHighlighting();
         }
-    }, [data.content]);
+    }, [processedContent]);
+
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const shareTitle = data.metadata.title;
 
     return (
         <main className="max-w-[728px] mx-auto px-4 py-8">
             <header className="mb-8">
-                <h1 className="text-3xl font-serif mb-4">
+                <h1 className="text-3xl font-serif mb-4 text-center">
                     {data.metadata.title}
                 </h1>
-                <div className="flex items-center space-x-4 mb-6">
-                    <Link
-                        href={`https://github.com/${data.metadata.author}`}
-                        className="flex items-center space-x-2 text-gray-700 hover:text-black"
-                    >
+                <div className="flex justify-center space-x-4 mb-6">
+                    <div className="flex items-center space-x-2 text-gray-700">
                         <Image
                             src={`https://github.com/${data.metadata.author}.png`}
                             alt={data.metadata.author}
                             width={48}
                             height={48}
                             className="rounded-full"
-                            unoptimized // Since this is a GitHub avatar that's already optimized
+                            unoptimized
                         />
                         <div>
                             <div className="font-medium">{data.metadata.author}</div>
-                            {data.metadata.lastUpdated && (
-                                <div className="text-sm text-gray-500">
-                                    Last updated: {formatDate(data.metadata.lastUpdated)}
-                                </div>
-                            )}
+                            {data.metadata.lastUpdated && formatDate(data.metadata.lastUpdated)}
                         </div>
-                    </Link>
-                </div>
-                <div className="flex items-center space-x-4 text-gray-500">
-                    <Link
-                        href={`https://github.com/${data.metadata.repository}`}
-                        className="hover:text-black"
-                    >
-                        View on GitHub
-                    </Link>
+                    </div>
                 </div>
             </header>
 
-            {/* Article Content */}
             <article className="prose prose-lg max-w-none">
                 <div
-                    dangerouslySetInnerHTML={{__html: processedContent}}
+                    ref={contentRef}
+                    dangerouslySetInnerHTML={{ __html: processedContent }}
                     className="github-markdown"
                 />
             </article>
+
+            <div className="flex gap-4 mt-8 items-center">
+                <span className="text-gray-600 flex items-center">
+                    <ShareIcon className="mr-2" size={20} />
+                    Share
+                </span>
+                <TwitterShareButton
+                    url={shareUrl}
+                    title={shareTitle}
+                    hashtags={['article']}
+                >
+                    <button className="p-2 rounded-full bg-blue-400 hover:bg-blue-500 text-white">
+                        <TwitterIcon size={20} />
+                    </button>
+                </TwitterShareButton>
+                <LinkedinShareButton
+                    url={shareUrl}
+                    title={shareTitle}
+                >
+                    <button className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white">
+                        <Linkedin size={20} />
+                    </button>
+                </LinkedinShareButton>
+                <FacebookShareButton
+                    url={shareUrl}
+                    hashtag={`#${shareTitle.replace(/\s+/g, '')}`}
+                >
+                    <button className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white">
+                        <FacebookIcon size={20} />
+                    </button>
+                </FacebookShareButton>
+            </div>
         </main>
     );
 };
