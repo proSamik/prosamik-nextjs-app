@@ -1,6 +1,6 @@
 export const processCenteredMedia = (html: string) => {
     return html.replace(
-        /<(img|video|iframe)([^>]*)(title="([^"]*)")?([^>]*)>/g,
+        /<(img|video)([^>]*)(title="([^"]*)")?([^>]*)>/g,
         (_, tag, attrs1, titleAttr, attrs2) => {
             return `
                 <div class="my-4 flex justify-center items-center">

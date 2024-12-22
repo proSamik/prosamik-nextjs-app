@@ -14,14 +14,14 @@ export const processYouTubeLinks = (html: string): string => {
 
                 p.innerHTML = `
                     ${textBefore}
-                    <div class="aspect-w-16 aspect-h-9 my-4">
+                    <div class="my-4">
                         <iframe 
                             src="https://www.youtube.com/embed/${videoId}"
                             title="YouTube video player"
                             style="border: 0;"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
-                            class="w-full h-[400px] rounded-lg"
+                            class="w-full h-full rounded-lg"
                         ></iframe>
                     </div>
                 `;

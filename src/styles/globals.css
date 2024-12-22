@@ -87,3 +87,11 @@
 .social-button:hover {
     @apply transform scale-110;
 }
+
+/* Prevent YouTube iframe from stretching */
+iframe {
+    max-width: 100%;
+    height: 100%; /* Default height, adjust as needed */
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+}
