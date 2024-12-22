@@ -1,22 +1,25 @@
 import React from 'react';
-import { 
-    TwitterShareButton,
+import {
+    FacebookShareButton,
     LinkedinShareButton,
-    FacebookShareButton 
+    TwitterShareButton
 } from 'react-share';
-import { 
-    Share2 as ShareIcon,
+import {
+    Facebook as FacebookIcon,
     Linkedin,
-    Twitter as TwitterIcon,
-    Facebook as FacebookIcon 
+    Share2 as ShareIcon,
+    Twitter as TwitterIcon
 } from 'react-feather';
 
 interface SocialShareButtonsProps {
-    url: string;
-    title: string;
+    shareUrl: string;
+    shareTitle: string;
 }
 
-export const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ url, title }) => {
+const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
+                                                                   shareUrl,
+                                                                   shareTitle
+                                                               }) => {
     return (
         <div className="flex gap-4 mt-8 items-center">
             <span className="text-gray-600 flex items-center">
@@ -24,8 +27,8 @@ export const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ url, tit
                 Share
             </span>
             <TwitterShareButton
-                url={url}
-                title={title}
+                url={shareUrl}
+                title={shareTitle}
                 hashtags={['article']}
             >
                 <button className="p-2 rounded-full bg-blue-400 hover:bg-blue-500 text-white">
@@ -33,16 +36,16 @@ export const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ url, tit
                 </button>
             </TwitterShareButton>
             <LinkedinShareButton
-                url={url}
-                title={title}
+                url={shareUrl}
+                title={shareTitle}
             >
                 <button className="p-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white">
                     <Linkedin size={20} />
                 </button>
             </LinkedinShareButton>
             <FacebookShareButton
-                url={url}
-                hashtag={`#${title.replace(/\s+/g, '')}`}
+                url={shareUrl}
+                hashtag={`#${shareTitle.replace(/\s+/g, '')}`}
             >
                 <button className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white">
                     <FacebookIcon size={20} />
@@ -51,3 +54,5 @@ export const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ url, tit
         </div>
     );
 };
+
+export default SocialShareButtons;
