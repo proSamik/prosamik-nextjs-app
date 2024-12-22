@@ -49,9 +49,6 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
             // Get original HTML content
             const originalHtml = codeBlock.getAttribute('data-original-html') || codeBlock.textContent || '';
 
-            // Skip HTML blocks
-            if (language === 'html') return;
-
             // Create wrapper for syntax highlighter and copy button
             const wrapper = document.createElement('div');
             wrapper.className = 'relative group my-4';

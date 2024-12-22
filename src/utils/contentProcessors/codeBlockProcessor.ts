@@ -6,7 +6,7 @@ export const processCodeBlocks = (html: string) => {
     codeBlocks.forEach((block) => {
         const codeText = block.textContent?.trim() || '';
 
-        // Handle SVG blocks
+        // Handle SVG blocks separately
         if (codeText.startsWith('<svg')) {
             // Create a wrapper to render the SVG
             const svgWrapper = document.createElement('div');
@@ -26,8 +26,34 @@ export const processCodeBlocks = (html: string) => {
                 block.parentElement?.parentNode?.replaceChild(svgWrapper, block.parentElement);
             }
         } else {
-            // Embed data for later processing of other code blocks
-            block.setAttribute('data-original-html', block.innerHTML);
+            // Process regular code blocks
+            // Get language class
+            const languageClass = Array.from(block.classList)
+                .find(cls => cls.startsWith('language-'));
+
+            // Create wrapper div
+            const wrapper = document.createElement('div');
+            wrapper.className = 'relative group my-4';
+
+            // Create pre and code elements
+            const pre = document.createElement('pre');
+            const code = document.createElement('code');
+
+            // Set classes and content
+            if (languageClass) {
+                pre.className = languageClass;
+                code.className = languageClass;
+            }
+
+            // Preserve the original content
+            code.innerHTML = block.innerHTML;
+            pre.appendChild(code);
+            wrapper.appendChild(pre);
+
+            // Replace original block
+            if (block.parentElement?.parentNode) {
+                block.parentElement.parentNode.replaceChild(wrapper, block.parentElement);
+            }
         }
     });
 
