@@ -4,16 +4,21 @@
 
 /* Base prose styling */
 .github-markdown {
-    @apply text-gray-800 leading-relaxed;
+    @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+}
+
+/* Dark mode background and text */
+body {
+    @apply bg-white dark:bg-gray-900 text-black dark:text-white;
 }
 
 /* Table of Contents */
 .toc-list {
-    @apply my-6 p-4 bg-gray-50 rounded-lg border border-gray-200;
+    @apply my-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700;
 }
 
 .toc-list a {
-    @apply text-blue-600 hover:text-blue-800 no-underline;
+    @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline;
 }
 
 /* Code blocks */
@@ -22,11 +27,11 @@
 }
 
 .code-block pre {
-    @apply bg-gray-800 text-white p-4 rounded-lg overflow-x-auto;
+    @apply bg-gray-800 dark:bg-gray-700 text-white p-4 rounded-lg overflow-x-auto;
 }
 
 .code-block .copy-button {
-    @apply absolute right-2 top-2 bg-gray-700 text-white px-2 py-1 rounded text-sm opacity-0 transition-opacity;
+    @apply absolute right-2 top-2 bg-gray-700 dark:bg-gray-600 text-white px-2 py-1 rounded text-sm opacity-0 transition-opacity;
 }
 
 .code-block:hover .copy-button {
@@ -34,8 +39,20 @@
 }
 
 /* Lists */
+.github-markdown ul,
+.github-markdown ol,
+.github-markdown li {
+    @apply text-gray-900 dark:text-gray-100;
+}
+
 .github-markdown ul {
     @apply list-disc pl-6 my-4 space-y-2;
+    /* Bullet color in dark mode */
+    list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='4' fill='%23e5e7eb'/%3E%3C/svg%3E");
+}
+
+.github-markdown ul.dark {
+    list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='4' fill='%23374151'/%3E%3C/svg%3E");
 }
 
 .github-markdown ol {
@@ -44,12 +61,12 @@
 
 /* Blockquotes */
 .github-markdown blockquote {
-    @apply border-l-4 border-gray-300 pl-4 my-4 italic;
+    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 my-4 italic;
 }
 
 /* Inline code */
 .github-markdown code:not(pre code) {
-    @apply bg-gray-100 px-1.5 py-0.5 rounded text-red-600 text-sm;
+    @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 text-sm;
 }
 
 /* Tables */
@@ -58,19 +75,19 @@
 }
 
 .github-markdown th {
-    @apply bg-gray-100 border border-gray-300 px-4 py-2 text-left font-semibold;
+    @apply bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold;
 }
 
 .github-markdown td {
-    @apply border border-gray-300 px-4 py-2;
+    @apply border border-gray-300 dark:border-gray-600 px-4 py-2;
 }
 
 /* Footnotes */
 .footnotes {
-    @apply mt-12 pt-8 border-t border-gray-200;
+    @apply mt-12 pt-8 border-t border-gray-200 dark:border-gray-700;
 }
 
-/* Social Share buttons */
+/* Social sharing */
 .social-share {
     @apply flex gap-2 mt-4;
 }
@@ -79,19 +96,15 @@
     @apply p-2 rounded-full transition-colors;
 }
 
-/* Share buttons hover effect */
-.social-button {
-    @apply transition-transform duration-200 ease-in-out;
-}
-
-.social-button:hover {
-    @apply transform scale-110;
-}
-
-/* Prevent YouTube iframe from stretching */
+/* Responsive media */
 iframe {
     max-width: 100%;
-    height: 100%; /* Default height, adjust as needed */
+    height: auto;
     aspect-ratio: 16 / 9;
     object-fit: contain;
+}
+
+/* Horizontal Rule Styling */
+.github-markdown hr {
+    @apply border-t border-gray-200 dark:border-gray-700 my-4 h-px;
 }

@@ -1,12 +1,15 @@
 import React, {RefObject } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import {oneDark, oneLight} from 'react-syntax-highlighter/dist/cjs/styles/prism';
+
+
 
 export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElement> | null) => {
     // Explicit null check with type guard
     if (!contentRef || !contentRef.current) return;
 
+    const isDarkMode = document.documentElement.classList.contains('dark');
     const codeBlocks = contentRef.current.querySelectorAll('pre code');
     codeBlocks.forEach((codeBlock) => {
         // Skip SVG blocks
@@ -29,9 +32,23 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
 
         // Create copy button
         const copyButton = document.createElement('button');
-        copyButton.className = 'absolute top-2 right-2 z-10 p-1 bg-white border rounded hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100';
+        copyButton.className = `
+                                absolute top-2 right-2 z-10 p-1 
+                                bg-white dark:bg-gray-800 
+                                border border-gray-200 dark:border-gray-600 
+                                text-gray-700 dark:text-gray-300
+                                hover:bg-gray-100 dark:hover:bg-gray-700 
+                                transition-colors 
+                                opacity-0 group-hover:opacity-100
+                            `;
         copyButton.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" 
+                 fill="none" 
+                 stroke="currentColor" 
+                 class="stroke-gray-700 dark:stroke-gray-300"
+                 stroke-width="2" 
+                 stroke-linecap="round" 
+                 stroke-linejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
@@ -47,7 +64,7 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
             root.render(
                 <SyntaxHighlighter
                     language={language}
-                    style={oneDark}
+                    style={isDarkMode ? oneDark : oneLight}
                     customStyle={{
                         margin: '0',
                         borderRadius: '0.5rem',
@@ -64,7 +81,13 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
             copyButton.addEventListener('click', () => {
                 navigator.clipboard.writeText(originalHtml).then(() => {
                     copyButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" 
+                             fill="none" 
+                             stroke="green" 
+                             class="stroke-green-600 dark:stroke-green-400"
+                             stroke-width="2" 
+                             stroke-linecap="round" 
+                             stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     `;

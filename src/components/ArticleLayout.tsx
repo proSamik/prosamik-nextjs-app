@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BackendResponse } from '@/types/article';
+import ThemeToggle from '@/components/ThemeToggle';
 
 import { processYouTubeLinks } from '@/utils/contentProcessors/youtubeProcessor';
 import { processCodeBlocks } from '@/utils/contentProcessors/codeBlockProcessor';
@@ -41,16 +42,44 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
         processContent();
     }, [data.content, content]);
 
+    // Add effect to handle list marker changes
+    useEffect(() => {
+        const updateListMarkers = () => {
+            const htmlElement = document.documentElement;
+            const lists = document.querySelectorAll('.github-markdown ul');
+
+            if (htmlElement.classList.contains('dark')) {
+                lists.forEach(list => list.classList.add('dark'));
+            } else {
+                lists.forEach(list => list.classList.remove('dark'));
+            }
+        };
+
+        // Initial check
+        updateListMarkers();
+
+        // Add event listener for theme changes
+        window.addEventListener('themeChange', updateListMarkers);
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('themeChange', updateListMarkers);
+        };
+    }, []);
+
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
     return (
         <main className="max-w-[728px] mx-auto px-4 py-8">
-            <ArticleHeader
-                data={data}
-                shareUrl={shareUrl}
-            />
+            <div className="flex justify-between items-center mb-8">
+                <ArticleHeader
+                    data={data}
+                    shareUrl={shareUrl}
+                />
+                <ThemeToggle />
+            </div>
 
-            <article className="prose prose-lg max-w-none">
+            <article className="prose prose-lg max-w-none dark:prose-invert">
                 <div
                     ref={contentRef}
                     dangerouslySetInnerHTML={{ __html: processedContent }}

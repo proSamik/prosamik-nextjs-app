@@ -8,8 +8,9 @@ export default {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/**/*.html',  // Add this line to ensure HTML files are included for Tailwind CSS processing.
+    './src/**/*.html',
   ],
+  darkMode: 'class', // Enable dark mode using class
   theme: {
     extend: {
       typography: {
@@ -24,6 +25,13 @@ export default {
               fontFamily: 'serif',
             },
           },
+        },
+      },
+      colors: {
+        // Optional: Define custom dark mode colors if needed
+        dark: {
+          background: '#121212',
+          text: '#ffffff',
         },
       },
     },
