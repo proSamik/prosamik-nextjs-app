@@ -1,5 +1,7 @@
+// hooks/useReadmeData.ts
 import { useState, useEffect } from 'react';
 import { BackendResponse } from '@/types/article';
+import { config } from '@/config';
 
 interface UseReadmeDataParams {
     owner: string | null;
@@ -22,9 +24,11 @@ export const useReadmeData = ({ owner, repo }: UseReadmeDataParams) => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:10000/readme?owner=${owner}&repo=${repo}`
-                );
+                const url = new URL(`${config.baseUrl}${config.apiEndpoints.readme}`);
+                url.searchParams.append('owner', owner);
+                url.searchParams.append('repo', repo);
+
+                const response = await fetch(url.toString());
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

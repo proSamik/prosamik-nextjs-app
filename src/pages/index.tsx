@@ -14,7 +14,7 @@ export default function Home() {
     return (
         <main className="max-w-[728px] mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-serif">My Blog Posts</h1>
+                <h1 className="text-3xl font-serif">Blog Posts</h1>
                 <ThemeToggle />
             </div>
             <div className="space-y-4">

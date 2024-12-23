@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RepoListResponse } from '@/types/article';
+import { config } from '@/config';
 
 export const useRepoList = () => {
     const [data, setData] = useState<RepoListResponse | null>(null);
@@ -9,7 +10,7 @@ export const useRepoList = () => {
     useEffect(() => {
         const fetchRepos = async () => {
             try {
-                const response = await fetch('http://localhost:10000/repos-list');
+                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.reposList}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch repos');
                 }

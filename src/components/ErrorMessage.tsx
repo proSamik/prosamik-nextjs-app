@@ -1,8 +1,25 @@
+import { config } from '@/config';
+
 interface ErrorMessageProps {
     message: string;
+    customSteps?: string[];
 }
 
-const ErrorMessage = ({ message = 'An error occurred' }: ErrorMessageProps) => {
+const ErrorMessage = ({
+                          message = 'An error occurred',
+                          customSteps
+                      }: ErrorMessageProps) => {
+    // Default troubleshooting steps using config values
+    const defaultSteps = [
+        `Ensure the backend server is running`,
+        `Check if the server is running on port ${config.port}`,
+        'Verify your network connection',
+        'Try refreshing the page'
+    ];
+
+    // Use custom steps if provided, otherwise use default steps
+    const troubleshootingSteps = customSteps || defaultSteps;
+
     return (
         <div className="max-w-[728px] mx-auto px-4 py-8">
             <div className="bg-red-50 border-l-4 border-red-500 p-4">
@@ -22,10 +39,9 @@ const ErrorMessage = ({ message = 'An error occurred' }: ErrorMessageProps) => {
                     <div className="text-sm bg-white p-4 rounded border border-red-200">
                         <p className="font-medium text-red-800">Troubleshooting steps:</p>
                         <ul className="mt-2 list-disc list-inside text-red-700">
-                            <li>Ensure the backend server is running</li>
-                            <li>Check if the server is running on port 10000</li>
-                            <li>Verify your network connection</li>
-                            <li>Try refreshing the page</li>
+                            {troubleshootingSteps.map((step, index) => (
+                                <li key={index}>{step}</li>
+                            ))}
                         </ul>
                     </div>
                 </div>
