@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BackendResponse } from '@/types/article';
-import ThemeToggle from '@/components/ThemeToggle';
 
 import { processYouTubeLinks } from '@/utils/contentProcessors/youtubeProcessor';
 import { processCodeBlocks } from '@/utils/contentProcessors/codeBlockProcessor';
@@ -70,13 +69,12 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
     return (
-        <main className="max-w-[728px] mx-auto px-4 py-8">
+        <main className="max-w-[800px] mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
                 <ArticleHeader
                     data={data}
                     shareUrl={shareUrl}
                 />
-                <ThemeToggle />
             </div>
 
             <article className="prose prose-lg max-w-none dark:prose-invert">
