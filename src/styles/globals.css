@@ -106,5 +106,5 @@ iframe {
 
 /* Horizontal Rule Styling */
 .github-markdown hr {
-    @apply border-t border-gray-200 dark:border-gray-700 my-4 h-px;
+    @apply my-4 h-px border-none bg-transparent;
 }

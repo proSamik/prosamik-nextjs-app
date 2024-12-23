@@ -25,7 +25,9 @@ const ThemeToggle: React.FC = () => {
     localStorage.setItem('theme', selectedTheme);
 
     // Dispatch custom event for theme change
-    window.dispatchEvent(new Event('themeChange'));
+    window.dispatchEvent(new CustomEvent('themeChange', {
+      detail: { theme: selectedTheme }
+    }));
   };
 
   const toggleTheme = () => {
