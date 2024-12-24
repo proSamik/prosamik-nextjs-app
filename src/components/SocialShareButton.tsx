@@ -1,21 +1,17 @@
-// SocialShareButton.tsx
 import React, { useState } from 'react';
-import {
-    TwitterShareButton,
-    FacebookShareButton,
-    LinkedinShareButton,
-    TwitterIcon,
-    FacebookIcon,
-    LinkedinIcon
-} from 'react-share';
-import { Share2 } from 'lucide-react';
+import { FaInstagram, FaTwitter, FaLinkedinIn, FaShareAlt } from 'react-icons/fa';
 
 interface SocialShareButtonsProps {
     shareUrl: string;
     shareTitle: string;
+    screenshotUrl: string;
 }
 
-const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ shareUrl, shareTitle }) => {
+const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
+                                                                   shareUrl,
+                                                                   shareTitle,
+                                                                   screenshotUrl
+                                                               }) => {
     const [showModal, setShowModal] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -29,40 +25,50 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({ shareUrl, share
         }
     };
 
+    const openInstagramStories = () => {
+        const instagramUrl = `https://www.instagram.com/create/story/?media=${encodeURIComponent(
+            screenshotUrl
+        )}`;
+        window.open(instagramUrl, '_blank');
+    };
+
     return (
         <>
             <div className="flex space-x-2">
-                <TwitterShareButton
-                    url={shareUrl}
-                    title={shareTitle}
-                    className="hover:opacity-80 transition-opacity"
+                {/* Custom Twitter Share Button */}
+                <button
+                    onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank')}
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    aria-label="Share to Twitter"
                 >
-                    <TwitterIcon size={32} round />
-                </TwitterShareButton>
+                    <FaTwitter size={32} />
+                </button>
 
-                <FacebookShareButton
-                    url={shareUrl}
-                    title={shareTitle}
-                    className="hover:opacity-80 transition-opacity"
+                {/* Custom LinkedIn Share Button */}
+                <button
+                    onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareTitle)}&summary=${encodeURIComponent(shareTitle)}`, '_blank')}
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    aria-label="Share to LinkedIn"
                 >
-                    <FacebookIcon size={32} round />
-                </FacebookShareButton>
+                    <FaLinkedinIn size={32} />
+                </button>
 
-                <LinkedinShareButton
-                    url={shareUrl}
-                    title={shareTitle}
-                    summary={shareTitle}
-                    className="hover:opacity-80 transition-opacity"
+                {/* Custom Instagram Share Button */}
+                <button
+                    onClick={openInstagramStories}
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    aria-label="Share to Instagram Stories"
                 >
-                    <LinkedinIcon size={32} round />
-                </LinkedinShareButton>
+                    <FaInstagram size={32}  />
+                </button>
 
+                {/* Share Link Button */}
                 <button
                     onClick={() => setShowModal(true)}
-                    className="p-2 hover:bg-gray-100 rounded-full dark:hover:bg-gray-800"
+                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors"
                     aria-label="Share link"
                 >
-                    <Share2 className="w-5 h-5" />
+                    <FaShareAlt size={20}/>
                 </button>
             </div>
 

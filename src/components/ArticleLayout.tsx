@@ -18,9 +18,10 @@ interface ArticleLayoutProps {
 }
 
 const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
-    const [processedContent, setProcessedContent] = useState("");
+    const [processedContent, setProcessedContent] = useState<string>("");
     const contentRef = useRef<HTMLDivElement>(null);
 
+    // Syntax highlighter for code blocks
     useCodeBlockSyntaxHighlighter(contentRef, [processedContent]);
 
     useEffect(() => {
@@ -39,9 +40,9 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
         };
 
         processContent();
-    }, [data.content, content]);
+    }, [content, data.content]);
 
-    // Add effect to handle list marker changes
+    // Add effect to handle list marker changes based on theme
     useEffect(() => {
         const updateListMarkers = () => {
             const htmlElement = document.documentElement;
@@ -70,6 +71,7 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
 
     return (
         <main className="max-w-[800px] mx-auto px-4 py-8">
+            {/* Article Header */}
             <div className="flex justify-between items-center mb-8">
                 <ArticleHeader
                     data={data}
@@ -77,6 +79,7 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
                 />
             </div>
 
+            {/* Article Content */}
             <article className="prose prose-lg max-w-none dark:prose-invert">
                 <div
                     ref={contentRef}

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
 import ThemeToggle from './ThemeToggle';
 import { BackendResponse } from '@/types/article';
+import html2canvas from 'html2canvas';
 
 interface ArticleHeaderProps {
     data: BackendResponse;
@@ -11,6 +12,31 @@ interface ArticleHeaderProps {
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
+    const [screenshotUrl, setScreenshotUrl] = useState<string>('');
+    const headerRef = useRef<HTMLDivElement>(null);  // Reference to the desktop layout part
+
+    // Function to generate screenshot of the header (desktop layout)
+    const captureScreenshot = async () => {
+        if (headerRef.current) {
+            try {
+                // Capture screenshot of the desktop layout
+                const canvas = await html2canvas(headerRef.current, {
+                    scrollX: 0,  // Optional, in case you want to ignore page scroll
+                    scrollY: 0,
+                });
+                const dataUrl = canvas.toDataURL();  // Converts canvas to base64 image URL
+                setScreenshotUrl(dataUrl);  // Set the screenshot URL
+            } catch (error) {
+                console.error('Error capturing screenshot:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        // Capture screenshot when the component mounts
+        captureScreenshot();
+    }, []);
+
     const githubProfileUrl = `https://github.com/${data.metadata.author}`;
 
     const AuthorInfo = () => (
@@ -41,7 +67,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                         rel="noopener noreferrer"
                         className="follow-link"
                     >
-                            Follow
+                        Follow
                     </a>
                 </div>
                 {data.metadata.lastUpdated && (
@@ -67,17 +93,19 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                     <SocialShareButtons
                         shareUrl={shareUrl}
                         shareTitle={data.metadata.title}
+                        screenshotUrl={screenshotUrl}  // Pass the generated screenshotUrl here
                     />
                 </div>
             </div>
 
             {/* Desktop layout */}
-            <div className="hidden md:flex justify-between items-center">
+            <div className="hidden md:flex justify-between items-center" ref={headerRef}>
                 <AuthorInfo />
                 <div className="flex items-center space-x-6 ml-8">
                     <SocialShareButtons
                         shareUrl={shareUrl}
                         shareTitle={data.metadata.title}
+                        screenshotUrl={screenshotUrl}  // Pass the generated screenshotUrl here
                     />
                     <ThemeToggle />
                 </div>
