@@ -108,3 +108,42 @@ iframe {
 .github-markdown hr {
     @apply my-4 h-px border-none bg-transparent;
 }
+
+/* Global link styles in globals.css */
+a {
+    text-decoration: none; /* Remove underline */
+    color: inherit;        /* Inherit text color */
+    transition: color 0.3s; /* Optional for smooth hover effect */
+}
+
+a:hover {
+    text-decoration: underline; /* Add underline on hover */
+}
+
+.author-card{
+    text-decoration: none;
+}
+
+.author-card:hover{
+    text-decoration: none;
+    transform: scale(1.1);
+}
+
+/* Specific for "Follow" links */
+.follow-link {
+    color: #ef4444; /* Tailwind's blue-500 */
+    font-size: 0.875rem; /* Tailwind's text-sm */
+}
+
+.follow-link {
+    color: #ef4444;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.follow-link:hover {
+    text-decoration: none;
+    transform: scale(1.1);
+}
+
