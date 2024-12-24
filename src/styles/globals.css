@@ -109,18 +109,9 @@ iframe {
     @apply my-4 h-px border-none bg-transparent;
 }
 
-/* Global link styles in globals.css */
-a {
-    text-decoration: none; /* Remove underline */
+.author-card{
     color: inherit;        /* Inherit text color */
     transition: color 0.3s; /* Optional for smooth hover effect */
-}
-
-a:hover {
-    text-decoration: underline; /* Add underline on hover */
-}
-
-.author-card{
     text-decoration: none;
 }
 
@@ -146,4 +137,24 @@ a:hover {
     text-decoration: none;
     transform: scale(1.1);
 }
+
+/* Base styling for the footnote references */
+sup.footnote-ref a {
+    color: #2563eb; /* Tailwind's blue-600 for distinct color */
+    text-decoration: none; /* No underline by default */
+    font-weight: bold; /* Optional: to make it more visible */
+    transition: color 0.3s ease, text-decoration 0.3s ease; /* Smooth transitions */
+}
+
+/* Hover effect for footnote references */
+sup.footnote-ref a:hover {
+    text-decoration: underline; /* Underline the link when hovered */
+    color: #1d4ed8; /* Slightly darker blue for hover (Tailwind's blue-700) */
+}
+
+/* Styling for the footnote number in the actual footnotes */
+#footnotes sup {
+    color: #4b5563; /* Tailwind's gray-600 for non-interactive footnote numbers */
+}
+
 
