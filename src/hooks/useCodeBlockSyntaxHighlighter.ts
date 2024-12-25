@@ -1,15 +1,17 @@
 import { RefObject, useEffect } from 'react';
 import { addCodeBlockSyntaxHighlighting } from "@/components/CodeBlockSyntaxHighlighter";
 
+// Update hook to handle isMobile dependency
 export const useCodeBlockSyntaxHighlighter = (
     contentRef: RefObject<HTMLDivElement | null>,
-    processedContent?: string | string[]
+    processedContent?: string | string[],
+    isMobile?: boolean
 ) => {
-    const dependenciesKey = JSON.stringify(processedContent || []);
-
+    // Only trigger when the content or layout changes
     useEffect(() => {
         if (contentRef.current) {
+            // Apply syntax highlighting
             addCodeBlockSyntaxHighlighting(contentRef as RefObject<HTMLDivElement>);
         }
-    }, [contentRef, dependenciesKey]);
+    }, [contentRef, processedContent, isMobile]);  // Add isMobile here to track layout changes
 };

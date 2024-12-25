@@ -157,4 +157,23 @@ sup.footnote-ref a:hover {
     color: #4b5563; /* Tailwind's gray-600 for non-interactive footnote numbers */
 }
 
+nav {
+    z-index: 1000;
+}
+
+nav a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: inherit;
+}
+
+.nav-text {
+    color: #000; /* Set an appropriate color */
+    font-size: 16px;
+    display: block;
+}
+
+
 

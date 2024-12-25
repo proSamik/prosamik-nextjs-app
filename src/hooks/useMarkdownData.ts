@@ -1,4 +1,3 @@
-// hooks/useMarkdownData.ts
 import { useState, useEffect } from 'react';
 import { BackendResponse } from '@/types/article';
 import { config } from '@/config';
@@ -13,15 +12,16 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // If repoPath is null, skip the fetch
+        // Skip fetch if repoPath is null
         if (!repoPath) {
             setLoading(false);
             return;
         }
 
-        let isMounted = true;
+        let isMounted = true; // flag to check component mount status
 
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const url = new URL(`${config.baseUrl}${config.apiEndpoints.readme}`);
                 url.searchParams.append('url', repoPath);  // Send the full repoPath to the backend
@@ -29,7 +29,9 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
                 const response = await fetch(url.toString());
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    setError(`Failed to fetch data: HTTP ${response.status}`);
+                    setData(null);
+                    return;
                 }
 
                 const responseData: BackendResponse = await response.json();
@@ -40,7 +42,8 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
                 }
             } catch (err) {
                 if (isMounted) {
-                    setError(err instanceof Error ? err.message : 'An error occurred');
+                    // Set error message for any issue during fetching or parsing
+                    setError(err instanceof Error ? err.message : 'An error occurred while fetching data');
                     setData(null);
                 }
             } finally {
@@ -50,7 +53,13 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
             }
         };
 
-        fetchData();
+        fetchData().catch(() => {
+            // Catching any rejected promise
+            if (isMounted) {
+                setError('Error while fetching data');
+                setLoading(false);
+            }
+        });
 
         return () => {
             isMounted = false;

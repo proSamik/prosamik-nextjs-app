@@ -41,9 +41,16 @@ export default function BlogPost() {
     // Redirect to 404 if repo not found
     useEffect(() => {
         if (notFound && !repoLoading) {
-            router.push('/404');
+            // Await the router.push() to ensure it completes before moving on
+            router.push('/404').then(() => {
+                // Optionally, add any additional logic here after navigation completes
+            }).catch(err => {
+                // Handle any errors that may occur during the push
+                console.error('Navigation error:', err);
+            });
         }
     }, [notFound, repoLoading, router]);
+
 
     // Show loading state while fetching data
     if (repoLoading || loading) {

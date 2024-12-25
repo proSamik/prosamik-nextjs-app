@@ -9,7 +9,7 @@ export default function Custom404() {
                     Page Not Found
                 </h2>
                 <p className="text-gray-500 mb-8">
-                    The page you're looking for doesn't exist or has been moved.
+                    The page you are looking for does not exist or has been moved.
                 </p>
                 <Link 
                     href="/" 

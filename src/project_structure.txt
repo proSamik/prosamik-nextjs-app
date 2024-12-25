@@ -1,17 +1,40 @@
 .
 |-- components
+|   |-- ArticleHeader.tsx
 |   |-- ArticleLayout.tsx
+|   |-- CodeBlockSyntaxHighlighter.tsx
 |   |-- ErrorMessage.tsx
-|   `-- Loading.tsx
+|   |-- Loading.tsx
+|   |-- SocialShareButton.tsx
+|   `-- ThemeToggle.tsx
+|-- config
+|   `-- index.ts
 |-- hooks
-|   `-- useReadmeData.ts
+|   |-- useCodeBlockSyntaxHighlighter.ts
+|   |-- useMarkdownData.ts
+|   |-- useRepoList.ts
+|   `-- useShareContent.ts
 |-- pages
+|   |-- 404.tsx
 |   |-- _app.tsx
+|   |-- blog
+|   |   `-- [slug].tsx
 |   `-- index.tsx
 |-- project_structure.txt
 |-- styles
 |   `-- globals.css
-`-- types
-    `-- article.ts
+|-- types
+|   `-- article.ts
+`-- utils
+    |-- contentProcessors
+    |   |-- blockquoteProcessor.ts
+    |   |-- codeBlockProcessor.ts
+    |   |-- inlineCodeProcessor.ts
+    |   |-- listItemProcessor.ts
+    |   |-- mediaCenterProcessor.ts
+    |   |-- svgProcessor.ts
+    |   `-- youtubeProcessor.ts
+    |-- dateUtils.ts
+    `-- typeGuards.ts
 
-6 directories, 9 files
+10 directories, 28 files
