@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { RepoListItem } from '@/types/article';
-import { isValidRepoPath, getErrorMessage } from '@/utils/typeGuards';
+import {getErrorMessage } from '@/utils/typeGuards';
 import ArticleLayout from '@/components/ArticleLayout';
-import { useReadmeData } from '@/hooks/useReadmeData';
+import { useMarkdownData } from '@/hooks/useMarkdownData';  // Use new hook
 import { useRepoList } from '@/hooks/useRepoList';
 import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
@@ -32,12 +32,10 @@ export default function BlogPost() {
     }, [slug, repoList]);
 
     const repoPath = repoInfo?.repoPath || null;
-    const [owner, repo] = isValidRepoPath(repoPath) ? repoPath.split('/') : [null, null];
 
-    // Fetch README data
-    const { data, error, loading } = useReadmeData({
-        owner,
-        repo
+    // Fetch markdown data
+    const { data, error, loading } = useMarkdownData({
+        repoPath
     });
 
     // Redirect to 404 if repo not found

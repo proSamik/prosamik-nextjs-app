@@ -1,21 +1,20 @@
-// hooks/useReadmeData.ts
+// hooks/useMarkdownData.ts
 import { useState, useEffect } from 'react';
 import { BackendResponse } from '@/types/article';
 import { config } from '@/config';
 
-interface UseReadmeDataParams {
-    owner: string | null;
-    repo: string | null;
+interface UseMarkdownDataParams {
+    repoPath: string | null;
 }
 
-export const useReadmeData = ({ owner, repo }: UseReadmeDataParams) => {
+export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
     const [data, setData] = useState<BackendResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // If owner or repo is null, skip the fetch
-        if (!owner || !repo) {
+        // If repoPath is null, skip the fetch
+        if (!repoPath) {
             setLoading(false);
             return;
         }
@@ -25,8 +24,7 @@ export const useReadmeData = ({ owner, repo }: UseReadmeDataParams) => {
         const fetchData = async () => {
             try {
                 const url = new URL(`${config.baseUrl}${config.apiEndpoints.readme}`);
-                url.searchParams.append('owner', owner);
-                url.searchParams.append('repo', repo);
+                url.searchParams.append('url', repoPath);  // Send the full repoPath to the backend
 
                 const response = await fetch(url.toString());
 
@@ -57,7 +55,7 @@ export const useReadmeData = ({ owner, repo }: UseReadmeDataParams) => {
         return () => {
             isMounted = false;
         };
-    }, [owner, repo]);
+    }, [repoPath]);
 
     return { data, error, loading };
 };

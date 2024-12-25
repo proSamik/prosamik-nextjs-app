@@ -44,9 +44,13 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
 
     // Add effect to handle list marker changes based on theme
     useEffect(() => {
+        if (!contentRef.current) return;
+
         const updateListMarkers = () => {
             const htmlElement = document.documentElement;
             const lists = document.querySelectorAll('.github-markdown ul');
+
+            if (!htmlElement || !lists) return;
 
             if (htmlElement.classList.contains('dark')) {
                 lists.forEach(list => list.classList.add('dark'));

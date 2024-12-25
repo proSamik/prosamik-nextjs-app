@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FaInstagram, FaTwitter, FaLinkedinIn, FaShareAlt, FaCopy } from "react-icons/fa";
 
 interface SocialShareButtonsProps {
@@ -10,11 +10,11 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
                                                                    shareUrl,
                                                                    shareTitle,
                                                                }) => {
-    const [copied, setCopied] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [copied, setCopied] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Handle copying the share link
-    const handleCopyLink = async () => {
+    const handleCopyLink = useCallback(async () => {
         try {
             await navigator.clipboard.writeText(shareUrl);
             setCopied(true);
@@ -22,10 +22,10 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
         } catch (err) {
             console.error("Failed to copy link:", err);
         }
-    };
+    }, [shareUrl]);
 
     // Handle copying the content with the link
-    const handleCopyContentWithLink = async () => {
+    const handleCopyContentWithLink = useCallback(async () => {
         const contentWithLink = `${shareTitle}\n${shareUrl}`;
         try {
             await navigator.clipboard.writeText(contentWithLink);
@@ -34,37 +34,27 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
         } catch (err) {
             console.error("Failed to copy content with link:", err);
         }
-    };
+    }, [shareTitle, shareUrl]);
 
     // Social Media Share URLs
-    const openInstagramShare = () => {
+    const openInstagramShare = useCallback(() => {
         const instagramUrl = `https://www.instagram.com/share?url=${encodeURIComponent(shareUrl)}`;
         window.open(instagramUrl, "_blank");
-    };
+    }, [shareUrl]);
 
-    const openTwitterShare = () => {
+    const openTwitterShare = useCallback(() => {
         const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
             shareUrl
         )}&text=${encodeURIComponent(shareTitle)}`;
         window.open(twitterUrl, "_blank");
-    };
+    }, [shareUrl, shareTitle]);
 
-    const openLinkedInShare = () => {
+    const openLinkedInShare = useCallback(() => {
         const linkedInUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
             shareUrl
         )}&title=${encodeURIComponent(shareTitle)}`;
         window.open(linkedInUrl, "_blank");
-    };
-
-    // Open the modal
-    const handleShareClick = () => {
-        setIsModalOpen(true);
-    };
-
-    // Close the modal
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
+    }, [shareUrl, shareTitle]);
 
     return (
         <div className="relative">
@@ -96,9 +86,9 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
                     <FaInstagram size={32} />
                 </button>
 
-                {/* Share Link Button (opens the modal) */}
+                {/* Share Link Button */}
                 <button
-                    onClick={handleShareClick}
+                    onClick={() => setIsModalOpen(true)}
                     className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors"
                     aria-label="Share options"
                 >
@@ -112,24 +102,27 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl text-gray-900 dark:text-white">Share Options</h3>
-                            <button onClick={handleCloseModal} className="text-gray-500 dark:text-gray-400">
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-gray-500 dark:text-gray-400"
+                            >
                                 X
                             </button>
                         </div>
 
-                        {/* Text Area for Copying Link */}
+                        {/* Copy Link */}
                         <div className="mb-4">
                             <label htmlFor="link" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                                 Copy Link
                             </label>
                             <div className="flex items-center space-x-2 mt-2">
-                <textarea
-                    id="link"
-                    value={shareUrl}
-                    readOnly
-                    rows={3}
-                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
+                                <textarea
+                                    id="link"
+                                    value={shareUrl}
+                                    readOnly
+                                    rows={3}
+                                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                />
                                 <button
                                     onClick={handleCopyLink}
                                     className="p-2 bg-blue-500 text-white rounded-full"
@@ -140,19 +133,22 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
                             </div>
                         </div>
 
-                        {/* Text Area for Copying Content with Link */}
+                        {/* Copy Content with Link */}
                         <div>
-                            <label htmlFor="contentWithLink" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                            <label
+                                htmlFor="contentWithLink"
+                                className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                            >
                                 Copy Content with Link
                             </label>
                             <div className="flex items-center space-x-2 mt-2">
-                <textarea
-                    id="contentWithLink"
-                    value={`${shareTitle}\n${shareUrl}`}
-                    readOnly
-                    rows={5}
-                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
+                                <textarea
+                                    id="contentWithLink"
+                                    value={`${shareTitle}\n${shareUrl}`}
+                                    readOnly
+                                    rows={5}
+                                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                />
                                 <button
                                     onClick={handleCopyContentWithLink}
                                     className="p-2 bg-blue-500 text-white rounded-full"
@@ -163,12 +159,7 @@ const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
                             </div>
                         </div>
 
-                        {/* "Copied" Message */}
-                        {copied && (
-                            <div className="mt-2 text-sm text-green-500">
-                                Copied to clipboard!
-                            </div>
-                        )}
+                        {copied && <div className="mt-2 text-sm text-green-500">Copied to clipboard!</div>}
                     </div>
                 </div>
             )}

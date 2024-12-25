@@ -12,6 +12,7 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
     const highlightCode = () => {
 
         const isDarkMode = document.documentElement.classList.contains('dark');
+        if (!contentRef.current) return; // Gracefully handle null reference
         const codeBlocks = contentRef.current.querySelectorAll('pre code');
         codeBlocks.forEach((codeBlock) => {
             // Skip SVG blocks

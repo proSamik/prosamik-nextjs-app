@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
@@ -12,13 +12,17 @@ interface ArticleHeaderProps {
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
-    // Get the hook's values
     const { setShareContent } = useShareContent();
 
+    // Avoid redundant updates by checking if the content has already been set
+    const hasSetShareContent = useRef(false);
+
     useEffect(() => {
-        // Setting share content when the component mounts
-        setShareContent(data.metadata.title, shareUrl);  // Pass text and URL to the setter
-    }, [data.metadata.title, shareUrl, setShareContent]);  // Re-run if title or shareUrl changes
+        if (!hasSetShareContent.current) {
+            setShareContent(data.metadata.title, shareUrl);
+            hasSetShareContent.current = true;
+        }
+    }, [data.metadata.title, shareUrl, setShareContent]);
 
     const githubProfileUrl = `https://github.com/${data.metadata.author}`;
 
@@ -32,7 +36,6 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                     width={48}
                     height={48}
                 />
-
             </a>
             <div>
                 <div className="font-medium flex items-center space-x-2">
