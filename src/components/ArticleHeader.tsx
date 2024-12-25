@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
 import ThemeToggle from './ThemeToggle';
 import { BackendResponse } from '@/types/article';
-import html2canvas from 'html2canvas';
+import useShareContent from '@/hooks/useShareContent';
 
 interface ArticleHeaderProps {
     data: BackendResponse;
@@ -12,30 +12,13 @@ interface ArticleHeaderProps {
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
-    const [screenshotUrl, setScreenshotUrl] = useState<string>('');
-    const headerRef = useRef<HTMLDivElement>(null);  // Reference to the desktop layout part
-
-    // Function to generate screenshot of the header (desktop layout)
-    const captureScreenshot = async () => {
-        if (headerRef.current) {
-            try {
-                // Capture screenshot of the desktop layout
-                const canvas = await html2canvas(headerRef.current, {
-                    scrollX: 0,  // Optional, in case you want to ignore page scroll
-                    scrollY: 0,
-                });
-                const dataUrl = canvas.toDataURL();  // Converts canvas to base64 image URL
-                setScreenshotUrl(dataUrl);  // Set the screenshot URL
-            } catch (error) {
-                console.error('Error capturing screenshot:', error);
-            }
-        }
-    };
+    // Get the hook's values
+    const { setShareContent } = useShareContent();
 
     useEffect(() => {
-        // Capture screenshot when the component mounts
-        captureScreenshot();
-    }, []);
+        // Setting share content when the component mounts
+        setShareContent(data.metadata.title, shareUrl);  // Pass text and URL to the setter
+    }, [data.metadata.title, shareUrl, setShareContent]);  // Re-run if title or shareUrl changes
 
     const githubProfileUrl = `https://github.com/${data.metadata.author}`;
 
@@ -45,11 +28,11 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                 <Image
                     src={`https://github.com/${data.metadata.author}.png`}
                     alt={data.metadata.author}
+                    className="rounded-full"
                     width={48}
                     height={48}
-                    className="rounded-full"
-                    unoptimized
                 />
+
             </a>
             <div>
                 <div className="font-medium flex items-center space-x-2">
@@ -93,19 +76,17 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                     <SocialShareButtons
                         shareUrl={shareUrl}
                         shareTitle={data.metadata.title}
-                        screenshotUrl={screenshotUrl}  // Pass the generated screenshotUrl here
                     />
                 </div>
             </div>
 
             {/* Desktop layout */}
-            <div className="hidden md:flex justify-between items-center" ref={headerRef}>
+            <div className="hidden md:flex justify-between items-center">
                 <AuthorInfo />
                 <div className="flex items-center space-x-6 ml-8">
                     <SocialShareButtons
                         shareUrl={shareUrl}
                         shareTitle={data.metadata.title}
-                        screenshotUrl={screenshotUrl}  // Pass the generated screenshotUrl here
                     />
                     <ThemeToggle />
                 </div>
