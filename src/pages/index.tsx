@@ -5,7 +5,7 @@ import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
 import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer'; // Import Footer component
+import Footer from '@/components/Footer';
 
 export default function Home() {
     const { data, error, loading } = useRepoList();

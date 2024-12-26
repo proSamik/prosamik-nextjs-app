@@ -3,6 +3,7 @@ export const config = {
     port: process.env.NEXT_PUBLIC_PORT || 10000,
     apiEndpoints: {
         reposList: '/repos-list',
-        readme: '/readme'
+        readme: '/readme',
+        feedback: '/feedback',
     }
 };

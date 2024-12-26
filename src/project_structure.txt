@@ -4,7 +4,9 @@
 |   |-- ArticleLayout.tsx
 |   |-- CodeBlockSyntaxHighlighter.tsx
 |   |-- ErrorMessage.tsx
+|   |-- Footer.tsx
 |   |-- Loading.tsx
+|   |-- Navigation.tsx
 |   |-- SocialShareButton.tsx
 |   `-- ThemeToggle.tsx
 |-- config
@@ -17,6 +19,7 @@
 |-- pages
 |   |-- 404.tsx
 |   |-- _app.tsx
+|   |-- about.tsx
 |   |-- blog
 |   |   `-- [slug].tsx
 |   `-- index.tsx
@@ -37,4 +40,4 @@
     |-- dateUtils.ts
     `-- typeGuards.ts
 
-10 directories, 28 files
+10 directories, 31 files
