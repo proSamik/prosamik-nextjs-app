@@ -12,6 +12,7 @@ import { processCenteredMedia } from '@/utils/contentProcessors/mediaCenterProce
 import ArticleHeader from './ArticleHeader';
 import { useCodeBlockSyntaxHighlighter } from '@/hooks/useCodeBlockSyntaxHighlighter';
 import Navigation from '@/components/Navigation';
+import Footer from "@/components/Footer";
 
 interface ArticleLayoutProps {
     data: BackendResponse;
@@ -117,6 +118,8 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
                     />
                 </article>
             </main>
+            {/* Footer component */}
+            <Footer />
         </div>
     );
 };

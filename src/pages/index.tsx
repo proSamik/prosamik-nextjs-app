@@ -5,6 +5,7 @@ import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
 import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer'; // Import Footer component
 
 export default function Home() {
     const { data, error, loading } = useRepoList();
@@ -36,7 +37,8 @@ export default function Home() {
                 className={`max-w-[728px] mx-auto px-4 py-8`}
                 style={{
                     width: isMobile ? '100%' : 'auto',
-                    marginTop: isMobile ? '60px' : '0', // Apply a fixed margin for mobile
+                    marginTop: isMobile ? '60px' : '0',
+                    marginBottom: isMobile ? '60px' : '0',
                 }}
             >
                 <div className="flex justify-between items-center mb-4">
@@ -58,6 +60,9 @@ export default function Home() {
                     ))}
                 </div>
             </main>
+
+            {/* Footer component */}
+            <Footer />
         </div>
     );
 }

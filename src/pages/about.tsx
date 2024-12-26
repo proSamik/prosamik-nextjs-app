@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
+import Footer from "@/components/Footer";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
@@ -43,6 +44,8 @@ export default function About() {
                     </p>
                 </div>
             </main>
+            {/* Footer component */}
+            <Footer />
         </div>
     );
 }
