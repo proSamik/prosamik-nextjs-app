@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'img.shields.io',
                 pathname: '/**',
             },
@@ -37,6 +42,14 @@ const nextConfig: NextConfig = {
         dangerouslyAllowSVG: true,
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
+    experimental: {
+        isrFlushToDisk: false, // Disable ISR flushing during development
+    },
+    devIndicators: {
+        buildActivity: false,  // Disables the build activity indicator
+        appIsrStatus: false,  // Disables ISR status
+    },
+    reactStrictMode: false,
 };
 
 export default nextConfig;

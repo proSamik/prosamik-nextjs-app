@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
 import Footer from "@/components/Footer";
+import ProfileHeader from "@/components/ProfileHeader";
+import PersonalStory from '@/components/PersonalStory';
+import Timeline from "@/components/Timeline";
+import Skills from '@/components/Skills';
+import CallToAction from "@/components/CallToAction";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
@@ -28,20 +33,19 @@ export default function About() {
                 className={`max-w-[728px] mx-auto px-4 py-8`}
                 style={{
                     width: isMobile ? '100%' : 'auto',
-                    marginTop: isMobile ? '60px' : '0', // Apply a fixed margin for mobile
-                }}
+                    marginTop: isMobile ? '60px' : '0',
+                    marginBottom: isMobile ? '60px' : '0',}}
             >
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-serif mr-28">About Me</h1>
+                <div className="flex justify-center items-center mb-4">
                     <ThemeToggle />
                 </div>
-                <div className="space-y-4">
-                    <p className="text-gray-700 dark:text-gray-300">
-                        Acha sochke likhunga
-                    </p>
-                    <p className="text-gray-700 dark:text-gray-300">
-                        Kuch toh likhna padega
-                    </p>
+                {/* About page components */}
+                <div className="space-y-8">
+                    <ProfileHeader />
+                    <PersonalStory />
+                    <Timeline />
+                    <Skills />
+                    <CallToAction />
                 </div>
             </main>
             {/* Footer component */}

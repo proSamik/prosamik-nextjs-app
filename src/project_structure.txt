@@ -4,6 +4,7 @@
 |   |-- ArticleLayout.tsx
 |   |-- CodeBlockSyntaxHighlighter.tsx
 |   |-- ErrorMessage.tsx
+|   |-- FeedbackForm.tsx
 |   |-- Footer.tsx
 |   |-- Loading.tsx
 |   |-- Navigation.tsx
@@ -15,13 +16,15 @@
 |   |-- useCodeBlockSyntaxHighlighter.ts
 |   |-- useMarkdownData.ts
 |   |-- useRepoList.ts
-|   `-- useShareContent.ts
+|   |-- useShareContent.ts
+|   `-- useSubmitFeedback.ts
 |-- pages
 |   |-- 404.tsx
 |   |-- _app.tsx
 |   |-- about.tsx
 |   |-- blog
 |   |   `-- [slug].tsx
+|   |-- feedback.tsx
 |   `-- index.tsx
 |-- project_structure.txt
 |-- styles
@@ -40,4 +43,4 @@
     |-- dateUtils.ts
     `-- typeGuards.ts
 
-10 directories, 31 files
+10 directories, 34 files
