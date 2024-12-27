@@ -34,7 +34,7 @@ export default function About() {
                 style={{
                     width: isMobile ? '100%' : '100%',
                     marginTop: isMobile ? '60px' : '0',
-                    marginBottom: isMobile ? '60px' : '0',}}
+                    marginBottom: isMobile ? '80px' : '0',}}
             >
                 <div className="flex justify-center items-center mb-4">
                     <ThemeToggle />

@@ -45,7 +45,7 @@ export default function CallToAction() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="I won't spam you :)"
+                            placeholder="Enter your email, I won't spam you :)"
                             required
                             className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 
                                 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
