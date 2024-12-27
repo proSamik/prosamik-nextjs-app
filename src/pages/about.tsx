@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
 import Footer from "@/components/Footer";
 import ProfileHeader from "@/components/ProfileHeader";
@@ -26,7 +25,8 @@ export default function About() {
     return (
         <div className="flex flex-col md:flex-row">
             {/* Navigation component */}
-            <Navigation />
+                <Navigation />
+
 
             {/* Main content area */}
             <main
@@ -36,9 +36,6 @@ export default function About() {
                     marginTop: isMobile ? '60px' : '0',
                     marginBottom: isMobile ? '80px' : '0',}}
             >
-                <div className="flex justify-center items-center mb-4">
-                    <ThemeToggle />
-                </div>
                 {/* About page components */}
                 <div className="space-y-8">
                     <ProfileHeader />

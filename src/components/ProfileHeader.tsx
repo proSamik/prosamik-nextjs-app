@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function ProfileHeader() {
     const [typedText, setTypedText] = useState('');
@@ -24,26 +25,34 @@ export default function ProfileHeader() {
     }, []);
 
     return (
-        <div className="flex flex-col items-center pt-2 w-full">
+        <div className="flex flex-col items-center mt-5 pt-2 w-full">
             {/* Typing Animation */}
-            <p className="text-4xl font-bold text-blue-500 dark:text-blue-400 mb-8 font-mono text-center w-full">
-                {typedText}
-                <span className="animate-pulse">|</span>
-            </p>
+            <div className="flex items-center justify-between w-full mb-8">
+                <div className="flex-grow text-center">
+                    <p className="text-4xl font-bold text-blue-500 dark:text-blue-400 font-mono">
+                        {typedText}
+                        <span className="animate-pulse">|</span>
+                    </p>
+                </div>
+                <div>
+                    <ThemeToggle/>
+                </div>
+            </div>
 
-            <div className="flex flex-row items-center sm:justify-center w-full">
+
+            <div className="flex flex-row items-center justify-between sm:justify-center w-full">
                 {/* Profile Image */}
                 <Image
                     src="https://avatars.githubusercontent.com/u/73891260?v=4"
                     alt="Profile Picture"
                     width={120} // Default size
                     height={120} // Default size
-                    className="rounded-full shadow-md sm:w-50 sm:h-50"
+                    className="rounded-full shadow-md ml-5 sm:ml-0"
                     priority
                 />
 
                 {/* Name */}
-                <h1 className="text-2xl sm:text-3xl font-bold ml-10">Samik Choudhury</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold ml-5 sm:ml-10 text-nowrap">Samik Choudhury</h1>
             </div>
 
             {/* Tagline */}
