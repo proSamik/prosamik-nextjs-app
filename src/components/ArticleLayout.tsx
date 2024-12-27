@@ -91,16 +91,19 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
     return (
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row justify-between">  {/* Added justify-between */}
             {/* Navigation component */}
-            <Navigation />
+            <div className="md:w-64">
+                <Navigation />
+            </div>
 
             {/* Main content area */}
             <main
-                className={`max-w-[728px] mx-auto px-4 py-8`}
+                className="max-w-[768px] pl-7 py-8"
                 style={{
                     width: isMobile ? '100%' : 'auto',
-                    marginTop: isMobile ? '60px' : '0', // Apply a fixed margin for mobile
+                    marginTop: isMobile ? '60px' : '0',
+                    marginBottom: isMobile ? '60px' : '0',
                 }}
             >
                 {/* Article Header */}
@@ -120,8 +123,11 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
                     />
                 </article>
             </main>
+
             {/* Footer component */}
-            <Footer />
+            <div className="md:w-64">  {/* Added fixed width container */}
+                <Footer />
+            </div>
         </div>
     );
 };

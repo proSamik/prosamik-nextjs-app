@@ -21,7 +21,7 @@ const Navigation = () => {
             className={`${
                 isMobile
                     ? 'fixed left-0 top-0 w-full bg-white dark:bg-gray-800 shadow-md z-10 flex justify-center items-center px-4'
-                    : 'sticky top-0 left-0 w-auto h-screen p-2 flex flex-col items-center justify-center'
+                    : 'sticky top-0 left-0 w-fit h-screen p-2 flex flex-col items-center justify-center'
             }`}
         >
             {/* Theme Toggle */}
@@ -32,7 +32,7 @@ const Navigation = () => {
             {/* Navigation Links Container */}
             <div className={`${
                 isMobile
-                    ? 'flex items-center gap-4 justify-center'
+                    ? 'flex items-center justify-center'
                     : 'flex flex-col items-center gap-4'
             }`}>
                 <Link

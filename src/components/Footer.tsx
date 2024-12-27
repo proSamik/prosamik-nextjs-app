@@ -19,8 +19,8 @@ const Footer = () => {
         <footer
             className={`${
                 isMobile
-                    ? 'fixed bottom-0 left-0 w-full pb-1 bg-white dark:bg-gray-800 flex justify-center pt-3'
-                    : 'fixed right-0 top-1/2 transform -translate-y-1/2 p-16 flex flex-col items-center max-w-[70px] w-full' 
+                    ? 'fixed bottom-0 left-0 w-full pb-1 bg-white dark:bg-gray-800 flex justify-center pt-3 items-center'
+                    : 'fixed right-0 top-1/2 transform -translate-y-1/2 pr-5 flex flex-col items-center max-w-[70px] w-full' 
             }`}
         >
             {/* Social Icons */}
