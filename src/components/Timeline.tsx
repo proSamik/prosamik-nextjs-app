@@ -196,23 +196,23 @@ export default function Timeline() {
                 {/* Events list */}
                 <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg ">
                     <div className="w-full text-center">
-                        <h2 className="inline-block text-xl font-bold mb-4 p-3 rounded-lg cursor-pointer transition-all
+                        <h2 className="inline-block text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
                   border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600">
                             {`${selectedYearRange.start} - ${selectedYearRange.end}`}
                         </h2>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="mt-2 space-y-3">
                         {timelineData
                             .find((period) => period.yearRange.start === selectedYearRange.start)
                             ?.events.map((event: TimelineEvent, index: number) => (
                                 <div
                                     key={index}
                                     onClick={() => handleEventClick(event)}
-                                    className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer
+                                    className="p-1 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer
                                         hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-600"
                                 >
-                                    <h3 className="text-lg font-medium">{event.title}</h3>
+                                    <h3 className="text-lg font-medium text-center">{event.title}</h3>
                                 </div>
                             ))}
                     </div>
