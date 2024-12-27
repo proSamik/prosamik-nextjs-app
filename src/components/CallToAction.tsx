@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useSubscribeNewsletter } from '@/hooks/useSubscribeNewsletter';
 
 export default function CallToAction() {
