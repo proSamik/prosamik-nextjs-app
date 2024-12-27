@@ -5,5 +5,6 @@ export const config = {
         reposList: '/repos-list',
         readme: '/readme',
         feedback: '/feedback',
+        newsletter: '/newsletter',
     }
 };
