@@ -30,9 +30,9 @@ export default function About() {
 
             {/* Main content area */}
             <main
-                className={`max-w-[800px] mx-auto px-4 py-8`}
+                className={`max-w-[800px] mx-auto px-4 py-4`}
                 style={{
-                    width: isMobile ? '100%' : 'auto',
+                    width: isMobile ? '100%' : '100%',
                     marginTop: isMobile ? '60px' : '0',
                     marginBottom: isMobile ? '60px' : '0',}}
             >

@@ -24,14 +24,14 @@ export default function ProfileHeader() {
     }, []);
 
     return (
-        <div className="flex flex-col items-center text-center pt-2">
+        <div className="flex flex-col items-center pt-2 w-full">
             {/* Typing Animation */}
-            <p className="text-4xl font-bold text-blue-500 dark:text-blue-400 mb-8 font-mono">
+            <p className="text-4xl font-bold text-blue-500 dark:text-blue-400 mb-8 font-mono text-center w-full">
                 {typedText}
                 <span className="animate-pulse">|</span>
             </p>
 
-            <div className="flex flex-row items-center space-x-4 sm:justify-between">
+            <div className="flex flex-row items-center sm:justify-center w-full">
                 {/* Profile Image */}
                 <Image
                     src="https://avatars.githubusercontent.com/u/73891260?v=4"
@@ -47,7 +47,7 @@ export default function ProfileHeader() {
             </div>
 
             {/* Tagline */}
-            <p className="text-sm sm:text-lg font-bold text-gray-600 dark:text-gray-300 mt-6 text-left">
+            <p className="text-sm sm:text-lg font-bold text-gray-600 dark:text-gray-300 mt-6 text-center w-full">
                 On My Learning Path, One Step Closer to Becoming an Indie Dev.
             </p>
         </div>

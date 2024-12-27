@@ -23,7 +23,6 @@ export default function PersonalStory() {
         return () => clearInterval(typingInterval); // Cleanup interval on unmount
     }, [fullText]);
 
-    // Replace \n with <br /> to render line breaks in HTML
     const displayText = typedText.split('\n').map((line, index) => (
         <span key={index}>
             {line}
@@ -32,7 +31,7 @@ export default function PersonalStory() {
     ));
 
     return (
-        <div className="space-y-4 px-4 py-2 max-w-2xl">
+        <div className="space-y-4 py-2 w-full">
             <p className="text-gray-700 dark:text-gray-300 break-words ">
                 <span className="typing">{displayText}</span>
             </p>

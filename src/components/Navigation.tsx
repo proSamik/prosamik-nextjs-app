@@ -20,7 +20,7 @@ const Navigation = () => {
             className={`${
                 isMobile
                     ? 'fixed left-0 top-0 w-full bg-white dark:bg-gray-800 shadow-md z-10 flex justify-center'
-                    : 'sticky top-0 left-0 w-auto h-screen p-4 flex flex-col items-center justify-center'
+                    : 'sticky top-0 left-0 w-auto h-screen p-2 flex flex-col items-center justify-center'
             }`}
         >
             <Link
