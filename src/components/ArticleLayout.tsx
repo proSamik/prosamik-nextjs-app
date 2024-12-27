@@ -13,6 +13,7 @@ import ArticleHeader from './ArticleHeader';
 import { useCodeBlockSyntaxHighlighter } from '@/hooks/useCodeBlockSyntaxHighlighter';
 import Navigation from '@/components/Navigation';
 import Footer from "@/components/Footer";
+import {processTableContent} from "@/utils/contentProcessors/tableProcessor";
 
 interface ArticleLayoutProps {
     data: BackendResponse;
@@ -39,6 +40,7 @@ const ArticleLayout = ({ data, content }: ArticleLayoutProps) => {
             processedHtml = processBlockquotes(processedHtml);
             processedHtml = processListItems(processedHtml);
             processedHtml = processCenteredMedia(processedHtml);
+            processedHtml = processTableContent(processedHtml);
             setProcessedContent(processedHtml);
         };
 

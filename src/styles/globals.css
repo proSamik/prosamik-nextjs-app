@@ -21,6 +21,89 @@ body {
     @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 no-underline;
 }
 
+/* Table Wrapper */
+/* Table Wrapper */
+.table-scroll-wrapper {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.7) transparent;
+}
+
+/* Enhanced mobile scrollbar visibility */
+@media (max-width: 760px) {
+    .table-scroll-wrapper {
+        /* Force scrollbar to be visible on mobile */
+        -webkit-overflow-scrolling: touch;
+        overflow-x: scroll !important; /* Force horizontal scroll */
+        scrollbar-width: thin !important;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar {
+        -webkit-appearance: none;
+        height: 12px !important; /* Larger height for mobile */
+        width: auto;
+        background: rgba(229, 231, 235, 0.3);
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar-thumb {
+        background-color: rgba(107, 114, 128, 0.8) !important; /* Darker for visibility */
+        border-radius: 6px;
+        min-height: 40px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+}
+
+/* Desktop scrollbar styles */
+.table-scroll-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+    background: rgba(229, 231, 235, 0.2);
+    border-radius: 4px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.6);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+}
+
+/* Dark mode styles */
+.dark .table-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(209, 213, 219, 0.6);
+}
+
+.dark .table-scroll-wrapper th {
+    --bg-color: rgb(17, 24, 39);
+}
+
+/* Table styles */
+.table-scroll-wrapper table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-scroll-wrapper th {
+    white-space: nowrap;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    --bg-color: white;
+}
+
+.table-scroll-wrapper td {
+    padding: 0.75rem;
+    border-top: 1px solid rgba(229, 231, 235, 0.5);
+}
+
 /* Code blocks */
 .code-block {
     @apply relative my-6;
