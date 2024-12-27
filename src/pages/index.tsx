@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRepoList } from '@/hooks/useRepoList';
 import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
-import ThemeToggle from '@/components/ThemeToggle';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -41,9 +40,8 @@ export default function Home() {
                     marginBottom: isMobile ? '60px' : '0',
                 }}
             >
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-3xl font-serif">My Blog Posts</h1>
-                    <ThemeToggle />
+                <div className="items-center mb-4">
+                    <h1 className="text-3xl font-serif text-center">My Blog Posts</h1>
                 </div>
                 <div className="space-y-4">
                     {data.repos.map((repo) => (
