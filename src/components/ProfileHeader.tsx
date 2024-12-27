@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import ThemeToggle from "@/components/ThemeToggle";
 
 export default function ProfileHeader() {
     const [typedText, setTypedText] = useState('');
@@ -33,9 +32,6 @@ export default function ProfileHeader() {
                         {typedText}
                         <span className="animate-pulse">|</span>
                     </p>
-                </div>
-                <div>
-                    <ThemeToggle/>
                 </div>
             </div>
 

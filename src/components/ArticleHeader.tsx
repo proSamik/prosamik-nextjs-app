@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
-import ThemeToggle from './ThemeToggle';
 import { BackendResponse } from '@/types/article';
 import useShareContent from '@/hooks/useShareContent';
 
@@ -71,9 +70,6 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
             <div className="md:hidden flex flex-col space-y-4">
                 <div className="flex justify-between items-center">
                     <AuthorInfo />
-                    <div className="flex items-center space-x-6 ml-8">
-                        <ThemeToggle />
-                    </div>
                 </div>
                 <div className="flex justify-center">
                     <SocialShareButtons
@@ -91,7 +87,6 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                         shareUrl={shareUrl}
                         shareTitle={data.metadata.title}
                     />
-                    <ThemeToggle />
                 </div>
             </div>
         </header>

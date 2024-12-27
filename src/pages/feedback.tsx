@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import ThemeToggle from '@/components/ThemeToggle';
 import FeedbackForm from '@/components/FeedbackForm'; // Import the FeedbackForm component
 
 export default function Feedback() {
@@ -35,7 +34,6 @@ export default function Feedback() {
             >
                 <div className="flex justify-center items-center mb-4">
                     <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
-                    <ThemeToggle />
                 </div>
 
                 {/* Feedback Form Component */}
