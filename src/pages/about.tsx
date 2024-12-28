@@ -11,41 +11,69 @@ export default function About() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Check if the screen is mobile or desktop
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1090); // Adjust the breakpoint as needed
+            setIsMobile(window.innerWidth <= 1090);
         };
 
-        handleResize(); // Run initially
+        handleResize();
         window.addEventListener('resize', handleResize);
-
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    return (
-        <div className="flex flex-col md:flex-row">
-            {/* Navigation component */}
+    if (isMobile) {
+        return (
+            <div className="flex flex-col md:flex-row">
+                {/* Navigation component */}
                 <Navigation />
 
+                {/* Main content area */}
+                <main
+                    className={`max-w-[800px] mx-auto px-4 py-4`}
+                    style={{
+                        width: '100%',
+                        marginTop: '60px',
+                        marginBottom: '80px',
+                    }}
+                >
+                    <div className="space-y-8">
+                        <ProfileHeader />
+                        <PersonalStory />
+                        <Timeline />
+                        <Skills />
+                        <CallToAction />
+                    </div>
+                </main>
 
-            {/* Main content area */}
-            <main
-                className={`max-w-[800px] mx-auto px-4 py-4`}
-                style={{
-                    width: isMobile ? '100%' : '100%',
-                    marginTop: isMobile ? '60px' : '0',
-                    marginBottom: isMobile ? '80px' : '0',}}
-            >
-                {/* About page components */}
-                <div className="space-y-8">
-                    <ProfileHeader />
-                    <PersonalStory />
-                    <Timeline />
-                    <Skills />
-                    <CallToAction />
+                {/* Footer component */}
+                <Footer />
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col">
+            <div className="flex-grow flex flex-col md:flex-row">
+                {/* Navigation */}
+                <div className="md:w-64 flex-shrink-0">
+                    <Navigation />
                 </div>
-            </main>
-            {/* Footer component */}
+
+                {/* Main content */}
+                <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
+                    <div className="space-y-8">
+                        <ProfileHeader />
+                        <PersonalStory />
+                        <Timeline />
+                        <Skills />
+                        <CallToAction />
+                    </div>
+                </main>
+
+                {/* Right spacing div for desktop */}
+                <div className="hidden md:block md:w-64 flex-shrink-0" />
+            </div>
+
+            {/* Footer */}
             <Footer />
         </div>
     );
