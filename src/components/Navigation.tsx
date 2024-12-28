@@ -88,7 +88,7 @@ const Navigation = () => {
 
                 {/* Blog Link */}
                 <Link
-                    href="/blog"
+                    href="/blogs"
                     className="pr-4 pl-4 pt-2 pb-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 flex flex-col items-center"
                 >
                     <svg
