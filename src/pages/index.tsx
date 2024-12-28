@@ -24,19 +24,15 @@ export default function Home() {
     if (isMobile) {
         return (
             <div className="flex flex-col md:flex-row">
-                {/* Navigation component */}
                 <Navigation />
 
-                {/* Main content area */}
                 <main
-                    className={`max-w-[800px] mx-auto px-4 py-4`}
+                    className="w-full mx-auto px-4 py-4"
                     style={{
-                        width: '100%',
                         marginTop: '60px',
                         marginBottom: '80px',
                     }}
                 >
-                    {/* Navigation Buttons Row - Added this section */}
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
                         <CustomForwardButton />
@@ -46,11 +42,15 @@ export default function Home() {
                         <ProfileHeader />
                         <BlogPreview isMobile={true} />
                         <ProjectPreview isMobile={true} />
-                        <CallToAction />
+                        {/* Centered CallToAction with max-width */}
+                        <div className="w-full flex justify-center">
+                            <div className="w-full max-w-[728px]">
+                                <CallToAction />
+                            </div>
+                        </div>
                     </div>
                 </main>
 
-                {/* Footer component */}
                 <Footer />
             </div>
         );
@@ -59,32 +59,31 @@ export default function Home() {
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex-grow flex flex-col md:flex-row">
-                {/* Navigation */}
-                <div className="md:w-64 flex-shrink-0">
+                <div className="">
                     <Navigation />
                 </div>
 
-                {/* Main content */}
-                <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
+                <main className="flex-grow w-full mx-auto px-4 py-4">
                     <div className="space-y-12">
                         <ProfileHeader />
 
-                        {/* Blog and Project previews side by side */}
-                        <div className="flex flex-row space-x-4">
+                        <div className="flex flex-row space-x-2">
                             <BlogPreview isMobile={false} />
                             <ProjectPreview isMobile={false} />
                         </div>
 
-                        {/* Additional components stacked below */}
-                        <CallToAction />
+                        {/* Centered CallToAction with max-width */}
+                        <div className="w-full flex justify-center">
+                            <div className="w-full max-w-[728px]">
+                                <CallToAction />
+                            </div>
+                        </div>
                     </div>
                 </main>
 
-                {/* Right spacing div for desktop */}
-                <div className="hidden md:block md:w-64 flex-shrink-0" />
+                <div className="hidden md:block md:w-20 flex-shrink-0"/>
             </div>
 
-            {/* Footer */}
             <Footer />
         </div>
     );
