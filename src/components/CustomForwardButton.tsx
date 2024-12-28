@@ -14,7 +14,6 @@ const CustomForwardButton: React.FC<CustomButtonProps> = ({ onClick }) => {
 
         const checkNavigationState = () => {
             const browserForward = window.navigation?.canGoForward || false;
-            console.log('Browser forward available:', browserForward);
             setCanGoForward(browserForward);
         };
 
@@ -28,11 +27,6 @@ const CustomForwardButton: React.FC<CustomButtonProps> = ({ onClick }) => {
             forwardStack.push(currentPath);
             currentPosition = forwardStack.length - 1;
 
-            console.log('Navigation state updated:', {
-                stack: forwardStack,
-                position: currentPosition,
-                canGoForward: currentPosition < forwardStack.length - 1
-            });
         };
 
         const afterNavigate = () => {

@@ -16,7 +16,6 @@ const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
       const browserBack = window.navigation?.canGoBack || false;
       const currentPath = window.location.pathname;
       const isRootPath = currentPath === '/' || currentPath === '';
-      console.log('Navigation state:', { browserBack, currentPath, isRootPath });
 
       setCanGoBack(browserBack && !isRootPath);
     };
