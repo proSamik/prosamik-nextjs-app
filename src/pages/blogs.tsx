@@ -5,6 +5,8 @@ import {useRepoList} from "@/hooks/useRepoList";
 import Loading from "@/components/Loading";
 import ErrorMessage from "@/components/ErrorMessage";
 import BlogList from "@/components/BlogList";
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function Blogs() {
     const { data, error, loading } = useRepoList();
@@ -39,6 +41,12 @@ export default function Blogs() {
                         marginBottom: '80px',
                     }}
                 >
+                    {/* Navigation Buttons Row - Added this section */}
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
                     <div className="space-y-8">
                         <BlogList repos={data.repos} />
                     </div>

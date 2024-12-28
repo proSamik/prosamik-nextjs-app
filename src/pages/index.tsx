@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ProfileHeader from '@/components/ProfileHeader';
 import BlogPreview from '@/components/BlogPreview';
 import ProjectPreview from '@/components/ProjectPreview';
 import CallToAction from '@/components/CallToAction';
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
@@ -34,6 +36,12 @@ export default function Home() {
                         marginBottom: '80px',
                     }}
                 >
+                    {/* Navigation Buttons Row - Added this section */}
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
                     <div className="space-y-12">
                         <ProfileHeader />
                         <BlogPreview isMobile={true} />

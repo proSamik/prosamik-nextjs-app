@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import FeedbackForm from '@/components/FeedbackForm';
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function Feedback() {
     const [isMobile, setIsMobile] = useState(false);
@@ -31,6 +33,12 @@ export default function Feedback() {
                         marginBottom: '60px',
                     }}
                 >
+                    {/* Navigation Buttons Row - Added this section */}
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
                     <div className="flex justify-center items-center mb-4">
                         <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
                     </div>

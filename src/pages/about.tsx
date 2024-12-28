@@ -6,6 +6,8 @@ import PersonalStory from '@/components/PersonalStory';
 import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
 import CallToAction from "@/components/CallToAction";
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
@@ -35,6 +37,12 @@ export default function About() {
                         marginBottom: '80px',
                     }}
                 >
+                    {/* Navigation Buttons Row - Added this section */}
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
                     <div className="space-y-8">
                         <ProfileHeader />
                         <PersonalStory />

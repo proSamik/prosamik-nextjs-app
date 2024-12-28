@@ -4,7 +4,6 @@ import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
 import { BackendResponse } from '@/types/article';
 import useShareContent from '@/hooks/useShareContent';
-import CustomBackButton from "@/components/CustomBackButton";
 
 interface ArticleHeaderProps {
     data: BackendResponse;
@@ -69,10 +68,6 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
         <header className="mb-8 w-full">
             {/* Mobile layout */}
             <div className="md:hidden flex flex-col space-y-4">
-                {/* Back button at top */}
-                <div className="w-full">
-                    <CustomBackButton />
-                </div>
 
                 {/* Author info and Social icons container */}
                 <div className="w-full flex flex-wrap justify-between items-center gap-y-4">
@@ -94,7 +89,6 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
             {/* Desktop layout */}
             <div className="hidden md:flex justify-between items-center">
                 <div className="flex items-center">
-                    <CustomBackButton/>
                     <AuthorInfo/>
                 </div>
                 <div className="flex items-center space-x-6 ml-8">

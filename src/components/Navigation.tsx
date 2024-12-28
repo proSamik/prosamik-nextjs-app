@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ThemeToggle from "@/components/ThemeToggle";
+import CustomBackButton from "./CustomBackButton";
+import CustomForwardButton from "./CustomForwardButton";
 
 const Navigation = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -27,6 +29,22 @@ const Navigation = () => {
                     : 'sticky top-0 left-0 w-fit h-screen p-2 flex flex-col items-center justify-center'
             }`}
         >
+
+            {/* Navigation Controls for Desktop */}
+            {!isMobile && (
+                <>
+                    {/* Back Button */}
+                    <div className="absolute top-4 left-0 px-5">
+                        <CustomBackButton />
+                    </div>
+
+                    {/* Forward Button */}
+                    <div className="absolute bottom-4 left-0 px-5">
+                        <CustomForwardButton />
+                    </div>
+                </>
+            )}
+
             {/* Theme Toggle */}
             <div className={isMobile ? 'absolute left-0 px-5' : 'mb-12'}>
                 <ThemeToggle/>

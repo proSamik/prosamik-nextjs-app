@@ -5,6 +5,8 @@ import {useProjectsList} from "@/hooks/useProjectsList";
 import Loading from "@/components/Loading";
 import ErrorMessage from "@/components/ErrorMessage";
 import ProjectList from "@/components/ProjectList";
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function Projects() {
     const [isMobile, setIsMobile] = useState(false);
@@ -39,6 +41,12 @@ export default function Projects() {
                         marginBottom: '80px',
                     }}
                 >
+                    {/* Navigation Buttons Row - Added this section */}
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
                     <div className="space-y-8">
                         <ProjectList repos={data.repos} />
                     </div>
