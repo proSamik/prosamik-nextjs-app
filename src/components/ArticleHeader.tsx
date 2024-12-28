@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/dateUtils';
 import SocialShareButtons from './SocialShareButton';
 import { BackendResponse } from '@/types/article';
 import useShareContent from '@/hooks/useShareContent';
+import CustomBackButton from "@/components/CustomBackButton";
 
 interface ArticleHeaderProps {
     data: BackendResponse;
@@ -42,7 +43,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                         href={githubProfileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="author-card"
+                        className="author-card dark:text-gray-200"
                     >
                         {data.metadata.author}
                     </a>
@@ -56,7 +57,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
                     </a>
                 </div>
                 {data.metadata.lastUpdated && (
-                    <div className="text-gray-500 text-sm">
+                    <div className="text-gray-500 text-sm dark:text-gray-200">
                         {formatDate(data.metadata.lastUpdated)}
                     </div>
                 )}
@@ -68,20 +69,34 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
         <header className="mb-8 w-full">
             {/* Mobile layout */}
             <div className="md:hidden flex flex-col space-y-4">
-                <div className="flex justify-between items-center">
-                    <AuthorInfo />
+                {/* Back button at top */}
+                <div className="w-full">
+                    <CustomBackButton />
                 </div>
-                <div className="flex justify-center">
-                    <SocialShareButtons
-                        shareUrl={shareUrl}
-                        shareTitle={data.metadata.title}
-                    />
+
+                {/* Author info and Social icons container */}
+                <div className="w-full flex flex-wrap justify-between items-center gap-y-4">
+                    {/* Author info */}
+                    <div className="ml-2">
+                        <AuthorInfo />
+                    </div>
+
+                    {/* Social icons */}
+                    <div className="ml-2">
+                        <SocialShareButtons
+                            shareUrl={shareUrl}
+                            shareTitle={data.metadata.title}
+                        />
+                    </div>
                 </div>
             </div>
 
             {/* Desktop layout */}
             <div className="hidden md:flex justify-between items-center">
-                <AuthorInfo />
+                <div className="flex items-center">
+                    <CustomBackButton/>
+                    <AuthorInfo/>
+                </div>
                 <div className="flex items-center space-x-6 ml-8">
                     <SocialShareButtons
                         shareUrl={shareUrl}
