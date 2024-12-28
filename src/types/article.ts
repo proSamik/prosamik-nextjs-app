@@ -12,8 +12,10 @@ export interface BackendResponse {
 
 export interface RepoListItem {
     title: string;
-    repoPath: string;  // format: "owner/repo"
+    repoPath: string;
     description?: string;
+    tags: string;
+    views_count: number;
 }
 
 export interface RepoListResponse {

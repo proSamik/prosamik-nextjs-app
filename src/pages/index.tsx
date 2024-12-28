@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRepoList } from '@/hooks/useRepoList';
 import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import BlogList from "@/components/BlogList";
 
 export default function Home() {
     const { data, error, loading } = useRepoList();
@@ -40,23 +40,7 @@ export default function Home() {
                     marginBottom: isMobile ? '60px' : '0',
                 }}
             >
-                <div className="items-center mb-4">
-                    <h1 className="text-3xl font-serif text-center">My Blog Posts</h1>
-                </div>
-                <div className="space-y-4">
-                    {data.repos.map((repo) => (
-                        <Link
-                            key={repo.repoPath}
-                            href={`/blog/${encodeURIComponent(repo.title)}`}
-                            className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md dark:hover:shadow-lg transition-shadow"
-                        >
-                            <h2 className="text-xl font-semibold mb-2 dark:text-white">{repo.title}</h2>
-                            {repo.description && (
-                                <p className="text-gray-600 dark:text-gray-300">{repo.description}</p>
-                            )}
-                        </Link>
-                    ))}
-                </div>
+                <BlogList repos={data.repos} />
             </main>
 
             {/* Footer component */}
