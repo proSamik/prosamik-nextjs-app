@@ -1,21 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import {useRouter} from "next/router";
+import { useRouter } from 'next/router';
 
 interface CustomButtonProps {
   onClick?: () => void;
 }
 
 const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
+  const [canGoBack, setCanGoBack] = useState(false);
   const router = useRouter();
 
-  const handleClick = () => {
+  useEffect(() => {
+
+    const checkNavigationState = () => {
+      const browserBack = window.navigation?.canGoBack || false;
+      const currentPath = window.location.pathname;
+      const isRootPath = currentPath === '/' || currentPath === '';
+      console.log('Navigation state:', { browserBack, currentPath, isRootPath });
+
+      setCanGoBack(browserBack && !isRootPath);
+    };
+
+    checkNavigationState();
+
+    window.addEventListener('popstate', checkNavigationState);
+    window.addEventListener('navigate', checkNavigationState);
+
+    return () => {
+      window.removeEventListener('popstate', checkNavigationState);
+      window.removeEventListener('navigate', checkNavigationState);
+    };
+  }, []);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (onClick) {
       onClick();
     } else {
       router.back();
     }
   };
+
+  if (!canGoBack) return null;
 
   return (
       <button
