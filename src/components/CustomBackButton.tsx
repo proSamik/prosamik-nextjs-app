@@ -11,23 +11,21 @@ const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
   const router = useRouter();
 
   useEffect(() => {
-
     const checkNavigationState = () => {
-      const browserBack = window.navigation?.canGoBack || false;
+      // Use the history length to determine if the user can navigate back
+      const hasHistory = window.history.length > 2; // More than 2 means there's a previous page
       const currentPath = window.location.pathname;
       const isRootPath = currentPath === '/' || currentPath === '';
 
-      setCanGoBack(browserBack && !isRootPath);
+      setCanGoBack(hasHistory && !isRootPath);
     };
 
     checkNavigationState();
 
-    window.addEventListener('popstate', checkNavigationState);
-    window.addEventListener('navigate', checkNavigationState);
+    window.addEventListener('popstate', checkNavigationState); // Trigger on history changes
 
     return () => {
       window.removeEventListener('popstate', checkNavigationState);
-      window.removeEventListener('navigate', checkNavigationState);
     };
   }, []);
 
