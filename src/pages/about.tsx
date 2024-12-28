@@ -25,34 +25,31 @@ export default function About() {
     if (isMobile) {
         return (
             <div className="flex flex-col md:flex-row">
-                {/* Navigation component */}
                 <Navigation />
 
-                {/* Main content area */}
                 <main
-                    className={`max-w-[800px] mx-auto px-4 py-4`}
+                    className="w-full mx-auto px-4 py-4"
                     style={{
-                        width: '100%',
                         marginTop: '60px',
                         marginBottom: '80px',
                     }}
                 >
-                    {/* Navigation Buttons Row - Added this section */}
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
                         <CustomForwardButton />
                     </div>
 
-                    <div className="space-y-8">
-                        <ProfileHeader />
-                        <PersonalStory />
-                        <Timeline />
-                        <Skills />
-                        <CallToAction />
+                    <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-[800px] space-y-8">
+                            <ProfileHeader />
+                            <PersonalStory />
+                            <Timeline />
+                            <Skills />
+                            <CallToAction />
+                        </div>
                     </div>
                 </main>
 
-                {/* Footer component */}
                 <Footer />
             </div>
         );
@@ -61,27 +58,25 @@ export default function About() {
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex-grow flex flex-col md:flex-row">
-                {/* Navigation */}
-                <div className="md:w-64 flex-shrink-0">
+                <div className="md:w-48 flex-shrink-0">
                     <Navigation />
                 </div>
 
-                {/* Main content */}
-                <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
-                    <div className="space-y-8">
-                        <ProfileHeader />
-                        <PersonalStory />
-                        <Timeline />
-                        <Skills />
-                        <CallToAction />
+                <main className="flex-grow w-full mx-auto px-4 py-4">
+                    <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-[800px] space-y-8">
+                            <ProfileHeader />
+                            <PersonalStory />
+                            <Timeline />
+                            <Skills />
+                            <CallToAction />
+                        </div>
                     </div>
                 </main>
 
-                {/* Right spacing div for desktop */}
-                <div className="hidden md:block md:w-64 flex-shrink-0" />
+                <div className="hidden md:block md:w-48 flex-shrink-0" />
             </div>
 
-            {/* Footer */}
             <Footer />
         </div>
     );
