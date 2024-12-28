@@ -16,7 +16,7 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
     useEffect(() => {
         const fetchRepos = async () => {
             try {
-                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.reposList}`);
+                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.blogsList}`);
                 if (!response.ok) {
                     setError('Repos not found');
                     return;
