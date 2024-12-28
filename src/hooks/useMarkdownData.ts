@@ -23,7 +23,7 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const url = new URL(`${config.baseUrl}${config.apiEndpoints.readme}`);
+                const url = new URL(`${config.baseUrl}${config.apiEndpoints.md}`);
                 url.searchParams.append('url', repoPath);  // Send the full repoPath to the backend
 
                 const response = await fetch(url.toString());

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import FeedbackForm from '@/components/FeedbackForm';
+import Footer from "@/components/Footer";
+import {useProjectsList} from "@/hooks/useProjectsList";
+import Loading from "@/components/Loading";
+import ErrorMessage from "@/components/ErrorMessage";
+import ProjectList from "@/components/ProjectList";
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
 
-export default function Feedback() {
+export default function Projects() {
     const [isMobile, setIsMobile] = useState(false);
+    const { data, error, loading } = useProjectsList();
 
     useEffect(() => {
         const handleResize = () => {
@@ -18,6 +22,10 @@ export default function Feedback() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    if (loading) return <Loading />;
+    if (error) return <ErrorMessage message={error} />;
+    if (!data?.repos.length) return <div>No projects found</div>;
+
     if (isMobile) {
         return (
             <div className="flex flex-col md:flex-row">
@@ -26,11 +34,11 @@ export default function Feedback() {
 
                 {/* Main content area */}
                 <main
-                    className={`max-w-[728px] mx-auto px-4 py-8`}
+                    className={`max-w-[800px] mx-auto px-4 py-4`}
                     style={{
                         width: '100%',
                         marginTop: '60px',
-                        marginBottom: '60px',
+                        marginBottom: '80px',
                     }}
                 >
                     {/* Navigation Buttons Row - Added this section */}
@@ -39,12 +47,9 @@ export default function Feedback() {
                         <CustomForwardButton />
                     </div>
 
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
+                    <div className="space-y-8">
+                        <ProjectList repos={data.repos} />
                     </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
                 </main>
 
                 {/* Footer component */}
@@ -57,22 +62,19 @@ export default function Feedback() {
         <div className="min-h-screen flex flex-col">
             <div className="flex-grow flex flex-col md:flex-row">
                 {/* Navigation */}
-                <div className="md:w-36 flex-shrink-0">
+                <div className="md:w-64 flex-shrink-0">
                     <Navigation />
                 </div>
 
                 {/* Main content */}
-                <main className="flex-grow w-full mx-auto px-4 py-8">
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
+                <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
+                    <div className="space-y-8">
+                        <ProjectList repos={data.repos} />
                     </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
                 </main>
 
                 {/* Right spacing div for desktop */}
-                <div className="hidden md:block md:w-36 flex-shrink-0" />
+                <div className="hidden md:block md:w-64 flex-shrink-0" />
             </div>
 
             {/* Footer */}

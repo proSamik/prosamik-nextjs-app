@@ -8,38 +8,38 @@ interface FetchResult<T> {
     loading: boolean;
 }
 
-export const useRepoList = (): FetchResult<RepoListResponse> => {
+export const useProjectsList = (): FetchResult<RepoListResponse> => {
     const [data, setData] = useState<RepoListResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchRepos = async () => {
+        const fetchProjects = async () => {
             try {
-                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.blogsList}`);
+                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.projectsList}`);
                 if (!response.ok) {
-                    setError('Repos not found');
+                    setError('Projects not found');
                     return;
                 }
 
-                const repoData: RepoListResponse = await response.json();
-                if (repoData.repos.length === 0) {
-                    setError('Repos not found');
+                const projectData: RepoListResponse = await response.json();
+                if (projectData.repos.length === 0) {
+                    setError('Projects not found');
                     setData(null);
                     return;
                 }
 
-                setData(repoData);
+                setData(projectData);
                 setError(null); // Reset error if data is successfully fetched
             } catch {
-                setError('Repos not found'); // Handle the error case here
+                setError('Projects not found'); // Handle the error case here
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchRepos().catch(() => {
-            setError('Repos not found');
+        fetchProjects().catch(() => {
+            setError('Projects not found');
             setLoading(false);
         });
     }, []);

@@ -1,65 +1,89 @@
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRepoList } from '@/hooks/useRepoList';
-import Loading from '@/components/Loading';
-import ErrorMessage from '@/components/ErrorMessage';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ProfileHeader from '@/components/ProfileHeader';
+import BlogPreview from '@/components/BlogPreview';
+import ProjectPreview from '@/components/ProjectPreview';
+import CallToAction from '@/components/CallToAction';
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function Home() {
-    const { data, error, loading } = useRepoList();
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Check if screen is mobile or desktop
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1090); // Adjust the breakpoint as needed
+            setIsMobile(window.innerWidth <= 1090);
         };
 
-        handleResize(); // Run initially
+        handleResize();
         window.addEventListener('resize', handleResize);
-
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    if (loading) return <Loading />;
-    if (error) return <ErrorMessage message={error} />;
-    if (!data?.repos.length) return <div>No repos found</div>;
+    if (isMobile) {
+        return (
+            <div className="flex flex-col md:flex-row">
+                <Navigation />
+
+                <main
+                    className="w-full mx-auto px-4 py-4"
+                    style={{
+                        marginTop: '60px',
+                        marginBottom: '80px',
+                    }}
+                >
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
+
+                    <div className="space-y-12">
+                        <ProfileHeader />
+                        <BlogPreview isMobile={true} />
+                        <ProjectPreview isMobile={true} />
+                        {/* Centered CallToAction with max-width */}
+                        <div className="w-full flex justify-center">
+                            <div className="w-full max-w-[728px]">
+                                <CallToAction />
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <Footer />
+            </div>
+        );
+    }
 
     return (
-        <div className="flex flex-col md:flex-row">
-            {/* Navigation component */}
-            <Navigation />
-
-            {/* Main content area */}
-            <main
-                className={`max-w-[728px] mx-auto px-4 py-8`}
-                style={{
-                    width: isMobile ? '100%' : 'auto',
-                    marginTop: isMobile ? '60px' : '0',
-                    marginBottom: isMobile ? '60px' : '0',
-                }}
-            >
-                <div className="items-center mb-4">
-                    <h1 className="text-3xl font-serif text-center">My Blog Posts</h1>
+        <div className="min-h-screen flex flex-col">
+            <div className="flex-grow flex flex-col md:flex-row">
+                <div className="">
+                    <Navigation />
                 </div>
-                <div className="space-y-4">
-                    {data.repos.map((repo) => (
-                        <Link
-                            key={repo.repoPath}
-                            href={`/blog/${encodeURIComponent(repo.title)}`}
-                            className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md dark:hover:shadow-lg transition-shadow"
-                        >
-                            <h2 className="text-xl font-semibold mb-2 dark:text-white">{repo.title}</h2>
-                            {repo.description && (
-                                <p className="text-gray-600 dark:text-gray-300">{repo.description}</p>
-                            )}
-                        </Link>
-                    ))}
-                </div>
-            </main>
 
-            {/* Footer component */}
+                <main className="flex-grow w-full mx-auto px-4 py-4">
+                    <div className="space-y-12">
+                        <ProfileHeader />
+
+                        <div className="flex flex-row space-x-2">
+                            <BlogPreview isMobile={false} />
+                            <ProjectPreview isMobile={false} />
+                        </div>
+
+                        {/* Centered CallToAction with max-width */}
+                        <div className="w-full flex justify-center">
+                            <div className="w-full max-w-[728px]">
+                                <CallToAction />
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <div className="hidden md:block md:w-20 flex-shrink-0"/>
+            </div>
+
             <Footer />
         </div>
     );

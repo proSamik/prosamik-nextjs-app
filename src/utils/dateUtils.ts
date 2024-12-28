@@ -6,18 +6,13 @@ export const formatDate = (dateString: string): string => {
             return '';
         }
 
-        const dateStr = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
+        // Only format the date part using Intl.DateTimeFormat
+        return new Intl.DateTimeFormat('en-GB', {
             day: 'numeric',
+            month: 'long',
             year: 'numeric'
         }).format(date);
 
-        const timeStr = new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-        }).format(date);
-
-        return `${dateStr} at ${timeStr}`;
     } catch (error) {
         console.error('Error formatting date:', error);
         return dateString;

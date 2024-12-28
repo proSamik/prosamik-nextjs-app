@@ -6,46 +6,77 @@ import PersonalStory from '@/components/PersonalStory';
 import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
 import CallToAction from "@/components/CallToAction";
+import CustomBackButton from "@/components/CustomBackButton"
+import CustomForwardButton from "@/components/CustomForwardButton";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        // Check if the screen is mobile or desktop
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1090); // Adjust the breakpoint as needed
+            setIsMobile(window.innerWidth <= 1090);
         };
 
-        handleResize(); // Run initially
+        handleResize();
         window.addEventListener('resize', handleResize);
-
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    return (
-        <div className="flex flex-col md:flex-row">
-            {/* Navigation component */}
+    if (isMobile) {
+        return (
+            <div className="flex flex-col md:flex-row">
                 <Navigation />
 
+                <main
+                    className="w-full mx-auto px-4 py-4"
+                    style={{
+                        marginTop: '60px',
+                        marginBottom: '80px',
+                    }}
+                >
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton />
+                        <CustomForwardButton />
+                    </div>
 
-            {/* Main content area */}
-            <main
-                className={`max-w-[800px] mx-auto px-4 py-4`}
-                style={{
-                    width: isMobile ? '100%' : '100%',
-                    marginTop: isMobile ? '60px' : '0',
-                    marginBottom: isMobile ? '80px' : '0',}}
-            >
-                {/* About page components */}
-                <div className="space-y-8">
-                    <ProfileHeader />
-                    <PersonalStory />
-                    <Timeline />
-                    <Skills />
-                    <CallToAction />
+                    <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-[800px] space-y-8">
+                            <ProfileHeader />
+                            <PersonalStory />
+                            <Timeline />
+                            <Skills />
+                            <CallToAction />
+                        </div>
+                    </div>
+                </main>
+
+                <Footer />
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col">
+            <div className="flex-grow flex flex-col md:flex-row">
+                <div className="md:w-48 flex-shrink-0">
+                    <Navigation />
                 </div>
-            </main>
-            {/* Footer component */}
+
+                <main className="flex-grow w-full mx-auto px-4 py-4">
+                    <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-[800px] space-y-8">
+                            <ProfileHeader />
+                            <PersonalStory />
+                            <Timeline />
+                            <Skills />
+                            <CallToAction />
+                        </div>
+                    </div>
+                </main>
+
+                <div className="hidden md:block md:w-48 flex-shrink-0" />
+            </div>
+
             <Footer />
         </div>
     );
