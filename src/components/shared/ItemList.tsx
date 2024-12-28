@@ -12,6 +12,7 @@ interface ItemCardProps {
     description?: string;
     tags?: string;
     views_count?: number;
+    repoPath?: string;
 }
 
 interface ItemListProps {
