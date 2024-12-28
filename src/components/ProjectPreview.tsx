@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useProjectsList } from '@/hooks/useProjectsList';
-import BlogList from '@/components/BlogList';
 import Loading from '@/components/Loading';
 import ErrorMessage from '@/components/ErrorMessage';
+import ProjectList from "@/components/ProjectList";
 
 interface ProjectPreviewProps {
     isMobile: boolean;
@@ -30,7 +30,7 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
                     Show More →
                 </button>
             </div>
-            <BlogList repos={previewProjects} />
+            <ProjectList repos={previewProjects} />
         </div>
     );
 };

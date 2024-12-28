@@ -4,11 +4,11 @@ import Footer from "@/components/Footer";
 import {useProjectsList} from "@/hooks/useProjectsList";
 import Loading from "@/components/Loading";
 import ErrorMessage from "@/components/ErrorMessage";
-import BlogList from "@/components/BlogList";
+import ProjectList from "@/components/ProjectList";
 
 export default function Projects() {
-    const { data, error, loading } = useProjectsList();
     const [isMobile, setIsMobile] = useState(false);
+    const { data, error, loading } = useProjectsList();
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,7 +40,7 @@ export default function Projects() {
                     }}
                 >
                     <div className="space-y-8">
-                        <BlogList repos={data.repos} />
+                        <ProjectList repos={data.repos} />
                     </div>
                 </main>
 
@@ -61,7 +61,7 @@ export default function Projects() {
                 {/* Main content */}
                 <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
                     <div className="space-y-8">
-                        <BlogList repos={data.repos} />
+                        <ProjectList repos={data.repos} />
                     </div>
                 </main>
 

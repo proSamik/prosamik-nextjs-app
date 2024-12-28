@@ -21,3 +21,8 @@ export interface RepoListItem {
 export interface RepoListResponse {
     repos: RepoListItem[];
 }
+
+export interface ArticleLayoutProps {
+    data: BackendResponse;
+    content?: string;
+}
