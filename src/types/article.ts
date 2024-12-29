@@ -16,6 +16,8 @@ export interface RepoListItem {
     description?: string;
     tags: string;
     views_count: number;
+    type: string;
+    id: number;
 }
 
 export interface RepoListResponse {

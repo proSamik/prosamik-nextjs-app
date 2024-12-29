@@ -7,5 +7,6 @@ export const config = {
         md: '/md',
         feedback: '/feedback',
         newsletter: '/newsletter',
+        analytics: '/analytics',
     }
 };

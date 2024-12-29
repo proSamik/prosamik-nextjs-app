@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { RepoListItem } from '@/types/article';
 import { useMarkdownData } from '@/hooks/useMarkdownData';
+import {useTrackViews} from "@/hooks/useTrackViews";
 
 export function useRepoHandler(slug: string | string[] | undefined, repoList: RepoListItem[] | undefined) {
     const [repoInfo, setRepoInfo] = useState<RepoListItem | null>(null);
@@ -26,6 +27,16 @@ export function useRepoHandler(slug: string | string[] | undefined, repoList: Re
     }, [slug, repoList]);
 
     const repoPath = repoInfo?.repoPath || null;
+
+    const { trackView } = useTrackViews();  // New hook
+
+    // Track view when repoInfo becomes available
+    useEffect(() => {
+        if (repoInfo?.type && repoInfo?.id) {
+            // No need to await or .catch() here since we're handling it in the hook
+            trackView(repoInfo.type, repoInfo.id);
+        }
+    }, [repoInfo, trackView]);
 
     // Fetch markdown data
     const { data, error, loading } = useMarkdownData({ repoPath });

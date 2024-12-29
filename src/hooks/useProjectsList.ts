@@ -24,15 +24,25 @@ export const useProjectsList = (): FetchResult<RepoListResponse> => {
 
                 const projectData: RepoListResponse = await response.json();
                 if (projectData.repos.length === 0) {
-                    setError('Projects not found');
-                    setData(null);
+                    // Instead of setting error, create a "No Projects Found" item
+                    setData({
+                        repos: [{
+                            title: 'No Projects Found',
+                            repoPath: '/',
+                            description: 'Start creating your first project!',
+                            tags: '',
+                            views_count: 0,
+                            id: 0,
+                            type: 'empty'
+                        }]
+                    });
                     return;
                 }
 
                 setData(projectData);
-                setError(null); // Reset error if data is successfully fetched
+                setError(null);
             } catch {
-                setError('Projects not found'); // Handle the error case here
+                setError('Projects not found');
             } finally {
                 setLoading(false);
             }
