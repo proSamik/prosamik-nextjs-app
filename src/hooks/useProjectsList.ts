@@ -31,7 +31,9 @@ export const useProjectsList = (): FetchResult<RepoListResponse> => {
                             repoPath: '/',
                             description: 'Start creating your first project!',
                             tags: '',
-                            views_count: 0
+                            views_count: 0,
+                            id: 0,
+                            type: 'empty'
                         }]
                     });
                     return;

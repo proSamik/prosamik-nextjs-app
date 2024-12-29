@@ -31,7 +31,9 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
                             repoPath: '/',
                             description: 'Start creating your first blog!',
                             tags: '',
-                            views_count: 0
+                            views_count: 0,
+                            id: 0,
+                            type: 'empty'
                         }]
                     });
                     return;
