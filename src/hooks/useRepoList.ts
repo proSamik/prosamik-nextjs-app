@@ -24,15 +24,23 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
 
                 const repoData: RepoListResponse = await response.json();
                 if (repoData.repos.length === 0) {
-                    setError('Repos not found');
-                    setData(null);
+                    // Instead of setting error, create a "No Blogs Found" item
+                    setData({
+                        repos: [{
+                            title: 'No Blogs Found',
+                            repoPath: '/',
+                            description: 'Start creating your first blog!',
+                            tags: '',
+                            views_count: 0
+                        }]
+                    });
                     return;
                 }
 
                 setData(repoData);
-                setError(null); // Reset error if data is successfully fetched
+                setError(null);
             } catch {
-                setError('Repos not found'); // Handle the error case here
+                setError('Repos not found');
             } finally {
                 setLoading(false);
             }
