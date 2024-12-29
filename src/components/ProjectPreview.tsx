@@ -26,7 +26,8 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
     if (error) return <ErrorMessage message={error} />;
     if (!data?.repos.length) return null;
 
-    const previewProjects = data.repos.slice(0, isMobile ? 3 : 4);
+    // Check if we have the "No Projects Found" placeholder
+    const isEmptyState = data.repos.length === 1 && data.repos[0].title === 'No Projects Found';
 
     const ProjectItem: React.FC<{ repo: Repo }> = ({ repo }) => {
         const tagList = repo.tags ? repo.tags.split(',').map((tag) => tag.trim()) : [];
@@ -92,20 +93,28 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
             >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold dark:text-white">Featured Projects</h2>
-                    <button
-                        onClick={() => router.push('/projects')}
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300
-                        rounded-full text-nowrap text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                    >
-                        Show More →
-                    </button>
+                    {!isEmptyState && (
+                        <button
+                            onClick={() => router.push('/projects')}
+                            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300
+                            rounded-full text-nowrap text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            Show More →
+                        </button>
+                    )}
                 </div>
 
-                <div className="grid gap-6">
-                    {previewProjects.map((repo, index) => (
-                        <ProjectItem key={index} repo={repo} />
-                    ))}
-                </div>
+                {isEmptyState ? (
+                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                        No projects found :)
+                    </div>
+                ) : (
+                    <div className="grid gap-6">
+                        {data.repos.slice(0, isMobile ? 3 : 4).map((repo, index) => (
+                            <ProjectItem key={index} repo={repo} />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
