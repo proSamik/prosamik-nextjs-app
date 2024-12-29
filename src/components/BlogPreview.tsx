@@ -9,6 +9,13 @@ interface BlogPreviewProps {
     isMobile: boolean;
 }
 
+interface Repo {
+    title: string;
+    description?: string;
+    tags?: string;
+    views_count?: number;
+}
+
 const BlogPreview: React.FC<BlogPreviewProps> = ({ isMobile }) => {
     const router = useRouter();
     const { data, error, loading } = useRepoList();
@@ -19,12 +26,11 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ isMobile }) => {
 
     const previewBlogs = data.repos.slice(0, isMobile ? 3 : 4);
 
-    // Custom wrapper for blog items
-    const BlogItem = ({ repo }) => {
-        const tagList = repo.tags ? repo.tags.split(',').map(tag => tag.trim()) : [];
+    const BlogItem: React.FC<{ repo: Repo }> = ({ repo }) => {
+        const tagList = repo.tags ? repo.tags.split(',').map((tag) => tag.trim()) : [];
 
         return (
-            <div className="px-4"> {/* Added padding container for scale effect */}
+            <div className="px-4">
                 <div
                     onClick={() => router.push(`/blog/${encodeURIComponent(repo.title)}`)}
                     className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md dark:hover:shadow-lg
@@ -49,7 +55,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ isMobile }) => {
                                 ))}
                             </div>
                         )}
-                        {repo.views_count > 0 && (
+                        {repo.views_count !== undefined && (
                             <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
                                 <Eye size={20} />
                                 <span>{repo.views_count}</span>
@@ -63,9 +69,9 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ isMobile }) => {
 
     return (
         <div
-            className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : 'w-2/3 px-2'}`}> {/* Increased width from w-1/2 to w-2/3 */}
+            className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : 'w-2/3 px-2'}`}>
             <div
-                className={`${isMobile ? 'px-3 py-6' : 'p-2 py-4 px-5'} w-full  rounded-lg border-2 border-gray-200 dark:border-gray-700 `}> {/* Increased padding from p-4 to p-6 */}
+                className={`${isMobile ? 'px-3 py-6' : 'p-2 py-4 px-5'} w-full  rounded-lg border-2 border-gray-200 dark:border-gray-700`}>
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold dark:text-white">Latest Blogs</h2>
                     <button
@@ -79,7 +85,7 @@ const BlogPreview: React.FC<BlogPreviewProps> = ({ isMobile }) => {
 
                 <div className="grid gap-6">
                     {previewBlogs.map((repo, index) => (
-                        <BlogItem key={index} repo={repo}/>
+                        <BlogItem key={index} repo={repo} />
                     ))}
                 </div>
             </div>
