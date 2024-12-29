@@ -5,7 +5,6 @@ import { ItemCard } from "@/components/shared/ItemCard";
 import { useMemo, useState } from "react";
 import React from 'react';
 
-// Define ItemCardProps interface
 interface ItemCardProps {
     title: string;
     link: string;
@@ -24,6 +23,17 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [showSearch, setShowSearch] = useState(false);
+
+    // Check for both empty states
+    const isEmptyState = items.length === 1 &&
+        (items[0].title === 'No Blogs Found' || items[0].title === 'No Projects Found');
+
+    // Get the appropriate empty state message
+    const getEmptyStateMessage = () => {
+        if (items[0].title === 'No Blogs Found') return 'No blogs found :)';
+        if (items[0].title === 'No Projects Found') return 'No projects found :)';
+        return 'No items found :)';
+    };
 
     const allTags = useMemo(() => {
         const tagSet = new Set<string>();
@@ -60,16 +70,18 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
         <>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-serif dark:text-white">{title}</h1>
-                <button
-                    onClick={() => setShowSearch(!showSearch)}
-                    className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                    aria-label="Toggle search"
-                >
-                    <SearchIcon />
-                </button>
+                {!isEmptyState && (
+                    <button
+                        onClick={() => setShowSearch(!showSearch)}
+                        className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                        aria-label="Toggle search"
+                    >
+                        <SearchIcon />
+                    </button>
+                )}
             </div>
 
-            {showSearch && (
+            {showSearch && !isEmptyState && (
                 <SearchPanel
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
@@ -81,17 +93,17 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
             )}
 
             <div className="space-y-4">
-                {filteredItems.length > 0 ? (
+                {isEmptyState ? (
+                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                        {getEmptyStateMessage()}
+                    </div>
+                ) : (
                     filteredItems.map((item) => (
                         <ItemCard
                             key={item.link}
                             {...item}
                         />
                     ))
-                ) : (
-                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                        No {title.toLowerCase()} found matching your criteria
-                    </div>
                 )}
             </div>
         </>
