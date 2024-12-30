@@ -1,6 +1,6 @@
 export interface BackendResponse {
     content: string;
-    rawContent: string;
+    // rawContent: string;
     metadata: {
         title: string;
         repository: string;
