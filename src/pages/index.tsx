@@ -7,9 +7,17 @@ import ProjectPreview from '@/components/ProjectPreview';
 import CallToAction from '@/components/CallToAction';
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
+import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
+
+    const { trackPageView } = usePageAnalytics();
+
+    useEffect(() => {
+        // Using void operator to handle the promise
+        void trackPageView('home');
+    }, [trackPageView]);
 
     useEffect(() => {
         const handleResize = () => {
