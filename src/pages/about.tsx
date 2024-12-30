@@ -8,9 +8,17 @@ import Skills from '@/components/Skills';
 import CallToAction from "@/components/CallToAction";
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
+import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
+
+    const { trackPageView } = usePageAnalytics();
+
+    useEffect(() => {
+        // Using void operator to handle the promise
+        void trackPageView('about');
+    }, [trackPageView]);
 
     useEffect(() => {
         const handleResize = () => {
