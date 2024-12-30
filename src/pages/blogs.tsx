@@ -7,10 +7,18 @@ import ErrorMessage from "@/components/ErrorMessage";
 import BlogList from "@/components/BlogList";
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
+import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function Blogs() {
     const { data, error, loading } = useRepoList();
     const [isMobile, setIsMobile] = useState(false);
+
+    const { trackPageView } = usePageAnalytics();
+
+    useEffect(() => {
+        // Using void operator to handle the promise
+        void trackPageView('blogs');
+    }, [trackPageView]);
 
     useEffect(() => {
         const handleResize = () => {
