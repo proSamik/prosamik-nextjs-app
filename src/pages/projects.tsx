@@ -7,10 +7,18 @@ import ErrorMessage from "@/components/ErrorMessage";
 import ProjectList from "@/components/ProjectList";
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
+import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function Projects() {
     const [isMobile, setIsMobile] = useState(false);
     const { data, error, loading } = useProjectsList();
+
+    const { trackPageView } = usePageAnalytics();
+
+    useEffect(() => {
+        // Using void operator to handle the promise
+        void trackPageView('projects');
+    }, [trackPageView]);
 
     useEffect(() => {
         const handleResize = () => {
