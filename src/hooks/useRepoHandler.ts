@@ -34,7 +34,7 @@ export function useRepoHandler(slug: string | string[] | undefined, repoList: Re
     useEffect(() => {
         if (repoInfo?.type && repoInfo?.id) {
             // No need to await or .catch() here since we're handling it in the hook
-            trackView(repoInfo.type, repoInfo.id);
+            void trackView(repoInfo.type, repoInfo.id);
         }
     }, [repoInfo, trackView]);
 
