@@ -1,24 +1,16 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import { useProjectsList } from '@/hooks/useProjectsList';
-import Loading from '@/components/Loading';
-import ErrorMessage from '@/components/ErrorMessage';
-import { Eye } from 'lucide-react';
-import { FaGithub } from "react-icons/fa";
+import {ItemCard} from "@/components/shared/ItemCard";
+import Loading from "@/components/Loading";
+import ErrorMessage from "@/components/ErrorMessage";
+import {useProjectsList} from "@/hooks/useProjectsList";
+import {useRouter} from "next/router";
 
+// Define the interface
 interface ProjectPreviewProps {
     isMobile: boolean;
 }
 
-interface Repo {
-    title: string;
-    description?: string;
-    tags?: string;
-    views_count?: number;
-    repoPath?: string;
-}
-
-const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
+// Add export statement
+export default function ProjectPreview({ isMobile }: ProjectPreviewProps) {
     const router = useRouter();
     const { data, error, loading } = useProjectsList();
 
@@ -28,63 +20,6 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
 
     // Check if we have the "No Projects Found" placeholder
     const isEmptyState = data.repos.length === 1 && data.repos[0].title === 'No Projects Found';
-
-    const ProjectItem: React.FC<{ repo: Repo }> = ({ repo }) => {
-        const tagList = repo.tags ? repo.tags.split(',').map((tag) => tag.trim()) : [];
-
-        const getGitHubUrl = (fullPath: string) => {
-            const match = fullPath.match(/https:\/\/github\.com\/[^\/]+\/[^\/]+/);
-            return match ? match[0] : fullPath;
-        };
-
-        return (
-            <div className="px-4">
-                <div className="relative">
-                    <div
-                        onClick={() => router.push(`/project/${encodeURIComponent(repo.title)}`)}
-                        className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md dark:hover:shadow-lg
-                        transition-all duration-200 hover:scale-110 cursor-pointer"
-                    >
-                        {repo.repoPath && (
-                            <a
-                                href={getGitHubUrl(repo.repoPath)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 z-10"
-                            >
-                                <FaGithub size={28} />
-                            </a>
-                        )}
-                        <h2 className="text-xl font-semibold mb-2 dark:text-white">{repo.title}</h2>
-                        {repo.description && (
-                            <p className="text-gray-600 dark:text-gray-300 mb-3">{repo.description}</p>
-                        )}
-                        <div className="flex justify-between items-center">
-                            {tagList.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                    {tagList.map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full"
-                                        >
-                                            #{tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                            {repo.views_count !== undefined && (
-                                <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-                                    <Eye size={20} />
-                                    <span>{repo.views_count}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
     return (
         <div className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : 'w-2/3 px-2'}`}>
@@ -111,13 +46,20 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({ isMobile }) => {
                 ) : (
                     <div className="grid gap-6">
                         {data.repos.slice(0, isMobile ? 3 : 4).map((repo, index) => (
-                            <ProjectItem key={index} repo={repo} />
+                            <div key={index} className="px-3">
+                                <ItemCard
+                                    title={repo.title}
+                                    link={`/project/${encodeURIComponent(repo.title)}`}
+                                    description={repo.description}
+                                    tags={repo.tags}
+                                    views_count={repo.views_count}
+                                    repoPath={repo.repoPath}
+                                />
+                            </div>
                         ))}
                     </div>
                 )}
             </div>
         </div>
     );
-};
-
-export default ProjectPreview;
+}
