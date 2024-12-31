@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
 import ProfileHeader from '@/components/ProfileHeader';
-import CallToAction from '@/components/CallToAction';
-import CustomBackButton from "@/components/CustomBackButton";
-import CustomForwardButton from "@/components/CustomForwardButton";
+import CallToAction from '@/components/layout/CallToAction';
+import CustomBackButton from "@/components/layout/CustomBackButton";
+import CustomForwardButton from "@/components/layout/CustomForwardButton";
 import { usePageAnalytics } from "@/hooks/usePageAnalytics";
-import { useRepoList } from "@/hooks/useRepoList";
-import { useProjectsList } from "@/hooks/useProjectsList";
-import PreviewLayoutCards from "@/components/PreviewLayoutCards";
+import ContentPreviewCards from "@/components/ContentPreviewCards";
+import {useContentList} from "@/hooks/useContentList";
 
 export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
     const { trackPageView } = usePageAnalytics();
-    const { data: blogData, error: blogError, loading: blogLoading } = useRepoList();
-    const { data: projectData, error: projectError, loading: projectLoading } = useProjectsList();
+    const { data: blogData, error: blogError, loading: blogLoading } = useContentList({ type: 'blog' });
+    const { data: projectData, error: projectError, loading: projectLoading } = useContentList({ type: 'project' });
 
     useEffect(() => {
         void trackPageView('home');
@@ -61,14 +60,14 @@ export default function Home() {
                         <ProfileHeader />
 
                         <div className={layoutClasses.previewCardsContainer}>
-                            <PreviewLayoutCards
+                            <ContentPreviewCards
                                 isMobile={isMobile}
                                 type="blog"
                                 data={blogData}
                                 loading={blogLoading}
                                 error={blogError}
                             />
-                            <PreviewLayoutCards
+                            <ContentPreviewCards
                                 isMobile={isMobile}
                                 type="project"
                                 data={projectData}
