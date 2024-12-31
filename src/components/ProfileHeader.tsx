@@ -104,7 +104,7 @@ export default function ProfileHeader() {
             </div>
 
             <p className="text-sm sm:text-lg font-bold text-gray-600 dark:text-gray-300 mt-6 text-center w-full">
-                On My Learning Path, One Step Closer to Becoming an Indie Dev.
+                &lt; Build to Ship /&gt;
             </p>
         </div>
     );
