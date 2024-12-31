@@ -1,12 +1,13 @@
+// pages/ContentDetailPage.tsx
 import { useRouter } from 'next/router';
 import { useContentList } from '@/hooks/useContentList';
 import { useRepoHandler } from '@/hooks/useRepoHandler';
-import BlogLayout from '@/components/article/BlogLayout';
-import ProjectLayout from '@/components/article/ProjectLayout';
 import RepoLoader from '@/components/article/RepoLoader';
+import { ArticleLayoutType } from "@/types/article";
+import ArticleLayout from "@/components/article/ArticleLayout";
 
 interface ContentDetailPageProps {
-    type: 'blog' | 'project';
+    type: ArticleLayoutType;
 }
 
 export default function ContentDetailPage({ type }: ContentDetailPageProps) {
@@ -15,11 +16,14 @@ export default function ContentDetailPage({ type }: ContentDetailPageProps) {
     const { data: repoList, error: repoError, loading: repoLoading } = useContentList({ type });
     const { repoInfo, data, error, loading } = useRepoHandler(slug, repoList?.repos);
 
-    const Layout = type === 'blog' ? BlogLayout : ProjectLayout;
-
     return (
         <RepoLoader loading={repoLoading || loading} error={repoError || error}>
-            {data && repoInfo && <Layout data={data} />}
+            {data && repoInfo && (
+                <ArticleLayout
+                    data={data}
+                    layoutType={type}
+                />
+            )}
         </RepoLoader>
     );
 }
