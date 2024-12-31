@@ -9,11 +9,62 @@ import CallToAction from "@/components/CallToAction";
 import CustomBackButton from "@/components/CustomBackButton"
 import CustomForwardButton from "@/components/CustomForwardButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
+import SEO from "@/components/SEO";
+import Head from "next/head";
+import {useTimelineData} from "@/hooks/useTimelineData";
 
 export default function About() {
     const [isMobile, setIsMobile] = useState(false);
 
     const { trackPageView } = usePageAnalytics();
+
+    const { timelineData } = useTimelineData();
+
+    // Generate JSON-LD data from timelineData
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Samik",
+        "jobTitle": "DevOps Engineer",
+        "alumniOf": [
+            {
+                "@type": "Organization",
+                "name": "Army Institute of Technology, Pune",
+                "startDate": "2020",
+                "endDate": "2024"
+            },
+            {
+                "@type": "Organization",
+                "name": "rtCamp",
+                "url": "https://rtcamp.com",
+                "startDate": "2023"
+            }
+        ],
+        "memberOf": [
+            {
+                "@type": "Organization",
+                "name": "Google Developer Student Clubs",
+                "url": "https://developers.google.com/community/gdsc"
+            },
+            {
+                "@type": "Organization",
+                "name": "WordPress Community",
+                "url": "https://wordpress.org"
+            }
+        ],
+        "knowsAbout": timelineData.flatMap(period =>
+            period.events.flatMap(event =>
+                event.skills.map(skill => skill.replace('#', ''))
+            )
+        ),
+        "hasOccupation": timelineData.map(period => ({
+            "@type": "Occupation",
+            "name": period.events[0].title.split('@')[0].trim(),
+            "startDate": period.yearRange.start,
+            "endDate": period.yearRange.end,
+            "description": period.events[0].description
+        }))
+    };
 
     useEffect(() => {
         // Using void operator to handle the promise
@@ -30,62 +81,70 @@ export default function About() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    if (isMobile) {
-        return (
-            <div className="flex flex-col md:flex-row">
-                <Navigation />
-
-                <main
-                    className="w-full mx-auto px-4 py-4"
-                    style={{
-                        marginTop: '60px',
-                        marginBottom: '80px',
+    return (
+        <>
+            <SEO
+                title="About Samik | Journey and Experience"
+                description="DevOps Engineer with expertise in AWS, Terraform, and Cloud Infrastructure.
+                 Led tech communities, contributed to WordPress Core, and specialized in automation.
+                 Experience ranges from Web Development to Cloud Architecture spanning 2017-present."
+                ogImage="https://prosamik.com/image/og-Image.png"
+            />
+            <Head>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(jsonLd)
                     }}
-                >
+                />
+            </Head>
+        <div
+            className={`flex flex-col ${
+                isMobile ? '' : 'min-h-screen'
+            } md:flex-row`}
+        >
+            <div
+                className={`${
+                    isMobile ? '' : 'md:w-48 flex-shrink-0'
+                }`}
+            >
+                <Navigation />
+            </div>
+
+            <main
+                className={`w-full mx-auto px-4 py-4 ${
+                    isMobile ? '' : 'flex-grow'
+                }`}
+                style={{
+                    marginTop: isMobile ? '60px' : '',
+                    marginBottom: isMobile ? '80px' : '',
+                }}
+            >
+                {isMobile && (
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
                         <CustomForwardButton />
                     </div>
+                )}
 
-                    <div className="w-full flex flex-col items-center">
-                        <div className="w-full max-w-[800px] space-y-8">
-                            <ProfileHeader />
-                            <PersonalStory />
-                            <Timeline />
-                            <Skills />
-                            <CallToAction />
-                        </div>
+                <div className="w-full flex flex-col items-center">
+                    <div className="w-full max-w-[800px] space-y-8">
+                        <ProfileHeader />
+                        <PersonalStory />
+                        <Timeline />
+                        <Skills />
+                        <CallToAction />
                     </div>
-                </main>
-
-                <Footer />
-            </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen flex flex-col">
-            <div className="flex-grow flex flex-col md:flex-row">
-                <div className="md:w-48 flex-shrink-0">
-                    <Navigation />
                 </div>
+            </main>
 
-                <main className="flex-grow w-full mx-auto px-4 py-4">
-                    <div className="w-full flex flex-col items-center">
-                        <div className="w-full max-w-[800px] space-y-8">
-                            <ProfileHeader />
-                            <PersonalStory />
-                            <Timeline />
-                            <Skills />
-                            <CallToAction />
-                        </div>
-                    </div>
-                </main>
-
+            {!isMobile && (
                 <div className="hidden md:block md:w-48 flex-shrink-0" />
-            </div>
+            )}
 
             <Footer />
         </div>
+        </>
     );
+
 }
