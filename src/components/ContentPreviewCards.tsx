@@ -1,8 +1,8 @@
-import { ItemCard } from "@/components/shared/ItemCard";
-import Loading from "@/components/Loading";
-import ErrorMessage from "@/components/ErrorMessage";
+import { ItemList } from "@/components/shared/ItemList";
+import Loading from "@/components/layout/Loading";
+import ErrorMessage from "@/components/layout/ErrorMessage";
 import { useRouter } from "next/router";
-import {RepoListItem} from "@/types/article";
+import { RepoListItem } from "@/types/article";
 
 interface PreviewLayoutCardsProps {
     isMobile: boolean;
@@ -17,25 +17,23 @@ const CONFIGS = {
         title: 'Latest Blogs',
         basePath: '/blog',
         showMorePath: '/blogs',
-        buttonStyle: 'bg-blue-500 text-white hover:bg-blue-600',
-        emptyText: 'No Blogs Found'
+        buttonStyle: 'bg-blue-500 text-white hover:bg-blue-600'
     },
     project: {
         title: 'Featured Projects',
         basePath: '/project',
         showMorePath: '/projects',
-        buttonStyle: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600',
-        emptyText: 'No Projects Found'
+        buttonStyle: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
     }
 };
 
 export default function ContentPreviewCards({
-                                               isMobile,
-                                               type,
-                                               data,
-                                               loading,
-                                               error
-                                           }: PreviewLayoutCardsProps) {
+                                                isMobile,
+                                                type,
+                                                data,
+                                                loading,
+                                                error
+                                            }: PreviewLayoutCardsProps) {
     const router = useRouter();
     const config = CONFIGS[type];
 
@@ -43,8 +41,19 @@ export default function ContentPreviewCards({
     if (error) return <ErrorMessage message={error} />;
     if (!data?.repos.length) return null;
 
-    // Check if we have the empty state placeholder
-    const isEmptyState = data.repos.length === 1 && data.repos[0].title === config.emptyText;
+    // Transform the repos data to match ItemList's expected format
+    const items = data.repos.slice(0, isMobile ? 3 : 4).map(repo => ({
+        title: repo.title,
+        link: `${config.basePath}/${encodeURIComponent(repo.title)}`,
+        description: repo.description,
+        tags: repo.tags,
+        views_count: repo.views_count,
+        type: repo.type,
+        ...(type === 'project' && { repoPath: repo.repoPath })
+    }));
+
+    // Check if we have the empty state based on type property
+    const isEmptyState = data.repos.length === 1 && data.repos[0].type === 'empty';
 
     return (
         <div className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : 'w-2/3 px-2'}`}>
@@ -63,26 +72,12 @@ export default function ContentPreviewCards({
                     )}
                 </div>
 
-                {isEmptyState ? (
-                    <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                        {config.emptyText} :)
-                    </div>
-                ) : (
-                    <div className="grid gap-6">
-                        {data.repos.slice(0, isMobile ? 3 : 4).map((repo, index) => (
-                            <div key={index} className="px-3">
-                                <ItemCard
-                                    title={repo.title}
-                                    link={`${config.basePath}/${encodeURIComponent(repo.title)}`}
-                                    description={repo.description}
-                                    tags={repo.tags}
-                                    views_count={repo.views_count}
-                                    repoPath={type === 'project' ? repo.repoPath : ''}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <div className="grid gap-6">
+                    <ItemList
+                        items={items}
+                        title="preview"  // Empty title since we already show it above
+                    />
+                </div>
             </div>
         </div>
     );
