@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/layout/Navigation';
-import Footer from '@/components/layout/Footer';
-import FeedbackForm from '@/components/layout/FeedbackForm';
+import Footer from "@/components/layout/Footer";
+import Loading from "@/components/layout/Loading";
+import ErrorMessage from "@/components/layout/ErrorMessage";
+import ContentList from "@/components/ContentList";
 import CustomBackButton from "@/components/layout/CustomBackButton"
 import CustomForwardButton from "@/components/layout/CustomForwardButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
+import {useContentList} from "@/hooks/useContentList";
 
-export default function Feedback() {
+interface ContentPageProps {
+    type: 'blog' | 'project';
+}
+
+export default function ContentPage({ type }: ContentPageProps) {
     const [isMobile, setIsMobile] = useState(false);
-
+    const { data, error, loading } = useContentList({ type });
     const { trackPageView } = usePageAnalytics();
 
     useEffect(() => {
-        // Using void operator to handle the promise
-        void trackPageView('feedback');
-    }, [trackPageView]);
+        void trackPageView(type + 's');
+    }, [trackPageView, type]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -26,36 +32,32 @@ export default function Feedback() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    if (loading) return <Loading />;
+    if (error) return <ErrorMessage message={error} />;
+
     if (isMobile) {
         return (
             <div className="flex flex-col md:flex-row">
-                {/* Navigation component */}
                 <Navigation />
-
-                {/* Main content area */}
                 <main
-                    className={`max-w-[728px] mx-auto px-4 py-8`}
+                    className={`max-w-[800px] mx-auto px-4 py-4`}
                     style={{
                         width: '100%',
                         marginTop: '60px',
-                        marginBottom: '60px',
+                        marginBottom: '80px',
                     }}
                 >
-                    {/* Navigation Buttons Row - Added this section */}
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
                         <CustomForwardButton />
                     </div>
-
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
+                    <div className="space-y-8">
+                        <ContentList
+                            repos={data?.repos || []}
+                            type={type}
+                        />
                     </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
                 </main>
-
-                {/* Footer component */}
                 <Footer />
             </div>
         );
@@ -64,26 +66,19 @@ export default function Feedback() {
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex-grow flex flex-col md:flex-row">
-                {/* Navigation */}
-                <div className="md:w-36 flex-shrink-0">
+                <div className="md:w-64 flex-shrink-0">
                     <Navigation />
                 </div>
-
-                {/* Main content */}
-                <main className="flex-grow w-full mx-auto px-4 py-8">
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
+                <main className="flex-grow max-w-[800px] w-full mx-auto px-4 py-4">
+                    <div className="space-y-8">
+                        <ContentList
+                            repos={data?.repos || []}
+                            type={type}
+                        />
                     </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
                 </main>
-
-                {/* Right spacing div for desktop */}
-                <div className="hidden md:block md:w-36 flex-shrink-0" />
+                <div className="hidden md:block md:w-64 flex-shrink-0" />
             </div>
-
-            {/* Footer */}
             <Footer />
         </div>
     );

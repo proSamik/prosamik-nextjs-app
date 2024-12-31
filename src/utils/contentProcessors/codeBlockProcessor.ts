@@ -33,7 +33,7 @@ export const processCodeBlocks = (html: string) => {
 
             // Create wrapper div
             const wrapper = document.createElement('div');
-            wrapper.className = 'relative group my-4';
+            wrapper.className = 'relative group my-4 mx-4';
 
             // Create pre and code elements
             const pre = document.createElement('pre');

@@ -28,3 +28,5 @@ export interface ArticleLayoutProps {
     data: BackendResponse;
     content?: string;
 }
+
+export type ArticleLayoutType = 'blog' | 'project';

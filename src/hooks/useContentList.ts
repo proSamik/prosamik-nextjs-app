@@ -8,25 +8,36 @@ interface FetchResult<T> {
     loading: boolean;
 }
 
+interface UseContentListProps {
+    type: 'blog' | 'project';
+}
+
 const CACHE_EXPIRY = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
-// Generate a unique key based on repos data to detect changes
+// Generate a unique key based on content data to detect changes
 function generateTransientKey(data: RepoListResponse): string {
     return data.repos
-        .map(repo => `${repo.title}|${repo.repoPath}|${repo.views_count}`)
+        .map(item => `${item.title}|${item.repoPath}|${item.views_count}`)
         .join('_');
 }
 
-export const useRepoList = (): FetchResult<RepoListResponse> => {
+export const useContentList = ({ type }: UseContentListProps): FetchResult<RepoListResponse> => {
     const [data, setData] = useState<RepoListResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Determine storage key and API endpoint based on type
+    const storageKey = `${type}s_list`;
+    const apiEndpoint = type === 'blog' ? config.apiEndpoints.blogsList : config.apiEndpoints.projectsList;
+    const notFoundMessage = `${type.charAt(0).toUpperCase() + type.slice(1)}s not found`;
+    const emptyMessage = `No ${type.charAt(0).toUpperCase() + type.slice(1)}s Found`;
+    const startMessage = `Create the first ${type}!`;
 
     useEffect(() => {
         let isMounted = true;
 
         // Show cached data immediately if available
-        const cached = localStorage.getItem('repo_list');
+        const cached = localStorage.getItem(storageKey);
         if (cached) {
             const cacheData = JSON.parse(cached);
             if (Date.now() - cacheData.timestamp < CACHE_EXPIRY) {
@@ -35,21 +46,21 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
             }
         }
 
-        const fetchRepos = async () => {
+        const fetchContent = async () => {
             try {
-                const response = await fetch(`${config.baseUrl}${config.apiEndpoints.blogsList}`);
+                const response = await fetch(`${config.baseUrl}${apiEndpoint}`);
                 if (!response.ok) {
-                    setError('Repos not found');
+                    setError(notFoundMessage);
                     return;
                 }
 
-                const repoData: RepoListResponse = await response.json();
-                if (repoData.repos.length === 0) {
+                const contentData: RepoListResponse = await response.json();
+                if (contentData.repos.length === 0) {
                     const emptyData = {
                         repos: [{
-                            title: 'No Blogs Found',
+                            title: emptyMessage,
                             repoPath: '/',
-                            description: 'Start creating your first blog!',
+                            description: startMessage,
                             tags: '',
                             views_count: 0,
                             id: 0,
@@ -59,8 +70,7 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
 
                     if (isMounted) {
                         setData(emptyData);
-                        // Cache empty state as well
-                        localStorage.setItem('repo_list', JSON.stringify({
+                        localStorage.setItem(storageKey, JSON.stringify({
                             content: JSON.stringify(emptyData),
                             transientKey: generateTransientKey(emptyData),
                             timestamp: Date.now()
@@ -69,23 +79,23 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
                     return;
                 }
 
-                const currentKey = generateTransientKey(repoData);
+                const currentKey = generateTransientKey(contentData);
 
                 if (isMounted) {
-                    const cached = localStorage.getItem('repo_list');
+                    const cached = localStorage.getItem(storageKey);
                     if (!cached || JSON.parse(cached).transientKey !== currentKey) {
-                        localStorage.setItem('repo_list', JSON.stringify({
-                            content: JSON.stringify(repoData),
+                        localStorage.setItem(storageKey, JSON.stringify({
+                            content: JSON.stringify(contentData),
                             transientKey: currentKey,
                             timestamp: Date.now()
                         }));
-                        setData(repoData);
+                        setData(contentData);
                     }
                     setError(null);
                 }
             } catch {
                 if (isMounted) {
-                    setError('Repos not found');
+                    setError(notFoundMessage);
                 }
             } finally {
                 if (isMounted) {
@@ -94,15 +104,15 @@ export const useRepoList = (): FetchResult<RepoListResponse> => {
             }
         };
 
-        fetchRepos().catch(() => {
+        fetchContent().catch(() => {
             if (isMounted) {
-                setError('Repos not found');
+                setError(notFoundMessage);
                 setLoading(false);
             }
         });
 
         return () => { isMounted = false; };
-    }, []);
+    }, [apiEndpoint, notFoundMessage, emptyMessage, startMessage, storageKey]);
 
     return { data, error, loading };
 };

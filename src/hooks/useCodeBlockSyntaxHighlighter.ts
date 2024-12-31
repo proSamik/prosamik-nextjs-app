@@ -1,5 +1,5 @@
 import { RefObject, useEffect } from 'react';
-import { addCodeBlockSyntaxHighlighting } from "@/components/CodeBlockSyntaxHighlighter";
+import { addCodeBlockSyntaxHighlighting } from "@/components/article/CodeBlockSyntaxHighlighter";
 
 // Update hook to handle isMobile dependency
 export const useCodeBlockSyntaxHighlighter = (

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Eye } from 'lucide-react';
 import { FaGithub } from "react-icons/fa";
 
-interface ItemCardProps {
+export interface ItemCardProps {
     title: string;
     link: string;
     description?: string;
@@ -35,12 +35,24 @@ export const ItemCard: React.FC<ItemCardProps> = ({
     };
 
     return (
-        <div className="relative">
+        <div>
             <Link
                 href={link}
-                className="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md dark:hover:shadow-lg transition-shadow"
+                className="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md
+    dark:hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer mx-1"
             >
-                <h2 className="text-xl font-semibold mb-2 dark:text-white pr-12">{title}</h2>
+                <div className="flex justify-between items-start">
+                    <h2 className="text-xl font-semibold mb-2 dark:text-white flex-1">{title}</h2>
+                    {repoPath && (
+                        <button
+                            onClick={handleGitHubClick}
+                            className="ml-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex-2"
+                            aria-label="View on GitHub"
+                        >
+                            <FaGithub size={32}/>
+                        </button>
+                    )}
+                </div>
                 {description && (
                     <p className="text-gray-600 dark:text-gray-300 mb-3">{description}</p>
                 )}
@@ -52,28 +64,19 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                                     key={tag}
                                     className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full"
                                 >
-                                    #{tag}
-                                </span>
+                            #{tag}
+                        </span>
                             ))}
                         </div>
                     )}
                     {views_count > 0 && (
                         <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-                            <Eye size={20} />
+                            <Eye size={20}/>
                             <span>{views_count}</span>
                         </div>
                     )}
                 </div>
             </Link>
-            {repoPath && (
-                <button
-                    onClick={handleGitHubClick}
-                    className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 z-10"
-                    aria-label="View on GitHub"
-                >
-                    <FaGithub size={32} />
-                </button>
-            )}
         </div>
     );
 };

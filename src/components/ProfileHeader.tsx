@@ -91,7 +91,7 @@ export default function ProfileHeader() {
                 </div>
             </div>
 
-            <div className="flex flex-row items-center justify-between sm:justify-center w-full">
+            <div className="flex flex-row items-center justify-center w-full">
                 <Image
                     src="https://avatars.githubusercontent.com/u/73891260?v=4"
                     alt="Profile Picture"

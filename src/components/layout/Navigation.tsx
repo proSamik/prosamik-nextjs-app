@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import ThemeToggle from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import CustomBackButton from "./CustomBackButton";
 import CustomForwardButton from "./CustomForwardButton";
 

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
-import Footer from "@/components/Footer";
+import Navigation from '@/components/layout/Navigation';
+import Footer from "@/components/layout/Footer";
 import ProfileHeader from "@/components/ProfileHeader";
 import PersonalStory from '@/components/PersonalStory';
 import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
-import CallToAction from "@/components/CallToAction";
-import CustomBackButton from "@/components/CustomBackButton"
-import CustomForwardButton from "@/components/CustomForwardButton";
+import CallToAction from "@/components/layout/CallToAction";
+import CustomBackButton from "@/components/layout/CustomBackButton"
+import CustomForwardButton from "@/components/layout/CustomForwardButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
-import SEO from "@/components/SEO";
+import SEO from "@/components/layout/SEO";
 import Head from "next/head";
 import {useTimelineData} from "@/hooks/useTimelineData";
 
