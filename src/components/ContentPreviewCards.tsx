@@ -29,7 +29,7 @@ const CONFIGS = {
     }
 };
 
-export default function PreviewLayoutCards({
+export default function ContentPreviewCards({
                                                isMobile,
                                                type,
                                                data,
