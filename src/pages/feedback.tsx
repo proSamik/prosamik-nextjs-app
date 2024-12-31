@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import FeedbackForm from '@/components/FeedbackForm';
-import CustomBackButton from "@/components/CustomBackButton"
-import CustomForwardButton from "@/components/CustomForwardButton";
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
+import FeedbackForm from '@/components/layout/FeedbackForm';
+import CustomBackButton from "@/components/layout/CustomBackButton"
+import CustomForwardButton from "@/components/layout/CustomForwardButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function Feedback() {
