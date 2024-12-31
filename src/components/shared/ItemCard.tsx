@@ -35,7 +35,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
     };
 
     return (
-        <div>
+        <div className='mt-3'>
             <Link
                 href={link}
                 className="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md
