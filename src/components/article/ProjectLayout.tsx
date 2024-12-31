@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/Navigation';
-import Footer from "@/components/Footer";
+import Navigation from '@/components/layout/Navigation';
+import Footer from "@/components/layout/Footer";
 import ArticleHeader from './ArticleHeader';
 import useProcessedContent from '@/hooks/useProcessedContent';
 import { ArticleLayoutProps } from "@/types/article";
-import CustomBackButton from "@/components/CustomBackButton";
-import CustomForwardButton from "@/components/CustomForwardButton";
+import CustomBackButton from "@/components/layout/CustomBackButton";
+import CustomForwardButton from "@/components/layout/CustomForwardButton";
 import {FaGithub} from "react-icons/fa";
 
 // Function to construct clean GitHub URL

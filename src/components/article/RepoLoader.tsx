@@ -1,6 +1,6 @@
 import React from 'react';
-import Loading from '@/components/Loading';
-import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/layout/Loading';
+import ErrorMessage from '@/components/layout/ErrorMessage';
 
 interface RepoLoaderProps {
     loading: boolean;
