@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import ProfileHeader from '@/components/ProfileHeader';
 import CallToAction from '@/components/layout/CallToAction';
 import CustomBackButton from "@/components/layout/CustomBackButton";
 import CustomNextButton from "@/components/layout/CustomNextButton";
 import { usePageAnalytics } from "@/hooks/usePageAnalytics";
 import ContentPreviewCards from "@/components/ContentPreviewCards";
 import {useContentList} from "@/hooks/useContentList";
+import HeroSection from "@/components/HeroSection";
 
 export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
@@ -57,7 +57,9 @@ export default function Home() {
                     )}
 
                     <div className={layoutClasses.contentWrapper}>
-                        <ProfileHeader />
+                        <HeroSection
+                        isMobile={isMobile}
+                        />
 
                         <div className={layoutClasses.previewCardsContainer}>
                             <ContentPreviewCards
