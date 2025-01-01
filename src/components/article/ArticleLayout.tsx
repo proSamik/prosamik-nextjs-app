@@ -57,7 +57,7 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
             </div>
 
             <main
-                className={`${config.mainClasses} pl-7 py-8`}
+                className={`${config.mainClasses} pl-7 py-8 px-8`}
                 style={{
                     width: isMobileView ? '100%' : 'auto',
                     marginTop: isMobileView ? '60px' : '0',
