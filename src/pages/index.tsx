@@ -4,7 +4,7 @@ import Footer from '@/components/layout/Footer';
 import ProfileHeader from '@/components/ProfileHeader';
 import CallToAction from '@/components/layout/CallToAction';
 import CustomBackButton from "@/components/layout/CustomBackButton";
-import CustomForwardButton from "@/components/layout/CustomForwardButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 import { usePageAnalytics } from "@/hooks/usePageAnalytics";
 import ContentPreviewCards from "@/components/ContentPreviewCards";
 import {useContentList} from "@/hooks/useContentList";
@@ -52,7 +52,7 @@ export default function Home() {
                     {isMobile && (
                         <div className="flex justify-between mb-6">
                             <CustomBackButton />
-                            <CustomForwardButton />
+                            <CustomNextButton />
                         </div>
                     )}
 

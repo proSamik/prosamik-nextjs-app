@@ -3,7 +3,7 @@ import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import FeedbackForm from '@/components/layout/FeedbackForm';
 import CustomBackButton from "@/components/layout/CustomBackButton"
-import CustomForwardButton from "@/components/layout/CustomForwardButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 
 export default function Feedback() {
@@ -44,7 +44,7 @@ export default function Feedback() {
                     {/* Navigation Buttons Row - Added this section */}
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
-                        <CustomForwardButton />
+                        <CustomNextButton />
                     </div>
 
                     <div className="flex justify-center items-center mb-4">
