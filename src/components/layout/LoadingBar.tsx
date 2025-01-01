@@ -7,7 +7,7 @@ const loadingSteps = [
     { message: "Optimizing development workflows...", percent: 60 },
     { message: "Gathering efficiency templates...", percent: 85 },
     { message: "Finalizing acceleration toolkit...", percent: 95 },
-    { message: "Your fast-track resources ready!", percent: 100 }
+    { message: "Your fast-track resources are ready!", percent: 100 }
 ] as const;
 
 
