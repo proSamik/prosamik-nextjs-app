@@ -19,8 +19,8 @@ const Footer = () => {
         <footer
             className={`${
                 isMobile
-                    ? 'fixed bottom-0 left-0 w-full pb-1 bg-white dark:bg-gray-800 flex justify-center pt-3 items-center'
-                    : 'fixed right-0 top-1/2 transform -translate-y-1/2 pr-5 flex flex-col items-center max-w-[70px] w-full' 
+                    ? 'fixed bottom-0 left-0 w-full pb-1 bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/95 shadow-lg shadow-slate-200/20 dark:shadow-black/20 flex justify-center pt-3 items-center'
+                    : 'fixed right-0 top-1/2 transform -translate-y-1/2 pr-5 flex flex-col items-center max-w-[70px] w-full'
             }`}
         >
             {/* Social Icons */}
