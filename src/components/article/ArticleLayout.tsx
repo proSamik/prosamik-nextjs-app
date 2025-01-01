@@ -114,6 +114,13 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
                         </div>
                     )}
                 </article>
+
+                {isMobileView && (
+                    <div className="flex justify-between mb-6">
+                        <CustomBackButton/>
+                        <CustomNextButton/>
+                    </div>
+                )}
             </main>
 
             <div className="md:w-64">
