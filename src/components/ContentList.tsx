@@ -1,5 +1,6 @@
 import { ItemList } from './shared/ItemList';
 import React from 'react';
+import {useSlug} from "@/hooks/useSlug";
 
 interface ContentListProps {
     repos: {
@@ -10,24 +11,22 @@ interface ContentListProps {
         views_count?: number;
         type?: string;
     }[];
-    type: 'blog' | 'project'; // This helps distinguish between blog and project
+    type: 'blog' | 'project';
 }
 
 const ContentList: React.FC<ContentListProps> = ({ repos, type }) => {
-    // Transform the repos data to match ItemCard props
+    const { createSlug } = useSlug();
+
     const items = repos.map(repo => ({
         title: repo.title,
-        // Dynamically create link based on type
-        link: `/${type}/${encodeURIComponent(repo.title)}`,
+        link: `/${type}/${createSlug(repo.title)}`,
         description: repo.description,
         tags: repo.tags,
         views_count: repo.views_count,
-        type: repo.type, // Make sure to pass the type property
-        // Only include repoPath for projects
+        type: repo.type,
         ...(type === 'project' && { repoPath: repo.repoPath })
     }));
 
-    // Dynamically set title based on type
     const title = type === 'blog' ? 'My Blogs' : 'My Projects';
 
     return <ItemList items={items} title={title} />;

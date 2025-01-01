@@ -3,18 +3,20 @@ import { useRouter } from 'next/router';
 import { RepoListItem } from '@/types/article';
 import { useMarkdownData } from '@/hooks/useMarkdownData';
 import {useTrackViews} from "@/hooks/useTrackViews";
+import {useSlug} from "@/hooks/useSlug";
 
 export function useRepoHandler(slug: string | string[] | undefined, repoList: RepoListItem[] | undefined) {
     const [repoInfo, setRepoInfo] = useState<RepoListItem | null>(null);
     const [notFound, setNotFound] = useState(false);
     const [redirecting, setRedirecting] = useState(false); // Prevent multiple redirections
     const router = useRouter();
+    const { matchSlug } = useSlug();
 
-    // Find matching repo when data is available
     useEffect(() => {
         if (slug && repoList) {
-            const decodedSlug = Array.isArray(slug) ? slug[0] : decodeURIComponent(slug);
-            const repo = repoList.find((r) => r.title === decodedSlug);
+            const currentSlug = Array.isArray(slug) ? slug[0] : slug;
+
+            const repo = repoList.find((r) => matchSlug(currentSlug, r.title));
 
             if (repo) {
                 setRepoInfo(repo);
@@ -24,7 +26,7 @@ export function useRepoHandler(slug: string | string[] | undefined, repoList: Re
                 setNotFound(true);
             }
         }
-    }, [slug, repoList]);
+    }, [slug, repoList, matchSlug]);
 
     const repoPath = repoInfo?.repoPath || null;
 
