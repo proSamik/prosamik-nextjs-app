@@ -5,7 +5,7 @@ import Loading from "@/components/layout/Loading";
 import ErrorMessage from "@/components/layout/ErrorMessage";
 import ContentList from "@/components/ContentList";
 import CustomBackButton from "@/components/layout/CustomBackButton"
-import CustomForwardButton from "@/components/layout/CustomForwardButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 import {useContentList} from "@/hooks/useContentList";
 
@@ -49,7 +49,7 @@ export default function ContentPage({ type }: ContentPageProps) {
                 >
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
-                        <CustomForwardButton />
+                        <CustomNextButton />
                     </div>
                     <div className="space-y-8">
                         <ContentList
