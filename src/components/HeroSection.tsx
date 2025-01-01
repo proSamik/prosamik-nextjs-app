@@ -4,9 +4,11 @@ import LoadingBar from "@/components/layout/LoadingBar";
 
 interface HeroSectionProps {
     isMobile: boolean;
+    onBuildsClick: () => void;
+    onLogsClick: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ isMobile }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLogsClick  }) => {
     const [step, setStep] = useState(0);
     const steps = ['Initializing build...', 'Optimizing for speed...', 'Removing complexity...', 'Ready to ship! 🚀'];
 
@@ -86,10 +88,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile }) => {
 
             <div className="flex gap-4 justify-center">
                 <button
+                    onClick={onLogsClick}
                     className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
                     See Latest Builds
                 </button>
-                <button className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50  hover:text-gray-700 transition-colors">
+                <button
+                    onClick={onBuildsClick}
+                    className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50  hover:text-gray-700 transition-colors">
                     Read Build Logs
                 </button>
             </div>
