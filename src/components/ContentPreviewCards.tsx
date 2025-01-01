@@ -23,7 +23,7 @@ const CONFIGS = {
         title: 'Featured Projects',
         basePath: '/project',
         showMorePath: '/projects',
-        buttonStyle: 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+        buttonStyle: 'border border-gray-500 dark:text-white text-gray-500 hover:text-white hover:bg-gray-500 dark:hover:bg-gray-400/70'
     }
 };
 
@@ -56,9 +56,9 @@ export default function ContentPreviewCards({
     const isEmptyState = data.repos.length === 1 && data.repos[0].type === 'empty';
 
     return (
-        <div className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : 'w-2/3 px-2'}`}>
+        <div className={`space-y-4 ${isMobile ? 'w-full px-2 pb-4' : ''}`}>
             <div
-                className={`${isMobile ? 'px-3 py-6' : 'p-2 py-4 px-5'} w-full rounded-lg border-2 border-gray-200 dark:border-gray-700`}
+                className={`${isMobile ? 'px-3 py-6' : 'p-2 py-4'} w-full rounded-lg`}
             >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold dark:text-white">{config.title}</h2>
