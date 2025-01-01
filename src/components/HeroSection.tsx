@@ -29,15 +29,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
 
     return (
-        <div className={`flex flex-col ${isMobile ? 'p-6 space-y-8' : 'p-8 space-y-12'}`}>
-            <div className="space-y-2">
-                {!isMobile && (
-
+        <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-4 pt-4 space-y-8'}`}>
+            <div className="space-y-8">
                     <LoadingBar />
 
-                )}
                 <h1 className={`font-bold ${isMobile ? 'text-4xl' : 'text-6xl leading-tight'}`}>
-                    Building Products That
+                    Building Products To
                     <span className="block text-blue-500 animate-pulse">Ship Fast</span>
                 </h1>
                 <p className={`${isMobile ? 'text-lg' : 'text-xl'} opacity-80 leading-relaxed`}>
@@ -73,11 +70,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-6`}>
+            <div className={` grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-6`}>
                 {buildPhilosophy.map(({ icon: Icon, title, desc }, index) => (
                     <div
                         key={index}
-                        className="p-6 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
+                        className="p-3 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
                     >
                         <Icon className="text-blue-500 mb-4" size={24} />
                         <h3 className="font-semibold mb-2">{title}</h3>
