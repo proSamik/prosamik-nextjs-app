@@ -3,6 +3,7 @@ import Loading from "@/components/layout/Loading";
 import ErrorMessage from "@/components/layout/ErrorMessage";
 import { useRouter } from "next/router";
 import { RepoListItem } from "@/types/article";
+import {useSlug} from "@/hooks/useSlug";
 
 interface PreviewLayoutCardsProps {
     isMobile: boolean;
@@ -36,6 +37,7 @@ export default function ContentPreviewCards({
                                             }: PreviewLayoutCardsProps) {
     const router = useRouter();
     const config = CONFIGS[type];
+    const { createSlug } = useSlug();
 
     if (loading) return <Loading />;
     if (error) return <ErrorMessage message={error} />;
@@ -44,7 +46,7 @@ export default function ContentPreviewCards({
     // Transform the repos data to match ItemList's expected format
     const items = data.repos.slice(0, isMobile ? 3 : 4).map(repo => ({
         title: repo.title,
-        link: `${config.basePath}/${encodeURIComponent(repo.title)}`,
+        link: `${config.basePath}/${createSlug(repo.title)}`,
         description: repo.description,
         tags: repo.tags,
         views_count: repo.views_count,
