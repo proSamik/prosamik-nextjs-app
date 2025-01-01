@@ -7,7 +7,7 @@ interface CustomButtonProps {
     className?: string;
 }
 
-const CustomForwardButton: React.FC<CustomButtonProps> = ({
+const CustomNextButton: React.FC<CustomButtonProps> = ({
                                                               onClick,
                                                               className = ''
                                                           }) => {
@@ -38,7 +38,7 @@ const CustomForwardButton: React.FC<CustomButtonProps> = ({
             onClick={handleClick}
             disabled={isNavigating}
             className={`
-                flex items-center mr-2 pr-2 py-2 rounded-md
+                flex items-center mr-2 py-2 pl-4 rounded-md
                 text-gray-700 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white
                 hover:bg-gray-100 dark:hover:bg-gray-800
                 transition-all duration-200
@@ -48,10 +48,10 @@ const CustomForwardButton: React.FC<CustomButtonProps> = ({
             `.trim()}
             aria-label="Navigate forward"
         >
-            <span>Forward</span>
+            <span className={''}>Next</span>
             <ChevronRight className={`w-7 h-7 ${isNavigating ? 'animate-pulse' : ''}`} />
         </button>
     );
 };
 
-export default CustomForwardButton;
+export default CustomNextButton;

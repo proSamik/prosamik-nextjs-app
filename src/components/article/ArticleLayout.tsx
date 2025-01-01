@@ -5,7 +5,7 @@ import ArticleHeader from './ArticleHeader';
 import useProcessedContent from '@/hooks/useProcessedContent';
 import { ArticleLayoutProps, ArticleLayoutType } from "@/types/article";
 import CustomBackButton from "@/components/layout/CustomBackButton";
-import CustomForwardButton from "@/components/layout/CustomForwardButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 import { FaGithub } from "react-icons/fa";
 
 interface EnhancedArticleLayoutProps extends ArticleLayoutProps {
@@ -67,7 +67,7 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
                 {isMobileView && (
                     <div className="flex justify-between mb-6">
                         <CustomBackButton/>
-                        <CustomForwardButton/>
+                        <CustomNextButton/>
                     </div>
                 )}
 

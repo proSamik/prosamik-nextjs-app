@@ -7,7 +7,7 @@ import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
 import CallToAction from "@/components/layout/CallToAction";
 import CustomBackButton from "@/components/layout/CustomBackButton"
-import CustomForwardButton from "@/components/layout/CustomForwardButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 import SEO from "@/components/layout/SEO";
 import Head from "next/head";
@@ -123,7 +123,7 @@ export default function About() {
                 {isMobile && (
                     <div className="flex justify-between mb-6">
                         <CustomBackButton />
-                        <CustomForwardButton />
+                        <CustomNextButton />
                     </div>
                 )}
 
