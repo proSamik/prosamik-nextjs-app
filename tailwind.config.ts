@@ -13,6 +13,9 @@ export default {
   darkMode: 'class', // Enable dark mode using class
   theme: {
     extend: {
+      transitionDuration: {
+        '3000': '3000ms',
+      },
       typography: {
         DEFAULT: {
           css: {
