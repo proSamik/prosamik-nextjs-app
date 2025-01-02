@@ -29,7 +29,7 @@ const getLayoutConfig = (layoutType: string) => {
 
     // Default blog configuration
     return {
-        mainClasses: 'max-w-[768px]',
+        mainClasses: 'max-w-[900px]',
         project: false,
     };
 };
@@ -52,7 +52,7 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
 
     return (
         <div className={`flex flex-col md:flex-row justify-between bg-gray-50 dark:bg-gray-900`}>
-            <div className="md:w-64">
+            <div className="">
                 <Navigation/>
             </div>
 
@@ -123,7 +123,7 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
                 )}
             </main>
 
-            <div className="md:w-64">
+            <div className="">
                 <Footer/>
             </div>
         </div>

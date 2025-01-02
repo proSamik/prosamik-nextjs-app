@@ -48,7 +48,7 @@ const LoadingBar = () => {
         : "bg-green-500";
 
     return (
-        <div className="h-24 flex items-end">
+        <div className="flex items-end">
             <div className="w-full space-y-2">
                 <div className="flex justify-end text-sm">
                     <span>{loadingSteps[currentStep].percent} % </span>

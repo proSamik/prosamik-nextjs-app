@@ -76,10 +76,10 @@ const Navigation = () => {
             {/* Desktop Navigation Controls */}
             {!isMobile && (
                 <>
-                    <div className="absolute top-28 left-0 px-2">
+                    <div className="absolute top-16 left-0 px-2">
                         <CustomBackButton/>
                     </div>
-                    <div className="absolute bottom-28 left-0 px-2">
+                    <div className="absolute bottom-16 left-0 px-2">
                         <CustomNextButton/>
                     </div>
                 </>

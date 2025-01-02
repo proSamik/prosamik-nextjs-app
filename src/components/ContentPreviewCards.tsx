@@ -46,7 +46,7 @@ export default function ContentPreviewCards({
     // Transform the repos data to match ItemList's expected format
     const items = data.repos.slice(0, isMobile ? 3 : 4).map(repo => ({
         title: repo.title,
-        link: `${config.basePath}/${createSlug(repo.title)}`,
+        link: `${config.basePath}s/${createSlug(repo.title)}`,
         description: repo.description,
         tags: repo.tags,
         views_count: repo.views_count,
