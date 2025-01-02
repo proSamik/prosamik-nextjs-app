@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Disallow crawling of admin pages
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://prosamik.com/sitemap.xml
+
+# Rate limiting
+Crawl-delay: 10
+
+# Additional rules for specific bots
+User-agent: GPTBot
+Disallow: /private/
+Disallow: /drafts/
+
+User-agent: ChatGPT-User
+Disallow: /private/
+Disallow: /drafts/
