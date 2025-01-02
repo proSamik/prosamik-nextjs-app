@@ -29,12 +29,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
 
     return (
-        <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-8 pt-4 space-y-8'}`}>
-            <div className="space-y-8">
+        <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-4 pt-4 space-y-10'}`}>
+            <div className="space-y-10">
                     <LoadingBar />
+            <div className={`${isMobile ? '' : 'space-y-8'}`}>
 
+
+            </div>
                 <h1 className={`font-bold ${isMobile ? 'text-4xl' : 'text-6xl leading-tight'}`}>
-                    Building Products To
+                    Building Products That
                     <span className="block text-blue-500 animate-pulse">Ship Fast</span>
                 </h1>
                 <p className={`${isMobile ? 'text-lg' : 'text-xl'} opacity-80 leading-relaxed`}>
@@ -47,7 +50,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </p>
             </div>
 
-            <div className="bg-zinc-800 dark:bg-black/40 rounded-lg p-4 font-mono text-sm text-green-400 relative overflow-hidden w-full">
+            <div className="bg-zinc-800 dark:bg-black/40 rounded-lg p-8 font-mono text-sm text-green-400 relative overflow-hidden w-full">
                 <div className="flex items-center gap-2 mb-2">
                     <Terminal size={16}/>
                     <span>build-to-ship init project</span>
@@ -70,7 +73,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <div className={` grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-6`}>
+            <div className={` py-6 grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-6`}>
                 {buildPhilosophy.map(({ icon: Icon, title, desc }, index) => (
                     <div
                         key={index}
