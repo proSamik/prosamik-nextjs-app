@@ -19,7 +19,7 @@ const ContentList: React.FC<ContentListProps> = ({ repos, type }) => {
 
     const items = repos.map(repo => ({
         title: repo.title,
-        link: `/${type}/${createSlug(repo.title)}`,
+        link: `/${type}s/${createSlug(repo.title)}`,
         description: repo.description,
         tags: repo.tags,
         views_count: repo.views_count,
@@ -27,7 +27,7 @@ const ContentList: React.FC<ContentListProps> = ({ repos, type }) => {
         ...(type === 'project' && { repoPath: repo.repoPath })
     }));
 
-    const title = type === 'blog' ? 'My Blogs' : 'My Projects';
+    const title = type === 'blog' ? 'Recent Blogs' : 'Featured Projects';
 
     return <ItemList items={items} title={title} />;
 };
