@@ -30,6 +30,8 @@ export function useRepoHandler(slug: string | string[] | undefined, repoList: Re
 
     const repoPath = repoInfo?.repoPath || null;
 
+    const tags = repoInfo?.tags ?? '';
+
     const { trackView } = useTrackViews();  // New hook
 
     // Track view when repoInfo becomes available
@@ -56,5 +58,5 @@ export function useRepoHandler(slug: string | string[] | undefined, repoList: Re
         }
     }, [notFound, redirecting, router]);
 
-    return { repoInfo, data, error, loading, notFound };
+    return { repoInfo, data, error, tags, loading, notFound };
 }
