@@ -10,7 +10,6 @@ import CustomBackButton from "@/components/layout/CustomBackButton"
 import CustomNextButton from "@/components/layout/CustomNextButton";
 import {usePageAnalytics} from "@/hooks/usePageAnalytics";
 import SEO from "@/components/layout/SEO";
-import Head from "next/head";
 import {useTimelineData} from "@/hooks/useTimelineData";
 
 export default function About() {
@@ -89,15 +88,8 @@ export default function About() {
                  Led tech communities, contributed to WordPress Core, and specialized in automation.
                  Experience ranges from Web Development to Cloud Architecture spanning 2017-present."
                 ogImage="https://prosamik.com/image/og-Image.png"
+                structuredData={jsonLd}  // Now we can pass JSON-LD directly to SEO component
             />
-            <Head>
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify(jsonLd)
-                    }}
-                />
-            </Head>
         <div
             className={`flex flex-col ${
                 isMobile ? '' : 'min-h-screen'
