@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 
@@ -7,27 +7,7 @@ interface CustomButtonProps {
 }
 
 const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
-  const [canGoBack, setCanGoBack] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkNavigationState = () => {
-      // Use the history length to determine if the user can navigate back
-      const hasHistory = window.history.length > 2; // More than 2 means there's a previous page
-      const currentPath = window.location.pathname;
-      const isRootPath = currentPath === '/' || currentPath === '';
-
-      setCanGoBack(hasHistory && !isRootPath);
-    };
-
-    checkNavigationState();
-
-    window.addEventListener('popstate', checkNavigationState); // Trigger on history changes
-
-    return () => {
-      window.removeEventListener('popstate', checkNavigationState);
-    };
-  }, []);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,9 +18,7 @@ const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
     }
   };
 
-  if (!canGoBack) return null;
-
-  // Only hide on root path
+  // Only hide on root path, show on all other paths
   if (router.pathname === '/') return null;
 
   return (
