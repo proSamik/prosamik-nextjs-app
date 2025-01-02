@@ -1,90 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/layout/Navigation';
-import Footer from '@/components/layout/Footer';
+// pages/feedback.tsx
+import React from 'react';
 import FeedbackForm from '@/components/layout/FeedbackForm';
-import CustomBackButton from "@/components/layout/CustomBackButton"
-import CustomNextButton from "@/components/layout/CustomNextButton";
-import {usePageAnalytics} from "@/hooks/usePageAnalytics";
+import SEO from "@/components/layout/SEO";
+import { siteMetadata } from "@/utils/siteMetadata";
 
 export default function Feedback() {
-    const [isMobile, setIsMobile] = useState(false);
-
-    const { trackPageView } = usePageAnalytics();
-
-    useEffect(() => {
-        // Using void operator to handle the promise
-        void trackPageView('feedback');
-    }, [trackPageView]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1090);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    if (isMobile) {
-        return (
-            <div className="flex flex-col md:flex-row">
-                {/* Navigation component */}
-                <Navigation />
-
-                {/* Main content area */}
-                <main
-                    className={`max-w-[728px] mx-auto px-4 py-8`}
-                    style={{
-                        width: '100%',
-                        marginTop: '60px',
-                        marginBottom: '60px',
-                    }}
-                >
-                    {/* Navigation Buttons Row - Added this section */}
-                    <div className="flex justify-between mb-6">
-                        <CustomBackButton />
-                        <CustomNextButton />
-                    </div>
-
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
-                    </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
-                </main>
-
-                {/* Footer component */}
-                <Footer />
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen flex flex-col">
-            <div className="flex-grow flex flex-col md:flex-row">
-                {/* Navigation */}
-                <div className="md:w-36 flex-shrink-0">
-                    <Navigation />
+        <>
+            <SEO
+                title="Roast Me"
+                description="Roast me or contact me by giving feedback so that this site can be improved"
+                ogImage={siteMetadata.defaultImage}
+                keywords={'feedback, prosamik, roast, contact'}
+                openGraph={{
+                    type: 'website',
+                    siteName: siteMetadata.title,
+                    locale: 'en_US',
+                }}
+                twitter={{
+                    cardType: 'summary_large_image',
+                    site: siteMetadata.twitterUsername,
+                    creator: siteMetadata.twitterUsername,
+                    imageAlt: 'Feedback | proSamik',
+                }}
+            />
+
+            <div className="mx-auto w-full justify-center mt-5 px-3 py-5">
+                <div className="flex justify-center items-center mb-10">
+                    <h1 className="text-3xl font-serif text-center">Feedback Form</h1>
                 </div>
 
-                {/* Main content */}
-                <main className="flex-grow w-full mx-auto px-4 py-8">
-                    <div className="flex justify-center items-center mb-4">
-                        <h1 className="text-3xl font-serif text-center mr-10">Feedback Form</h1>
-                    </div>
-
-                    {/* Feedback Form Component */}
-                    <FeedbackForm />
-                </main>
-
-                {/* Right spacing div for desktop */}
-                <div className="hidden md:block md:w-36 flex-shrink-0" />
+                <FeedbackForm />
             </div>
-
-            {/* Footer */}
-            <Footer />
-        </div>
+        </>
     );
 }
