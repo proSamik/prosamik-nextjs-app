@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            elementFormDefault="qualified">
+    <xsd:annotation>
+        <xsd:documentation>
+            XML Schema for Sitemap files.
+            Last Modifed 2008-03-26
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="urlset">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="url" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="loc" type="xsd:anyURI"/>
+                            <xsd:element name="lastmod" type="xsd:dateTime" minOccurs="0"/>
+                            <xsd:element name="changefreq" minOccurs="0">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="always"/>
+                                        <xsd:enumeration value="hourly"/>
+                                        <xsd:enumeration value="daily"/>
+                                        <xsd:enumeration value="weekly"/>
+                                        <xsd:enumeration value="monthly"/>
+                                        <xsd:enumeration value="yearly"/>
+                                        <xsd:enumeration value="never"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                            <xsd:element name="priority" minOccurs="0">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:decimal">
+                                        <xsd:minInclusive value="0.0"/>
+                                        <xsd:maxInclusive value="1.0"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
