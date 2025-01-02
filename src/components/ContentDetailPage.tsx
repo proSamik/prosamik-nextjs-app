@@ -14,7 +14,7 @@ export default function ContentDetailPage({ type }: ContentDetailPageProps) {
     const router = useRouter();
     const { slug } = router.query;
     const { data: repoList, error: repoError, loading: repoLoading } = useContentList({ type });
-    const { repoInfo, data, error, loading } = useRepoHandler(slug, repoList?.repos);
+    const { repoInfo, tags, data, error, loading } = useRepoHandler(slug, repoList?.repos);
 
     return (
         <RepoLoader loading={repoLoading || loading} error={repoError || error}>
@@ -22,6 +22,7 @@ export default function ContentDetailPage({ type }: ContentDetailPageProps) {
                 <ArticleLayout
                     data={data}
                     layoutType={type}
+                    tags={tags}
                 />
             )}
         </RepoLoader>
