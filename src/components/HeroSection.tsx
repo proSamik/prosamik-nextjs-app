@@ -29,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
 
     return (
-        <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-4 pt-4 space-y-8'}`}>
+        <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-8 pt-4 space-y-8'}`}>
             <div className="space-y-8">
                     <LoadingBar />
 
