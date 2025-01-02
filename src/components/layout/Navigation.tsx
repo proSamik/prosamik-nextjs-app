@@ -208,7 +208,7 @@ const Navigation = () => {
                             />
                         </svg>
                     }
-                    label="About Me"
+                    label="Who is Samik"
                     isMenuOpen={isMenuOpen}
                 />
 

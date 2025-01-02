@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import Navigation from '@/components/layout/Navigation';
-import Footer from "@/components/layout/Footer";
+// components/article/ArticleLayout.tsx
+import React from 'react';
 import ArticleHeader from './ArticleHeader';
 import useProcessedContent from '@/hooks/useProcessedContent';
 import { ArticleLayoutProps, ArticleLayoutType } from "@/types/article";
-import CustomBackButton from "@/components/layout/CustomBackButton";
-import CustomNextButton from "@/components/layout/CustomNextButton";
 import { FaGithub } from "react-icons/fa";
+import SEO from '@/components/layout/SEO';
+import { siteMetadata } from '@/utils/siteMetadata';
 
 interface EnhancedArticleLayoutProps extends ArticleLayoutProps {
     layoutType: ArticleLayoutType;
+    tags?: string;
 }
 
 const constructGitHubUrl = (author: string, repository: string) => {
@@ -22,61 +22,90 @@ const constructGitHubUrl = (author: string, repository: string) => {
 const getLayoutConfig = (layoutType: string) => {
     if (layoutType === 'project') {
         return {
-            mainClasses: 'max-w-[800px]',
-            project: true,  // Example of project-specific feature
+            mainClasses: 'max-w-[900px]',
+            project: true,
         };
     }
-
-    // Default blog configuration
     return {
         mainClasses: 'max-w-[900px]',
         project: false,
     };
 };
 
-const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps) => {
-    const [isMobileView, setIsMobileView] = useState(false);
+const ArticleLayout = ({ data, content, layoutType, tags}: EnhancedArticleLayoutProps) => {
     const { processedContent, contentRef, shareUrl } = useProcessedContent(data, content);
     const githubUrl = constructGitHubUrl(data.metadata.author, data.metadata.repository);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobileView(window.innerWidth <= 1090);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
     const config = getLayoutConfig(layoutType);
 
+    const tagsArray = (tags || '').split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+
+    // Extract text from content (HTML)
+    const extractTextFromHTML = (html: string) => {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        return div.textContent || div.innerText || '';
+    };
+
+    const articleText = extractTextFromHTML(processedContent || '');
+
+    // JSON-LD structured data for the article
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": data.metadata.title,
+        "description": data.metadata.description || siteMetadata.defaultDescription,
+        "author": {
+            "@type": "Person",
+            "name": data.metadata.author,
+            "url": `https://github.com/${data.metadata.author}`,
+        },
+        "dateModified": data.metadata.lastUpdated,
+        "publisher": {
+            "@type": "Organization",
+            "name": siteMetadata.title,
+            "logo": {
+                "@type": "ImageObject",
+                "url": `${siteMetadata.siteUrl}/favicon.svg`,
+            },
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `${siteMetadata.siteUrl}`,
+        },
+        "keywords": tagsArray,
+        "articleBody": articleText,
+    };
+
     return (
-        <div className={`flex flex-col md:flex-row justify-between bg-gray-50 dark:bg-gray-900`}>
-            <div className="">
-                <Navigation/>
-            </div>
-
-            <main
-                className={`${config.mainClasses} pl-7 py-8 px-8`}
-                style={{
-                    width: isMobileView ? '100%' : 'auto',
-                    marginTop: isMobileView ? '60px' : '0',
-                    marginBottom: isMobileView ? '60px' : '0',
+        <>
+            <SEO
+                title={data.metadata.title}
+                description={data.metadata.description || siteMetadata.defaultDescription}
+                keywords={tags}
+                structuredData={jsonLd}
+                openGraph={{
+                    type: 'article',
+                    article: {
+                        title: data.metadata.title,
+                        modifiedTime: data.metadata.lastUpdated,
+                        authors: [data.metadata.author],
+                        tags: tagsArray,
+                    },
                 }}
-            >
-                {isMobileView && (
-                    <div className="flex justify-between mb-6">
-                        <CustomBackButton/>
-                        <CustomNextButton/>
-                    </div>
-                )}
+                twitter={{
+                    cardType: 'summary_large_image',
+                    site: siteMetadata.twitterUsername,
+                    creator: data.metadata.author,
+                    imageAlt: data.metadata.title,
+                }}
+            />
 
-                <div className="flex justify-between items-center mb-8">
+            <div className={`${config.mainClasses} mx-auto px-4`}>
+                <div className="flex justify-between items-center mb-8 w-full py-5">
                     <ArticleHeader data={data} shareUrl={shareUrl}/>
                 </div>
 
-                <article className="prose prose-lg max-w-none dark:prose-invert">
-
+                <article className="prose prose-lg dark:prose-invert w-full">
                     <div
                         ref={contentRef}
                         dangerouslySetInnerHTML={{__html: processedContent}}
@@ -84,49 +113,35 @@ const ArticleLayout = ({ data, content, layoutType }: EnhancedArticleLayoutProps
                     />
 
                     {data.metadata.repository && (
-                        <div className="mt-8 flex justify-center">
+                        <div className="mt-8 w-full flex justify-center">
                             <a
-                            href={githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white
-                            rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors no-underline"
+                                href={githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white
+                                rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors no-underline"
                             >
-                            <FaGithub size={20}/>
-                            <span>Visit Repository</span>
-                        </a>
-                        </div>
-                        )}
-
-                    {/* Example of project layout-specific content */}
-                    {config.project && (
-                        <div className="mt-6 mx-4  bg-gray-100 dark:bg-gray-800 rounded-lg hidden">
-                            <h3 className='p-3 flex justify-center'>Similar Projects</h3>
-                            {/* Add tech stack content for projects */}
+                                <FaGithub size={20}/>
+                                <span>Visit Repository</span>
+                            </a>
                         </div>
                     )}
 
-                    {/* Example of blog layout-specific content */}
+                    {/* Layout-specific content sections */}
+                    {config.project && (
+                        <div className="mt-6 mx-4 bg-gray-100 dark:bg-gray-800 rounded-lg hidden">
+                            <h3 className='p-3 flex justify-center'>Similar Projects</h3>
+                        </div>
+                    )}
+
                     {!config.project && (
                         <div className="mt-6 mx-4 bg-gray-100 dark:bg-gray-800 rounded-lg hidden">
                             <h3 className='p-3 flex justify-center'>Similar Blogs</h3>
-                            {/* Add tech stack content for projects */}
                         </div>
                     )}
                 </article>
-
-                {isMobileView && (
-                    <div className="flex justify-between mb-6">
-                        <CustomBackButton/>
-                        <CustomNextButton/>
-                    </div>
-                )}
-            </main>
-
-            <div className="">
-                <Footer/>
             </div>
-        </div>
+        </>
     );
 };
 
