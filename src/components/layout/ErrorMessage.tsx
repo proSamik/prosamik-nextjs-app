@@ -1,7 +1,4 @@
-// components/layout/ErrorLayout.tsx
 import React from 'react';
-import Navigation from '@/components/layout/Navigation';
-import Footer from "@/components/layout/Footer";
 import { useRouter } from 'next/router';
 
 interface ErrorLayoutProps {
@@ -21,12 +18,8 @@ const ErrorMessage = ({ message, customSteps }: ErrorLayoutProps) => {
     const troubleshootingSteps = customSteps || defaultSteps;
 
     return (
-        <div className="flex flex-col md:flex-row justify-between bg-gray-50 dark:bg-gray-900 min-h-screen">
-            <div className="md:w-64">
-                <Navigation />
-            </div>
 
-            <main className="max-w-[800px] pl-7 py-8 flex-grow">
+            <main className="pl-7 py-8 flex justify-center w-full">
                 <div className="flex flex-col items-center justify-center h-full">
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 w-full max-w-[728px]">
                         {/* Error Icon */}
@@ -91,11 +84,6 @@ const ErrorMessage = ({ message, customSteps }: ErrorLayoutProps) => {
                     </div>
                 </div>
             </main>
-
-            <div className="md:w-64">
-                <Footer />
-            </div>
-        </div>
     );
 };
 
