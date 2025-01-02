@@ -1,0 +1,81 @@
+.
+|-- components
+|   |-- ContentDetailPage.tsx
+|   |-- ContentList.tsx
+|   |-- ContentPage.tsx
+|   |-- ContentPreviewCards.tsx
+|   |-- HeroSection.tsx
+|   |-- PersonalStory.tsx
+|   |-- ProfileHeader.tsx
+|   |-- SEO.tsx
+|   |-- Skills.tsx
+|   |-- Timeline.tsx
+|   |-- article
+|   |   |-- ArticleHeader.tsx
+|   |   |-- ArticleLayout.tsx
+|   |   |-- CodeBlockSyntaxHighlighter.tsx
+|   |   |-- RepoLoader.tsx
+|   |   `-- SocialShareButton.tsx
+|   |-- layout
+|   |   |-- CallToAction.tsx
+|   |   |-- CustomBackButton.tsx
+|   |   |-- CustomNextButton.tsx
+|   |   |-- ErrorMessage.tsx
+|   |   |-- FeedbackForm.tsx
+|   |   |-- Footer.tsx
+|   |   |-- Loading.tsx
+|   |   |-- LoadingBar.tsx
+|   |   |-- Navigation.tsx
+|   |   `-- ThemeToggle.tsx
+|   `-- shared
+|       |-- ItemCard.tsx
+|       |-- ItemList.tsx
+|       `-- SearchPanel.tsx
+|-- config
+|   `-- index.ts
+|-- hooks
+|   |-- useCodeBlockSyntaxHighlighter.ts
+|   |-- useContentList.ts
+|   |-- useMarkdownData.ts
+|   |-- usePageAnalytics.ts
+|   |-- useProcessedContent.ts
+|   |-- useRepoHandler.ts
+|   |-- useShareContent.ts
+|   |-- useSlug.ts
+|   |-- useSubmitFeedback.ts
+|   |-- useSubscribeNewsletter.ts
+|   |-- useTimelineData.ts
+|   `-- useTrackViews.ts
+|-- pages
+|   |-- 404.tsx
+|   |-- _app.tsx
+|   |-- about.tsx
+|   |-- blog
+|   |   `-- [slug].tsx
+|   |-- blogs.tsx
+|   |-- feedback.tsx
+|   |-- index.tsx
+|   |-- project
+|   |   `-- [slug].tsx
+|   `-- projects.tsx
+|-- project-structure.txt
+|-- styles
+|   `-- globals.css
+|-- types
+|   |-- article.ts
+|   `-- timeline.ts
+`-- utils
+    |-- contentProcessors
+    |   |-- blockquoteProcessor.ts
+    |   |-- codeBlockProcessor.ts
+    |   |-- inlineCodeProcessor.ts
+    |   |-- listItemProcessor.ts
+    |   |-- mediaCenterProcessor.ts
+    |   |-- svgProcessor.ts
+    |   |-- tableProcessor.ts
+    |   `-- youtubeProcessor.ts
+    |-- dateUtils.ts
+    |-- siteMetadata.ts
+    `-- typeGuards.ts
+
+14 directories, 65 files
