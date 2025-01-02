@@ -121,8 +121,6 @@ export default function SEO({
     // Theme color based on theme mode
     const themeColor = theme === 'dark' ? '#000000' : '#ffffff'; // Hardcoded colors for simplicity
 
-    // Debugging: Log the Open Graph article tags
-    console.log('OpenGraph Article Tags:', openGraph?.article?.tags);
 
     return (
         <Head>
