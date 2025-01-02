@@ -40,6 +40,9 @@ const CustomBackButton: React.FC<CustomButtonProps> = ({ onClick }) => {
 
   if (!canGoBack) return null;
 
+  // Only hide on root path
+  if (router.pathname === '/') return null;
+
   return (
       <button
           onClick={handleClick}
