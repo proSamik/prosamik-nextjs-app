@@ -1,6 +1,12 @@
-import React from "react";
+'use client';
+// components/Timeline.tsx
+import React, { useState } from "react";
 import { X } from "lucide-react";
-import {useTimelineData} from "@/hooks/useTimelineData";
+import { TimelineEvent, TimePeriod, YearRange } from "@/types/timeline";
+
+interface TimelineProps {
+    timelineData: TimePeriod[];
+}
 
 const CalendarIcon = () => (
     <svg
@@ -19,16 +25,18 @@ const CalendarIcon = () => (
     </svg>
 );
 
-export default function Timeline() {
-    const {
-        timelineData,
-        selectedYearRange,
-        setSelectedYearRange,
-        selectedEvent,
-        isModalOpen,
-        selectEvent,
-        closeModal,
-    } = useTimelineData();
+export default function Timeline({ timelineData }: TimelineProps) {
+    // Move state management into the component
+    const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
+    const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const selectEvent = (event: TimelineEvent) => {
+        setSelectedEvent(event);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <div className="w-full">
@@ -50,7 +58,7 @@ export default function Timeline() {
                                 <div className="text-sm opacity-60">
                                     {period.events.length} milestone{period.events.length !== 1 ? "s" : ""}
                                 </div>
-                                <CalendarIcon/>
+                                <CalendarIcon />
                             </div>
                             <div className="flex items-center w-full font-medium justify-center">
                                 <span className="text-lg">{period.yearRange.start}</span>
@@ -62,10 +70,10 @@ export default function Timeline() {
                 </div>
 
                 {/* Events list */}
-                <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg ">
+                <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
                     <div className="w-full text-center">
                         <h2 className="inline-block text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
-                  border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600">
+                    border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600">
                             {`${selectedYearRange.start} - ${selectedYearRange.end}`}
                         </h2>
                     </div>
