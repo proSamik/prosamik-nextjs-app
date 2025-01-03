@@ -1,10 +1,10 @@
 import { SearchPanel } from "@/components/shared/SearchPanel";
 import { SearchIcon } from "lucide-react";
-import { ItemCard } from "@/components/shared/ItemCard";
 import { useMemo, useState } from "react";
 import React from 'react';
+import AnimatedCardStack from "@/components/shared/AnimateCardStack";
 
-interface ItemCardProps {
+export interface ItemCardProps {
     title: string;
     link: string;
     description?: string;
@@ -14,7 +14,7 @@ interface ItemCardProps {
     type?: string;
 }
 
-interface ItemListProps {
+export interface ItemListProps {
     items: ItemCardProps[];
     title: string;
 }
@@ -105,13 +105,15 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
                         </p>
                     </div>
                 ) : (
-                    <div className={isPreview ? 'grid gap-2 px-4' : ''}>
-                        {filteredItems.map((item) => (
-                            <div key={item.link} >
-                                <ItemCard {...item} />
-                            </div>
-                        ))}
-                    </div>
+                    // <div className={isPreview ? 'grid gap-2 px-4' : ''}>
+                    //     {filteredItems.map((item) => (
+                    //         <div key={item.link} >
+                    //             <ItemCard {...item} />
+                    //         </div>
+                    //     ))}
+                    // </div>
+
+                    <AnimatedCardStack items={filteredItems} isPreview={isPreview} />
                 )}
             </div>
         </>
