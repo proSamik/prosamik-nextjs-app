@@ -25,7 +25,7 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
     // Screen size effect
     useEffect(() => {
         const handleResize = () => {
-            setIsLargeScreen(window.innerWidth > 1300);
+            setIsLargeScreen(window.innerWidth > 1500);
         };
 
         // Initial check
@@ -89,7 +89,7 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
         return (
             <div className="space-y-4">
                 {recommendationTitle(type)}
-                <ItemList items={items} title="preview" />
+                <ItemList items={items} title="recommendations" />
             </div>
         );
     };
@@ -130,7 +130,7 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
 
     return (
         <div className="mx-auto max-w-7xl px-4">
-            <div className={`flex ${isLargeScreen && hasRecommendations ? 'flex-row justify-center' : 'flex-col items-center'}`}>
+            <div className={`flex ${isLargeScreen && hasRecommendations ? 'flex-row justify-start' : 'flex-col items-center'}`}>
                 {/* Main content */}
                 <main className={`${isLargeScreen && hasRecommendations ? 'grow' : ''} max-w-4xl bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4 lg:p-6`}>
                     {children}
@@ -141,14 +141,21 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                     <>
                         {/* Desktop recommendations - only visible > 1500px */}
                         {isLargeScreen ? (
-                            <aside className="ml-8 w-80 shrink-0">
+                            <aside className="ml-16 w-80 shrink-0">
                                 <div className="sticky top-24">
-                                    <RecommendationContent />
+                                    <div className="max-h-[calc(100vh-50px)] overflow-y-scroll w-fit">
+                                        <RecommendationContent/>
+                                        <style jsx>{`
+                                            div::-webkit-scrollbar {
+                                                display: none;
+                                            }
+                                        `}</style>
+                                    </div>
                                 </div>
                             </aside>
                         ) : (
                             <div className="w-full max-w-4xl mt-8 border-t pt-8">
-                                <RecommendationContent />
+                                <RecommendationContent/>
                             </div>
                         )}
                     </>
