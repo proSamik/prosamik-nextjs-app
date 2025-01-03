@@ -19,7 +19,7 @@ export default function ContentPage({ type }: ContentPageProps) {
 
     // Main content render
     return (
-        <div className="w-full mx-auto">
+        <div className="w-fit mx-auto">
             <div className="space-y-8">
                 <ContentList
                     repos={data?.repos || []}
