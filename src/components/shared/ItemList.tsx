@@ -26,11 +26,13 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
 
     // Check for empty state based on type property
     const isEmptyState = items.length === 1 && items[0].type === 'empty';
-    // Check if this is a preview list
+    // Check if this is a preview or recommendations list
     const isPreview = title === 'preview';
+    const isRecommendations = title === 'recommendations';
+    const skipSearchAndHeader = isPreview || isRecommendations;
 
     const allTags = useMemo(() => {
-        if (isEmptyState || isPreview) return [];
+        if (isEmptyState || skipSearchAndHeader) return [];
 
         const tagSet = new Set<string>();
         items.forEach(item => {
@@ -39,10 +41,10 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
             }
         });
         return Array.from(tagSet).sort();
-    }, [items, isEmptyState, isPreview]);
+    }, [items, isEmptyState, skipSearchAndHeader]);
 
     const filteredItems = useMemo(() => {
-        if (isEmptyState || isPreview) return items;
+        if (isEmptyState || skipSearchAndHeader) return items;
 
         return items.filter(item => {
             const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -54,7 +56,7 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
                 item.tags?.toLowerCase().includes(tag.toLowerCase())
             );
         });
-    }, [items, searchTerm, selectedTags, isEmptyState, isPreview]);
+    }, [items, searchTerm, selectedTags, isEmptyState, skipSearchAndHeader]);
 
     const toggleTag = (tag: string) => {
         setSelectedTags(prev =>
@@ -66,7 +68,7 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
 
     return (
         <>
-            {!isPreview && (
+            {!skipSearchAndHeader && (
                 <>
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-serif dark:text-white">{title}</h1>
@@ -112,8 +114,10 @@ export const ItemList: React.FC<ItemListProps> = ({ items, title }) => {
                     //         </div>
                     //     ))}
                     // </div>
-
-                    <AnimatedCardStack items={filteredItems} isPreview={isPreview} />
+                    <AnimatedCardStack
+                        items={filteredItems}
+                        isPreview={isPreview}
+                    />
                 )}
             </div>
         </>
