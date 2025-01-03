@@ -6,6 +6,7 @@ import { ArticleLayoutProps, ArticleLayoutType } from "@/types/article";
 import { FaGithub } from "react-icons/fa";
 import SEO from '@/components/layout/SEO';
 import { siteMetadata } from '@/utils/siteMetadata';
+import RecommendationLayout from "@/components/RecommendationLayout";
 
 interface EnhancedArticleLayoutProps extends ArticleLayoutProps {
     layoutType: ArticleLayoutType;
@@ -100,7 +101,13 @@ const ArticleLayout = ({ data, content, layoutType, tags}: EnhancedArticleLayout
                 }}
             />
 
-            <div className={`${config.mainClasses} mx-auto px-4`}>
+            <RecommendationLayout
+                tags={tags || ''}
+                currentArticleTitle={data.metadata.title}
+                layoutType={layoutType}
+            >
+
+            <div className={`w-full`}>
                 <div className="flex justify-between items-center mb-8 w-full py-5">
                     <ArticleHeader data={data} shareUrl={shareUrl}/>
                 </div>
@@ -141,6 +148,7 @@ const ArticleLayout = ({ data, content, layoutType, tags}: EnhancedArticleLayout
                     )}
                 </article>
             </div>
+            </RecommendationLayout>
         </>
     );
 };
