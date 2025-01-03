@@ -77,7 +77,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
                             <MoreHorizontal className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"/>
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on events to see more
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more
                             details</p>
                     </div>
 
