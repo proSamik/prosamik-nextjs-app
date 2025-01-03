@@ -126,9 +126,9 @@ export default function SEO({
         <Head>
             {/* Base Meta Tags */}
             <title>{finalTitle}</title>
-            <meta name="description" content={truncatedDescription} />
-            <meta charSet="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="description" content={truncatedDescription}/>
+            <meta charSet="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
             {/* Robots Meta Tags */}
             <meta
@@ -137,37 +137,40 @@ export default function SEO({
             />
 
             {/* Canonical and Alternate URLs */}
-            <link rel="canonical" href={pageCanonicalUrl} />
+            <link rel="canonical" href={pageCanonicalUrl}/>
             {alternateUrls &&
                 Object.entries(alternateUrls).map(([lang, url]) => (
-                    <link key={lang} rel="alternate" hrefLang={lang} href={url} />
+                    <link key={lang} rel="alternate" hrefLang={lang} href={url}/>
                 ))}
 
             {/* Author and Keywords */}
-            <meta name="author" content={siteMetadata.creator} />
-            <meta name="keywords" content={keywords} />
+            <meta name="author" content={siteMetadata.creator}/>
+            <meta name="keywords" content={keywords}/>
 
             {/* Open Graph Tags */}
-            <meta property="og:type" content={openGraph?.type || 'website'} />
-            <meta property="og:site_name" content={openGraph?.siteName || siteMetadata.title} />
-            <meta property="og:title" content={finalTitle} />
-            <meta property="og:description" content={truncatedDescription} />
-            <meta property="og:image" content={ogImage} />
-            <meta property="og:image:width" content={ogImageWidth.toString()} />
-            <meta property="og:image:height" content={ogImageHeight.toString()} />
-            <meta property="og:image:alt" content={ogImageAlt} />
-            <meta property="og:image:type" content={ogImageType} />
-            <meta property="og:image:secure_url" content={ogImageSecureUrl} />
-            <meta property="og:url" content={pageCanonicalUrl} />
-            <meta property="og:locale" content={openGraph?.locale || 'en_US'} />
+            <meta property="og:type" content={openGraph?.type || 'website'}/>
+            <meta property="og:site_name" content={openGraph?.siteName || siteMetadata.title}/>
+            <meta property="og:title" content={finalTitle}/>
+            <meta property="og:description" content={truncatedDescription}/>
+            <meta property="og:image" content={ogImage}/>
+            <meta property="og:image:width" content={ogImageWidth.toString()}/>
+            <meta property="og:image:height" content={ogImageHeight.toString()}/>
+            <meta property="og:image:alt" content={ogImageAlt}/>
+            <meta property="og:image:type" content={ogImageType}/>
+            <meta property="og:image:secure_url" content={ogImageSecureUrl}/>
+            <meta property="og:url" content={pageCanonicalUrl}/>
+            <meta property="og:locale" content={openGraph?.locale || 'en_US'}/>
 
             {/* Additional Open Graph Profile Tags */}
             {openGraph?.profile && (
                 <>
-                    {openGraph.profile.firstName && <meta property="profile:first_name" content={openGraph.profile.firstName} />}
-                    {openGraph.profile.lastName && <meta property="profile:last_name" content={openGraph.profile.lastName} />}
-                    {openGraph.profile.username && <meta property="profile:username" content={openGraph.profile.username} />}
-                    {openGraph.profile.gender && <meta property="profile:gender" content={openGraph.profile.gender} />}
+                    {openGraph.profile.firstName &&
+                        <meta property="profile:first_name" content={openGraph.profile.firstName}/>}
+                    {openGraph.profile.lastName &&
+                        <meta property="profile:last_name" content={openGraph.profile.lastName}/>}
+                    {openGraph.profile.username &&
+                        <meta property="profile:username" content={openGraph.profile.username}/>}
+                    {openGraph.profile.gender && <meta property="profile:gender" content={openGraph.profile.gender}/>}
                 </>
             )}
 
@@ -175,28 +178,28 @@ export default function SEO({
             {openGraph?.article && (
                 <>
                     {openGraph.article.publishedTime && (
-                        <meta property="article:published_time" content={openGraph.article.publishedTime} />
+                        <meta property="article:published_time" content={openGraph.article.publishedTime}/>
                     )}
                     {openGraph.article.modifiedTime && (
-                        <meta property="article:modified_time" content={openGraph.article.modifiedTime} />
+                        <meta property="article:modified_time" content={openGraph.article.modifiedTime}/>
                     )}
                     {openGraph.article.authors?.map((author) => (
-                        <meta key={author} property="article:author" content={author} />
+                        <meta key={author} property="article:author" content={author}/>
                     ))}
                     {openGraph.article.tags?.map((tag) => (
-                        <meta key={tag} property="article:tag" content={tag} />
+                        <meta key={tag} property="article:tag" content={tag}/>
                     ))}
                 </>
             )}
 
             {/* Twitter Card Tags */}
-            <meta name="twitter:card" content={twitter?.cardType || 'summary_large_image'} />
-            <meta name="twitter:site" content={twitter?.site || siteMetadata.twitterUsername} />
-            <meta name="twitter:creator" content={twitter?.creator || siteMetadata.twitterUsername} />
-            <meta name="twitter:title" content={finalTitle} />
-            <meta name="twitter:description" content={truncatedDescription} />
-            <meta name="twitter:image" content={ogImage} />
-            <meta name="twitter:image:alt" content={twitter?.imageAlt || ogImageAlt} />
+            <meta name="twitter:card" content={twitter?.cardType || 'summary_large_image'}/>
+            <meta name="twitter:site" content={twitter?.site || siteMetadata.twitterUsername}/>
+            <meta name="twitter:creator" content={twitter?.creator || siteMetadata.twitterUsername}/>
+            <meta name="twitter:title" content={finalTitle}/>
+            <meta name="twitter:description" content={truncatedDescription}/>
+            <meta name="twitter:image" content={ogImage}/>
+            <meta name="twitter:image:alt" content={twitter?.imageAlt || ogImageAlt}/>
 
             {/* Structured Data / JSON-LD */}
             <script
@@ -210,18 +213,29 @@ export default function SEO({
             {additionalMetaTags.map((tag) => (
                 <meta
                     key={tag.name || tag.property}
-                    {...(tag.name && { name: tag.name })}
-                    {...(tag.property && { property: tag.property })}
+                    {...(tag.name && {name: tag.name})}
+                    {...(tag.property && {property: tag.property})}
                     content={tag.content}
                 />
             ))}
 
             {/* Theme Color */}
-            <meta name="theme-color" content={themeColor} />
+            <meta name="theme-color" content={themeColor}/>
+
+            <meta name="apple-mobile-web-app-title" content="proSamik"/>
 
             {/* Favicon */}
-            <link rel="icon" href="/favicon.svg" />
-            <link rel="apple-touch-icon" href="/favicon.svg" />
+            <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+            <link rel="icon" type="image/png" sizes="32x32" href="/icon.png"/>
+            <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+            <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon.png"/>
+            <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-icon.png"/>
+
+
+            <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/>
+
+            <meta name="apple-mobile-web-app-capable" content="yes"/>
+            <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 
             {/* Additional Head Elements */}
             {children}
