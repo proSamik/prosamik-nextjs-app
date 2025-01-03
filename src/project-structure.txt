@@ -5,9 +5,10 @@
 |   |-- ContentPage.tsx
 |   |-- ContentPreviewCards.tsx
 |   |-- HeroSection.tsx
+|   |-- MainLayout.tsx
 |   |-- PersonalStory.tsx
 |   |-- ProfileHeader.tsx
-|   |-- SEO.tsx
+|   |-- RecommendationLayout.tsx
 |   |-- Skills.tsx
 |   |-- Timeline.tsx
 |   |-- article
@@ -26,14 +27,18 @@
 |   |   |-- Loading.tsx
 |   |   |-- LoadingBar.tsx
 |   |   |-- Navigation.tsx
+|   |   |-- SEO.tsx
 |   |   `-- ThemeToggle.tsx
 |   `-- shared
+|       |-- AnimateCardStack.tsx
 |       |-- ItemCard.tsx
 |       |-- ItemList.tsx
-|       `-- SearchPanel.tsx
+|       |-- SearchPanel.tsx
+|       `-- StyledItemCard.tsx
 |-- config
 |   `-- index.ts
 |-- hooks
+|   |-- useCachedRecommendations.ts
 |   |-- useCodeBlockSyntaxHighlighter.ts
 |   |-- useContentList.ts
 |   |-- useMarkdownData.ts
@@ -44,18 +49,17 @@
 |   |-- useSlug.ts
 |   |-- useSubmitFeedback.ts
 |   |-- useSubscribeNewsletter.ts
-|   |-- useTimelineData.ts
 |   `-- useTrackViews.ts
 |-- pages
 |   |-- 404.tsx
 |   |-- _app.tsx
 |   |-- about.tsx
-|   |-- blog
+|   |-- blogs
 |   |   `-- [slug].tsx
 |   |-- blogs.tsx
 |   |-- feedback.tsx
 |   |-- index.tsx
-|   |-- project
+|   |-- projects
 |   |   `-- [slug].tsx
 |   `-- projects.tsx
 |-- project-structure.txt
@@ -74,8 +78,9 @@
     |   |-- svgProcessor.ts
     |   |-- tableProcessor.ts
     |   `-- youtubeProcessor.ts
+    |-- dataTimelineData.ts
     |-- dateUtils.ts
     |-- siteMetadata.ts
     `-- typeGuards.ts
 
-14 directories, 65 files
+14 directories, 70 files
