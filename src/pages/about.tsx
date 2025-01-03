@@ -6,11 +6,11 @@ import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
 import CallToAction from "@/components/layout/CallToAction";
 import SEO from "@/components/layout/SEO";
-import { useTimelineData } from "@/hooks/useTimelineData";
 import { siteMetadata } from "@/utils/siteMetadata";
+import {dataTimelineData} from "@/utils/dataTimelineData";
 
 export default function About() {
-    const { timelineData } = useTimelineData();
+    const timelineData  = dataTimelineData;
 
     // Generate JSON-LD data from timelineData
     const jsonLd = {
@@ -86,7 +86,7 @@ export default function About() {
                 <div className="w-full max-w-[800px] space-y-8">
                     <ProfileHeader />
                     <PersonalStory />
-                    <Timeline />
+                    <Timeline timelineData={timelineData} />
                     <Skills />
                     <CallToAction />
                 </div>

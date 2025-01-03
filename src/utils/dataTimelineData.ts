@@ -1,8 +1,6 @@
-import { useState } from "react";
-import {TimelineEvent, TimePeriod, YearRange} from "@/types/timeline";
+import {TimePeriod} from "@/types/timeline";
 
-
-const timelineData: TimePeriod[] = [
+export const dataTimelineData: TimePeriod[] = [
   {
     yearRange: {
       start: "2024",
@@ -104,27 +102,4 @@ const timelineData: TimePeriod[] = [
     ]
   }
 ];
-
-export function useTimelineData() {
-  const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const selectEvent = (event: TimelineEvent) => {
-    setSelectedEvent(event);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-
-  return {
-    timelineData,
-    selectedYearRange,
-    setSelectedYearRange,
-    selectedEvent,
-    isModalOpen,
-    selectEvent,
-    closeModal,
-  };
-}
 

@@ -1,6 +1,12 @@
-import React from "react";
-import { X } from "lucide-react";
-import {useTimelineData} from "@/hooks/useTimelineData";
+'use client';
+// components/Timeline.tsx
+import React, { useState } from "react";
+import {ChevronRight, MoreHorizontal, X} from "lucide-react";
+import { TimelineEvent, TimePeriod, YearRange } from "@/types/timeline";
+
+interface TimelineProps {
+    timelineData: TimePeriod[];
+}
 
 const CalendarIcon = () => (
     <svg
@@ -19,16 +25,18 @@ const CalendarIcon = () => (
     </svg>
 );
 
-export default function Timeline() {
-    const {
-        timelineData,
-        selectedYearRange,
-        setSelectedYearRange,
-        selectedEvent,
-        isModalOpen,
-        selectEvent,
-        closeModal,
-    } = useTimelineData();
+export default function Timeline({ timelineData }: TimelineProps) {
+    // Move state management into the component
+    const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
+    const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const selectEvent = (event: TimelineEvent) => {
+        setSelectedEvent(event);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <div className="w-full">
@@ -50,7 +58,7 @@ export default function Timeline() {
                                 <div className="text-sm opacity-60">
                                     {period.events.length} milestone{period.events.length !== 1 ? "s" : ""}
                                 </div>
-                                <CalendarIcon/>
+                                <CalendarIcon />
                             </div>
                             <div className="flex items-center w-full font-medium justify-center">
                                 <span className="text-lg">{period.yearRange.start}</span>
@@ -62,12 +70,15 @@ export default function Timeline() {
                 </div>
 
                 {/* Events list */}
-                <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg ">
+                <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
                     <div className="w-full text-center">
-                        <h2 className="inline-block text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
-                  border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600">
-                            {`${selectedYearRange.start} - ${selectedYearRange.end}`}
+                        <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
+        border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
+                            <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
+                            <MoreHorizontal className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"/>
                         </h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more
+                            details</p>
                     </div>
 
                     <div className="mt-2 space-y-3">
@@ -77,9 +88,12 @@ export default function Timeline() {
                                 <div
                                     key={index}
                                     onClick={() => selectEvent(event)}
-                                    className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+                                    className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-all
+                    group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600"
                                 >
-                                    <h3 className="text-lg font-medium text-center">{event.title}</h3>
+                                    <h3 className="text-lg font-medium text-center flex-1">{event.title}</h3>
+                                    <ChevronRight
+                                        className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
                                 </div>
                             ))}
                     </div>
@@ -95,7 +109,7 @@ export default function Timeline() {
                             className="absolute right-4 top-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
                             aria-label="Close modal"
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-4 w-4"/>
                         </button>
                         <h3 className="text-xl font-semibold mb-4">{selectedEvent.title}</h3>
                         <p className="text-gray-600 dark:text-gray-300 mb-4">{selectedEvent.description}</p>

@@ -1,9 +1,9 @@
-import React, { ReactNode, useState, useEffect } from 'react';
 import { ItemList, ItemCardProps } from '@/components/shared/ItemList';
 import { ArticleLayoutType, RepoListItem } from '@/types/article';
 import { useSlug } from '@/hooks/useSlug';
 import { useRouter } from 'next/router';
 import { useCachedRecommendations } from '@/hooks/useCachedRecommendations';
+import React, {ReactNode, useEffect, useState} from "react";
 
 interface RecommendationLayoutProps {
     tags: string;
@@ -11,6 +11,53 @@ interface RecommendationLayoutProps {
     layoutType: ArticleLayoutType;
     children: ReactNode;
 }
+
+
+// // New component for lazy loading
+// const LazyLoadWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
+//     const [isVisible, setIsVisible] = useState(false);
+//     const [hasIntersected, setHasIntersected] = useState(false);
+//
+//     useEffect(() => {
+//         // Create intersection observer
+//         const observer = new IntersectionObserver(
+//             (entries) => {
+//                 if (entries[0].isIntersecting && !hasIntersected) {
+//                     setIsVisible(true);
+//                     setHasIntersected(true);
+//                     observer.disconnect(); // Cleanup after first intersection
+//                 }
+//             },
+//             {
+//                 rootMargin: '100px', // Start loading 100px before element comes into view
+//                 threshold: 0.1
+//             }
+//         );
+//
+//         // Get the current element
+//         const element = document.getElementById('lazy-content');
+//         if (element) {
+//             observer.observe(element);
+//         }
+//
+//         // Cleanup
+//         return () => observer.disconnect();
+//     }, [hasIntersected]);
+//
+//     return (
+//         <div id="lazy-content">
+//             {isVisible ? (
+//                 <Suspense fallback={
+//                     <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-lg"></div>
+//                 }>
+//                     {children}
+//                 </Suspense>
+//             ) : (
+//                 <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-lg"></div>
+//             )}
+//         </div>
+//     );
+// };
 
 const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                                                                        tags,
@@ -142,6 +189,9 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                   shadow-sm 
                   p-4 lg:p-6
                 `}>
+                    {/*<LazyLoadWrapper>*/}
+                    {/*    {children}*/}
+                    {/*</LazyLoadWrapper>*/}
                     {children}
                 </main>
 
@@ -150,7 +200,7 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                     <>
                         {/* Desktop recommendations - only visible > 1500px */}
                         {isLargeScreen ? (
-                            <aside className="ml-16 w-80 shrink-0">
+                            <aside className="ml-4 w-80 shrink-0">
                                 <div className="sticky top-24">
                                     <div className="max-h-[calc(100vh-50px)] overflow-y-scroll w-fit">
                                         <RecommendationContent/>
