@@ -132,7 +132,16 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
         <div className="mx-auto max-w-7xl px-4">
             <div className={`flex ${isLargeScreen && hasRecommendations ? 'flex-row justify-start' : 'flex-col items-center'}`}>
                 {/* Main content */}
-                <main className={`${isLargeScreen && hasRecommendations ? 'grow' : ''} max-w-4xl bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4 lg:p-6`}>
+                <main className={`
+                  w-full  // Always take full width of parent
+                  max-w-full  // Never exceed parent width
+                  ${isLargeScreen && hasRecommendations ? 'lg:max-w-4xl' : ''} // Only apply max width on large screens
+                  bg-white dark:bg-gray-800 
+                  rounded-lg 
+                  border border-gray-200 dark:border-gray-700 
+                  shadow-sm 
+                  p-4 lg:p-6
+                `}>
                     {children}
                 </main>
 
