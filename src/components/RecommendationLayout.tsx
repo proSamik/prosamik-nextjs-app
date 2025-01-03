@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, {ReactNode, useState, useEffect, Suspense} from 'react';
 import { ItemList, ItemCardProps } from '@/components/shared/ItemList';
 import { ArticleLayoutType, RepoListItem } from '@/types/article';
 import { useSlug } from '@/hooks/useSlug';
@@ -11,6 +11,53 @@ interface RecommendationLayoutProps {
     layoutType: ArticleLayoutType;
     children: ReactNode;
 }
+
+
+// New component for lazy loading
+const LazyLoadWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [hasIntersected, setHasIntersected] = useState(false);
+
+    useEffect(() => {
+        // Create intersection observer
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !hasIntersected) {
+                    setIsVisible(true);
+                    setHasIntersected(true);
+                    observer.disconnect(); // Cleanup after first intersection
+                }
+            },
+            {
+                rootMargin: '100px', // Start loading 100px before element comes into view
+                threshold: 0.1
+            }
+        );
+
+        // Get the current element
+        const element = document.getElementById('lazy-content');
+        if (element) {
+            observer.observe(element);
+        }
+
+        // Cleanup
+        return () => observer.disconnect();
+    }, [hasIntersected]);
+
+    return (
+        <div id="lazy-content">
+            {isVisible ? (
+                <Suspense fallback={
+                    <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-lg"></div>
+                }>
+                    {children}
+                </Suspense>
+            ) : (
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-96 rounded-lg"></div>
+            )}
+        </div>
+    );
+};
 
 const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                                                                        tags,
@@ -142,7 +189,9 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                   shadow-sm 
                   p-4 lg:p-6
                 `}>
-                    {children}
+                    <LazyLoadWrapper>
+                        {children}
+                    </LazyLoadWrapper>
                 </main>
 
                 {/* Recommendations */}
