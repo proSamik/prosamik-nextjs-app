@@ -5,13 +5,13 @@ import MainLayout from '@/components/MainLayout'
 import { usePageAnalytics } from "@/hooks/usePageAnalytics";
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 export default function App({ Component, pageProps }: AppProps) {
     const { trackPageView } = usePageAnalytics();
     const router = useRouter();
 
     useEffect(() => {
-        // Track page views whenever the route changes
         const handleRouteChange = (url: string) => {
             const pageName = url.split('/')[1] || 'home';
             void trackPageView(pageName);
@@ -25,8 +25,16 @@ export default function App({ Component, pageProps }: AppProps) {
     }, [router.events, trackPageView]);
 
     return (
-        <MainLayout>
-            <Component {...pageProps} />
-        </MainLayout>
+        <>
+            <Head>
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                {/* Add language meta tag */}
+                <meta httpEquiv="content-language" content="en" />
+            </Head>
+            <MainLayout>
+                <Component {...pageProps} />
+            </MainLayout>
+        </>
     );
 }

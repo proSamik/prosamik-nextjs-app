@@ -50,6 +50,7 @@ const nextConfig: NextConfig = {
         appIsrStatus: false,  // Disables ISR status
     },
     reactStrictMode: false,
+    productionBrowserSourceMaps: true,
 };
 
 export default nextConfig;

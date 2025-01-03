@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import { useRouter } from 'next/router';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -77,21 +77,25 @@ export default function SEO({
                                 additionalMetaTags = [],
                             }: SEOProps) {
     const router = useRouter();
-    const [theme, setTheme] = useState<'light' | 'dark'>('light'); // Track theme state
 
-    // Listen for theme changes
+    const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
+
+    // Define theme color based on current theme
+    const themeColor = useMemo(() => {
+        return currentTheme === 'dark' ? '#000000' : '#ffffff';
+    }, [currentTheme]);
+
+    const handleThemeChange = useCallback((event: CustomEvent<{theme: 'light' | 'dark'}>) => {
+        setCurrentTheme(event.detail.theme);
+    }, []);
+
     useEffect(() => {
-        const handleThemeChange = (event: CustomEvent) => {
-            setTheme(event.detail.theme);
-        };
-
         window.addEventListener('themeChange', handleThemeChange as EventListener);
 
-        // Cleanup
         return () => {
             window.removeEventListener('themeChange', handleThemeChange as EventListener);
         };
-    }, []);
+    }, [handleThemeChange]);
 
     // Process title and description
     const finalTitle = title === siteMetadata.title ? title : `${title}`;
@@ -105,22 +109,21 @@ export default function SEO({
     const pageCanonicalUrl = canonicalUrl || `${siteMetadata.siteUrl}${cleanPath}`;
 
     // Combine default and custom structured data
-    const defaultStructuredData = {
-        '@context': 'https://schema.org',
-        '@type': 'Person',
-        name: siteMetadata.creator,
-        url: siteMetadata.siteUrl,
-        jobTitle: siteMetadata.jobTitle,
-        knowsAbout: siteMetadata.skills,
-        alumniOf: siteMetadata.alumniOf,
-        sameAs: siteMetadata.socialProfiles,
-    };
+    const finalStructuredData = useMemo(() => {
+        const defaultStructuredData = {
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: siteMetadata.creator,
+            url: siteMetadata.siteUrl,
+            jobTitle: siteMetadata.jobTitle,
+            knowsAbout: siteMetadata.skills,
+            alumniOf: siteMetadata.alumniOf,
+            sameAs: siteMetadata.socialProfiles,
+        };
+        return structuredData || defaultStructuredData;
+    }, [structuredData]);
 
-    const finalStructuredData = structuredData || defaultStructuredData;
-
-    // Theme color based on theme mode
-    const themeColor = theme === 'dark' ? '#000000' : '#ffffff'; // Hardcoded colors for simplicity
-
+    const isClient = typeof window !== 'undefined';
 
     return (
         <Head>
@@ -147,59 +150,65 @@ export default function SEO({
             <meta name="author" content={siteMetadata.creator}/>
             <meta name="keywords" content={keywords}/>
 
-            {/* Open Graph Tags */}
-            <meta property="og:type" content={openGraph?.type || 'website'}/>
-            <meta property="og:site_name" content={openGraph?.siteName || siteMetadata.title}/>
-            <meta property="og:title" content={finalTitle}/>
-            <meta property="og:description" content={truncatedDescription}/>
-            <meta property="og:image" content={ogImage}/>
-            <meta property="og:image:width" content={ogImageWidth.toString()}/>
-            <meta property="og:image:height" content={ogImageHeight.toString()}/>
-            <meta property="og:image:alt" content={ogImageAlt}/>
-            <meta property="og:image:type" content={ogImageType}/>
-            <meta property="og:image:secure_url" content={ogImageSecureUrl}/>
-            <meta property="og:url" content={pageCanonicalUrl}/>
-            <meta property="og:locale" content={openGraph?.locale || 'en_US'}/>
+            { isClient && (
 
-            {/* Additional Open Graph Profile Tags */}
-            {openGraph?.profile && (
                 <>
-                    {openGraph.profile.firstName &&
-                        <meta property="profile:first_name" content={openGraph.profile.firstName}/>}
-                    {openGraph.profile.lastName &&
-                        <meta property="profile:last_name" content={openGraph.profile.lastName}/>}
-                    {openGraph.profile.username &&
-                        <meta property="profile:username" content={openGraph.profile.username}/>}
-                    {openGraph.profile.gender && <meta property="profile:gender" content={openGraph.profile.gender}/>}
+                    {/* Open Graph Tags */}
+                    <meta property="og:type" content={openGraph?.type || 'website'}/>
+                    <meta property="og:site_name" content={openGraph?.siteName || siteMetadata.title}/>
+                    <meta property="og:title" content={finalTitle}/>
+                    <meta property="og:description" content={truncatedDescription}/>
+                    <meta property="og:image" content={ogImage}/>
+                    <meta property="og:image:width" content={ogImageWidth.toString()}/>
+                    <meta property="og:image:height" content={ogImageHeight.toString()}/>
+                    <meta property="og:image:alt" content={ogImageAlt}/>
+                    <meta property="og:image:type" content={ogImageType}/>
+                    <meta property="og:image:secure_url" content={ogImageSecureUrl}/>
+                    <meta property="og:url" content={pageCanonicalUrl}/>
+                    <meta property="og:locale" content={openGraph?.locale || 'en_US'}/>
+
+                    {/* Additional Open Graph Profile Tags */}
+                    {openGraph?.profile && (
+                        <>
+                            {openGraph.profile.firstName &&
+                                <meta property="profile:first_name" content={openGraph.profile.firstName}/>}
+                            {openGraph.profile.lastName &&
+                                <meta property="profile:last_name" content={openGraph.profile.lastName}/>}
+                            {openGraph.profile.username &&
+                                <meta property="profile:username" content={openGraph.profile.username}/>}
+                            {openGraph.profile.gender && <meta property="profile:gender" content={openGraph.profile.gender}/>}
+                        </>
+                    )}
+
+                    {/* Article-specific Open Graph Tags */}
+                    {openGraph?.article && (
+                        <>
+                            {openGraph.article.publishedTime && (
+                                <meta property="article:published_time" content={openGraph.article.publishedTime}/>
+                            )}
+                            {openGraph.article.modifiedTime && (
+                                <meta property="article:modified_time" content={openGraph.article.modifiedTime}/>
+                            )}
+                            {openGraph.article.authors?.map((author) => (
+                                <meta key={author} property="article:author" content={author}/>
+                            ))}
+                            {openGraph.article.tags?.map((tag) => (
+                                <meta key={tag} property="article:tag" content={tag}/>
+                            ))}
+                        </>
+                    )}
+
+                    {/* Twitter Card Tags */}
+                    <meta name="twitter:card" content={twitter?.cardType || 'summary_large_image'}/>
+                    <meta name="twitter:site" content={twitter?.site || siteMetadata.twitterUsername}/>
+                    <meta name="twitter:creator" content={twitter?.creator || siteMetadata.twitterUsername}/>
+                    <meta name="twitter:title" content={finalTitle}/>
+                    <meta name="twitter:description" content={truncatedDescription}/>
+                    <meta name="twitter:image" content={ogImage}/>
+                    <meta name="twitter:image:alt" content={twitter?.imageAlt || ogImageAlt}/>
                 </>
             )}
 
-            {/* Article-specific Open Graph Tags */}
-            {openGraph?.article && (
-                <>
-                    {openGraph.article.publishedTime && (
-                        <meta property="article:published_time" content={openGraph.article.publishedTime}/>
-                    )}
-                    {openGraph.article.modifiedTime && (
-                        <meta property="article:modified_time" content={openGraph.article.modifiedTime}/>
-                    )}
-                    {openGraph.article.authors?.map((author) => (
-                        <meta key={author} property="article:author" content={author}/>
-                    ))}
-                    {openGraph.article.tags?.map((tag) => (
-                        <meta key={tag} property="article:tag" content={tag}/>
-                    ))}
-                </>
-            )}
-
-            {/* Twitter Card Tags */}
-            <meta name="twitter:card" content={twitter?.cardType || 'summary_large_image'}/>
-            <meta name="twitter:site" content={twitter?.site || siteMetadata.twitterUsername}/>
-            <meta name="twitter:creator" content={twitter?.creator || siteMetadata.twitterUsername}/>
-            <meta name="twitter:title" content={finalTitle}/>
-            <meta name="twitter:description" content={truncatedDescription}/>
-            <meta name="twitter:image" content={ogImage}/>
-            <meta name="twitter:image:alt" content={twitter?.imageAlt || ogImageAlt}/>
 
             {/* Structured Data / JSON-LD */}
             <script
