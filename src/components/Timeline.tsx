@@ -91,7 +91,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
         return (
             <div className="space-y-4 mt-6">
                 <div>
-                    <h4 className="text-lg font-semibold mb-2">Technical Skills</h4>
+                    <h4 className="text-lg font-semibold mb-2">General Skills</h4>
                     <div className="flex flex-wrap gap-2">
                         {event.skills.map((skill, index) => (
                             <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
