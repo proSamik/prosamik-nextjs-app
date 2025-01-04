@@ -1,25 +1,47 @@
 import {TimePeriod} from "@/types/timeline";
 
 export const dataTimelineData: TimePeriod[] = [
-    //2025-Present
-
-    //July 24 - Dec 24
+    // 2025-Present
   {
     yearRange: {
-      start: "2024",
+      start: "2025",
       end: "Present",
-      description: "Rough phase"
+      description: "Loading…"
     },
     events: [
       {
-        title: "DevOps Engineer @rtCamp",
-        description: "Working on AWS infrastructure, CI/CD pipelines, and automation using Terraform and Ansible.",
-        skills: ["#AWS", "#Terraform", "#Docker", "#CI/CD", "#Linux"]
+        title: "Loading…",
+        description: "- Come on, the year has just begun!\n- Still, if you need to know, I have launched my website prosamik.com, which is the only website on the internet which uses GitHub for blogging.",
+        skills: ["#WebDevelopment", "#TypeScript", "#NextJs", "#Golang"]
+      }
+    ]
+  },
+
+    // July 24 - Dec 24
+  {
+    yearRange: {
+      start: "July '24",
+      end: "Dec '24",
+      description: "A period of learning, challenges, and self-discovery"
+    },
+    events: [
+      {
+        title: "Joined rtCamp",
+        description: "- It is a short-lived tale.\n- I joined there as a Software Engineer (Trainee) on July 15, 2024, and I was learning WordPress development there as it is one of the best WordPress website development agencies.\n- My opinion may differ from other trainees of my batch, but I felt very overworked there, and the main part which I didn’t like there was that we were treated like college kids, and I felt very overworked. The rtCamp I read in their handbook was quite the opposite over there (especially in the training), and since I didn’t do any development in the past 1 year, I was just catching up with the things.\n- I still committed myself to giving at least 1-2 years to see how things would roll out and shifted my gears for growth. But there was a big blocker, and that was Q&A like the viva in college (happened every week or two on the first day of the week), and in preparation for that, I used to give up my weekends and had to work on the week for straight 12 hrs, contrary to the 8 hrs work because I was always left behind, and my work was not always up to their expectations as they had a reputation to maintain and expected the same level of work from me.\n- And due to my low performance over there, I was shifted to PIP of 1 week, and someone who is struggling and trying, one week was very low to submit work as per their expectation, and the difficulties of the modules were also increasing in the meantime.\n- I didn’t do well, so I had to leave on Sep 10, 2024.\n- Well, in that period, I learnt a lot. If I am being completely honest, I started blogging daily about my learning. I got to see how CI/CD works from the outside. I today know every basic thing about git which a developer needs to know. I liked that more compared to WordPress Development, and it made me curious about that.\n- That’s when I decided to debunk every web-related topic after rtCamp.",
+        skills: ["#WordPressDevelopment", "#Git", "#CI/CD", "#WebDevelopment"],
+        soft_skills: ["#Resilience", "#Adaptability", "#TimeManagement", "#SelfMotivation"]
       },
       {
-        title: "Open Source Contributions",
-        description: "Contributing to WordPress Core and developing custom solutions for enterprise clients.",
-        skills: ["#WordPress", "#PHP", "#JavaScript", "#OpenSource"]
+        title: "Drove and Travelled Around 2000 kms",
+        description: "- When I got out of rtCamp, I was completely devastated to see that it actually happened. I took it very personally as I failed over there in a professional setting and was exhausted as I used to work 7 days/week just to get bare minimum marks.\n- So I thought of taking a break and going to my hometown, which is around 500 kms from my place of residence. I drove up and down that route and in my hometown to visit different places as I went there during Durga Puja and Diwali. So I travelled a lot and made some friends over there.\n- I got back to Siliguri, and since there are many hill stations from here, I visited them on my friend’s bike. I can easily say that I drove that bike for around 500-600 kms in total in pursuit of that. I went to Darjeeling 3 times in one single month with different routes, went to Kalimpong, Kurseong, and drove along the roads beside the Teesta river. As a local, you get the benefit when you need some break. \n- During navigation I saw a lot of gaps that AndroidAuto and GoogleMaps together could solve because even bikes today support digital screens",
+        skills: ["#AndroidAuto"], // Added AndroidAuto as a tech-related skill
+        soft_skills: ["#Exploration", "#Traveling", "#Adaptability"]
+      },
+      {
+        title: "What Happened to Varasi?",
+        description: "- I decided not to join Varasi (have to sacrifice Rs. 60,000/month) and invest my time totally in that which builds my foundation for the future.\n- I decided to learn about the web inside and out and share my findings and while sharing in the meantime, I decided to build products that will ship fast instead of over-engineering.",
+        skills: ["#WebDevelopment", "#ProductDevelopment", "#FastShipping"],
+        soft_skills: ["#SelfDiscipline", "#Focus", "#LongTermThinking"]
       }
     ]
   },
