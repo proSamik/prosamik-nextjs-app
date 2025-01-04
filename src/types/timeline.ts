@@ -7,6 +7,7 @@ export interface TimelineEvent {
 export interface YearRange {
     start: string;
     end: string;
+    description?: string;
 }
 
 export interface TimePeriod {
