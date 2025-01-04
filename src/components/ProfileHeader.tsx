@@ -22,14 +22,14 @@ export default function ProfileHeader() {
             </div>
 
             {/* Role Description */}
-            <div className="text-center space-y-4 animate-pulse">
-                <h1 className="text-4xl sm:text-5xl font-bold text-white relative">
+            <div className="text-center space-y-4 dark:animate-pulse">
+                <h1 className="text-4xl sm:text-5xl font-bold dark:text-white relative">
                     I{'  '}
                     <span className="relative inline-block">
             build
                         {/* Accent line overlay */}
                         <span
-                            className="absolute -inset-x-2 -inset-y-4 bg-white/30 -rotate-3 transform"
+                            className="absolute -inset-x-2 -inset-y-4 dark:bg-white/30 -rotate-3 transform bg-black/30"
                             style={{
                                 clipPath: 'polygon(0% 55%, 100% 30%, 40% 80%, -10% 65%)'
                             }}
@@ -40,7 +40,7 @@ export default function ProfileHeader() {
                         href="https://prosamik.com/projects"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:underline"
+                        className="text-blue-600 hover:underline"
                     >
                         Products
                     </a>
@@ -53,7 +53,7 @@ export default function ProfileHeader() {
 
                 <div className="flex ">
                     <div className="bg-gray-800 text-white px-4 py-2 rounded-md flex items-center space-x-4">
-                        <span>Reach me</span>
+                        <span>Reach me: </span>
                         <a
                             href="https://www.twitter.com/prosamik"
                             target="_blank"
