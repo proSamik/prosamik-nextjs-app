@@ -230,28 +230,39 @@ export const dataTimelineData: TimePeriod[] = [
   {
     yearRange: {
       start: "2017",
-      end: "2020"
+      end: "2020",
+      description: "Pre-College: A period of preparation"
     },
     events: [
       {
-        title: "Web Development Intern",
-        description: "Developed responsive websites and web applications using modern frameworks and tools.",
-        skills: ["#React", "#JavaScript", "#CSS", "#WebDev"]
+        title: "Secured 10 CGPA in 10th",
+        description: "- Seeing it from post-20s, it doesn’t seem like a great achievement, but it was a great feeling at that time.\n- It was something for which I worked hard a lot.",
+        skills: ["#Maths", "#Science"], // No tech-related skills for this event
+        soft_skills: ["#HardWork", "#Discipline", "#Focus"]
       },
       {
-        title: "Hackathon Winner",
-        description: "Won first place in college hackathon for developing an innovative solution for online education.",
-        skills: ["#Innovation", "#ProblemSolving", "#TeamWork"]
+        title: "Took Computer Science in 11th",
+        description: "- I was very curious about software. So, I worked very hard to build a foundation on the concepts.\n- I can say post that I didn’t work hard that much in learning to code syntax. That hard work paved my way to learn great things.",
+        skills: ["#ComputerScience", "#ProgrammingFundamentals"],
+        soft_skills: ["#Curiosity", "#HardWork", "#SelfLearning"]
       },
       {
-        title: "Programming Club Lead",
-        description: "Founded and led the college programming club,\norganizing coding competitions and practice sessions.",
-        skills: ["#DSA", "#Mentoring", "#PeerLearning"]
+        title: "2019 - Secured 98 in CS",
+        description: "- Well, I scored 84% in overall 12th.\n- 77% in PCM alone.\n- I liked CS more than any subject, and the irony is that I secured 67/100 in Maths (the lowest out of all).",
+        skills: ["#ComputerScience", "#ProgrammingFundamentals"],
+        soft_skills: ["#Focus", "#HardWork", "#SelfMotivation"]
       },
       {
-        title: "First Open Source Contribution",
-        description: "Started contributing to open source projects and learning collaborative development practices.",
-        skills: ["#OpenSource", "#Git", "#Collaboration"]
+        title: "2019-2020 - Kota <> Allen",
+        description: "- Since I studied Computer Science carefully and didn’t do justice to other subjects, I scored around 80 percentile in the first attempt of JEE Mains. And due to that, I didn’t get an affordable good engineering college (perks of no reservation certificate).\n- So, I thought of doing justice to other subjects and moved to Kota to prepare for the Joint Entrance Examination. I had a lower bar that below Army Institute of Technology, I could not afford to go to an engineering college and prepared like that.",
+        skills: ["#Physics", "#Chemistry", "#Maths"], // No tech-related skills for this event
+        soft_skills: ["#Resilience", "#Adaptability", "#HardWork", "#Focus"]
+      },
+      {
+        title: "2020 Jan - Cleared JEE Mains in First Attempt",
+        description: "- Scored 92.69 percentile, and the jump from 80 percentile to 92 really felt good.\n- I knew that AIT is something I will get easily, so I stopped working hard after that.",
+        skills: ["#PCM"], // No tech-related skills for this event
+        soft_skills: ["#Resilience", "#Focus", "#SelfMotivation"]
       }
     ]
   }
