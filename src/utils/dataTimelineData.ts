@@ -84,7 +84,7 @@ export const dataTimelineData: TimePeriod[] = [
     yearRange: {
       start: "2022",
       end: "2023",
-      description: "3rd year of my College"
+      description: "3rd year of College"
     },
     events: [
       {
@@ -96,7 +96,7 @@ export const dataTimelineData: TimePeriod[] = [
       {
         title: "I&E Cell Secretary ’22",
         description: "- Disclaimer: I really didn’t want to lead this responsibility as I became GDSC Lead by that time, but due to personal commitment the other team members had and due to the legacy we built from the first year itself, I didn’t want it to go into the wrong hands, so I also took the flag of Innovation and Entrepreneurship Cell of AIT and led it with complete responsibility.\n- The problem with GDSC was that it was very uncertain and didn’t know their next step, but in E Cell we had our yearly budget of more than 5 Lakhs at that time and I knew what I could do in this whole year with this kind of budget and what we could plan in the time period.\n- Well, as a Secretary I had a lot of responsibility because our E Cell had shown a lot of growth in the past few years compared to other clubs because we were running it like a startup, so did our responsibilities and for that year we focused on going to inter-college events and reaching out so that the students in our college had the right exposure and opportunities.\n- The favorite part if someone asked me in E Cell then I would say the team we had, it was phenomenal they worked day and night to achieve the tasks which I as Secretary envisioned and they did all of that because they respected me and couldn’t say no to me.\n- We conducted our first physical Startup Saga, since it was the first time and we implemented new ideas altogether for the events and it was uncharted territory for everyone and I would say we did pretty good as a team and it was 90% success and 10% failure. 10% because we changed the judging criteria before asking the judges whether they were comfortable or not, for speaker sessions we had some amazing speakers like unicorn founders, Shark Tank Pitchers, financial experts, career coaches and we couldn’t get more than 200 people in any of the sessions.\n- Apart from that we did pretty good and I really made some good bonding with my juniors over that time.\n- I, as a Secretary, did many other great and worst things, but if I start writing that also over here, then it would make this a long chapter instead of an article. But over the three years, it taught me many things and opened a lot of doors for me.",
-        skills: ["WebDevelopment", "Design", "Meetings", "ProjectManagement", "Marketing", "StrategyBuilding"], // No tech-related skills for this event
+        skills: ["#WebDevelopment", "#Design", "#Meetings", "#ProjectManagement", "#Marketing", "StrategyBuilding"], // No tech-related skills for this event
         soft_skills: ["#FinancialPlanning","#Leadership", "#TeamManagement", "#EventPlanning", "#Networking", "#Responsibility"]
       },
       {
@@ -114,7 +114,7 @@ export const dataTimelineData: TimePeriod[] = [
       {
         title: "Conducted Startup Saga and Innerve in a gap of 2 weeks",
         description: "- As the academic year was ending, we had to wrap our events, including Solution Challenge submissions, and due to that, they were running in parallel, and as a Secretary, Sponsorship Head, and Lead, I was very overworked, and there were a few days where I had to sacrifice my sleep for straight 48 hours or 36 hours (it was common).\n- And that’s how my 3rd year of college looked.",
-        skills: ["Sprint", "AllNighters"], // No tech-related skills for this event
+        skills: ["#Sprint", "#AllNighters"], // No tech-related skills for this event
         soft_skills: ["#TimeManagement", "#Multitasking", "#Resilience", "#Leadership"]
       }
     ]
@@ -124,18 +124,57 @@ export const dataTimelineData: TimePeriod[] = [
   {
     yearRange: {
       start: "2021",
-      end: "2022"
+      end: "2022",
+      description: "Second Year of College"
     },
     events: [
       {
-        title: "Android Study Jams Lead",
-        description: "Conducted Android development workshops and mentored students in building mobile applications.",
-        skills: ["#Android", "#Kotlin", "#Teaching"]
+        title: "Grabbed Second Internship",
+        description: "- I was not meant to be selected here, but the founder was an alumnus and due to my efforts in coordinating the internship drive for that company due to E Cell and DSA knowledge in Python, I convinced him to select me.\n- Instead of 2 candidates, he hired the third one (me).\n- The role was Web Developer (they used Django).\n- Well, the product they were working on was amazing; they had a good starting point because with LLM, it’s very easy now.\n- Disclaimer: this was my first non-stipend-based internship, and I did learn a lot, but due to the remote setup, I lost interest and felt disconnected.",
+        skills: ["#WebDevelopment", "#Django", "#Python", "#DSA"],
+        soft_skills: ["#Networking", "#Persuasion", "#SelfLearning"]
       },
       {
-        title: "Technical Writing",
-        description: "Published technical articles and documentation on various development topics and best practices.",
-        skills: ["#TechnicalWriting", "#Documentation", "#Blogging"]
+        title: "Conducted First Edition of Startup Saga",
+        description: "- The event was online as it was during a period of lockdown.\n- I learnt a lot, got to know about some company alumni due to E Cell reach, and closely saw how a sponsorship deal works.\n- That made the first time for E Cell to get its first sponsorship from Aviabird (Ashish sir).",
+        skills: ["#WebDevelopment", "#Marketing","#DashboardSetup", "#FinancialManagement"], // No tech-related skills for this event
+        soft_skills: ["#EventPlanning", "#Networking", "#SponsorshipManagement"]
+      },
+      {
+        title: "Became Joint Secretary",
+        description: "- Due to my interests, track record, and networking in the college, I was selected into different clubs which I really wanted to be a part of. A core member of GDSC and Joint Secretaries for E Cell and OSS.\n- GDSC (Google Developer Students Club), Innovation and Entrepreneurship Cell, Open Source Software Club (OSS Club).\n- I joined them as Joint Secretary (those who help third years organize events and the one who does the real groundwork).",
+        skills: ["#Android","#ProductDevelopment", "#LeadGeneration", "#Marketing"], // No tech-related skills for this event
+        soft_skills: ["#Leadership", "#Teamwork", "#Networking", "#Responsibility"]
+      },
+      {
+        title: "Joined the College (Offline)",
+        description: "- Lockdown was lifted, and we were called to college within a given range of time.\n- I was one of the last ones to report because I was in a dilemma about whether I should join the college anymore or not because I was in a state of constant development. I believed that if I stayed like this, then it would change my life. I thought I could easily become an entrepreneur.\n- But due to the benefit of the doubt, I went to college to explore the real college life, and this event is something which had opened my horizon and I got to know a lot about myself.\n- Confession: Whatever downfall you saw in me regarding tech development, it all started from here, but again, it opened my eyes.",
+        skills: ["#Electronics","#Telecommunication"], // No tech-related skills for this event
+        soft_skills: ["#SelfDiscovery", "#Adaptability", "#DecisionMaking"]
+      },
+      {
+        title: "Conducted Unnati for the First Time",
+        description: "- The first event of E Cell AIT in physical mode, an intra-college event.\n- As I told you, I joined E Cell in the glimmer of hope that I would learn how to run startups. So I saw a gap in college that there was no proper entrepreneurship awareness and ecosystem. So I thought of building one with the team and resources, and I had considered E Cell as the playground for entrepreneurship.\n- I closely saw how to organize events (online and physical), and if today someone asks me the handbook of it, I can easily lend it out.",
+        skills: ["#Marketing","#WebsiteDevelopment"], // No tech-related skills for this event
+        soft_skills: ["#EventManagement", "#Entrepreneurship", "#Teamwork"]
+      },
+      {
+        title: "Gave My First Pitch",
+        description: "- In Unnati, we were simulating “Sell me” in round 1 in 1 minute out of random topics. So our team got “Fan,” and we pitched by telling them that it was an AI fan and so on.\n- It was fun and a public stunt indeed for a shy guy like me who had never done anything random like that before.",
+        skills: ["#Pitching"], // No tech-related skills for this event
+        soft_skills: ["#PublicSpeaking", "#Creativity", "#Confidence"]
+      },
+      {
+        title: "Internship at Neoperk Technologies",
+        description: "- This was my first Android internship with a stipend of Rs. 3000 per month, which I did only for one month.\n- I got information via Internshala, and this was an Android Development role as I had been practicing Android development in the past. They also offered me Rs 1500 for 10 days in advance, but due to personal commitment, I had to leave and returned their money.",
+        skills: ["#AndroidDevelopment", "#MobileDevelopment"],
+        soft_skills: ["#Adaptability", "#TimeManagement", "#Professionalism"]
+      },
+      {
+        title: "Organized Innerve 6",
+        description: "- In 2020, due to its online presence, it made a lot of noise and became the largest student-driven hackathon in India. We were there as Joint Secretaries to continue the legacy.\n- The challenge was that it was in physical mode, but it was the marketing team’s challenge. I was involved as the Joint Sponsorship Head.\n- I was involved in accumulating sponsorship money and, under the guidance of my favorite senior, I got to know everything about event sponsorships. If you ask me for the handbook of it, I can easily provide it to you.\n- My learning here: To be honest, the more effort you put in, the better results you get. Don’t get sponsorship based on deliverables that your team can’t deliver. Because if you deliver the deliverables, there is a possibility that the next year they will sponsor you. But if you don’t, then in the future, they will never associate with you and also with your college because trust is very important here.",
+        skills: ["#WritingEmail", "#ColdEmail", "#FundsManagement", "#Brochure"], // No tech-related skills for this event
+        soft_skills: ["#SponsorshipManagement", "#EventManagement", "#Leadership", "#Teamwork"]
       }
     ]
   },
