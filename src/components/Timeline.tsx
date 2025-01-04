@@ -40,7 +40,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold text-center mb-8">Timeline</h1>
+            <h1 className="text-2xl font-bold text-center mb-8">- My Proud Moments -</h1>
             <div className="flex flex-col md:flex-row gap-2 space-x-4">
                 {/* Year blocks grid */}
                 <div className="md:w-2/3 grid grid-cols-2 gap-2">

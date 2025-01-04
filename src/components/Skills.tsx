@@ -27,7 +27,7 @@ export default function Skills() {
 
     return (
         <div className="py-2">
-            <h2 className="text-2xl font-bold mb-4 pb-2 text-center">Skills</h2>
+            <h2 className="text-2xl font-bold mb-4 pb-2 text-center">- Skills -</h2>
 
             {/* Flex container for both Technical and Non-Technical sections */}
             <div className={`flex justify-center gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
