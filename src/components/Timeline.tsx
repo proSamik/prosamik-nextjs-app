@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { ChevronRight, MoreHorizontal, X } from "lucide-react";
-import { TimelineEvent, TimePeriod, YearRange } from "@/types/timeline";
+import {TimelineEvent, TimePeriod, YearRange} from "@/types/timeline";
 
 interface TimelineProps {
     timelineData: TimePeriod[];
@@ -28,6 +28,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
     const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
     const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [showYearDescription, setShowYearDescription] = useState(false);
 
     const selectEvent = (event: TimelineEvent) => {
         setSelectedEvent(event);
@@ -36,14 +37,27 @@ export default function Timeline({ timelineData }: TimelineProps) {
 
     const closeModal = () => setIsModalOpen(false);
 
-    // Function to render description paragraphs
     const renderDescription = (description: string) => {
-        return description.split('\n').map((paragraph, index) => (
-            <p key={index} className="text-gray-600 dark:text-gray-300">
-                {paragraph}
-            </p>
-        ));
+        return description.split('\n').map((paragraph, index) => {
+            // Check if the paragraph starts with a tab (`\t`)
+            const isSubPoint = paragraph.startsWith('\t');
+
+            // Apply different styling for sub-points
+            return (
+                <p
+                    key={index}
+                    className={`text-gray-600 dark:text-gray-300 ${isSubPoint ? 'pl-4' : ''}`} // Add padding for sub-points
+                >
+                    {paragraph.trim()} {/* Trim to remove extra spaces or tabs */}
+                </p>
+            );
+        });
     };
+
+    // Get current period description
+    const currentPeriod = timelineData.find(
+        (period) => period.yearRange.start === selectedYearRange.start
+    );
 
     return (
         <div className="w-full">
@@ -76,13 +90,25 @@ export default function Timeline({ timelineData }: TimelineProps) {
                     ))}
                 </div>
 
-                {/* Events list */}
+                {/* Events list with hoverable description */}
                 <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
-                    <div className="w-full text-center">
+                    <div className="w-full text-center relative">
                         <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
                             border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
-                            <MoreHorizontal className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"/>
+                            <div className="relative">
+                                <MoreHorizontal
+                                    className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-help"
+                                    onMouseEnter={() => setShowYearDescription(true)}
+                                    onMouseLeave={() => setShowYearDescription(false)}
+                                />
+                                {/* Tooltip for year range description */}
+                                {showYearDescription && currentPeriod?.yearRange.description && (
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 top-6 w-48 p-2 dark:text-white text-gray-700 text-sm">
+                                        {currentPeriod.yearRange.description}
+                                    </div>
+                                )}
+                            </div>
                         </h2>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more details</p>
                     </div>
@@ -108,24 +134,28 @@ export default function Timeline({ timelineData }: TimelineProps) {
             {/* Modal with newline handling */}
             {isModalOpen && selectedEvent && (
                 <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
-                        <button
-                            onClick={closeModal}
-                            className="absolute right-4 top-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
-                            aria-label="Close modal"
-                        >
-                            <X className="h-4 w-4"/>
-                        </button>
-                        <h3 className="text-xl font-semibold mb-4">{selectedEvent.title}</h3>
-                        <div className="space-y-2 mb-4">
-                            {renderDescription(selectedEvent.description)}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {selectedEvent.skills.map((skill, index) => (
-                                <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
-                                    {skill}
-                                </span>
-                            ))}
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-[90%] max-w-[500px] overflow-hidden relative">
+                        <div className="max-h-[80vh] overflow-y-auto">
+                            <div className="p-6">
+                                <button
+                                    onClick={closeModal}
+                                    className="absolute right-4 top-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                                    aria-label="Close modal"
+                                >
+                                    <X className="h-4 w-4"/>
+                                </button>
+                                <h3 className="text-xl font-semibold mb-4">{selectedEvent.title}</h3>
+                                <div className="space-y-2 mb-4">
+                                    {renderDescription(selectedEvent.description)}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedEvent.skills.map((skill, index) => (
+                                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                                                {skill}
+                                            </span>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
