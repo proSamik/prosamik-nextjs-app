@@ -4,6 +4,8 @@ import { useSlug } from '@/hooks/useSlug';
 import { useRouter } from 'next/router';
 import { useCachedRecommendations } from '@/hooks/useCachedRecommendations';
 import React, {ReactNode, useEffect, useState} from "react";
+import CustomBackButton from "@/components/layout/CustomBackButton";
+import CustomNextButton from "@/components/layout/CustomNextButton";
 
 interface RecommendationLayoutProps {
     tags: string;
@@ -68,17 +70,18 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
     const router = useRouter();
     const currentSlug = router.query.slug as string;
     const [isLargeScreen, setIsLargeScreen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
-    // Screen size effect
     useEffect(() => {
         const handleResize = () => {
             setIsLargeScreen(window.innerWidth > 1500);
+            setIsMobile(window.innerWidth < 1090);
         };
 
         // Initial check
         handleResize();
 
-        // Add event listener
+        // Add single event listener
         window.addEventListener('resize', handleResize);
 
         // Cleanup
@@ -181,7 +184,7 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                 {/* Main content */}
                 <main className={`
                   w-full  // Always take full width of parent
-                  max-w-full  // Never exceed parent width
+                  max-w-[900px]  // Never exceed parent width
                   ${isLargeScreen && hasRecommendations ? 'lg:max-w-4xl' : ''} // Only apply max width on large screens
                   bg-white dark:bg-gray-800 
                   rounded-lg 
@@ -216,9 +219,20 @@ const RecommendationLayout: React.FC<RecommendationLayoutProps> = ({
                             <div className="w-full max-w-4xl mt-8 border-t pt-8">
                                 <RecommendationContent/>
                             </div>
+
                         )}
                     </>
                 )}
+
+                {isMobile && (
+                <>
+                <div className="w-full flex justify-between mb-5 mt-5">
+                    <CustomBackButton/>
+                    <CustomNextButton/>
+                </div>
+                </>
+                )
+                }
             </div>
         </div>
     );
