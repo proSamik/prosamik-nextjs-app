@@ -91,7 +91,7 @@ export const dataTimelineData: TimePeriod[] = [
       },
       {
         title: "Programming Club Lead",
-        description: "Founded and led the college programming club, organizing coding competitions and practice sessions.",
+        description: "Founded and led the college programming club,\norganizing coding competitions and practice sessions.",
         skills: ["#DSA", "#Mentoring", "#PeerLearning"]
       },
       {

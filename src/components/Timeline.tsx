@@ -1,7 +1,6 @@
 'use client';
-// components/Timeline.tsx
 import React, { useState } from "react";
-import {ChevronRight, MoreHorizontal, X} from "lucide-react";
+import { ChevronRight, MoreHorizontal, X } from "lucide-react";
 import { TimelineEvent, TimePeriod, YearRange } from "@/types/timeline";
 
 interface TimelineProps {
@@ -26,7 +25,6 @@ const CalendarIcon = () => (
 );
 
 export default function Timeline({ timelineData }: TimelineProps) {
-    // Move state management into the component
     const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
     const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -37,6 +35,15 @@ export default function Timeline({ timelineData }: TimelineProps) {
     };
 
     const closeModal = () => setIsModalOpen(false);
+
+    // Function to render description paragraphs
+    const renderDescription = (description: string) => {
+        return description.split('\n').map((paragraph, index) => (
+            <p key={index} className="text-gray-600 dark:text-gray-300">
+                {paragraph}
+            </p>
+        ));
+    };
 
     return (
         <div className="w-full">
@@ -73,12 +80,11 @@ export default function Timeline({ timelineData }: TimelineProps) {
                 <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
                     <div className="w-full text-center">
                         <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
-        border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
+                            border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
                             <MoreHorizontal className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"/>
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more
-                            details</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more details</p>
                     </div>
 
                     <div className="mt-2 space-y-3">
@@ -89,18 +95,17 @@ export default function Timeline({ timelineData }: TimelineProps) {
                                     key={index}
                                     onClick={() => selectEvent(event)}
                                     className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-all
-                    group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600"
+                                    group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600"
                                 >
                                     <h3 className="text-lg font-medium text-center flex-1">{event.title}</h3>
-                                    <ChevronRight
-                                        className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
+                                    <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
                                 </div>
                             ))}
                     </div>
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Modal with newline handling */}
             {isModalOpen && selectedEvent && (
                 <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
@@ -112,12 +117,14 @@ export default function Timeline({ timelineData }: TimelineProps) {
                             <X className="h-4 w-4"/>
                         </button>
                         <h3 className="text-xl font-semibold mb-4">{selectedEvent.title}</h3>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">{selectedEvent.description}</p>
+                        <div className="space-y-2 mb-4">
+                            {renderDescription(selectedEvent.description)}
+                        </div>
                         <div className="flex flex-wrap gap-2">
                             {selectedEvent.skills.map((skill, index) => (
                                 <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
-                  {skill}
-                </span>
+                                    {skill}
+                                </span>
                             ))}
                         </div>
                     </div>
