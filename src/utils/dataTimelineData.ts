@@ -11,7 +11,7 @@ export const dataTimelineData: TimePeriod[] = [
     events: [
       {
         title: "Loading…",
-        description: "- Come on, the year has just begun!\n- Still, if you need to know, I have launched my website prosamik.com, which is the only website on the internet which uses GitHub for blogging.",
+        description: "- Come on, the year has just begun!\n- Well, I have built my website prosamik.com, which is the only website on the internet that uses GitHub for blogging in 20 days.",
         skills: ["#WebDevelopment", "#TypeScript", "#NextJs", "#Golang"]
       }
     ]
