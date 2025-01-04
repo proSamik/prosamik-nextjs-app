@@ -11,15 +11,21 @@ interface NavLinkProps {
     icon: ReactNode;
     label: string;
     isMenuOpen?: boolean;
+    onNavigate?: () => void;
 }
 
 const Navigation = () => {
     const router = useRouter();
+    const [isMounted, setIsMounted] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
+
+        // Set mounted state
+        setIsMounted(true);
+
         const handleResize = () => {
             setIsMobile(window.innerWidth < 1090);
             setIsSmallScreen(window.innerWidth < 630);
@@ -28,8 +34,18 @@ const Navigation = () => {
         handleResize();
         window.addEventListener('resize', handleResize);
 
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        // Close menu on route change
+        const handleRouteChange = () => {
+            setIsMenuOpen(false);
+        };
+
+        router.events.on('routeChangeComplete', handleRouteChange);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            router.events.off('routeChangeComplete', handleRouteChange);
+        };
+    }, [router.events]);
 
     const isActivePath = (path: string): boolean => router.pathname === path;
 
@@ -64,6 +80,10 @@ const Navigation = () => {
             </Link>
         );
     };
+
+    if (!isMounted) {
+        return null;
+    }
 
     return (
         <nav
