@@ -83,18 +83,39 @@ export const dataTimelineData: TimePeriod[] = [
   {
     yearRange: {
       start: "2022",
-      end: "2023"
+      end: "2023",
+      description: "3rd year of my College"
     },
     events: [
       {
-        title: "GDSC Lead",
-        description: "Led Google Developer Student Clubs chapter, organized tech events and workshops focused on Google technologies.",
-        skills: ["#GoogleCloud", "#Android", "#Leadership"]
+        title: "GDSC Lead ’22",
+        description: "- I was selected as the Lead of Google Developer Students Club of Army Institute of Technology, Pune.\n- I felt great because I wanted to become one from my first year, and the seniors who have been the campus Lead before, I really admire them till date. The legacy they left to continue was amazing.\n- As a GDSC Lead, you are the PoC for your campus, and there were around 500+ GDSC campuses registered in India at that time, so it was a precious position at that time and gives you a lot of networking ability and open doors for opportunities if you can grab it.\n- When I became Lead, I made friends out of my college and someone who was not from that region, made some regional friends over there and called ourselves the Leads of GDSC Pune.\n- As a Lead, you had a few goals in a year to do. Basically, Google has its own programs to promote such as Android Study Jams, Cloud Study Jams or Arcade, and other programs for Flutter, Angular, and other related Google technologies. \n- We as a Lead were tasked to bring awareness about the program and had to reach certain milestones to be recognized. I still wonder why we didn't promote Golang for Backend technology\n- I myself conducted many study sessions on Android, and there were other domain heads who taught other Google technologies.\n- The programs were focused on one conclusion, and that was Google Solution Challenge where 17 Sustainable Development Goals were the theme for the same.\n- Our college students never made it to the top 50 teams, but I as a Lead pushed a lot to promote each and every program for their self-growth, and due to that, I lost track of my own development time, but it was a great opportunity as we focused on college problems and shortlisted a few pain points and asked students to build solutions on top of it to solve the issue, but due to time constraint, that was never fulfilled successfully.\n- In the end, we were rewarded with a Graduation ceremony at Bangalore, and it was grand, and more than 400 people (estimated) attended that, and the journey as a Lead came to an end.",
+        skills: ["#Android", "#Flutter", "#Angular", "#GoogleCloud", "#GoogleTechnologies"],
+        soft_skills: ["#Leadership", "#Networking", "#Teamwork", "#TimeManagement", "#SelfMotivation"]
       },
       {
-        title: "E-Cell Secretary",
-        description: "Managed entrepreneurship initiatives, startup mentoring sessions, and innovation challenges.",
-        skills: ["#Entrepreneurship", "#EventManagement", "#Strategy"]
+        title: "I&E Cell Secretary ’22",
+        description: "- Disclaimer: I really didn’t want to lead this responsibility as I became GDSC Lead by that time, but due to personal commitment the other team members had and due to the legacy we built from the first year itself, I didn’t want it to go into the wrong hands, so I also took the flag of Innovation and Entrepreneurship Cell of AIT and led it with complete responsibility.\n- The problem with GDSC was that it was very uncertain and didn’t know their next step, but in E Cell we had our yearly budget of more than 5 Lakhs at that time and I knew what I could do in this whole year with this kind of budget and what we could plan in the time period.\n- Well, as a Secretary I had a lot of responsibility because our E Cell had shown a lot of growth in the past few years compared to other clubs because we were running it like a startup, so did our responsibilities and for that year we focused on going to inter-college events and reaching out so that the students in our college had the right exposure and opportunities.\n- The favorite part if someone asked me in E Cell then I would say the team we had, it was phenomenal they worked day and night to achieve the tasks which I as Secretary envisioned and they did all of that because they respected me and couldn’t say no to me.\n- We conducted our first physical Startup Saga, since it was the first time and we implemented new ideas altogether for the events and it was uncharted territory for everyone and I would say we did pretty good as a team and it was 90% success and 10% failure. 10% because we changed the judging criteria before asking the judges whether they were comfortable or not, for speaker sessions we had some amazing speakers like unicorn founders, Shark Tank Pitchers, financial experts, career coaches and we couldn’t get more than 200 people in any of the sessions.\n- Apart from that we did pretty good and I really made some good bonding with my juniors over that time.\n- I, as a Secretary, did many other great and worst things, but if I start writing that also over here, then it would make this a long chapter instead of an article. But over the three years, it taught me many things and opened a lot of doors for me.",
+        skills: ["WebDevelopment", "Design", "Meetings", "ProjectManagement", "Marketing", "StrategyBuilding"], // No tech-related skills for this event
+        soft_skills: ["#FinancialPlanning","#Leadership", "#TeamManagement", "#EventPlanning", "#Networking", "#Responsibility"]
+      },
+      {
+        title: "OSS Sponsorship Head ’22",
+        description: "- This was offered to me because I was the Joint Sponsorship Head of OSS during the 2021-22 academic year.\n- The sponsorship head had to work only during the Innerve with 25 other members to organize the largest student-driven hackathon.\n- We conducted Innerve 7, and this time we got a lot of sponsorship amount and more than the previous year, and it was more than 3 or 4 Lakhs in monetary and more than 10+ Lakhs in in-kind sponsorship, which includes services like domain name registration, cloud hosting, and other resources which professionals have to pay a hefty amount for, but it was free for the students.\n- Due to my connections in E Cell and exposure to the Alumni network, we got a lot of trust for the sponsorship but couldn’t deliver a few mentioned deliverables, not because I did something wrong, but in the brochure, we had committed to a lot, and in the end, due to the rush of time, we couldn’t deliver the same. It was fixed in Innerve 8 by the juniors by providing the right deliverables for the right amount.",
+        skills: ["#SponsorshipManagement", "#LeadGeneration", "#Networking"],
+        soft_skills: ["#Leadership", "#Teamwork", "#Negotiation", "#TimeManagement"]
+      },
+      {
+        title: "Internship at Skrolkart",
+        description: "- I worked as an app developer for one month in an Alumni’s company.\n- The app idea was amazing; we could order foods not by seeing tags or cards but by seeing the reels, and they targeted local food items over that platform.\n- Since this was a kind of side hustle for the developer, I didn’t get much to do on the app as there were fewer meetings.",
+        skills: ["#AppDevelopment", "#MobileDevelopment", "#Swagger"],
+        soft_skills: ["#Adaptability", "#SelfLearning", "#TimeManagement"]
+      },
+      {
+        title: "Conducted Startup Saga and Innerve in a gap of 2 weeks",
+        description: "- As the academic year was ending, we had to wrap our events, including Solution Challenge submissions, and due to that, they were running in parallel, and as a Secretary, Sponsorship Head, and Lead, I was very overworked, and there were a few days where I had to sacrifice my sleep for straight 48 hours or 36 hours (it was common).\n- And that’s how my 3rd year of college looked.",
+        skills: ["Sprint", "AllNighters"], // No tech-related skills for this event
+        soft_skills: ["#TimeManagement", "#Multitasking", "#Resilience", "#Leadership"]
       }
     ]
   },
@@ -119,7 +140,37 @@ export const dataTimelineData: TimePeriod[] = [
     ]
   },
 
-    // 2017-20
+    // 2020-21
+  {
+    yearRange: {
+      start: "2020",
+      end: "2021"
+    },
+    events: [
+      {
+        title: "Web Development Intern",
+        description: "Developed responsive websites and web applications using modern frameworks and tools.",
+        skills: ["#React", "#JavaScript", "#CSS", "#WebDev"]
+      },
+      {
+        title: "Hackathon Winner",
+        description: "Won first place in college hackathon for developing an innovative solution for online education.",
+        skills: ["#Innovation", "#ProblemSolving", "#TeamWork"]
+      },
+      {
+        title: "Programming Club Lead",
+        description: "Founded and led the college programming club,\norganizing coding competitions and practice sessions.",
+        skills: ["#DSA", "#Mentoring", "#PeerLearning"]
+      },
+      {
+        title: "First Open Source Contribution",
+        description: "Started contributing to open source projects and learning collaborative development practices.",
+        skills: ["#OpenSource", "#Git", "#Collaboration"]
+      }
+    ]
+  },
+
+  // 2017-20
   {
     yearRange: {
       start: "2017",
