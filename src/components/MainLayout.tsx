@@ -38,7 +38,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
                 <main className={layoutClasses.main}>
                     {isMobile && (
-                        <div className="flex justify-between mb-6">
+                        <div className="flex justify-between mb-6 mt-5">
                             <CustomBackButton />
                             <CustomNextButton />
                         </div>
