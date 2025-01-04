@@ -155,10 +155,14 @@ export default function Timeline({ timelineData }: TimelineProps) {
                 {/* Events list with hoverable description */}
                 <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
                     <div className="w-full text-center relative">
-                        <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
-                            border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
+
+                        <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-default transition-all
+                            border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group ">
+                            <MoreHorizontal
+                                className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-default"
+                            />
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
-                            <div className="">
+                            <div className="relative">
                                 <MoreHorizontal
                                     className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-default"
                                     onMouseEnter={() => setShowYearDescription(true)}
@@ -166,13 +170,16 @@ export default function Timeline({ timelineData }: TimelineProps) {
                                 />
                                 {/* Tooltip for year range description */}
                                 {showYearDescription && currentPeriod?.yearRange.description && (
-                                    <div className="absolute left-1/2 transform -translate-x-1/2 mt-4 w-full h-48 dark:text-white text-gray-700 text-sm">
-                                        {currentPeriod.yearRange.description}
+                                    <div
+                                        className="absolute left-1/2 transform -translate-x-1/2 mt-3 w-48 h-48">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1"></p>
                                     </div>
                                 )}
                             </div>
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on them to see more details</p>
+                        {currentPeriod?.yearRange.description && (
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{currentPeriod.yearRange.description}</p>
+                        )}
                     </div>
 
                     <div className="mt-2 space-y-3">
