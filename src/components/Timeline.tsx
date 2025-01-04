@@ -24,6 +24,38 @@ const CalendarIcon = () => (
     </svg>
 );
 
+// Helper component for skill tags display
+const SkillTags = ({ skills, maxVisible, onClick }: {
+    skills: string[],
+    maxVisible: number,
+    onClick?: () => void
+}) => {
+    // Only show up to maxVisible tags
+    const visibleSkills = skills.slice(0, maxVisible);
+    const remainingCount = skills.length - maxVisible;
+
+    return (
+        <div className="flex flex-wrap gap-1 mt-2">
+            {visibleSkills.map((skill, index) => (
+                <span
+                    key={index}
+                    className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-md"
+                >
+                    {skill}
+                </span>
+            ))}
+            {remainingCount > 0 && (
+                <button
+                    onClick={onClick}
+                    className="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-md hover:bg-gray-200"
+                >
+                    +{remainingCount} more
+                </button>
+            )}
+        </div>
+    );
+};
+
 export default function Timeline({ timelineData }: TimelineProps) {
     const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
     const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
@@ -52,6 +84,36 @@ export default function Timeline({ timelineData }: TimelineProps) {
                 </p>
             );
         });
+    };
+
+    // Function to render skills in categories
+    const renderSkillCategories = (event: TimelineEvent) => {
+        return (
+            <div className="space-y-4 mt-6">
+                <div>
+                    <h4 className="text-lg font-semibold mb-2">Technical Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {event.skills.map((skill, index) => (
+                            <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                                {skill}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+                {event.soft_skills && event.soft_skills.length > 0 && (
+                    <div>
+                        <h4 className="text-lg font-semibold mb-2">Soft Skills</h4>
+                        <div className="flex flex-wrap gap-2">
+                            {event.soft_skills.map((skill, index) => (
+                                <span key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-md">
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
     };
 
     // Get current period description
@@ -96,15 +158,15 @@ export default function Timeline({ timelineData }: TimelineProps) {
                         <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-pointer transition-all
                             border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group">
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
-                            <div className="relative">
+                            <div className="">
                                 <MoreHorizontal
-                                    className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-help"
+                                    className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-default"
                                     onMouseEnter={() => setShowYearDescription(true)}
                                     onMouseLeave={() => setShowYearDescription(false)}
                                 />
                                 {/* Tooltip for year range description */}
                                 {showYearDescription && currentPeriod?.yearRange.description && (
-                                    <div className="absolute left-1/2 transform -translate-x-1/2 top-6 w-48 p-2 dark:text-white text-gray-700 text-sm">
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 mt-4 w-full h-48 dark:text-white text-gray-700 text-sm">
                                         {currentPeriod.yearRange.description}
                                     </div>
                                 )}
@@ -121,10 +183,18 @@ export default function Timeline({ timelineData }: TimelineProps) {
                                     key={index}
                                     onClick={() => selectEvent(event)}
                                     className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-all
-                                    group flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600"
+                                group flex flex-col hover:bg-gray-100 dark:hover:bg-gray-600"
                                 >
-                                    <h3 className="text-lg font-medium text-center flex-1">{event.title}</h3>
-                                    <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-lg font-medium">{event.title}</h3>
+                                        <ChevronRight
+                                            className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
+                                    </div>
+                                    <SkillTags
+                                        skills={event.skills}
+                                        maxVisible={3}
+                                        onClick={() => selectEvent(event)}
+                                    />
                                 </div>
                             ))}
                     </div>
@@ -134,7 +204,8 @@ export default function Timeline({ timelineData }: TimelineProps) {
             {/* Modal with newline handling */}
             {isModalOpen && selectedEvent && (
                 <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-[90%] max-w-[500px] overflow-hidden relative">
+                    <div
+                        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-[90%] max-w-[500px] overflow-hidden relative">
                         <div className="max-h-[80vh] overflow-y-auto">
                             <div className="p-6">
                                 <button
@@ -149,11 +220,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
                                     {renderDescription(selectedEvent.description)}
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {selectedEvent.skills.map((skill, index) => (
-                                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
-                                                {skill}
-                                            </span>
-                                    ))}
+                                {renderSkillCategories(selectedEvent)}
                                 </div>
                             </div>
                         </div>
