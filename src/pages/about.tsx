@@ -13,6 +13,8 @@ export default function About() {
     const timelineData  = dataTimelineData;
 
     // Generate JSON-LD data from timelineData
+    // const SOFT_SKILL_KEYWORDS = ["Resilience", "Adaptability", "TimeManagement", "Communication"];
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Person",
@@ -38,24 +40,30 @@ export default function About() {
                 "name": "Google Developer Student Clubs",
                 "url": "https://developers.google.com/community/gdsc"
             },
-            {
-                "@type": "Organization",
-                "name": "WordPress Community",
-                "url": "https://wordpress.org"
-            }
         ],
-        "knowsAbout": timelineData.flatMap(period =>
-            period.events.flatMap(event =>
-                event.skills.map(skill => skill.replace('#', ''))
-            )
-        ),
-        "hasOccupation": timelineData.map(period => ({
-            "@type": "Occupation",
-            "name": period.events[0].title.split('@')[0].trim(),
-            "startDate": period.yearRange.start,
-            "endDate": period.yearRange.end,
-            "description": period.events[0].description
-        }))
+        // "skills": timelineData.flatMap(period =>
+        //     period.events.flatMap(event => event.skills.map(skill => skill.replace('#', '')))
+        // ),
+        // "softSkills": timelineData.flatMap(period =>
+        //     period.events.flatMap(event =>
+        //         event.soft_skills // Use soft_skills if provided
+        //             ? event.soft_skills.map(skill => skill.replace('#', ''))
+        //             : event.skills // Fallback to automatic extraction
+        //                 .map(skill => skill.replace('#', ''))
+        //                 .filter(skill => SOFT_SKILL_KEYWORDS.includes(skill))
+        //     )
+        // ),
+        "hasExperience": timelineData.flatMap(period =>
+            period.events.map(event => ({
+                "@type": "Event",
+                "name": event.title,
+                "startDate": period.yearRange.start,
+                "endDate": period.yearRange.end,
+                "description": event.description,
+                "skills": event.skills.map(skill => skill.replace('#', '')),
+                "soft_skills": event.soft_skills?.map(soft_skill => soft_skill.replace('#', ''))
+            }))
+        )
     };
 
     return (
