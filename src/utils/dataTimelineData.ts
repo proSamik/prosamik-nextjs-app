@@ -183,28 +183,45 @@ export const dataTimelineData: TimePeriod[] = [
   {
     yearRange: {
       start: "2020",
-      end: "2021"
+      end: "2021",
+      description: "First Year of College"
     },
     events: [
       {
-        title: "Web Development Intern",
-        description: "Developed responsive websites and web applications using modern frameworks and tools.",
-        skills: ["#React", "#JavaScript", "#CSS", "#WebDev"]
+        title: "Admission in AIT (15/10/2020)",
+        description: "- In the merit list, I got the first mechanical seat, but I didn’t want to pursue it. Not because of job scarcity, but because I wasn’t curious enough to know about automotive working enough.\n- I wanted something related to electronics and computers because I had an interest and was curious enough to know about their working.\n- And on the admission day, due to top students leaving AIT seats, I did get admission in Electronics and Telecommunication (E&TC) branch.",
+        skills: ["#DecisionMaking"], // No tech-related skills for this event
+        soft_skills: [ "#Curiosity", "#Adaptability"]
       },
       {
-        title: "Hackathon Winner",
-        description: "Won first place in college hackathon for developing an innovative solution for online education.",
-        skills: ["#Innovation", "#ProblemSolving", "#TeamWork"]
+        title: "Got Selected in Technical Clubs",
+        description: "- Again seeing it from now, it wasn’t a great achievement, but I really felt it when the first shortlisting arrived.\n- I aimed for tech-related clubs as I wanted to expand my knowledge over there and I got shortlisted in the Robotics club and the Technical Board of the college (not because I was good, but they required mass people and I was one of them).",
+        skills: ["#WebDevelopment", "StrategyBuilding"], // No tech-related skills for this event
+        soft_skills: ["#Networking", "#Curiosity", "#Teamwork"]
       },
       {
-        title: "Programming Club Lead",
-        description: "Founded and led the college programming club,\norganizing coding competitions and practice sessions.",
-        skills: ["#DSA", "#Mentoring", "#PeerLearning"]
+        title: "First Internship in the First Year of College",
+        description: "- Well, we had our alumnus, Pawan Yadav sir, who was running the Entrepreneurship Development Program and offered an internship in that domain, and it was market research.\n- Market research on “Automation Anywhere”. Since this was my first-ever internship or professional work, I was damn serious about this, and this is what we had to do in a team, and I was the main point of contact and had to communicate the requirements with the team.\n- It not only gave me my first Rs. 1700 internship amount, but it also gave me good networking opportunities with my peers, teachers, and seniors, not at that time but due to the butterfly effect it created.",
+        skills: ["#MarketResearch", "#Teamwork", "#Communication"], // No tech-related skills for this event
+        soft_skills: [ "#Responsibility", "#Professionalism"]
       },
       {
-        title: "First Open Source Contribution",
-        description: "Started contributing to open source projects and learning collaborative development practices.",
-        skills: ["#OpenSource", "#Git", "#Collaboration"]
+        title: "Got Selected in E Cell (est. Jan 2021)",
+        description: "- Well, it was like all other clubs, but it deserves special mention because from that batch onwards, they started taking first years.\n- Also, it changed my course of life from that day onwards.\n- The reason I wanted to join this Cell was because I wanted to become an entrepreneur and thought this opportunity would unlock the doors for me at that time, so I thought let’s join and learn from there.",
+        skills: ["#Presentation", "#Operations"], // No tech-related skills for this event
+        soft_skills: ["#Entrepreneurship", "#Networking", "#Curiosity"]
+      },
+      {
+        title: "Made My First App (Dice Roller)",
+        description: "- In our college, Android Study Jams were going on, and from childhood, I had a dream of building an app (a little backstory- when I first used the first QWERTY keyboard phone, I was very curious about how these apps are built, especially the Opera web browser), so I signed up for those study sessions.\n- And I aligned my interest in app development for the rest of my college days, so I will say that this also changed the course of my life ahead.",
+        skills: ["#Android", "#AppDevelopment"],
+        soft_skills: ["#Curiosity", "#SelfLearning", "#Persistence"]
+      },
+      {
+        title: "Top Performer in DSA (Aug 2021)",
+        description: "- There was a lot of noise that DSA is very important for placements, and if you don’t do it, then you have to face consequences, and that made me curious about what it is actually?\n- So, I studied DSA in Coding Ninjas and became a top performer in 2 months only after giving day and night learning it, thinking that once I achieved it, I would have a badge of honor, so I became a top performer in it by learning DSA in Python (because I knew someday AI would boom, and I would be required to know the basics).\n- PS: I had a misconception that it is a badge of honor or some milestone, but if you want to be in the tech industry and clear the interview in an orthodox way, then you have to study DSA till your deathbed.",
+        skills: ["#DSA", "#Python","OOPs"],
+        soft_skills: ["#SelfDiscipline", "#TimeManagement", "#Persistence"]
       }
     ]
   },
