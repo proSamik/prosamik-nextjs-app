@@ -6,8 +6,27 @@ export const processCodeBlocks = (html: string) => {
     codeBlocks.forEach((block) => {
         const codeText = block.textContent?.trim() || '';
 
+        // Check if it's a Mermaid block by looking for the language-mermaid class
+        const isMermaid = Array.from(block.classList).includes('language-mermaid');
+
+        if (isMermaid) {
+            // Create an outer wrapper for centering
+            const centerWrapper = document.createElement('div');
+            centerWrapper.className = 'flex justify-center w-full';  // Added for centering
+
+            // Create a wrapper for the Mermaid diagram
+            const mermaidWrapper = document.createElement('div');
+            mermaidWrapper.className = 'mermaid my-4';
+            mermaidWrapper.textContent = codeText;
+
+            // Add mermaid wrapper to the center wrapper
+            centerWrapper.appendChild(mermaidWrapper);
+
+            // Replace the original code block with the centered Mermaid wrapper
+            block.parentElement?.parentNode?.replaceChild(centerWrapper, block.parentElement);
+        }
         // Handle SVG blocks separately
-        if (codeText.startsWith('<svg')) {
+        else if (codeText.startsWith('<svg')) {
             // Create a wrapper to render the SVG
             const svgWrapper = document.createElement('div');
             svgWrapper.className = 'my-4 flex justify-center';
