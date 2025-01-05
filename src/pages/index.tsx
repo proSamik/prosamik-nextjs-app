@@ -41,7 +41,7 @@ export default function Home() {
         <>
             <SEO
                 title="proSamik"
-                description="Monitor your latest builds and access build logs in real-time. Streamline your DevOps workflow with our comprehensive dashboard."
+                description={siteMetadata.defaultDescription}
                 ogImage={siteMetadata.defaultImage}
                 openGraph={{
                     type: 'website',
