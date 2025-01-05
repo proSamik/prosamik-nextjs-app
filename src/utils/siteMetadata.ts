@@ -27,5 +27,5 @@ export const siteMetadata = {
     ogImageHeight: 600, // Added for Open Graph
     ogImageAlt: 'proSamik - Building Products that ship fast', // Added for Open Graph
     ogImageType: 'image/png', // Added for Open Graph
-    ogImageSecureUrl: 'https://prosamik.com/image/og-image.png', // Added for Open Graph
+    ogImageSecureUrl: 'https://prosamik.com/image/og-Image.png', // Added for Open Graph
 };
