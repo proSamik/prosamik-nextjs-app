@@ -8,6 +8,7 @@ import { processListItems } from "@/utils/contentProcessors/listItemProcessor";
 import { processCenteredMedia } from "@/utils/contentProcessors/mediaCenterProcessor";
 import { processTableContent } from "@/utils/contentProcessors/tableProcessor";
 import { useCodeBlockSyntaxHighlighter } from "@/hooks/useCodeBlockSyntaxHighlighter";
+import { useMermaidProcessor } from '@/hooks/useMermaidProcessor';
 
 interface ContentData {
     content: string; // Adjust this type definition based on actual data structure
@@ -20,6 +21,8 @@ export default function useProcessedContent(data: ContentData, content?: string)
 
     // Syntax highlighter for code blocks
     useCodeBlockSyntaxHighlighter(contentRef, [processedContent, String(isMobile)]);
+
+    useMermaidProcessor(contentRef, processedContent);
 
     const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
