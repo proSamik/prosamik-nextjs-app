@@ -1,151 +1,99 @@
-# GitHub README Blog Renderer
+# ProSamik Next.js Application
 
-A Next.js application that renders GitHub README content in a Medium-style blog format. This project can fetch and display README files from GitHub repositories, handling various content types including text, images, and embedded videos.
+It is currently markdown renderer turned portfolio website. Initially, the goal was to create a blogs website which uses markdown then it converted into portfolio website to test its feasibility, and later on it will be implemented for general purpose blog website with a single source of truth that is GitHub Markdown file.
 
-## Features
-
-- Renders markdown content in a clean, blog-style layout
-- Supports various content types:
-  - Headings
-  - Paragraphs
-  - Images (including SVGs)
-  - YouTube video embeds
-- Optimized image loading using Next.js Image component
-- Responsive design
-- TypeScript support
-- Tailwind CSS styling
+To understand the project in-depth [click here](https://prosamik.com/projects/prosamik-nextjs-app)
 
 ## Prerequisites
 
-- Node.js 16.8 or later
-- npm or yarn
+Before you begin, ensure you have installed:
+- Node.js (LTS version recommended)
+- npm (comes with Node.js)
+- Git
 
 ## Installation
 
 1. Clone the repository:
-```bash
-git clone [repository-url]
-cd [project-name]
-```
+   ```bash
+   git clone https://github.com/proSamik/prosamik-nextjs-app.git
+   cd prosamik-nextjs-app
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
+   ```bash
+   npm install
+   ```
 
-3. Start the development server:
+3. Create a `.env` file in the root directory:
+   ```env
+   PORT=10000 # Or your preferred backend port
+   NEXT_PUBLIC_BASE_URL=http://your-backend-url:10000
+   ```
+
+## Development
+
+To run the development server with Turbopack:
+
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-## Project Structure
+The application will be available at `http://localhost:3000` (or your configured port).
 
-```
-src/
-├── components/
-│   └── Article.tsx
-├── pages/
-│   ├── _app.tsx
-│   └── index.tsx
-├── styles/
-│   └── globals.css
-└── types/
-    └── article.ts
-```
+## Building for Production
 
-## Configuration
+1. Generate sitemap and build the application:
+   ```bash
+   npm run build
+   ```
 
-### Next.js Image Configuration
+2. Start the production server:
+   ```bash
+   npm run start
+   ```
 
-The project is configured to handle GitHub images. Check `next.config.ts`:
+## Available Scripts
 
-```typescript
-const nextConfig: NextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'github.com',
-                pathname: '/**',
-            }
-        ],
-        dangerouslyAllowSVG: true,
-        contentDispositionType: 'attachment',
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    },
-};
-```
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Generate sitemap and build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint for code quality
+- `npm run generate-sitemap` - Generate sitemap manually
 
-### Tailwind Configuration
+## Dependencies
 
-Tailwind is configured with typography and aspect-ratio plugins. Check `tailwind.config.ts`:
-
-```typescript
-export default {
-    content: [
-        "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
-    theme: {
-        extend: {
-            colors: {
-                background: "var(--background)",
-                foreground: "var(--foreground)",
-            },
-        },
-    },
-    plugins: [
-        require('@tailwindcss/typography'),
-        require('@tailwindcss/aspect-ratio'),
-    ],
-} satisfies Config;
-```
-
-## Data Structure
-
-The application expects README content in the following format:
-
-```typescript
-interface ArticleData {
-  metadata: {
-    title: string;
-    repo: string;
-    lastUpdated: string;
-  };
-  content: {
-    sections: Array<{
-      type: string;
-      level?: number;
-      content?: string;
-      alt?: string;
-      url?: string;
-      dimensions?: {
-        width: number | null;
-        height: number | null;
-      } | null;
-      platform?: string;
-      embedUrl?: string;
-    }>;
-  };
-}
-```
+### Core Dependencies
+- Next.js 15.1.2
+- React 19.0.0
+- TypeScript
+- Tailwind CSS 3.4.1
 
 ## Contributing
 
 1. Fork the repository
-2. Create a new branch
-3. Make your changes
-4. Submit a pull request
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Add me as a reviewer 
+6. Submit a pull request
 
-## Future Improvements
 
-- Add database integration
-- Implement admin dashboard for managing repos
-- Add caching mechanism
-- Implement error boundaries
-- Add loading states
-- Add image zoom functionality
+## Troubleshooting
+
+Common issues and solutions:
+
+1. Build errors
+  - Clear `.next` directory: `rm -rf .next`
+  - Delete `node_modules`: `rm -rf node_modules`
+  - Reinstall dependencies: `npm install`
+
+2. Environment variables not working
+  - Ensure `.env` file is in the root directory
+  - Verify all environment variables start with `NEXT_PUBLIC_` if used in client-side code
+  - Restart the development server
+
+3. Turbopack issues
+  - Try running without Turbopack: Remove `--turbopack` from the dev script
+  - Clear cache: `rm -rf .next`
+
 
