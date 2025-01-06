@@ -257,3 +257,80 @@ nav a {
     font-size: 16px;
     display: block;
 }
+
+/* Add to your global.css */
+
+.mermaid-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.7) transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mermaid-wrapper::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.mermaid-wrapper::-webkit-scrollbar-track {
+    background: rgba(229, 231, 235, 0.2);
+    border-radius: 4px;
+}
+
+.mermaid-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.7);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.mermaid-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.9);
+}
+
+/* Dark mode scrollbar */
+.dark .mermaid-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(209, 213, 219, 0.7);
+}
+
+.dark .mermaid-wrapper::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.2);
+}
+
+/* Force scrollbar visibility on mobile */
+@media (max-width: 768px) {
+    .mermaid-wrapper {
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .mermaid-wrapper::-webkit-scrollbar {
+        height: 6px !important;
+    }
+}
+
+/* Zoom controls specific styling */
+.zoom-controls {
+    position: absolute;
+    top: 10px !important;
+    right: 10px !important;
+    background-color: white !important;
+    border: 1px solid #ccc !important;
+    padding: 5px !important;
+    display: flex !important;
+    gap: 5px !important;
+}
+
+.zoom-controls button {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    color: #495057 !important;
+    padding: 4px 8px !important;
+    border-radius: 3px !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.zoom-controls button:hover {
+    background-color: #e9ecef !important;
+}
