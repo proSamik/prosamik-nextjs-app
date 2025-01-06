@@ -126,6 +126,7 @@ flowchart TD
     CDP --> TV
 
 ```
+---
 
 ### Core Components Structure
 
@@ -229,7 +230,7 @@ pages/
 └── [slug].tsx    # Individual project
 ```
 
-
+---
 ## Content Flow
 
 1. **Initial Load**
@@ -285,24 +286,4 @@ styles/
 └── globals.css   # Global CSS and Tailwind utilities
 ```
 
-## Development Guidelines
-
-### Component Creation
-1. Place in appropriate directory based on function
-2. Include TypeScript types
-3. Implement error boundaries
-4. Add loading states
-
-### Hook Development
-1. Follow single responsibility principle
-2. Implement cleanup functions
-3. Add error handling
-4. Document usage examples
-
-### Content Processing
-1. Use the appropriate processor for content type
-2. Implement error handling
-3. Consider caching strategies
-4. Test with various content types
-
-
+---
