@@ -42,6 +42,7 @@
 |   |-- useCodeBlockSyntaxHighlighter.ts
 |   |-- useContentList.ts
 |   |-- useMarkdownData.ts
+|   |-- useMermaidProcessor.ts
 |   |-- usePageAnalytics.ts
 |   |-- useProcessedContent.ts
 |   |-- useRepoHandler.ts
@@ -83,4 +84,4 @@
     |-- siteMetadata.ts
     `-- typeGuards.ts
 
-14 directories, 70 files
+14 directories, 71 files
