@@ -1,4 +1,3 @@
-// pages/about.tsx
 import React from 'react';
 import ProfileHeader from "@/components/ProfileHeader";
 import PersonalStory from '@/components/PersonalStory';
@@ -10,60 +9,61 @@ import { siteMetadata } from "@/utils/siteMetadata";
 import {dataTimelineData} from "@/utils/dataTimelineData";
 
 export default function About() {
-    const timelineData  = dataTimelineData;
+    const timelineData = dataTimelineData;
 
-    // Generate JSON-LD data from timelineData
-    // const SOFT_SKILL_KEYWORDS = ["Resilience", "Adaptability", "TimeManagement", "Communication"];
-
+    // Using PersonalProfile instead of an Event type to better represent professional history
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Samik",
-        "jobTitle": "DevOps Engineer",
-        "alumniOf": [
-            {
-                "@type": "Organization",
-                "name": "Army Institute of Technology, Pune",
-                "startDate": "2020",
-                "endDate": "2024"
-            },
-            {
-                "@type": "Organization",
-                "name": "rtCamp",
-                "url": "https://rtcamp.com",
-                "startDate": "2023"
-            }
-        ],
-        "memberOf": [
-            {
-                "@type": "Organization",
-                "name": "Google Developer Student Clubs",
-                "url": "https://developers.google.com/community/gdsc"
-            },
-        ],
-        // "skills": timelineData.flatMap(period =>
-        //     period.events.flatMap(event => event.skills.map(skill => skill.replace('#', '')))
-        // ),
-        // "softSkills": timelineData.flatMap(period =>
-        //     period.events.flatMap(event =>
-        //         event.soft_skills // Use soft_skills if provided
-        //             ? event.soft_skills.map(skill => skill.replace('#', ''))
-        //             : event.skills // Fallback to automatic extraction
-        //                 .map(skill => skill.replace('#', ''))
-        //                 .filter(skill => SOFT_SKILL_KEYWORDS.includes(skill))
-        //     )
-        // ),
-        "hasExperience": timelineData.flatMap(period =>
-            period.events.map(event => ({
-                "@type": "Event",
-                "name": event.title,
-                "startDate": period.yearRange.start,
-                "endDate": period.yearRange.end,
-                "description": event.description,
-                "skills": event.skills.map(skill => skill.replace('#', '')),
-                "soft_skills": event.soft_skills?.map(soft_skill => soft_skill.replace('#', ''))
-            }))
-        )
+        "@type": "ProfilePage",
+        "dateModified": new Date().toISOString(),
+        "mainEntity": {
+            "@type": "Person",
+            "name": "Samik",
+            "givenName": "Samik",
+            "familyName": "Choudhury",
+            "jobTitle": "Product Developer",
+            "url": "https://prosamik.com",
+            "image": "https://prosamik.com/image/og-Image.png",
+            "description": "Building products that ship faster and saves your time and efforts. Engineer by degree, innovator from heart",
+            "alumniOf": [
+                {
+                    "@type": "CollegeOrUniversity",
+                    "name": "Army Institute of Technology, Pune",
+                    "url": "https://aitpune.edu.in",
+                    "startDate": "2020",
+                    "endDate": "2024"
+                }
+            ],
+            "worksFor": [
+                {
+                    "@type": "Organization",
+                    "name": "proSamik",
+                    "url": "https://prosamik.com",
+                    "startDate": "2025"
+                }
+            ],
+            "memberOf": [
+                {
+                    "@type": "Organization",
+                    "name": "Google Developer Student Clubs",
+                    "url": "https://developers.google.com/community/gdsc"
+                }
+            ],
+            "knowsAbout": timelineData.flatMap(period =>
+                period.events.flatMap(event => [
+                    ...event.skills.map(skill => ({
+                        "@type": "DefinedTerm",
+                        "name": skill.replace('#', ''),
+                        "termCode": "TechnicalSkill"
+                    })),
+                    ...(event.soft_skills?.map(skill => ({
+                        "@type": "DefinedTerm",
+                        "name": skill.replace('#', ''),
+                        "termCode": "SoftSkill"
+                    })) || [])
+                ])
+            )
+        }
     };
 
     return (
