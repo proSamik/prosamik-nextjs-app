@@ -4,7 +4,7 @@
 
 /* Base prose styling */
 .github-markdown {
-    @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+    @apply text-gray-800 dark:text-gray-200 leading-relaxed break-words;
 }
 
 /* Dark mode background and text */
@@ -178,7 +178,7 @@ body {
 
 /* Inline code */
 .github-markdown code:not(pre code) {
-    @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 text-sm;
+    @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 text-sm whitespace-normal break-all inline-block max-w-full;
 }
 
 /* Tables */
