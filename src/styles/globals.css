@@ -12,6 +12,35 @@ body {
     @apply bg-white dark:bg-gray-900 text-black dark:text-white;
 }
 
+/* Add these to your existing CSS */
+.prose {
+    @apply max-w-none; /* Removes max-width constraint */
+}
+
+.prose h1 {
+    @apply text-3xl  font-bold; /* ~24px */
+}
+
+.prose h2 {
+    @apply text-xl  font-semibold; /* ~20px */
+}
+
+.prose h3 {
+    @apply text-lg  font-medium; /* ~18px */
+}
+
+.prose h4 {
+    @apply text-base  font-medium; /* ~16px */
+}
+
+.prose h5 {
+    @apply text-sm  font-medium; /* ~14px */
+}
+
+.prose h6 {
+    @apply text-sm  font-normal; /* ~14px */
+}
+
 /* Table of Contents */
 .toc-list {
     @apply my-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700;
