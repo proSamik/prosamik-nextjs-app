@@ -171,7 +171,7 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
     };
 
     return (
-        <div className={`min-w-[24rem] max-w-[32rem] flex-1 m-4`}>
+        <div className={`${isMobile ? 'min-w-[18rem] max-w-[20rem]' : 'min-w-[28rem] max-w-[32rem]'}  flex-1 m-2 `}>
             <a href={link}
                className="block"
                onMouseEnter={handleHover}
@@ -227,7 +227,7 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
                 </div>
 
                 {/* Card Content */}
-                <div className="bg-white dark:bg-slate-800 rounded-b-xl shadow-lg">
+                <div className={`${isMobile ? '' : 'min-h-[18rem]'} bg-white dark:bg-slate-800 rounded-b-xl shadow-lg flex flex-col h-full`}>
                     {/* Title Section */}
                     <div className="p-6 border-b border-slate-200 dark:border-slate-700">
                         <h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">
@@ -236,7 +236,7 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
 
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2 mt-4">
-                            {tagList.slice(0, 6).map((tag) => (
+                            {tagList.slice(0, isMobile ? 6 : 4).map((tag) => (
                                 <span
                                     key={tag}
                                     className={`px-3 py-1 text-sm rounded-lg transition-colors ${
@@ -245,44 +245,46 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
                                             : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
                                 >
-                                    #{tag}
-                                </span>
+            #{tag}
+        </span>
                             ))}
-                            {tagList.length > 6 && (
+                            {tagList.length > (isMobile ? 6 : 4) && (
                                 <span className="px-3 py-1 text-sm rounded-full
-                                               bg-slate-100 dark:bg-slate-700
-                                               text-slate-600 dark:text-slate-300">
-                                    +{tagList.length - 6} more
-                                </span>
+                       bg-slate-100 dark:bg-slate-700
+                       text-slate-600 dark:text-slate-300">
+            +{tagList.length - (isMobile ? 6 : 4)} more
+        </span>
                             )}
                         </div>
                     </div>
 
                     {/* Description and Footer */}
-                    <div className="p-6">
+                    <div className="flex flex-col flex-1 p-6 h-full">
+                        {/* Description */}
                         {description && (
-                            <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
-                                {description}
-                            </p>
+                            <div className="flex-grow">
+                                <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3 text-sm">
+                                    {description.length > 200 ? `${description.slice(0, 200)}...` : description}
+                                </p>
+                            </div>
                         )}
 
-                        {/* Footer */}
-                        <div className="flex justify-between items-center mt-4">
+                        {/* Footer - will now stick to the bottom */}
+                        <div
+                            className={`flex items-center ${views_count > 0 && repoPath ? 'justify-between' : 'justify-end'}`}>
                             {views_count > 0 && (
                                 <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
-                                    <Eye size={18} />
+                                    <Eye size={18}/>
                                     <span>{views_count}</span>
                                 </div>
                             )}
                             {repoPath && (
                                 <button
                                     onClick={handleGitHubClick}
-                                    className="text-slate-600 dark:text-slate-400
-                                             hover:text-slate-800 dark:hover:text-slate-200
-                                             transition-colors duration-300"
+                                    className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-300"
                                     aria-label="View on GitHub"
                                 >
-                                    <FaGithub size={24} />
+                                    <FaGithub size={24}/>
                                 </button>
                             )}
                         </div>
