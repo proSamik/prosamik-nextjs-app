@@ -108,7 +108,7 @@ const ArticleLayout = ({ data, content, layoutType, tags}: EnhancedArticleLayout
             >
 
             <div className={`w-full`}>
-                <div className="flex justify-between items-center mb-8 w-full py-5">
+                <div className="flex justify-between items-center w-full py-2">
                     <ArticleHeader data={data} shareUrl={shareUrl}/>
                 </div>
 

@@ -65,7 +65,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ data, shareUrl }) => {
     );
 
     return (
-        <header className="mb-8 w-full">
+        <header className="mb-3 w-full">
             {/* Mobile layout */}
             <div className="md:hidden flex flex-col space-y-4">
 
