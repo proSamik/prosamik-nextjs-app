@@ -105,7 +105,8 @@ export const useMermaidProcessor = (
                 svgWrapper.className = 'mermaid-svg-wrapper w-full overflow-auto';
                 svgWrapper.style.cssText = `
                     min-width: 100%;
-                    min-height: 300px;
+                    min-height: 200px;
+                    max-height: 400px;
                     overflow-x: auto;
                     overflow-y: auto;
                     padding: 1rem;
