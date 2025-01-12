@@ -43,6 +43,10 @@ export const useContentList = ({ type }: UseContentListProps): FetchResult<RepoL
             if (Date.now() - cacheData.timestamp < CACHE_EXPIRY) {
                 setData(JSON.parse(cacheData.content));
                 if (isMounted) setLoading(false);
+            } else {
+                // Delete expired cache
+                localStorage.removeItem(storageKey);
+                setData(null);
             }
         }
 
@@ -83,6 +87,14 @@ export const useContentList = ({ type }: UseContentListProps): FetchResult<RepoL
 
                 if (isMounted) {
                     const cached = localStorage.getItem(storageKey);
+                    if (cached) {
+                        const cacheData = JSON.parse(cached);
+                        // Check and delete if expired
+                        if (Date.now() - cacheData.timestamp >= CACHE_EXPIRY) {
+                            localStorage.removeItem(storageKey);
+                        }
+                    }
+
                     if (!cached || JSON.parse(cached).transientKey !== currentKey) {
                         localStorage.setItem(storageKey, JSON.stringify({
                             content: JSON.stringify(contentData),
