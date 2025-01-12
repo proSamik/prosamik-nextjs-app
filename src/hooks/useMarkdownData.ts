@@ -33,9 +33,12 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
             if (Date.now() - cacheData.timestamp < CACHE_EXPIRY) {
                 setData(JSON.parse(cacheData.content));
                 if (isMounted) setLoading(false);
+            } else {
+                // Add this: Delete expired cache
+                localStorage.removeItem(`md_${repoPath}`);
+                setData(null);
             }
         }
-
 
         // Fetch in background
         const fetchData = async () => {
@@ -55,6 +58,14 @@ export const useMarkdownData = ({ repoPath }: UseMarkdownDataParams) => {
 
                 if (isMounted) {
                     const cached = localStorage.getItem(`md_${repoPath}`);
+                    if (cached) {
+                        const cacheData = JSON.parse(cached);
+                        // Add this: Check and delete if expired
+                        if (Date.now() - cacheData.timestamp >= CACHE_EXPIRY) {
+                            localStorage.removeItem(`md_${repoPath}`);
+                        }
+                    }
+
                     if (!cached || JSON.parse(cached).transientKey !== currentKey) {
                         localStorage.setItem(`md_${repoPath}`, JSON.stringify({
                             content: JSON.stringify(responseData),
