@@ -1,7 +1,8 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useRef  } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { toPng } from 'html-to-image';
 
 // Header component for code blocks
 const CodeBlockHeader = ({ language }: { language: string }) => {
@@ -58,25 +59,11 @@ const ThemedSyntaxHighlighter = ({ language, code }: { language: string; code: s
                 maxWidth: '100%',
                 overflowX: 'auto',
                 minHeight: '50px',
-                maxHeight: '300px'
+                maxHeight: '500px',
             }}
         >
             {code}
         </SyntaxHighlighter>
-    );
-};
-
-// Main component that includes both syntax highlighting and styling
-const CodeBlock = ({ language, code }: { language: string; code: string }) => {
-    return (
-        <div className="dark:p-2  dark:bg-gray-300 rounded">
-            <div className="bg-[#f8f8f8] dark:bg-[#282c34] rounded-lg overflow-hidden">
-                <CodeBlockHeader language={language}/>
-                <ThemedSyntaxHighlighter language={language} code={code}/>
-            </div>
-
-        </div>
-
     );
 };
 
@@ -105,7 +92,7 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
         // Create copy button
         const copyButton = document.createElement('button');
         copyButton.className = `
-            absolute right-5 top-10 z-10
+            absolute right-16 top-10 z-10
             bg-[#f8f8f8] dark:bg-[#282c34]
             text-gray-600 dark:text-gray-400
             px-2 py-1 rounded text-sm
@@ -122,6 +109,28 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
             </svg>
         `;
         wrapper.appendChild(copyButton);
+
+        // Create export button
+        const exportButton = document.createElement('button');
+        exportButton.className = `
+            absolute right-5 top-10 z-10
+            bg-[#f8f8f8] dark:bg-[#282c34]
+            text-gray-600 dark:text-gray-400
+            px-2 py-1 rounded text-sm
+            opacity-0 group-hover:opacity-100
+            transition-opacity border
+            border-gray-300 dark:border-gray-600
+        `;
+        exportButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" 
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+        `;
+        wrapper.appendChild(exportButton);
 
         // Replace original code block
         const preElement = codeBlock.closest('pre');
@@ -161,6 +170,103 @@ export const addCodeBlockSyntaxHighlighting = (contentRef: RefObject<HTMLDivElem
                     }, 2000);
                 });
             });
+
+            // Add export functionality
+            exportButton.addEventListener('click', () => {
+                const codeBlockElement = wrapper.querySelector('div') as HTMLDivElement;
+                if (codeBlockElement) {
+                    void exportCodeBlockAsImage(codeBlockElement);
+                }
+            });
         }
     });
+};
+
+const exportCodeBlockAsImage = async (codeBlockElement: HTMLDivElement) => {
+    try {
+        // Create a clone of the element to manipulate
+        const clonedElement = codeBlockElement.cloneNode(true) as HTMLDivElement;
+
+        // Modify the cloned element to remove scrollbars and improve export
+        const prepareCloneForExport = (clone: HTMLDivElement) => {
+            // Remove any hover or opacity classes
+            clone.classList.remove('group', 'relative');
+
+            // Find and modify the syntax highlighter pre element
+            const preElement = clone.querySelector('pre');
+            if (preElement) {
+                Object.assign(preElement.style, {
+                    overflow: 'hidden',
+                    maxHeight: 'none',
+                    margin: '0',
+                    padding: '1rem',
+                });
+            }
+
+            // Ensure no scrollbars
+            Object.assign(clone.style, {
+                overflow: 'hidden',
+                maxHeight: 'none',
+                height: 'auto'
+            });
+        };
+
+        // Prepare the clone
+        prepareCloneForExport(clonedElement);
+
+        // Create a temporary container to render the clone
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'fixed';
+        tempContainer.style.top = '-9999px';
+        tempContainer.style.left = '-9999px';
+        tempContainer.appendChild(clonedElement);
+        document.body.appendChild(tempContainer);
+
+        // Use html-to-image to capture the entire code block
+        const dataUrl = await toPng(clonedElement, {
+            cacheBust: true,
+            pixelRatio: 5, // High-density pixel ratio
+            quality: 1, // Highest quality
+            style: {
+                transform: 'scale(1)',
+                transformOrigin: 'top left',
+                overflow: 'hidden'
+            },
+            filter: (node) => {
+                // Remove specific elements we don't want in the export
+                if (node.classList?.contains('opacity-0')) return false;
+
+                // Remove language tag
+                else if (node.classList?.contains('text-xs')) return false;
+
+                return true;
+            },
+            imagePlaceholder: '', // Optional placeholder
+        });
+
+        // Remove temporary container
+        document.body.removeChild(tempContainer);
+
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `code-block-${Date.now()}.png`;
+        link.href = dataUrl;
+        link.click();
+    } catch (error) {
+        console.error('Failed to export code block as image', error);
+    }
+};
+
+// Main component that includes both syntax highlighting and styling
+const CodeBlock = ({ language, code }: { language: string; code: string }) => {
+    const codeBlockRef = useRef<HTMLDivElement>(null);
+
+    return (
+        <div ref={codeBlockRef} className="p-2 dark:bg-gray-300 rounded relative group">
+            <div className="bg-[#f8f8f8] dark:bg-[#282c34] rounded-lg overflow-hidden">
+                <CodeBlockHeader language={language}/>
+                <ThemedSyntaxHighlighter language={language} code={code}/>
+            </div>
+        </div>
+    );
 };
