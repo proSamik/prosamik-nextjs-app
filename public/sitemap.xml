@@ -2,75 +2,75 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
       <loc>https://prosamik.com/</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>weekly</changefreq>
       <priority>1.0</priority>
    </url>
    <url>
       <loc>https://prosamik.com/about</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
    </url>
    <url>
       <loc>https://prosamik.com/blogs</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
    </url>
    <url>
       <loc>https://prosamik.com/projects</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
    </url>
    
    <url>
       <loc>https://prosamik.com/blog/the-only-terminal-guide-you-need</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/blog/tmux-mystery-solved</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/blog/readme-template-example</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    
    <url>
       <loc>https://prosamik.com/project/prosamik-nextjs-app</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/project/prosamik-golang-server</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/project/smart-parking-system-using-8051</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/project/ai-receipt</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>
    <url>
       <loc>https://prosamik.com/project/airbnb-analytics-api</loc>
-      <lastmod>2025-01-13T08:43:09.053Z</lastmod>
+      <lastmod>2025-01-13T19:21:53.418Z</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
    </url>

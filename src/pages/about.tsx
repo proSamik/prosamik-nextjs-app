@@ -70,7 +70,7 @@ export default function About() {
         <>
             <SEO
                 title="Who is Samik?"
-                description="Building products that ship faster and saves your time and efforts. Engineer by degree, innovator from heart"
+                description="Hey, I'm Samik Choudhury and by degree, I'm an Electronics and Telecommunication Engineer but I'm all about turning curiosity into code and understanding software products."
                 ogImage="https://prosamik.com/image/og-Image.png"
                 keywords={'prosamik, army institute of technology pune, google developer student club, gdsc, ait, aitpune, ecell, Innovation and Entrepreneurship Cell'}
                 structuredData={jsonLd}
@@ -86,7 +86,7 @@ export default function About() {
                     cardType: 'summary_large_image',
                     site: siteMetadata.twitterUsername,
                     creator: siteMetadata.twitterUsername,
-                    imageAlt: 'About Samik | Journey and Experience',
+                    imageAlt: 'Samik | Journey and Experience',
                 }}
             />
 
