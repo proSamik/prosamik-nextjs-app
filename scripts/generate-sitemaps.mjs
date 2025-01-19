@@ -49,7 +49,7 @@ async function generateSitemap() {
     // Generate URLs for blogs and projects
     const blogUrls = blogs.map(blog => `
    <url>
-      <loc>${baseUrl}/blog/${createSlug(blog.title)}</loc>
+      <loc>${baseUrl}/blogs/${createSlug(blog.title)}</loc>
       <lastmod>${currentDate}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
@@ -57,7 +57,7 @@ async function generateSitemap() {
 
     const projectUrls = projects.map(project => `
    <url>
-      <loc>${baseUrl}/project/${createSlug(project.title)}</loc>
+      <loc>${baseUrl}/projects/${createSlug(project.title)}</loc>
       <lastmod>${currentDate}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
