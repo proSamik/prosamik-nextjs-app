@@ -1,9 +1,11 @@
 // components/ContentPage.tsx
-import React from 'react';
+import React, { Suspense } from 'react';
 import Loading from "@/components/layout/Loading";
 import ErrorMessage from "@/components/layout/ErrorMessage";
-import ContentList from "@/components/ContentList";
 import { useContentList } from "@/hooks/useContentList";
+
+// Lazy load the ContentList component
+const ContentList = React.lazy(() => import("@/components/ContentList"));
 
 interface ContentPageProps {
     type: 'blog' | 'project';
@@ -45,10 +47,12 @@ export default function ContentPage({ type }: ContentPageProps) {
                 </h1>
             </div>
             <div className="space-y-8">
-                <ContentList
-                    repos={data?.repos || []}
-                    type={type}
-                />
+                <Suspense fallback={<Loading />}>
+                    <ContentList
+                        repos={data?.repos || []}
+                        type={type}
+                    />
+                </Suspense>
             </div>
         </div>
     );

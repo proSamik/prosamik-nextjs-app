@@ -10,8 +10,8 @@ export const dataTimelineData: TimePeriod[] = [
     },
     events: [
       {
-        title: "Loading…",
-        description: "- Come on, the year has just begun!\n- Well, I have built my website prosamik.com, which is the only website on the internet that uses GitHub for blogging in 20 days.",
+        title: "Launched githubme.com and prosamik.com",
+        description: "- Started the year by launching two products - prosamik.com and githubme.com\n- prosamik.com is a unique website that uses GitHub for blogging, built in 20 days\n- githubme.com is a platform that helps developers create stylish markdown blogs and documentation using their GitHub markdown files\n- Both projects showcase my commitment to building and shipping fast while maintaining quality",
         skills: ["#WebDevelopment", "#TypeScript", "#NextJs", "#Golang"]
       }
     ]
