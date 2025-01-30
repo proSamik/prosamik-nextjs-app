@@ -1,4 +1,4 @@
-import {FaGithub, FaLinkedin, FaTwitter} from "react-icons/fa";
+import {FaGithub, FaTwitter} from "react-icons/fa";
 import Image from "next/image";
 
 export default function ProfileHeader() {
@@ -70,14 +70,14 @@ export default function ProfileHeader() {
                         >
                             <FaGithub size={30}/>
                         </a>
-                        <a
+                        {/* <a
                             href="https://www.linkedin.com/in/prosamik"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-blue-600 flex flex-col items-center"
                         >
                             <FaLinkedin size={30}/>
-                        </a>
+                        </a> */}
                     </div>
                 </div>
             </div>
