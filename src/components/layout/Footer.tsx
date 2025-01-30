@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaLinkedin, FaTwitter, FaGithub } from 'react-icons/fa';
+import { FaTwitter, FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -31,7 +31,7 @@ const Footer = () => {
                         : 'flex flex-col justify-center items-center space-y-4 pb-10' // Stack vertically on desktop
                 }`}
             >
-                <a
+                {/* <a
                     href="https://www.linkedin.com/in/prosamik"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -41,7 +41,7 @@ const Footer = () => {
                     <span className="mt-2 text-sm">
                     proSamik
                     </span>
-                </a>
+                </a> */}
                 <a
                     href="https://www.twitter.com/prosamik"
                     target="_blank"
