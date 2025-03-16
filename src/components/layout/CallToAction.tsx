@@ -33,9 +33,9 @@ export default function CallToAction() {
     return (
         <form onSubmit={handleSubmit}>
             <div
-                className="flex flex-col items-center ">
-                <h2 className="text-2xl font-bold mb-4">Subscribe to my newsletter</h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+                className="flex flex-col items-center p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200">
+                <h2 className="text-2xl font-bold mb-4 text-amber-500">Subscribe to my newsletter</h2>
+                <p className="mb-6 text-center text-amber-400 dark:text-amber-200">
                     If and only if I find something worth sharing,<br/>
                     You will be the first to know!
                 </p>
@@ -60,7 +60,7 @@ export default function CallToAction() {
                         className={`w-full ${
                             loading
                                 ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-blue-500 hover:bg-blue-600'
+                                : 'bg-amber-500 hover:bg-amber-600'
                         } text-white px-6 py-2 rounded-lg transition-colors duration-200`}
                     >
                         {loading ? 'Subscribing...' : 'Subscribe'}
