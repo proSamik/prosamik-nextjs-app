@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Eye } from 'lucide-react';
+import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { FaGithub } from "react-icons/fa";
+import Link from 'next/link';
 
 export interface ItemCardProps {
     title: string;
@@ -11,159 +12,30 @@ export interface ItemCardProps {
     repoPath?: string;
     type?: string;
     isMobile?: boolean;
+    readTime?: number;
 }
-
-interface AnimatedWordProps {
-    word: string;
-    isActive: boolean;
-    onComplete: () => void;
-}
-
-const AnimatedWord: React.FC<AnimatedWordProps> = ({ word, isActive, onComplete }) => {
-    const [opacity, setOpacity] = useState(0);
-    const [scale, setScale] = useState(0.5);
-
-    useEffect(() => {
-        let timeoutId: NodeJS.Timeout | undefined;
-        if (isActive) {
-            setOpacity(1);
-            setScale(1);
-
-            timeoutId = setTimeout(() => {
-                setOpacity(0);
-                setScale(1.2);
-                setTimeout(onComplete, 500);
-            }, 1500);
-        } else {
-            setOpacity(0);
-            setScale(0.5);
-        }
-
-        return () => clearTimeout(timeoutId);
-    }, [isActive, onComplete]);
-
-    return (
-        <span
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                      text-4xl font-bold text-slate-700 dark:text-slate-200
-                      transition-all duration-500 ease-in-out"
-            style={{
-                opacity,
-                transform: `translate(-50%, -50%) scale(${scale})`,
-            }}
-        >
-            {word}
-        </span>
-    );
-};
-
-const FinalTitle: React.FC<{ title: string, isVisible: boolean }> = ({ title, isVisible }) => {
-    const [scale, setScale] = useState(0.5);
-    const [opacity, setOpacity] = useState(0);
-
-    useEffect(() => {
-        if (isVisible) {
-            setScale(0.5);
-            setOpacity(0);
-            setTimeout(() => {
-                setScale(1);
-                setOpacity(1);
-            }, 100);
-        }
-    }, [isVisible]);
-
-    return (
-        <div
-            className="absolute inset-0 flex items-center justify-center p-6 text-center"
-            style={{
-                opacity,
-                transform: `scale(${scale})`,
-                transition: 'all 0.8s ease-out'
-            }}
-        >
-            <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-200">
-                {title}
-            </h2>
-        </div>
-    );
-};
 
 export const StyledItemCard: React.FC<ItemCardProps> = ({
-                                                            title,
-                                                            link,
-                                                            description = '',
-                                                            tags = '',
-                                                            views_count = 0,
-                                                            repoPath = '',
-                                                            type = '',
-                                                            isMobile = false,
-                                                        }) => {
-    const [activeWordIndex, setActiveWordIndex] = useState(0);
-    const setAnimationCycles = useState(0)[1];
-    const [showFinalTitle, setShowFinalTitle] = useState(false);
-    const [canAnimate, setCanAnimate] = useState(true); // Track if hover animation is allowed
-
+    title,
+    link,
+    description = '',
+    tags = '',
+    views_count = 0,
+    repoPath = '',
+    type = '',
+    isMobile = false,
+    readTime,
+}) => {
+    // Parse tags - convert comma-separated string to array
     const tagList = tags ? tags.split(',').map(tag => tag.trim()) : [];
 
-    const words = title
-        .replace(/[[\]()]/g, '')
-        .split(/\s+/)
-        .filter(word => word.length > 0);
-
-    const handleWordComplete = useCallback(() => {
-        if (showFinalTitle) return;
-
-        setActiveWordIndex((prev) => {
-            const nextIndex = (prev + 1) % words.length;
-            if (nextIndex === 0) {
-                setAnimationCycles(cycles => {
-                    const newCycles = cycles + 1;
-                    if (newCycles >= 2) {
-                        setShowFinalTitle(true);
-                    }
-                    return newCycles;
-                });
-            }
-            return nextIndex;
-        });
-    }, [setAnimationCycles, showFinalTitle, words.length]);
-
-    const handleHover = () => {
-        if (showFinalTitle && canAnimate) {
-            setShowFinalTitle(false);
-            setActiveWordIndex(0);
-            setAnimationCycles(1);
-            setCanAnimate(false); // Prevent further hover animations until card is unhovered
-        }
-    };
-
-    const handleMouseLeave = () => {
-        setCanAnimate(true); // Reset the ability to animate on next hover
-        setShowFinalTitle(true);
-    };
-
-
-    // Handle single word animation
-    useEffect(() => {
-        if (words.length === 1 && !showFinalTitle) {
-            const timer = setTimeout(() => {
-                setAnimationCycles(cycles => {
-                    const newCycles = cycles + 1;
-                    if (newCycles >= 2) {
-                        setShowFinalTitle(true);
-                    }
-                    return newCycles;
-                });
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [words.length, showFinalTitle, setAnimationCycles]);
-
+    // GitHub URL formatting
     const getGitHubUrl = (fullPath: string): string => {
         const match = fullPath.match(/https:\/\/github\.com\/[^\/]+\/[^\/]+/);
         return match ? match[0] : fullPath;
     };
 
+    // Handle GitHub button click
     const handleGitHubClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
@@ -171,126 +43,75 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
     };
 
     return (
-        <div className={`${isMobile ? 'min-w-[18rem] max-w-[20rem]' : 'min-w-[28rem] max-w-[32rem]'}  flex-1 m-2 `}>
-            <a href={link}
-               className="block"
-               onMouseEnter={handleHover}
-               onMouseLeave={handleMouseLeave}
+        <div className="mt-3" style={{ width: '100%', maxWidth: '360px' }}>
+            <Link 
+                href={link}
+                                className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 dark:shadow-amber-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
+                style={{ height: '380px', display: 'flex', flexDirection: 'column' }}
             >
-                {/* Animated Placeholder */}
-                <div className={`${isMobile ? 'h-44' : 'h-48'} relative overflow-hidden rounded-t-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700`}>
-                    {/* Window Controls and Type Badge */}
-                    <div className="absolute top-0 left-0 right-0 h-8 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center justify-between h-full">
-                            {/* Window Controls */}
-                            <div className="flex items-center gap-2 px-4">
-                                <div className="w-3 h-3 rounded-full bg-red-500 opacity-75 hover:opacity-100" />
-                                <div className="w-3 h-3 rounded-full bg-yellow-500 opacity-75 hover:opacity-100" />
-                                <div className="w-3 h-3 rounded-full bg-green-500 opacity-75 hover:opacity-100" />
-                            </div>
-                            {/* Type Badge */}
-                            {type && (
-                                <div className="px-4 mb-1">
-                                    <span className="px-2.5 my-1 text-xs font-medium rounded-md
-
-                                                   text-slate-600 dark:text-slate-300
-                                                   border border-slate-300 dark:border-slate-600">
-                                        {type}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                
+                {/* Title and Arrow Section */}
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors pr-8">
+                        {title}
+                    </h3>
+                    <ArrowUpRight className="w-5 h-5 text-blue-600 dark:text-blue-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                </div>
+                
+                {/* Description Section */}
+                {description && (
+                    <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm flex-grow pr-2">
+                        {description.length > 200 ? `${description.slice(0, 200)}...` : description}
+                    </p>
+                )}
+                
+                {/* Tags Section - Moved to bottom for better spacing */}
+                {tagList.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {tagList.map((tag) => (
+                            <span 
+                                key={tag}
+                                className="px-3 py-1 text-sm rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
+                            >
+                                {tag}
+                            </span>
+                        ))}
                     </div>
-
-                    {/* Subtle background pattern */}
-                    <div className="absolute inset-0 pt-8 opacity-5">
-                        <div className="h-full w-full bg-[linear-gradient(90deg,rgba(0,0,0,.1)_1px,transparent_0),linear-gradient(rgba(0,0,0,.1)_1px,transparent_0)] bg-[size:20px_20px]" />
-                    </div>
-
-                    {/* Animated content */}
-                    <div className="relative h-full w-full pt-8 justify-center">
-                        {!showFinalTitle ? (
-                            words.map((word, index) => (
-                                <AnimatedWord
-                                    key={`${word}-${index}`}
-                                    word={word}
-                                    isActive={index === activeWordIndex}
-                                    onComplete={handleWordComplete}
-                                />
-                            ))
-                        ) : (
-                            <FinalTitle title={title} isVisible={showFinalTitle} />
+                )}
+                
+                {/* Footer Section - Read time and views */}
+                <div className="flex items-center justify-between mt-auto text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-3">
+                        {readTime && (
+                            <span className="flex items-center">
+                                <span className="mr-1">📚</span>
+                                {readTime} min read
+                            </span>
+                        )}
+                        {views_count > 0 && (
+                            <span className="flex items-center gap-1 ml-auto">
+                                 <span className="flex items-center gap-1">
+                                     {views_count} {views_count === 1 ? 'view' : 'views'}
+                                 </span>
+                            </span>
                         )}
                     </div>
-
-                    {/* Type Badge moved to header */}
+                    
+                    {/* GitHub Link */}
+                    {repoPath && (
+                        <button
+                            onClick={handleGitHubClick}
+                            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-300"
+                            aria-label="View on GitHub"
+                        >
+                            <FaGithub size={18}/>
+                        </button>
+                    )}
                 </div>
-
-                {/* Card Content */}
-                <div className={`${isMobile ? '' : 'min-h-[18rem]'} bg-white dark:bg-slate-800 rounded-b-xl shadow-lg flex flex-col h-full`}>
-                    {/* Title Section */}
-                    <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-                        <h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">
-                            {title}
-                        </h2>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mt-4">
-                            {tagList.slice(0, isMobile ? 6 : 4).map((tag) => (
-                                <span
-                                    key={tag}
-                                    className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                                        repoPath
-                                            ? "border border-gray-500 dark:text-white text-gray-500 hover:text-white hover:bg-gray-500 dark:hover:bg-gray-400/70"
-                                            : "bg-blue-500 text-white hover:bg-blue-600"
-                                    }`}
-                                >
-            #{tag}
-        </span>
-                            ))}
-                            {tagList.length > (isMobile ? 6 : 4) && (
-                                <span className="px-3 py-1 text-sm rounded-full
-                       bg-slate-100 dark:bg-slate-700
-                       text-slate-600 dark:text-slate-300">
-            +{tagList.length - (isMobile ? 6 : 4)} more
-        </span>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Description and Footer */}
-                    <div className="flex flex-col flex-1 p-6 h-full">
-                        {/* Description */}
-                        {description && (
-                            <div className="flex-grow">
-                                <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-3 text-sm">
-                                    {description.length > 200 ? `${description.slice(0, 200)}...` : description}
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Footer - will now stick to the bottom */}
-                        <div
-                            className={`flex items-center ${views_count > 0 && repoPath ? 'justify-between' : 'justify-end'}`}>
-                            {views_count > 0 && (
-                                <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400">
-                                    <Eye size={18}/>
-                                    <span>{views_count}</span>
-                                </div>
-                            )}
-                            {repoPath && (
-                                <button
-                                    onClick={handleGitHubClick}
-                                    className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-300"
-                                    aria-label="View on GitHub"
-                                >
-                                    <FaGithub size={24}/>
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </a>
+                
+                {/* Animated bottom bar - appears on hover */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+            </Link>
         </div>
     );
 };
