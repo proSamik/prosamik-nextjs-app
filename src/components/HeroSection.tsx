@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Globe, Github, Package, Rocket, Timer, Server, GitMerge } from 'lucide-react';
+import { Terminal, Globe, Github, Package, Rocket, Timer } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
+import { LucideIcon } from 'lucide-react';
 
 interface HeroSectionProps {
     isMobile: boolean;
@@ -8,9 +9,9 @@ interface HeroSectionProps {
     onLogsClick: () => void;
 }
 
-// Define interface for product objects
+// Define interface for product objects with proper typing for Lucide icons
 interface ProductItem {
-    icon: React.ForwardRefExoticComponent<any>;
+    icon: LucideIcon;
     title: string;
     desc: string;
     url?: string;
@@ -66,7 +67,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
             </div>
                 <h1 className={`font-bold ${isMobile ? 'text-4xl' : 'text-6xl leading-tight'}`}>
-                    Samik's Builder Toolkit
+                    Samik&apos;s Builder Toolkit
                     <div className="mt-6 mb-2 text-xl text-gray-700 dark:text-gray-300 font-medium">Save on what matters:</div>
                     <div className="flex flex-wrap gap-3 mt-2">
                         <span className="px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-base font-medium rounded-full flex items-center">
