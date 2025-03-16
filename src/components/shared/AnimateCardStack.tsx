@@ -39,7 +39,7 @@ const AnimateCardStack: React.FC<AnimatedCardStackProps> = ({ items, isPreview =
     }
 
     return (
-        <div className="flex flex-wrap justify-center items-start gap-4 w-full">
+        <div className="flex flex-wrap justify-center items-start gap-10 w-full">
             {items.map(item => (
                 <StyledItemCard
                     key={item.link}
