@@ -33,7 +33,7 @@ export default function CallToAction() {
     return (
         <form onSubmit={handleSubmit}>
             <div
-                className="flex flex-col items-center bg-white dark:bg-gray-800 py-8 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 shadow-sm">
+                className="flex flex-col items-center ">
                 <h2 className="text-2xl font-bold mb-4">Subscribe to my newsletter</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
                     If and only if I find something worth sharing,<br/>
@@ -50,7 +50,7 @@ export default function CallToAction() {
                             required
                             className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 
                                 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                dark:bg-gray-900 dark:text-white dark:placeholder-gray-400"
                         />
                     </div>
 
