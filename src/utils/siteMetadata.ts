@@ -21,7 +21,7 @@ export const siteMetadata = {
     socialProfiles: [ // Added for structured data
         `https://github.com/prosamik`,
         `https://linkedin.com/in/prosamik`,
-        `https://twitter.com/prosamik`,
+        `https://x.com/prosamik`,
     ],
     ogImageWidth: 2400, // Added for Open Graph
     ogImageHeight: 600, // Added for Open Graph
