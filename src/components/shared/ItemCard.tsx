@@ -37,12 +37,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
         <div className="mt-3">
             <Link
                 href={link}
-                className="block p-6 rounded-xl shadow-lg hover:shadow-xl
-                    transition-all duration-200 hover:-translate-y-1 cursor-pointer mx-1
-                    backdrop-blur-md
-                    bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300
-                    dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90
-                    border-2 border-slate-300 dark:border-white/10"
+                className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
             >
                 <div className="flex justify-between items-start">
                     <h2 className="text-xl font-semibold mb-2 dark:text-white flex-1">{title}</h2>

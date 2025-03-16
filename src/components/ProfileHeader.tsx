@@ -1,5 +1,6 @@
-import {FaGithub, FaTwitter} from "react-icons/fa";
+import {FaGithub} from "react-icons/fa";
 import Image from "next/image";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function ProfileHeader() {
 
@@ -53,14 +54,14 @@ export default function ProfileHeader() {
 
                 <div className="flex ">
                     <div className="bg-gray-800 text-white px-4 py-2 rounded-md flex items-center space-x-4">
-                        <span>Reach me: </span>
+                        <span>Reach @prosamik: </span>
                         <a
                             href="https://www.twitter.com/prosamik"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-blue-400 flex flex-col items-center"
                         >
-                            <FaTwitter size={30}/>
+                            <FaXTwitter size={30}/>
                         </a>
                         <a
                             href="https://www.github.com/prosamik"

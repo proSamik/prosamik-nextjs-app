@@ -70,13 +70,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                     Samik&apos;s Builder Toolkit
                     <div className="mt-6 mb-2 text-xl text-gray-700 dark:text-gray-300 font-medium">Save on what matters:</div>
                     <div className="flex flex-wrap gap-3 mt-2">
-                        <span className="px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-base font-medium rounded-full flex items-center">
+                        <span className="px-4 py-2 bg-purple-200 text-purple-900 dark:bg-purple-800 dark:text-purple-200 text-base font-medium rounded-full flex items-center">
                             <span className="mr-1">Time</span> <span className="text-xl">⏳</span>
                         </span>
-                        <span className="px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-base font-medium rounded-full flex items-center">
+                        <span className="px-4 py-2 bg-orange-200 text-orange-900 dark:bg-orange-800 dark:text-orange-200 text-base font-medium rounded-full flex items-center">
                             <span className="mr-1">Effort</span> <span className="text-xl">👨‍💻</span>
                         </span>
-                        <span className="px-4 py-2 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 text-base font-medium rounded-full flex items-center">
+                        <span className="px-4 py-2 bg-teal-200 text-teal-900 dark:bg-teal-800 dark:text-teal-200 text-base font-medium rounded-full flex items-center">
                             <span className="mr-1">Money</span> <span className="text-xl">💰</span>
                         </span>
                     </div>
@@ -120,7 +120,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 {myProducts.map(({ icon: Icon, title, desc, url, status }, index) => (
                     <div
                         key={index}
-                        className="p-5 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
+                        className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
                     >
                         <Icon className="text-blue-500 mb-4" size={28} />
                         <h3 className="font-semibold mb-2">{title}</h3>

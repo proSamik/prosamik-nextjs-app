@@ -33,12 +33,11 @@ export default function CallToAction() {
     return (
         <form onSubmit={handleSubmit}>
             <div
-                className="flex flex-col items-center bg-white dark:bg-gray-800 py-8 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 shadow-sm">
-                <h2 className="text-2xl font-bold mb-4">Subscribe to my newsletter</h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                    To send emails, I am using Gmail SMTP server, to know more about cost-effective hacks.<br/>
-                    Subscribe to my newsletter for a weekly summary of my blogs and updates.<br/>
-                    Be the first to know about new posts!
+                className="flex flex-col items-center p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200">
+                <h2 className="text-2xl font-bold mb-4 text-amber-500">Subscribe to my newsletter</h2>
+                <p className="mb-6 text-center text-amber-400 dark:text-amber-200">
+                    If and only if I find something worth sharing,<br/>
+                    You will be the first to know!
                 </p>
 
                 <div className="w-full max-w-md space-y-4">
@@ -51,7 +50,7 @@ export default function CallToAction() {
                             required
                             className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 
                                 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-                                dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                                dark:bg-gray-900 dark:text-white dark:placeholder-gray-400"
                         />
                     </div>
 
@@ -61,7 +60,7 @@ export default function CallToAction() {
                         className={`w-full ${
                             loading
                                 ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-blue-500 hover:bg-blue-600'
+                                : 'bg-amber-500 hover:bg-amber-600'
                         } text-white px-6 py-2 rounded-lg transition-colors duration-200`}
                     >
                         {loading ? 'Subscribing...' : 'Subscribe'}

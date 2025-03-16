@@ -63,6 +63,12 @@ export default function Home() {
                     onLogsClick={() => scrollToSection(logsRef)}
                 />
 
+                <div className="w-full flex justify-center">
+                    <div className="w-full max-w-[728px]">
+                        <CallToAction/>
+                    </div>
+                </div>
+
                 <div className={isMobile ? 'flex flex-col space-y-4' : 'grid grid-cols-2 gap-8'}>
                     <div ref={buildsRef} className="scroll-mt-20 flex-1">
                         <ContentPreviewCards
@@ -85,11 +91,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="w-full flex justify-center">
-                    <div className="w-full max-w-[728px]">
-                        <CallToAction/>
-                    </div>
-                </div>
+
             </div>
         </>
     );
