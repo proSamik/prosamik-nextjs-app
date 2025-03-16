@@ -120,7 +120,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 {myProducts.map(({ icon: Icon, title, desc, url, status }, index) => (
                     <div
                         key={index}
-                        className="p-5 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
+                        className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
                     >
                         <Icon className="text-blue-500 mb-4" size={28} />
                         <h3 className="font-semibold mb-2">{title}</h3>
