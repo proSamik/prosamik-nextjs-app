@@ -22,8 +22,6 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
     tags = '',
     views_count = 0,
     repoPath = '',
-    type = '',
-    isMobile = false,
     readTime,
 }) => {
     // Parse tags - convert comma-separated string to array
