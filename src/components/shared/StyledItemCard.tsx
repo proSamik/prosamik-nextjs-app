@@ -44,7 +44,7 @@ export const StyledItemCard: React.FC<ItemCardProps> = ({
         <div className="mt-3" style={{ width: '100%', maxWidth: '360px' }}>
             <Link 
                 href={link}
-                                className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 dark:shadow-amber-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
+                className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
                 style={{ height: '380px', display: 'flex', flexDirection: 'column' }}
             >
                 
