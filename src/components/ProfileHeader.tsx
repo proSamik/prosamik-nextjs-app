@@ -24,9 +24,9 @@ export default function ProfileHeader() {
             {/* Role Description */}
             <div className="text-center space-y-4 dark:animate-pulse">
                 <h1 className="text-4xl sm:text-5xl font-bold dark:text-white relative">
-                    I{'  '}
+                    Whatever I do,{'  '}
                     <span className="relative inline-block">
-            build
+            I do it
                         {/* Accent line overlay */}
                         <span
                             className="absolute -inset-x-2 -inset-y-4 dark:bg-white/30 -rotate-3 transform bg-black/30"
@@ -42,7 +42,7 @@ export default function ProfileHeader() {
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
                     >
-                        Products
+                        Proactively
                     </a>
                 </h1>
 
