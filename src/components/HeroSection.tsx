@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Rocket, Timer, Server, GitMerge } from 'lucide-react';
+import { Terminal, Globe, Github, Package, Rocket, Timer } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
+import { LucideIcon } from 'lucide-react';
 
 interface HeroSectionProps {
     isMobile: boolean;
@@ -8,25 +9,54 @@ interface HeroSectionProps {
     onLogsClick: () => void;
 }
 
+// Define interface for product objects with proper typing for Lucide icons
+interface ProductItem {
+    icon: LucideIcon;
+    title: string;
+    desc: string;
+    url?: string;
+    status?: string;
+}
+
 const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLogsClick  }) => {
     const [step, setStep] = useState(0);
     const steps = ['Initializing build...', 'Optimizing for speed...', 'Removing complexity...', 'Ready to ship! 🚀'];
 
     useEffect(() => {
+        // Set up timer to cycle through build steps
         const timer = setInterval(() => {
             setStep((prev) => (prev + 1) % steps.length);
         }, 2000);
         return () => clearInterval(timer);
     }, [steps.length]);
 
-    const buildPhilosophy = [
-        { icon: Rocket, title: 'Ship Fast, Refactor Later', desc: 'Focus on core functionality first' },
-        { icon: GitMerge, title: 'Pragmatic > Perfect', desc: 'Make practical engineering decisions' },
-        { icon: Server, title: 'Build for Scale', desc: 'Start simple, design for growth' },
-        { icon: Timer, title: 'Automate Everything', desc: 'Eliminate manual operations' },
-    ] as const;
-
-
+    // List of products with their details and icons
+    const myProducts: ProductItem[] = [
+        { 
+            icon: Globe, 
+            title: 'prosamik.com', 
+            desc: 'Official Website of Samik Choudhury',
+            url: 'https://prosamik.com' 
+        },
+        { 
+            icon: Github, 
+            title: 'githubme.com', 
+            desc: 'Convert README.md files into readable articles',
+            url: 'https://githubme.com' 
+        },
+        { 
+            icon: Package, 
+            title: 'SaaS Kit', 
+            desc: 'A scalable foundation for SaaS applications',
+            status: 'Coming Soon'
+        },
+        { 
+            icon: Rocket, 
+            title: 'n8n Templates', 
+            desc: 'Free automation workflows',
+            status: 'Coming Soon'
+        },
+    ];
 
     return (
         <div className={`flex flex-col ${isMobile ? 'px-6 space-y-5' : 'px-4 pt-4 space-y-10'}`}>
@@ -37,15 +67,26 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
             </div>
                 <h1 className={`font-bold ${isMobile ? 'text-4xl' : 'text-6xl leading-tight'}`}>
-                    Building Products That
-                    <span className="block text-blue-500 animate-pulse">Ship Fast</span>
+                    Samik&apos;s Builder Toolkit
+                    <div className="mt-6 mb-2 text-xl text-gray-700 dark:text-gray-300 font-medium">Save on what matters:</div>
+                    <div className="flex flex-wrap gap-3 mt-2">
+                        <span className="px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-base font-medium rounded-full flex items-center">
+                            <span className="mr-1">Time</span> <span className="text-xl">⏳</span>
+                        </span>
+                        <span className="px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-base font-medium rounded-full flex items-center">
+                            <span className="mr-1">Effort</span> <span className="text-xl">👨‍💻</span>
+                        </span>
+                        <span className="px-4 py-2 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 text-base font-medium rounded-full flex items-center">
+                            <span className="mr-1">Money</span> <span className="text-xl">💰</span>
+                        </span>
+                    </div>
                 </h1>
                 <p className={`${isMobile ? 'text-lg' : 'text-xl'} opacity-80 leading-relaxed`}>
-                    Transforming ideas into shipped products through pragmatic engineering
+                    Simple tools and templates that help developers work smarter, not harder
                     {!isMobile && (<>
                         .
                         <br/>
-                        No over-engineering, just right solutions.
+                        Designed to save you time, effort, and money on your next project.
                     </>)}
                 </p>
             </div>
@@ -53,7 +94,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             <div className="bg-zinc-800 dark:bg-black/40 rounded-lg p-8 font-mono text-sm text-green-400 relative overflow-hidden w-full">
                 <div className="flex items-center gap-2 mb-2">
                     <Terminal size={16}/>
-                    <span>build-to-ship init project</span>
+                    <span>init most-effective-project</span>
                 </div>
                 <div className="space-y-1">
                     {isMobile ? (
@@ -73,29 +114,47 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <div className={` py-6 grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-6`}>
-                {buildPhilosophy.map(({ icon: Icon, title, desc }, index) => (
+            <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mt-6`}>My Products</h2>
+
+            <div className={` py-2 grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'} gap-6`}>
+                {myProducts.map(({ icon: Icon, title, desc, url, status }, index) => (
                     <div
                         key={index}
-                        className="p-3 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
+                        className="p-5 rounded-lg transform hover:-translate-y-1 transition-all backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20"
                     >
-                        <Icon className="text-blue-500 mb-4" size={24} />
+                        <Icon className="text-blue-500 mb-4" size={28} />
                         <h3 className="font-semibold mb-2">{title}</h3>
-                        <p className="text-sm opacity-70">{desc}</p>
+                        <p className="text-sm opacity-70 mb-3">{desc}</p>
+                        {url ? (
+                            <a 
+                                href={url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+                            >
+                                Visit <Globe size={14} />
+                            </a>
+                        ) : (
+                            <span className="text-sm text-amber-500 flex items-center gap-1">
+                                {status} <Timer size={14} />
+                            </span>
+                        )}
                     </div>
                 ))}
             </div>
+
+            
 
             <div className="flex gap-4 justify-center">
                 <button
                     onClick={onLogsClick}
                     className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                    See Latest Builds
+                    Explore Templates
                 </button>
                 <button
                     onClick={onBuildsClick}
                     className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50  hover:text-gray-700 transition-colors">
-                    Read Build Logs
+                    View SaaS Kit
                 </button>
             </div>
         </div>

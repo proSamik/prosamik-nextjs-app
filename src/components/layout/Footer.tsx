@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FaTwitter, FaGithub } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -48,7 +49,7 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     className="hover:text-blue-400 flex flex-col items-center"
                 >
-                    <FaTwitter size={30}/>
+                    <FaXTwitter size={30}/>
                     <span className="mt-2 text-sm">
                     proSamik
                     </span>
