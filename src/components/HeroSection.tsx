@@ -149,12 +149,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 <button
                     onClick={onLogsClick}
                     className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                    Explore Templates
+                    Explore Featured Projects
                 </button>
                 <button
                     onClick={onBuildsClick}
                     className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50  hover:text-gray-700 transition-colors">
-                    View SaaS Kit
+                    View Recent Blogs
                 </button>
             </div>
         </div>
