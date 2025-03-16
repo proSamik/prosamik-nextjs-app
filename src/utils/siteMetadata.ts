@@ -3,7 +3,7 @@ export const siteMetadata = {
     title: 'proSamik',
     siteUrl: 'https://prosamik.com',
     twitterUsername: 'prosamik',
-    defaultDescription: 'Building Products that ship fast, I am transforming ideas into shipped products through pragmatic engineering',
+    defaultDescription: 'Building tools and templates that save you time, effort, and money. From automation workflows to SaaS templates — whatever I do, I do it proactively.',
     defaultImage: 'https://prosamik.com/image/og-image.png', // Updated path
     skills: ['Product Development', 'Golang', 'NextJS', 'Tailwind CSS', 'Deployment'],
     currentRole: 'Building Products',
@@ -25,7 +25,7 @@ export const siteMetadata = {
     ],
     ogImageWidth: 2400, // Added for Open Graph
     ogImageHeight: 600, // Added for Open Graph
-    ogImageAlt: 'proSamik - Building Products that ship fast', // Added for Open Graph
+    ogImageAlt: 'proSamik - Tools and templates to save you time, effort, and money', // Added for Open Graph
     ogImageType: 'image/png', // Added for Open Graph
     ogImageSecureUrl: 'https://prosamik.com/image/og-Image.png', // Added for Open Graph
 };
