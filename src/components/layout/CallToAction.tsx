@@ -36,9 +36,8 @@ export default function CallToAction() {
                 className="flex flex-col items-center bg-white dark:bg-gray-800 py-8 px-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 shadow-sm">
                 <h2 className="text-2xl font-bold mb-4">Subscribe to my newsletter</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-                    To send emails, I am using Gmail SMTP server, to know more about cost-effective hacks.<br/>
-                    Subscribe to my newsletter for a weekly summary of my blogs and updates.<br/>
-                    Be the first to know about new posts!
+                    If and only if I find something worth sharing,<br/>
+                    You will be the first to know!
                 </p>
 
                 <div className="w-full max-w-md space-y-4">
