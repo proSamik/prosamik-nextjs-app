@@ -40,7 +40,7 @@ export default function Home() {
     return (
         <>
             <SEO
-                title="proSamik"
+                title="Samik's Builder Toolkit"
                 description={siteMetadata.defaultDescription}
                 ogImage={siteMetadata.defaultImage}
                 openGraph={{
@@ -52,7 +52,7 @@ export default function Home() {
                     cardType: 'summary_large_image',
                     site: siteMetadata.twitterUsername,
                     creator: siteMetadata.twitterUsername,
-                    imageAlt: 'proSamik - Building Products that ship fast',
+                    imageAlt: siteMetadata.ogImageAlt,
                 }}
             />
 
