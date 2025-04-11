@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -23,9 +23,6 @@ interface ProductItem {
 const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLogsClick  }) => {
     const [step, setStep] = useState(0);
     const steps = ['Initializing build...', 'Optimizing for speed...', 'Removing complexity...', 'Ready to ship! 🚀'];
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
 
     useEffect(() => {
         // Set up timer to cycle through build steps
@@ -34,85 +31,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         }, 2000);
         return () => clearInterval(timer);
     }, [steps.length]);
-
-    // Auto-scrolling logic with full rotation
-    useEffect(() => {
-        const scrollContainer = scrollContainerRef.current;
-        if (!scrollContainer) return;
-
-        let scrollInterval: NodeJS.Timeout;
-        let pauseScroll = false;
-        let isResetting = false;
-
-        const startScrolling = () => {
-            scrollInterval = setInterval(() => {
-                if (pauseScroll || !scrollContainer || isResetting) return;
-                
-                // Get current scroll position
-                const currentScroll = scrollContainer.scrollLeft;
-                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                
-                // Check if we've reached the end (with some buffer)
-                if (maxScroll - currentScroll < 20) {
-                    // Prevent multiple reset attempts
-                    isResetting = true;
-                    
-                    // Reset to beginning immediately
-                    setTimeout(() => {
-                        scrollContainer.scrollLeft = 0;
-                        isResetting = false;
-                    }, 50);
-                } else {
-                    // Continue scrolling right
-                    scrollContainer.scrollLeft = currentScroll + 1;
-                }
-                
-                // Update arrow visibility
-                setShowLeftArrow(currentScroll > 10);
-                setShowRightArrow(currentScroll < maxScroll - 50);
-            }, 25);
-        };
-
-        startScrolling();
-
-        // Pause auto-scrolling when user interacts
-        const handleMouseEnter = () => { pauseScroll = true; };
-        const handleMouseLeave = () => { pauseScroll = false; };
-        const handleScroll = () => {
-            if (scrollContainer) {
-                const currentScroll = scrollContainer.scrollLeft;
-                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                
-                setShowLeftArrow(currentScroll > 10);
-                setShowRightArrow(currentScroll < maxScroll - 50);
-            }
-        };
-
-        scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-        scrollContainer.addEventListener('mouseleave', handleMouseLeave);
-        scrollContainer.addEventListener('scroll', handleScroll);
-
-        return () => {
-            clearInterval(scrollInterval);
-            if (scrollContainer) {
-                scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-                scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
-                scrollContainer.removeEventListener('scroll', handleScroll);
-            }
-        };
-    }, []);
-
-    const scrollLeft = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-        }
-    };
-
-    const scrollRight = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-        }
-    };
 
     // List of products with their details and icons
     const myProducts: ProductItem[] = [
@@ -216,98 +134,67 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <div className="relative">
+            <div>
                 <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mb-6`}>My Products</h2>
                 
-                {/* Navigation arrows */}
-                {showLeftArrow && (
-                    <button 
-                        onClick={scrollLeft}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md z-10 opacity-80 hover:opacity-100 transition-opacity"
-                    >
-                        <ChevronLeft size={24} className="text-gray-700 dark:text-gray-300" />
-                    </button>
-                )}
-                
-                {showRightArrow && (
-                    <button 
-                        onClick={scrollRight}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md z-10 opacity-80 hover:opacity-100 transition-opacity"
-                    >
-                        <ChevronRight size={24} className="text-gray-700 dark:text-gray-300" />
-                    </button>
-                )}
-                
-                {/* Horizontal scrolling container with controlled width */}
-                <div className="max-w-[80%] md:max-w-[85%] mx-auto overflow-hidden">
-                    <div 
-                        ref={scrollContainerRef}
-                        className="flex space-x-4 md:space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                    >
-                        {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
-                            <div 
-                                key={index} 
-                                style={{ 
-                                    minWidth: isMobile ? '220px' : '260px', 
-                                    maxWidth: isMobile ? '220px' : '260px', 
-                                    height: isMobile ? '200px' : '240px' 
-                                }}
+                {/* Static grid layout */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-xl mx-auto">
+                    {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
+                        <div key={index} className="flex justify-center">
+                            <Link 
+                                href={url || "#"}
+                                className="group relative block h-full p-6 rounded-xl 
+                                    transition-all duration-300 hover:-translate-y-2 cursor-pointer
+                                    bg-white dark:bg-gray-900
+                                    border border-gray-200 dark:border-gray-800
+                                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                                    dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
+                                    hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
+                                    dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]
+                                    w-full max-w-sm"
+                                style={{ display: 'flex', flexDirection: 'column', minHeight: '220px' }}
                             >
-                                <Link 
-                                    href={url || "#"}
-                                    className="group relative block h-full p-6 rounded-xl 
-                                        transition-all duration-300 hover:-translate-y-1 cursor-pointer
-                                        bg-white dark:bg-gray-900
-                                        border border-gray-200 dark:border-gray-800
-                                        shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                                        dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
-                                        hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
-                                        dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]"
-                                    style={{ display: 'flex', flexDirection: 'column' }}
-                                >
-                                    {/* Type Badge */}
-                                    <div className="absolute top-3 right-3 z-10">
-                                        <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
-                                            {type}
+                                {/* Type Badge */}
+                                <div className="absolute top-3 right-3 z-10">
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                        {type}
+                                    </span>
+                                </div>
+                                
+                                {/* Title and Arrow Section */}
+                                <div className="flex justify-between items-start mb-3">
+                                    <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
+                                        {title}
+                                    </h3>
+                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                </div>
+                                
+                                {/* Icon */}
+                                <Icon className="text-indigo-500 mb-3" size={isMobile ? 20 : 24} />
+                                
+                                {/* Description */}
+                                <p className={`text-gray-600 dark:text-gray-300 ${isMobile ? 'text-xs leading-tight' : 'text-sm'} flex-grow line-clamp-3`}>
+                                    {desc}
+                                </p>
+                                
+                                {/* Status or URL */}
+                                <div className="mt-auto pt-2">
+                                    {url ? (
+                                        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline`}>
+                                            Visit <Globe size={12} />
                                         </span>
-                                    </div>
-                                    
-                                    {/* Title and Arrow Section */}
-                                    <div className="flex justify-between items-start mb-3">
-                                        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
-                                            {title}
-                                        </h3>
-                                        <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
-                                    </div>
-                                    
-                                    {/* Icon */}
-                                    <Icon className="text-indigo-500 mb-3" size={isMobile ? 20 : 24} />
-                                    
-                                    {/* Description */}
-                                    <p className={`text-gray-600 dark:text-gray-300 ${isMobile ? 'text-xs leading-tight' : 'text-sm'} flex-grow line-clamp-3`}>
-                                        {desc}
-                                    </p>
-                                    
-                                    {/* Status or URL */}
-                                    <div className="mt-auto pt-2">
-                                        {url ? (
-                                            <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline`}>
-                                                Visit <Globe size={12} />
-                                            </span>
-                                        ) : (
-                                            <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-orange-500 flex items-center gap-1`}>
-                                                {status} <Terminal size={12} />
-                                            </span>
-                                        )}
-                                    </div>
-                                    
-                                    {/* Animated bottom bar - appears on hover */}
-                                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
+                                    ) : (
+                                        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-orange-500 flex items-center gap-1`}>
+                                            {status} <Terminal size={12} />
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                {/* Animated bottom bar - appears on hover */}
+                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                            </Link>
+                        </div>
+                    ))}
                 </div>
             </div>
 
