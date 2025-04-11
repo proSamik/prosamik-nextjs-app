@@ -37,14 +37,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         { 
             icon: Globe, 
             title: 'prosamik.com', 
-            type: 'Website',
+            type: 'Web App',
             desc: 'Official portfolio showcasing projects and blogs',
             url: 'https://prosamik.com' 
         },
         { 
             icon: Globe, 
             title: 'githubme.com', 
-            type: 'Web Tool',
+            type: 'Web App',
             desc: 'Convert any GitHub README into a readable article format',
             url: 'https://githubme.com' 
         },
