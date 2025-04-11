@@ -35,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         return () => clearInterval(timer);
     }, [steps.length]);
 
-    // Auto-scrolling logic
+    // Auto-scrolling logic with full rotation
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer) return;
@@ -45,26 +45,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
         const startScrolling = () => {
             scrollInterval = setInterval(() => {
-                if (pauseScroll) return;
+                if (pauseScroll || !scrollContainer) return;
                 
-                if (scrollContainer) {
-                    // Calculate new scroll position (always moving right)
-                    const newScrollLeft = scrollContainer.scrollLeft + 2;
-                    
-                    // Check if we've reached the end
-                    if (newScrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) {
-                        // Jump back to start for full rotation
-                        scrollContainer.scrollLeft = 0;
-                    } else {
-                        // Continue scrolling right
-                        scrollContainer.scrollLeft = newScrollLeft;
-                    }
-                    
-                    // Update arrow visibility
-                    setShowLeftArrow(scrollContainer.scrollLeft > 10);
-                    setShowRightArrow(scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
+                // Calculate new scroll position (always moving right)
+                const newScrollLeft = scrollContainer.scrollLeft + 1;
+                
+                // Fixed threshold to detect end
+                const endThreshold = scrollContainer.scrollWidth - scrollContainer.clientWidth - 5;
+                
+                // Check if we've reached the end with some buffer
+                if (newScrollLeft >= endThreshold) {
+                    // Jump back to start for full rotation
+                    scrollContainer.scrollTo({ left: 0, behavior: 'auto' });
+                } else {
+                    // Continue scrolling right
+                    scrollContainer.scrollLeft = newScrollLeft;
                 }
-            }, 50);
+                
+                // Update arrow visibility
+                setShowLeftArrow(scrollContainer.scrollLeft > 10);
+                setShowRightArrow(scrollContainer.scrollLeft < endThreshold - 10);
+            }, 25);
         };
 
         startScrolling();
@@ -74,8 +75,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         const handleMouseLeave = () => { pauseScroll = false; };
         const handleScroll = () => {
             if (scrollContainer) {
+                const endThreshold = scrollContainer.scrollWidth - scrollContainer.clientWidth - 5;
                 setShowLeftArrow(scrollContainer.scrollLeft > 10);
-                setShowRightArrow(scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
+                setShowRightArrow(scrollContainer.scrollLeft < endThreshold - 10);
             }
         };
 
@@ -229,67 +231,76 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                     </button>
                 )}
                 
-                {/* Horizontal scrolling container */}
-                <div 
-                    ref={scrollContainerRef}
-                    className="flex space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                    {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
-                        <div key={index} style={{ minWidth: '320px', maxWidth: '320px', height: '240px' }}>
-                            <Link 
-                                href={url || "#"}
-                                className="group relative block h-full p-6 rounded-xl 
-                                    transition-all duration-300 hover:-translate-y-1 cursor-pointer
-                                    bg-white dark:bg-gray-900
-                                    border border-gray-200 dark:border-gray-800
-                                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                                    dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
-                                    hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
-                                    dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]"
-                                style={{ display: 'flex', flexDirection: 'column' }}
+                {/* Horizontal scrolling container with controlled width */}
+                <div className="max-w-[90%] mx-auto overflow-hidden">
+                    <div 
+                        ref={scrollContainerRef}
+                        className="flex space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                        {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
+                            <div 
+                                key={index} 
+                                style={{ 
+                                    minWidth: isMobile ? '240px' : '280px', 
+                                    maxWidth: isMobile ? '240px' : '280px', 
+                                    height: isMobile ? '200px' : '240px' 
+                                }}
                             >
-                                {/* Type Badge */}
-                                <div className="absolute top-3 right-3 z-10">
-                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
-                                        {type}
-                                    </span>
-                                </div>
-                                
-                                {/* Title and Arrow Section */}
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-8">
-                                        {title}
-                                    </h3>
-                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
-                                </div>
-                                
-                                {/* Icon */}
-                                <Icon className="text-indigo-500 mb-4" size={24} />
-                                
-                                {/* Description */}
-                                <p className="text-gray-600 dark:text-gray-300 text-sm flex-grow">
-                                    {desc}
-                                </p>
-                                
-                                {/* Status or URL */}
-                                <div className="mt-auto pt-4">
-                                    {url ? (
-                                        <span className="text-sm text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline">
-                                            Visit <Globe size={14} />
+                                <Link 
+                                    href={url || "#"}
+                                    className="group relative block h-full p-6 rounded-xl 
+                                        transition-all duration-300 hover:-translate-y-1 cursor-pointer
+                                        bg-white dark:bg-gray-900
+                                        border border-gray-200 dark:border-gray-800
+                                        shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                                        dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
+                                        hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
+                                        dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]"
+                                    style={{ display: 'flex', flexDirection: 'column' }}
+                                >
+                                    {/* Type Badge */}
+                                    <div className="absolute top-3 right-3 z-10">
+                                        <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                            {type}
                                         </span>
-                                    ) : (
-                                        <span className="text-sm text-orange-500 flex items-center gap-1">
-                                            {status} <Terminal size={14} />
-                                        </span>
-                                    )}
-                                </div>
-                                
-                                {/* Animated bottom bar - appears on hover */}
-                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                            </Link>
-                        </div>
-                    ))}
+                                    </div>
+                                    
+                                    {/* Title and Arrow Section */}
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
+                                            {title}
+                                        </h3>
+                                        <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                    </div>
+                                    
+                                    {/* Icon */}
+                                    <Icon className="text-indigo-500 mb-3" size={isMobile ? 20 : 24} />
+                                    
+                                    {/* Description */}
+                                    <p className={`text-gray-600 dark:text-gray-300 ${isMobile ? 'text-xs leading-tight' : 'text-sm'} flex-grow line-clamp-3`}>
+                                        {desc}
+                                    </p>
+                                    
+                                    {/* Status or URL */}
+                                    <div className="mt-auto pt-2">
+                                        {url ? (
+                                            <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline`}>
+                                                Visit <Globe size={12} />
+                                            </span>
+                                        ) : (
+                                            <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-orange-500 flex items-center gap-1`}>
+                                                {status} <Terminal size={12} />
+                                            </span>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Animated bottom bar - appears on hover */}
+                                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
