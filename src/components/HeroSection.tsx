@@ -154,19 +154,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                                     w-full max-w-sm"
                                 style={{ display: 'flex', flexDirection: 'column', minHeight: '220px' }}
                             >
-                                {/* Type Badge */}
-                                <div className="absolute top-3 right-3 z-10">
-                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
-                                        {type}
-                                    </span>
-                                </div>
-                                
-                                {/* Title and Arrow Section */}
+                                {/* Title, Arrow and Type Badge Section */}
                                 <div className="flex justify-between items-start mb-3">
                                     <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
                                         {title}
                                     </h3>
-                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                    <div className="flex flex-col items-end">
+                                        <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                        <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 mt-2">
+                                            {type}
+                                        </span>
+                                    </div>
                                 </div>
                                 
                                 {/* Icon */}
