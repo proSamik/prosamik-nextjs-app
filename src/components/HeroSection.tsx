@@ -105,14 +105,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                         </span>
                     </div>
                 </h1>
-                <p className={`${isMobile ? 'text-lg' : 'text-xl'} opacity-80 leading-relaxed`}>
-                    Simple tools and templates that help developers work smarter, not harder
-                    {!isMobile && (<>
-                        .
-                        <br/>
-                        Designed to save you time, effort, and money on your next project.
-                    </>)}
-                </p>
             </div>
 
             <div className="bg-zinc-800 dark:bg-black/40 rounded-lg p-8 font-mono text-sm text-green-400 relative overflow-hidden w-full">
