@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Globe, Github, Package, Rocket, Timer } from 'lucide-react';
+import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
 import { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 
 interface HeroSectionProps {
     isMobile: boolean;
@@ -14,6 +15,7 @@ interface ProductItem {
     icon: LucideIcon;
     title: string;
     desc: string;
+    type: string;
     url?: string;
     status?: string;
 }
@@ -35,26 +37,48 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         { 
             icon: Globe, 
             title: 'prosamik.com', 
-            desc: 'Official Website of Samik Choudhury',
+            type: 'Web App',
+            desc: 'Official portfolio showcasing projects and blogs',
             url: 'https://prosamik.com' 
         },
         { 
-            icon: Github, 
+            icon: Globe, 
             title: 'githubme.com', 
-            desc: 'Convert README.md files into readable articles',
+            type: 'Web App',
+            desc: 'Convert any GitHub README into a readable article format',
             url: 'https://githubme.com' 
         },
         { 
-            icon: Package, 
-            title: 'SaaS Kit', 
-            desc: 'A scalable foundation for SaaS applications',
-            status: 'Coming Soon'
+            icon: Database, 
+            title: 'OnlineDB', 
+            type: 'Web App',
+            desc: 'Connect localhost or serverless databases to view and edit data easily',
+            url: 'https://githubme.com/proSamik/database-viewer-in-web',
+            status: 'Available Now'
         },
         { 
-            icon: Rocket, 
-            title: 'n8n Templates', 
-            desc: 'Free automation workflows',
-            status: 'Coming Soon'
+            icon: GitBranch, 
+            title: 'Consistent Tracker', 
+            type: 'Web App',
+            desc: 'Track your consistency across GitHub, Twitter, Instagram, and YouTube',
+            url: 'https://consistency.prosamik.com', // Updated link
+            status: 'Available Now' // Updated status
+        },
+        { 
+            icon: Monitor, 
+            title: 'FreeScreenshot', 
+            type: 'macOS App',
+            desc: 'Add beautiful colorful backgrounds to your Mac screenshots',
+            url: 'https://githubme.com/proSamik/freescreenshot',
+            status: 'Available Now'
+        },
+        { 
+            icon: Chrome, 
+            title: 'Tweet Copier', 
+            type: 'Chrome Extension',
+            desc: 'Save tweets and threads with one click in text format for analysis and inspiration',
+            url: 'https://githubme.com/proSamik/a-tweet-copier',
+            status: 'Available Now'
         },
     ];
 
@@ -81,14 +105,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                         </span>
                     </div>
                 </h1>
-                <p className={`${isMobile ? 'text-lg' : 'text-xl'} opacity-80 leading-relaxed`}>
-                    Simple tools and templates that help developers work smarter, not harder
-                    {!isMobile && (<>
-                        .
-                        <br/>
-                        Designed to save you time, effort, and money on your next project.
-                    </>)}
-                </p>
             </div>
 
             <div className="bg-zinc-800 dark:bg-black/40 rounded-lg p-8 font-mono text-sm text-green-400 relative overflow-hidden w-full">
@@ -114,36 +130,67 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mt-6`}>My Products</h2>
-
-            <div className={` py-2 grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'} gap-6`}>
-                {myProducts.map(({ icon: Icon, title, desc, url, status }, index) => (
-                    <div
-                        key={index}
-                        className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
-                    >
-                        <Icon className="text-blue-500 mb-4" size={28} />
-                        <h3 className="font-semibold mb-2">{title}</h3>
-                        <p className="text-sm opacity-70 mb-3">{desc}</p>
-                        {url ? (
-                            <a 
-                                href={url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+            <div>
+                <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mb-6`}>Checkout my products</h2>
+                
+                {/* Static grid layout */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-xl mx-auto">
+                    {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
+                        <div key={index} className="flex justify-center">
+                            <Link 
+                                href={url || "#"}
+                                className="group relative block h-full p-6 rounded-xl 
+                                    transition-all duration-300 hover:-translate-y-2 cursor-pointer
+                                    bg-white dark:bg-gray-900
+                                    border border-gray-200 dark:border-gray-800
+                                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                                    dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
+                                    hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
+                                    dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]
+                                    w-full max-w-sm"
+                                style={{ display: 'flex', flexDirection: 'column', minHeight: '220px' }}
                             >
-                                Visit <Globe size={14} />
-                            </a>
-                        ) : (
-                            <span className="text-sm text-amber-500 flex items-center gap-1">
-                                {status} <Timer size={14} />
-                            </span>
-                        )}
-                    </div>
-                ))}
+                                {/* Icon and Type Tag Row */}
+                                <div className="flex items-center mb-4">
+                                    <Icon className="text-indigo-500 mr-3 flex-shrink-0" size={isMobile ? 20 : 24} />
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                        {type}
+                                    </span>
+                                </div>
+                                
+                                {/* Title and Arrow Section */}
+                                <div className="flex justify-between items-start mb-3">
+                                    <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
+                                        {title}
+                                    </h3>
+                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                </div>
+                                
+                                {/* Description */}
+                                <p className={`text-gray-600 dark:text-gray-300 ${isMobile ? 'text-xs leading-tight' : 'text-sm'} flex-grow line-clamp-3`}>
+                                    {desc}
+                                </p>
+                                
+                                {/* Status or URL */}
+                                <div className="mt-auto pt-2">
+                                    {url ? (
+                                        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline`}>
+                                            Visit <Globe size={12} />
+                                        </span>
+                                    ) : (
+                                        <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-orange-500 flex items-center gap-1`}>
+                                            {status} <Terminal size={12} />
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                {/* Animated bottom bar - appears on hover */}
+                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
-
-            
 
             <div className="flex gap-4 justify-center">
                 <button
