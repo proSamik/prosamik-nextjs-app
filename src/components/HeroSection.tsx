@@ -232,18 +232,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 )}
                 
                 {/* Horizontal scrolling container with controlled width */}
-                <div className="max-w-[90%] mx-auto overflow-hidden">
+                <div className="max-w-[80%] md:max-w-[85%] mx-auto overflow-hidden">
                     <div 
                         ref={scrollContainerRef}
-                        className="flex space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
+                        className="flex space-x-4 md:space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
                         {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
                             <div 
                                 key={index} 
                                 style={{ 
-                                    minWidth: isMobile ? '240px' : '280px', 
-                                    maxWidth: isMobile ? '240px' : '280px', 
+                                    minWidth: isMobile ? '220px' : '260px', 
+                                    maxWidth: isMobile ? '220px' : '260px', 
                                     height: isMobile ? '200px' : '240px' 
                                 }}
                             >
