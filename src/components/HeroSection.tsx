@@ -41,7 +41,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         if (!scrollContainer) return;
 
         let scrollInterval: NodeJS.Timeout;
-        let scrollDirection = 1; // 1 for right, -1 for left
         let pauseScroll = false;
 
         const startScrolling = () => {
@@ -49,20 +48,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 if (pauseScroll) return;
                 
                 if (scrollContainer) {
-                    // Calculate scroll position
-                    const newScrollLeft = scrollContainer.scrollLeft + (2 * scrollDirection);
-                    scrollContainer.scrollLeft = newScrollLeft;
+                    // Calculate new scroll position (always moving right)
+                    const newScrollLeft = scrollContainer.scrollLeft + 2;
                     
-                    // Change direction if we reach the end
-                    if (newScrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
-                        scrollDirection = -1;
-                    } else if (newScrollLeft <= 0) {
-                        scrollDirection = 1;
+                    // Check if we've reached the end
+                    if (newScrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) {
+                        // Jump back to start for full rotation
+                        scrollContainer.scrollLeft = 0;
+                    } else {
+                        // Continue scrolling right
+                        scrollContainer.scrollLeft = newScrollLeft;
                     }
                     
                     // Update arrow visibility
-                    setShowLeftArrow(newScrollLeft > 10);
-                    setShowRightArrow(newScrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
+                    setShowLeftArrow(scrollContainer.scrollLeft > 10);
+                    setShowRightArrow(scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
                 }
             }, 50);
         };
