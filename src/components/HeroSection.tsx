@@ -154,21 +154,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                                     w-full max-w-sm"
                                 style={{ display: 'flex', flexDirection: 'column', minHeight: '220px' }}
                             >
-                                {/* Title, Arrow and Type Badge Section */}
+                                {/* Icon and Type Tag Row */}
+                                <div className="flex items-center mb-4">
+                                    <Icon className="text-indigo-500 mr-3 flex-shrink-0" size={isMobile ? 20 : 24} />
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                        {type}
+                                    </span>
+                                </div>
+                                
+                                {/* Title and Arrow Section */}
                                 <div className="flex justify-between items-start mb-3">
                                     <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-6`}>
                                         {title}
                                     </h3>
-                                    <div className="flex flex-col items-end">
-                                        <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
-                                        <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 mt-2">
-                                            {type}
-                                        </span>
-                                    </div>
+                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
                                 </div>
-                                
-                                {/* Icon */}
-                                <Icon className="text-indigo-500 mb-3" size={isMobile ? 20 : 24} />
                                 
                                 {/* Description */}
                                 <p className={`text-gray-600 dark:text-gray-300 ${isMobile ? 'text-xs leading-tight' : 'text-sm'} flex-grow line-clamp-3`}>
