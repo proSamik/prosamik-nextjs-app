@@ -42,29 +42,34 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
         let scrollInterval: NodeJS.Timeout;
         let pauseScroll = false;
+        let isResetting = false;
 
         const startScrolling = () => {
             scrollInterval = setInterval(() => {
-                if (pauseScroll || !scrollContainer) return;
+                if (pauseScroll || !scrollContainer || isResetting) return;
                 
-                // Calculate new scroll position (always moving right)
-                const newScrollLeft = scrollContainer.scrollLeft + 1;
+                // Get current scroll position
+                const currentScroll = scrollContainer.scrollLeft;
+                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
                 
-                // Fixed threshold to detect end
-                const endThreshold = scrollContainer.scrollWidth - scrollContainer.clientWidth - 5;
-                
-                // Check if we've reached the end with some buffer
-                if (newScrollLeft >= endThreshold) {
-                    // Jump back to start for full rotation
-                    scrollContainer.scrollTo({ left: 0, behavior: 'auto' });
+                // Check if we've reached the end (with some buffer)
+                if (maxScroll - currentScroll < 20) {
+                    // Prevent multiple reset attempts
+                    isResetting = true;
+                    
+                    // Reset to beginning immediately
+                    setTimeout(() => {
+                        scrollContainer.scrollLeft = 0;
+                        isResetting = false;
+                    }, 50);
                 } else {
                     // Continue scrolling right
-                    scrollContainer.scrollLeft = newScrollLeft;
+                    scrollContainer.scrollLeft = currentScroll + 1;
                 }
                 
                 // Update arrow visibility
-                setShowLeftArrow(scrollContainer.scrollLeft > 10);
-                setShowRightArrow(scrollContainer.scrollLeft < endThreshold - 10);
+                setShowLeftArrow(currentScroll > 10);
+                setShowRightArrow(currentScroll < maxScroll - 50);
             }, 25);
         };
 
@@ -75,9 +80,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         const handleMouseLeave = () => { pauseScroll = false; };
         const handleScroll = () => {
             if (scrollContainer) {
-                const endThreshold = scrollContainer.scrollWidth - scrollContainer.clientWidth - 5;
-                setShowLeftArrow(scrollContainer.scrollLeft > 10);
-                setShowRightArrow(scrollContainer.scrollLeft < endThreshold - 10);
+                const currentScroll = scrollContainer.scrollLeft;
+                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                
+                setShowLeftArrow(currentScroll > 10);
+                setShowRightArrow(currentScroll < maxScroll - 50);
             }
         };
 
