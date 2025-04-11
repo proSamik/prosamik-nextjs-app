@@ -53,7 +53,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             title: 'OnlineDB', 
             type: 'Web App',
             desc: 'Connect local or serverless databases to view and edit data easily',
-            status: 'Coming Soon'
+            url: 'https://githubme.com/proSamik/database-viewer-in-web',
+            status: 'Available Now'
         },
         { 
             icon: GitBranch, 
@@ -67,14 +68,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             title: 'FreeScreenshot', 
             type: 'macOS App',
             desc: 'Add beautiful colorful backgrounds to your Mac screenshots',
-            status: 'Coming Soon'
+            url: 'https://githubme.com/proSamik/freescreenshot',
+            status: 'Available Now'
         },
         { 
             icon: Chrome, 
             title: 'Tweet Copier', 
             type: 'Chrome Extension',
             desc: 'Save tweets and threads with one click for analysis and inspiration',
-            status: 'Coming Soon'
+            url: 'https://githubme.com/proSamik/a-tweet-copier',
+            status: 'Available Now'
         },
     ];
 
