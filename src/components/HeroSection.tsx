@@ -52,7 +52,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             icon: Database, 
             title: 'OnlineDB', 
             type: 'Web App',
-            desc: 'Connect local or serverless databases to view and edit data easily',
+            desc: 'Connect localhost or serverless databases to view and edit data easily',
             url: 'https://githubme.com/proSamik/database-viewer-in-web',
             status: 'Available Now'
         },
@@ -76,7 +76,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             icon: Chrome, 
             title: 'Tweet Copier', 
             type: 'Chrome Extension',
-            desc: 'Save tweets and threads with one click for analysis and inspiration',
+            desc: 'Save tweets and threads with one click in text format for analysis and inspiration',
             url: 'https://githubme.com/proSamik/a-tweet-copier',
             status: 'Available Now'
         },
