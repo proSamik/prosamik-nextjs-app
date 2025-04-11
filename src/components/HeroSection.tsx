@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Terminal, Globe, Github, Package, Rocket, Timer } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
 import { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 
 interface HeroSectionProps {
     isMobile: boolean;
@@ -14,6 +15,7 @@ interface ProductItem {
     icon: LucideIcon;
     title: string;
     desc: string;
+    type: string;
     url?: string;
     status?: string;
 }
@@ -21,6 +23,9 @@ interface ProductItem {
 const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLogsClick  }) => {
     const [step, setStep] = useState(0);
     const steps = ['Initializing build...', 'Optimizing for speed...', 'Removing complexity...', 'Ready to ship! 🚀'];
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(true);
 
     useEffect(() => {
         // Set up timer to cycle through build steps
@@ -30,30 +35,118 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
         return () => clearInterval(timer);
     }, [steps.length]);
 
+    // Auto-scrolling logic
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        let scrollInterval: NodeJS.Timeout;
+        let scrollDirection = 1; // 1 for right, -1 for left
+        let pauseScroll = false;
+
+        const startScrolling = () => {
+            scrollInterval = setInterval(() => {
+                if (pauseScroll) return;
+                
+                if (scrollContainer) {
+                    // Calculate scroll position
+                    const newScrollLeft = scrollContainer.scrollLeft + (2 * scrollDirection);
+                    scrollContainer.scrollLeft = newScrollLeft;
+                    
+                    // Change direction if we reach the end
+                    if (newScrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+                        scrollDirection = -1;
+                    } else if (newScrollLeft <= 0) {
+                        scrollDirection = 1;
+                    }
+                    
+                    // Update arrow visibility
+                    setShowLeftArrow(newScrollLeft > 10);
+                    setShowRightArrow(newScrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
+                }
+            }, 50);
+        };
+
+        startScrolling();
+
+        // Pause auto-scrolling when user interacts
+        const handleMouseEnter = () => { pauseScroll = true; };
+        const handleMouseLeave = () => { pauseScroll = false; };
+        const handleScroll = () => {
+            if (scrollContainer) {
+                setShowLeftArrow(scrollContainer.scrollLeft > 10);
+                setShowRightArrow(scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth - 10);
+            }
+        };
+
+        scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+        scrollContainer.addEventListener('scroll', handleScroll);
+
+        return () => {
+            clearInterval(scrollInterval);
+            if (scrollContainer) {
+                scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+                scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+                scrollContainer.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
+
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    };
+
     // List of products with their details and icons
     const myProducts: ProductItem[] = [
         { 
             icon: Globe, 
             title: 'prosamik.com', 
-            desc: 'Official Website of Samik Choudhury',
+            type: 'Website',
+            desc: 'Official portfolio showcasing projects and blogs',
             url: 'https://prosamik.com' 
         },
         { 
-            icon: Github, 
+            icon: Globe, 
             title: 'githubme.com', 
-            desc: 'Convert README.md files into readable articles',
+            type: 'Web Tool',
+            desc: 'Convert any GitHub README into a readable article format',
             url: 'https://githubme.com' 
         },
         { 
-            icon: Package, 
-            title: 'SaaS Kit', 
-            desc: 'A scalable foundation for SaaS applications',
+            icon: Database, 
+            title: 'OnlineDB', 
+            type: 'Web App',
+            desc: 'Connect local or serverless databases to view and edit data easily',
             status: 'Coming Soon'
         },
         { 
-            icon: Rocket, 
-            title: 'n8n Templates', 
-            desc: 'Free automation workflows',
+            icon: GitBranch, 
+            title: 'Consistent Tracker', 
+            type: 'Web App',
+            desc: 'Track your consistency across GitHub, Twitter, Instagram, and YouTube',
+            status: 'Coming Soon'
+        },
+        { 
+            icon: Monitor, 
+            title: 'FreeScreenshot', 
+            type: 'macOS App',
+            desc: 'Add beautiful colorful backgrounds to your Mac screenshots',
+            status: 'Coming Soon'
+        },
+        { 
+            icon: Chrome, 
+            title: 'Tweet Copier', 
+            type: 'Chrome Extension',
+            desc: 'Save tweets and threads with one click for analysis and inspiration',
             status: 'Coming Soon'
         },
     ];
@@ -114,36 +207,91 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mt-6`}>My Products</h2>
-
-            <div className={` py-2 grid ${isMobile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'} gap-6`}>
-                {myProducts.map(({ icon: Icon, title, desc, url, status }, index) => (
-                    <div
-                        key={index}
-                        className="group relative flex flex-col p-6 bg-white dark:bg-gray-900 shadow-blue-200 dark:shadow-blue-200 dark:shadow-sm shadow-lg rounded-lg hover:shadow-xl transition-all duration-200"
+            <div className="relative">
+                <h2 className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'} mb-6`}>My Products</h2>
+                
+                {/* Navigation arrows */}
+                {showLeftArrow && (
+                    <button 
+                        onClick={scrollLeft}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md z-10 opacity-80 hover:opacity-100 transition-opacity"
                     >
-                        <Icon className="text-blue-500 mb-4" size={28} />
-                        <h3 className="font-semibold mb-2">{title}</h3>
-                        <p className="text-sm opacity-70 mb-3">{desc}</p>
-                        {url ? (
-                            <a 
-                                href={url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+                        <ChevronLeft size={24} className="text-gray-700 dark:text-gray-300" />
+                    </button>
+                )}
+                
+                {showRightArrow && (
+                    <button 
+                        onClick={scrollRight}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md z-10 opacity-80 hover:opacity-100 transition-opacity"
+                    >
+                        <ChevronRight size={24} className="text-gray-700 dark:text-gray-300" />
+                    </button>
+                )}
+                
+                {/* Horizontal scrolling container */}
+                <div 
+                    ref={scrollContainerRef}
+                    className="flex space-x-6 py-4 overflow-x-auto scrollbar-hide scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {myProducts.map(({ icon: Icon, title, desc, type, url, status }, index) => (
+                        <div key={index} style={{ minWidth: '320px', maxWidth: '320px', height: '240px' }}>
+                            <Link 
+                                href={url || "#"}
+                                className="group relative block h-full p-6 rounded-xl 
+                                    transition-all duration-300 hover:-translate-y-1 cursor-pointer
+                                    bg-white dark:bg-gray-900
+                                    border border-gray-200 dark:border-gray-800
+                                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                                    dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)]
+                                    hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)]
+                                    dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]"
+                                style={{ display: 'flex', flexDirection: 'column' }}
                             >
-                                Visit <Globe size={14} />
-                            </a>
-                        ) : (
-                            <span className="text-sm text-amber-500 flex items-center gap-1">
-                                {status} <Timer size={14} />
-                            </span>
-                        )}
-                    </div>
-                ))}
+                                {/* Type Badge */}
+                                <div className="absolute top-3 right-3 z-10">
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                        {type}
+                                    </span>
+                                </div>
+                                
+                                {/* Title and Arrow Section */}
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors pr-8">
+                                        {title}
+                                    </h3>
+                                    <ArrowUpRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform flex-shrink-0" />
+                                </div>
+                                
+                                {/* Icon */}
+                                <Icon className="text-indigo-500 mb-4" size={24} />
+                                
+                                {/* Description */}
+                                <p className="text-gray-600 dark:text-gray-300 text-sm flex-grow">
+                                    {desc}
+                                </p>
+                                
+                                {/* Status or URL */}
+                                <div className="mt-auto pt-4">
+                                    {url ? (
+                                        <span className="text-sm text-indigo-600 dark:text-indigo-400 flex items-center gap-1 group-hover:underline">
+                                            Visit <Globe size={14} />
+                                        </span>
+                                    ) : (
+                                        <span className="text-sm text-orange-500 flex items-center gap-1">
+                                            {status} <Terminal size={14} />
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                {/* Animated bottom bar - appears on hover */}
+                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
-
-            
 
             <div className="flex gap-4 justify-center">
                 <button
