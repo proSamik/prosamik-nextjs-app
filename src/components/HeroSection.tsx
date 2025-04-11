@@ -61,7 +61,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             title: 'Consistent Tracker', 
             type: 'Web App',
             desc: 'Track your consistency across GitHub, Twitter, Instagram, and YouTube',
-            status: 'Coming Soon'
+            url: 'https://consistency.prosamik.com', // Updated link
+            status: 'Available Now' // Updated status
         },
         { 
             icon: Monitor, 
