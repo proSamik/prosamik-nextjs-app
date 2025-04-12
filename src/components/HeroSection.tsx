@@ -35,11 +35,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
     // List of products with their details and icons
     const myProducts: ProductItem[] = [
         { 
-            icon: Globe, 
-            title: 'prosamik.com', 
-            type: 'Web App',
-            desc: 'Official portfolio showcasing projects and blogs',
-            url: 'https://prosamik.com' 
+            icon: Monitor, 
+            title: 'FreeScreenshot', 
+            type: 'macOS App',
+            desc: 'Add beautiful colorful backgrounds to your Mac screenshots',
+            url: 'https://githubme.com/proSamik/freescreenshot',
+            status: 'Available Now'
         },
         { 
             icon: Globe, 
@@ -47,14 +48,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             type: 'Web App',
             desc: 'Convert any GitHub README into a readable article format',
             url: 'https://githubme.com' 
-        },
-        { 
-            icon: Database, 
-            title: 'OnlineDB', 
-            type: 'Web App',
-            desc: 'Connect localhost or serverless databases to view and edit data easily',
-            url: 'https://githubme.com/proSamik/database-viewer-in-web',
-            status: 'Available Now'
         },
         { 
             icon: GitBranch, 
@@ -65,20 +58,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             status: 'Available Now' // Updated status
         },
         { 
-            icon: Monitor, 
-            title: 'FreeScreenshot', 
-            type: 'macOS App',
-            desc: 'Add beautiful colorful backgrounds to your Mac screenshots',
-            url: 'https://githubme.com/proSamik/freescreenshot',
-            status: 'Available Now'
-        },
-        { 
             icon: Chrome, 
             title: 'Tweet Copier', 
             type: 'Chrome Extension',
             desc: 'Save tweets and threads with one click in text format for analysis and inspiration',
             url: 'https://githubme.com/proSamik/a-tweet-copier',
             status: 'Available Now'
+        },
+        { 
+            icon: Database, 
+            title: 'OnlineDB', 
+            type: 'Web App',
+            desc: 'Connect localhost or serverless databases to view and edit data easily',
+            url: 'https://githubme.com/proSamik/database-viewer-in-web',
+            status: 'Available Now'
+        },
+        { 
+            icon: Globe, 
+            title: 'prosamik.com', 
+            type: 'Web App',
+            desc: 'Official portfolio showcasing projects and blogs',
+            url: 'https://prosamik.com' 
         },
     ];
 
