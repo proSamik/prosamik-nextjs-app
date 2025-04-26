@@ -38,7 +38,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             icon: Brain, 
             title: 'mapyourideas.com', 
             type: 'Web App',
-            desc: 'AI powered brainstorming tool',
+            desc: 'AI powered brainstorming and mind mapping app',
             url: 'https://mapyourideas.com',
             status: 'Available Now'
         },
