@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight } from 'lucide-react';
+import { Terminal, Globe, Database, GitBranch, Monitor, Chrome, ArrowUpRight, Brain } from 'lucide-react';
 import LoadingBar from "@/components/layout/LoadingBar";
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -34,6 +34,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
 
     // List of products with their details and icons
     const myProducts: ProductItem[] = [
+        { 
+            icon: Brain, 
+            title: 'mapyourideas.com', 
+            type: 'Web App',
+            desc: 'AI powered brainstorming tool',
+            url: 'https://mapyourideas.com',
+            status: 'Available Now'
+        },
         { 
             icon: Monitor, 
             title: 'FreeScreenshot', 
