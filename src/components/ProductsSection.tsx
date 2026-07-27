@@ -10,80 +10,19 @@ import {
     Monitor,
     type LucideIcon,
 } from 'lucide-react';
+import Link from 'next/link';
+import { projects, type ProjectIcon } from '@/data/projects';
 
-interface ProductItem {
-    icon: LucideIcon;
-    title: string;
-    description: string;
-    type: string;
-    url: string;
-}
-
-const products: ProductItem[] = [
-    {
-        icon: Clapperboard,
-        title: 'Subclip.app',
-        type: 'Web, iOS & macOS App',
-        description: 'AI video editor for captions, dubbing, transcription, and translation',
-        url: 'https://www.subclip.app',
-    },
-    {
-        icon: Ban,
-        title: 'Track Bad Habits',
-        type: 'iOS App',
-        description: 'Log slip-ups, understand your triggers, and stay accountable with streaks and widgets',
-        url: 'https://apps.apple.com/in/app/track-bad-habits/id6756222875',
-    },
-    {
-        icon: Brain,
-        title: 'mapyourideas.com',
-        type: 'Web App',
-        description: 'AI powered brainstorming and mind mapping app',
-        url: 'https://github.com/proSamik/mapyourideas',
-    },
-    {
-        icon: Monitor,
-        title: 'FreeScreenshot',
-        type: 'macOS App',
-        description: 'Add beautiful colorful backgrounds to your Mac screenshots',
-        url: 'https://github.com/proSamik/freescreenshot',
-    },
-    {
-        icon: Globe,
-        title: 'githubme.com',
-        type: 'Web App',
-        description: 'Convert any GitHub README into a readable article format',
-        url: 'https://github.com/proSamik/githubme',
-    },
-    {
-        icon: GitBranch,
-        title: 'Consistent Tracker',
-        type: 'Web App',
-        description: 'Track your consistency across GitHub, Twitter, Instagram, and YouTube',
-        url: 'https://github.com/proSamik/consistency-tracker-calendar',
-    },
-    {
-        icon: Chrome,
-        title: 'Tweet Copier',
-        type: 'Chrome Extension',
-        description: 'Save tweets and threads with one click in text format for analysis and inspiration',
-        url: 'https://github.com/proSamik/a-tweet-copier',
-    },
-    {
-        icon: Database,
-        title: 'OnlineDB',
-        type: 'Web App',
-        description: 'Connect localhost or serverless databases to view and edit data easily',
-        url: 'https://github.com/proSamik/database-viewer-in-web',
-    },
-    {
-        icon: Globe,
-        title: 'prosamik.com',
-        type: 'Web App',
-        description: 'Personal site and product portfolio',
-        url: 'https://prosamik.com',
-    },
-];
+const icons: Record<ProjectIcon, LucideIcon> = {
+    ban: Ban,
+    brain: Brain,
+    chrome: Chrome,
+    clapperboard: Clapperboard,
+    database: Database,
+    'git-branch': GitBranch,
+    globe: Globe,
+    monitor: Monitor,
+};
 
 export default function ProductsSection() {
     return (
@@ -91,40 +30,42 @@ export default function ProductsSection() {
             <h1 className="mb-8 w-full text-center text-3xl font-bold">My HONEST Experiments</h1>
 
             <div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {products.map(({ icon: Icon, title, description, type, url }) => (
-                    <div key={title} className="flex justify-center">
-                        <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                {projects.map((project) => {
+                    const Icon = icons[project.icon];
+
+                    return (
+                    <div key={project.slug} className="flex justify-center">
+                        <Link
+                            href={`/projects/${project.slug}`}
                             className="group relative flex min-h-[220px] w-full max-w-sm cursor-pointer flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.2),0_10px_20px_-2px_rgba(0,0,0,0.05)] dark:border-gray-800 dark:bg-gray-900 dark:shadow-[0_2px_15px_-3px_rgba(79,70,229,0.15)] dark:hover:shadow-[0_8px_20px_-4px_rgba(79,70,229,0.25)]"
                         >
                             <div className="mb-4 flex items-center">
                                 <Icon className="mr-3 shrink-0 text-indigo-500" size={24}/>
                                 <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                                    {type}
+                                    {project.type}
                                 </span>
                             </div>
 
                             <div className="mb-3 flex items-start justify-between">
                                 <h2 className="pr-6 text-lg font-bold text-indigo-600 transition-colors group-hover:text-indigo-700 dark:text-indigo-400 dark:group-hover:text-indigo-300 sm:text-xl">
-                                    {title}
+                                    {project.title}
                                 </h2>
                                 <ArrowUpRight className="h-5 w-5 shrink-0 text-indigo-600 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 dark:text-indigo-400"/>
                             </div>
 
                             <p className="line-clamp-3 flex-grow text-sm text-gray-600 dark:text-gray-300">
-                                {description}
+                                {project.description}
                             </p>
 
                             <span className="mt-auto flex items-center gap-1 pt-2 text-sm text-indigo-600 group-hover:underline dark:text-indigo-400">
-                                Visit <Globe size={12}/>
+                                Read the project story <ArrowUpRight size={12}/>
                             </span>
 
                             <div className="absolute bottom-0 left-0 h-1 w-full scale-x-0 bg-gradient-to-r from-indigo-500 to-purple-600 transition-transform duration-300 group-hover:scale-x-100"/>
-                        </a>
+                        </Link>
                     </div>
-                ))}
+                    );
+                })}
             </div>
         </section>
     );
