@@ -51,6 +51,7 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
     if (!period) notFound();
 
     const pageUrl = `${siteMetadata.siteUrl}/milestone/${period.year}`;
+    const orderedEvents = [...period.events].reverse();
     const itemListJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
@@ -59,7 +60,7 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
         url: pageUrl,
         mainEntity: {
             '@type': 'ItemList',
-            itemListElement: period.events.map((event, index) => ({
+            itemListElement: orderedEvents.map((event, index) => ({
                 '@type': 'ListItem',
                 position: index + 1,
                 name: event.title,
@@ -90,30 +91,56 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                 )}
             </header>
 
-            <section className="space-y-4 py-10" aria-label="Milestones">
-                {period.events.map((event) => {
+            <section className="relative mx-auto max-w-2xl py-10" aria-label="Milestones">
+                <div
+                    aria-hidden="true"
+                    className="milestone-timeline-line absolute bottom-16 left-[15px] top-16 w-0.5 bg-gradient-to-t from-blue-600 to-blue-200"
+                />
+
+                <div className="space-y-8">
+                {orderedEvents.map((event, index) => {
                     const milestoneSlug = getMilestoneSlug(event.title);
+                    const revealDelay = (orderedEvents.length - index - 1) * 140 + 250;
 
                     return (
-                        <Link
+                        <article
                             key={milestoneSlug}
-                            href={`/milestone/${period.year}/${milestoneSlug}`}
-                            className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
+                            className="milestone-timeline-item relative pl-12"
+                            style={{ animationDelay: `${revealDelay}ms` }}
                         >
-                            <div className="flex items-start justify-between gap-4">
-                                <h2 className="text-xl font-semibold">{event.title}</h2>
-                                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600" />
-                            </div>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {event.skills.map((skill) => (
-                                    <span key={skill} className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
-                                        {skill}
+                            <span
+                                aria-hidden="true"
+                                className={`absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-blue-600 ring-4 ring-white ${
+                                    index === 0 ? 'bg-blue-600 shadow-[0_0_0_5px_rgba(37,99,235,0.12)]' : 'bg-white'
+                                }`}
+                            />
+                            <Link
+                                href={`/milestone/${period.year}/${milestoneSlug}`}
+                                className={`group block rounded-xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md ${
+                                    index === 0 ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-200'
+                                }`}
+                            >
+                                {index === 0 && (
+                                    <span className="mb-3 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
+                                        Latest
                                     </span>
-                                ))}
-                            </div>
-                        </Link>
+                                )}
+                                <div className="flex items-start justify-between gap-4">
+                                    <h2 className="text-xl font-semibold">{event.title}</h2>
+                                    <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600" />
+                                </div>
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {event.skills.map((skill) => (
+                                        <span key={skill} className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            </Link>
+                        </article>
                     );
                 })}
+                </div>
             </section>
         </main>
     );
