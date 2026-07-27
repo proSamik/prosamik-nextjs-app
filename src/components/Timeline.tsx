@@ -27,7 +27,7 @@ export default function Timeline({ timelineData }: TimelineProps) {
     return (
         <section className="w-full">
             <h1 className="mb-8 text-center text-2xl font-bold">- My Proud Moments -</h1>
-            <div className="mx-auto grid w-full max-w-md grid-cols-2 gap-3">
+            <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3">
                 {timelineData.map((period) => {
                     const yearSlug = getYearSlug(period.yearRange.start, period.yearRange.end);
 
