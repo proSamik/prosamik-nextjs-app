@@ -27,3 +27,43 @@ nav a {
     color: #000;
     font-size: 16px;
 }
+
+@keyframes milestone-line-reveal {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes milestone-item-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.milestone-timeline-line {
+    transform: scaleY(0);
+    transform-origin: bottom;
+    animation: milestone-line-reveal 900ms ease-out 120ms forwards;
+}
+
+.milestone-timeline-item {
+    opacity: 0;
+    animation: milestone-item-reveal 480ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .milestone-timeline-line,
+    .milestone-timeline-item {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
