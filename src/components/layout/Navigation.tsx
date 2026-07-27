@@ -1,9 +1,6 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import ThemeToggle from "@/components/layout/ThemeToggle";
-import CustomBackButton from "./CustomBackButton";
-import CustomNextButton from "./CustomNextButton";
+import { usePathname } from 'next/navigation';
 
 // Define TypeScript interface for NavLink props
 interface NavLinkProps {
@@ -15,7 +12,7 @@ interface NavLinkProps {
 }
 
 const Navigation = () => {
-    const router = useRouter();
+    const pathname = usePathname();
     const [isMounted, setIsMounted] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -34,20 +31,16 @@ const Navigation = () => {
         handleResize();
         window.addEventListener('resize', handleResize);
 
-        // Close menu on route change
-        const handleRouteChange = () => {
-            setIsMenuOpen(false);
-        };
-
-        router.events.on('routeChangeComplete', handleRouteChange);
-
         return () => {
             window.removeEventListener('resize', handleResize);
-            router.events.off('routeChangeComplete', handleRouteChange);
         };
-    }, [router.events]);
+    }, []);
 
-    const isActivePath = (path: string): boolean => router.pathname === path;
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [pathname]);
+
+    const isActivePath = (path: string): boolean => pathname === path;
 
     const NavLink: React.FC<NavLinkProps> = ({ href, icon, label, isMenuOpen }) => {
         const isActive = isActivePath(href);
@@ -93,24 +86,6 @@ const Navigation = () => {
                     : 'sticky top-0 left-0 w-24 h-screen p-2 flex flex-col items-center justify-center'
             }`}
         >
-            {/* Desktop Navigation Controls */}
-            {!isMobile && (
-                <>
-                    <div className="absolute top-16 left-0 px-2">
-                        <CustomBackButton/>
-                    </div>
-                    <div className="absolute bottom-16 left-0 px-2">
-                        <CustomNextButton/>
-                    </div>
-                </>
-            )}
-
-
-            {/* Theme Toggle */}
-            <div className={isMobile ? 'absolute left-0 px-5' : 'absolute top-0 left-1 px-10 mt-5'}>
-                <ThemeToggle/>
-            </div>
-
             {/* Hamburger Menu */}
             {isSmallScreen && (
                 <button
