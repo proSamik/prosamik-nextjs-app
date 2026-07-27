@@ -1,4 +1,4 @@
-import {FaGithub} from "react-icons/fa";
+import {FaGithub, FaLinkedin, FaYoutube} from "react-icons/fa";
 import Image from "next/image";
 import { FaXTwitter } from "react-icons/fa6";
 
@@ -48,13 +48,14 @@ export default function ProfileHeader() {
             <div className="flex flex-col items-center space-y-4 mt-5">
 
                 <div className="flex ">
-                    <div className="bg-gray-800 text-white px-4 py-2 rounded-md flex items-center space-x-4">
-                        <span>Reach @prosamik: </span>
+                    <div className="bg-gray-800 text-white px-4 py-2 rounded-md flex flex-wrap items-center justify-center gap-4">
+                        <span>Socials @prosamik: </span>
                         <a
                             href="https://www.twitter.com/prosamik"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-blue-400 flex flex-col items-center"
+                            aria-label="proSamik on X"
                         >
                             <FaXTwitter size={30}/>
                         </a>
@@ -63,17 +64,28 @@ export default function ProfileHeader() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-gray-300 flex flex-col items-center"
+                            aria-label="proSamik on GitHub"
                         >
                             <FaGithub size={30}/>
                         </a>
-                        {/* <a
+                        <a
+                            href="https://www.youtube.com/@prosamik"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-red-500 flex flex-col items-center"
+                            aria-label="proSamik on YouTube"
+                        >
+                            <FaYoutube size={30}/>
+                        </a>
+                        <a
                             href="https://www.linkedin.com/in/prosamik"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-blue-600 flex flex-col items-center"
+                            aria-label="proSamik on LinkedIn"
                         >
                             <FaLinkedin size={30}/>
-                        </a> */}
+                        </a>
                     </div>
                 </div>
             </div>
