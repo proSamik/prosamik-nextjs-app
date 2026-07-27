@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: light;
+}
+
 body {
     @apply bg-white text-black dark:bg-gray-900 dark:text-white;
 }
