@@ -131,13 +131,6 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                                     <h2 className="text-xl font-semibold">{event.title}</h2>
                                     <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600" />
                                 </div>
-                                <div className="mt-4 flex flex-wrap gap-2">
-                                    {event.skills.map((skill) => (
-                                        <span key={skill} className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
                             </Link>
                         </article>
                     );
