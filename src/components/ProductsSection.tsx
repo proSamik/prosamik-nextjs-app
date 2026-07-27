@@ -69,7 +69,7 @@ function ProjectTimeline() {
             <div className="relative mx-auto max-w-5xl">
                 <div
                     aria-hidden="true"
-                    className="project-timeline-line absolute bottom-24 left-[15px] top-24 w-0.5 bg-gradient-to-b from-indigo-600 to-purple-300 md:left-1/2 md:-translate-x-1/2"
+                    className="project-timeline-line absolute bottom-0 left-[15px] top-0 w-0.5 bg-gradient-to-b from-indigo-600 to-purple-300 md:left-1/2 md:-translate-x-1/2"
                 />
 
                 <div className="space-y-8">
