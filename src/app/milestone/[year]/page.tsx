@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { getMilestoneSlug } from '@/utils/slugs';
 import { getMilestoneYear, milestoneYears } from '@/utils/milestones';
 import { siteMetadata } from '@/utils/siteMetadata';
@@ -74,9 +75,10 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
             />
 
-            <Link href="/about" className="text-sm text-blue-600 hover:underline">
-                ← Back to all years
-            </Link>
+            <Breadcrumbs items={[
+                { label: 'About', href: '/about' },
+                { label: `${period.yearRange.start}-${period.yearRange.end}` },
+            ]} />
 
             <header className="mt-8 border-b border-gray-200 pb-8 text-center">
                 <p className="mb-3 font-medium text-blue-600">My Proud Moments</p>
