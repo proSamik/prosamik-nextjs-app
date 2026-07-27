@@ -1,8 +1,5 @@
 import type { Config } from 'tailwindcss';
 
-import typography from '@tailwindcss/typography';
-import aspectRatio from '@tailwindcss/aspect-ratio';
-
 export default {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -16,20 +13,6 @@ export default {
       transitionDuration: {
         '3000': '3000ms',
       },
-      typography: {
-        DEFAULT: {
-          css: {
-            maxWidth: 'none',
-            img: {
-              marginTop: '1.5rem',
-              marginBottom: '1.5rem',
-            },
-            'h1, h2, h3, h4': {
-              fontFamily: 'serif',
-            },
-          },
-        },
-      },
       colors: {
         // Optional: Define custom dark mode colors if needed
         dark: {
@@ -39,8 +22,5 @@ export default {
       },
     },
   },
-  plugins: [
-    typography,
-    aspectRatio,
-  ],
+  plugins: [],
 } satisfies Config;
