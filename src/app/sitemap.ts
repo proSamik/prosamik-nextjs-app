@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { projects } from '@/data/projects';
-import { milestones } from '@/utils/milestones';
+import { milestones, milestoneYears } from '@/utils/milestones';
 import { siteMetadata } from '@/utils/siteMetadata';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -22,5 +22,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.7,
     }));
 
-    return [...staticRoutes, ...projectRoutes, ...milestoneRoutes];
+    const milestoneYearRoutes: MetadataRoute.Sitemap = milestoneYears.map((item) => ({
+        url: `${siteMetadata.siteUrl}/milestone/${item.year}`,
+        changeFrequency: 'yearly',
+        priority: 0.8,
+    }));
+
+    return [...staticRoutes, ...projectRoutes, ...milestoneYearRoutes, ...milestoneRoutes];
 }
