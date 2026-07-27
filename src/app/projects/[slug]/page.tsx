@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { getProjectBySlug, projects } from '@/data/projects';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -84,9 +84,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
             />
 
-            <Link href="/projects" className="text-sm text-indigo-600 hover:underline">
-                ← All experiments
-            </Link>
+            <Breadcrumbs items={[
+                { label: 'Projects', href: '/projects' },
+                { label: project.title },
+            ]} />
 
             <header className="mt-8 space-y-5 border-b border-gray-200 pb-8">
                 <span className="inline-flex rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-700">
