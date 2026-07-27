@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { getMilestone, milestones } from '@/utils/milestones';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -79,9 +79,14 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(milestoneJsonLd) }}
             />
 
-            <Link href="/about" className="text-sm text-blue-600 hover:underline">
-                ← Back to my proud moments
-            </Link>
+            <Breadcrumbs items={[
+                { label: 'About', href: '/about' },
+                {
+                    label: `${item.yearRange.start}-${item.yearRange.end}`,
+                    href: `/milestone/${item.year}`,
+                },
+                { label: item.event.title },
+            ]} />
 
             <header className="mt-8 space-y-4 border-b border-gray-200 pb-8">
                 <p className="font-medium text-blue-600">
