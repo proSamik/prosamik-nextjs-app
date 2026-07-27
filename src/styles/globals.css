@@ -48,6 +48,17 @@ nav a {
     }
 }
 
+@keyframes year-card-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .milestone-timeline-line {
     transform: scaleY(0);
     transform-origin: bottom;
@@ -59,9 +70,28 @@ nav a {
     animation: milestone-item-reveal 480ms ease-out forwards;
 }
 
+.year-card-reveal {
+    opacity: 0;
+    animation: year-card-reveal 480ms ease-out forwards;
+}
+
+.project-timeline-line {
+    transform: scaleY(0);
+    transform-origin: top;
+    animation: milestone-line-reveal 1100ms ease-out 120ms forwards;
+}
+
+.project-timeline-item {
+    opacity: 0;
+    animation: milestone-item-reveal 480ms ease-out forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .milestone-timeline-line,
-    .milestone-timeline-item {
+    .milestone-timeline-item,
+    .year-card-reveal,
+    .project-timeline-line,
+    .project-timeline-item {
         animation: none;
         opacity: 1;
         transform: none;
