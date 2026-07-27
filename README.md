@@ -1,8 +1,6 @@
 # ProSamik Next.js Application
 
-It is currently markdown renderer turned portfolio website. Initially, the goal was to create a blogs website which uses markdown then it converted into portfolio website to test its feasibility, and later on it will be implemented for general purpose blog website with a single source of truth that is GitHub Markdown file.
-
-To understand the project in-depth [click here](https://prosamik.com/projects/prosamik-nextjs-app)
+A standalone portfolio website for Samik and his products.
 
 ## Prerequisites
 
@@ -24,12 +22,6 @@ Before you begin, ensure you have installed:
    npm install
    ```
 
-3. Create a `.env` file in the root directory:
-   ```env
-   PORT=10000 # Or your preferred backend port
-   NEXT_PUBLIC_BASE_URL=http://your-backend-url:10000
-   ```
-
 ## Development
 
 To run the development server with Turbopack:
@@ -42,7 +34,7 @@ The application will be available at `http://localhost:3000` (or your configured
 
 ## Building for Production
 
-1. Generate sitemap and build the application:
+1. Build the application:
    ```bash
    npm run build
    ```
@@ -55,10 +47,9 @@ The application will be available at `http://localhost:3000` (or your configured
 ## Available Scripts
 
 - `npm run dev` - Start development server with Turbopack
-- `npm run build` - Generate sitemap and build for production
+- `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint for code quality
-- `npm run generate-sitemap` - Generate sitemap manually
 
 ## Dependencies
 
@@ -95,5 +86,3 @@ Common issues and solutions:
 3. Turbopack issues
   - Try running without Turbopack: Remove `--turbopack` from the dev script
   - Clear cache: `rm -rf .next`
-
-
