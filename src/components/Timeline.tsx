@@ -1,7 +1,10 @@
 'use client';
-import React, { useState } from "react";
-import { ChevronRight, MoreHorizontal, X } from "lucide-react";
-import {TimelineEvent, TimePeriod, YearRange} from "@/types/timeline";
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { ChevronRight, MoreHorizontal } from 'lucide-react';
+import type { TimePeriod, YearRange } from '@/types/timeline';
+import { getMilestoneSlug, getYearSlug } from '@/utils/slugs';
 
 interface TimelineProps {
     timelineData: TimePeriod[];
@@ -14,7 +17,7 @@ const CalendarIcon = () => (
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="w-5 h-5"
+        className="h-5 w-5"
     >
         <path
             strokeLinecap="round"
@@ -24,216 +27,97 @@ const CalendarIcon = () => (
     </svg>
 );
 
-// Helper component for skill tags display
-const SkillTags = ({ skills, maxVisible, onClick }: {
-    skills: string[],
-    maxVisible: number,
-    onClick?: () => void
-}) => {
-    // Only show up to maxVisible tags
+function SkillTags({ skills, maxVisible }: { skills: string[]; maxVisible: number }) {
     const visibleSkills = skills.slice(0, maxVisible);
     const remainingCount = skills.length - maxVisible;
 
     return (
-        <div className="flex flex-wrap gap-1 mt-2">
-            {visibleSkills.map((skill, index) => (
-                <span
-                    key={index}
-                    className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-md"
-                >
+        <div className="mt-2 flex flex-wrap gap-1">
+            {visibleSkills.map((skill) => (
+                <span key={skill} className="rounded-md bg-blue-100 px-2 py-0.5 text-xs text-blue-800">
                     {skill}
                 </span>
             ))}
             {remainingCount > 0 && (
-                <button
-                    onClick={onClick}
-                    className="bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-md hover:bg-gray-200"
-                >
+                <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-800">
                     +{remainingCount} more
-                </button>
+                </span>
             )}
         </div>
     );
-};
+}
 
 export default function Timeline({ timelineData }: TimelineProps) {
     const [selectedYearRange, setSelectedYearRange] = useState<YearRange>(timelineData[0].yearRange);
-    const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [showYearDescription, setShowYearDescription] = useState(false);
-
-    const selectEvent = (event: TimelineEvent) => {
-        setSelectedEvent(event);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => setIsModalOpen(false);
-
-    const renderDescription = (description: string) => {
-        return description.split('\n').map((paragraph, index) => {
-            // Check if the paragraph starts with a tab (`\t`)
-            const isSubPoint = paragraph.startsWith('\t');
-
-            // Apply different styling for sub-points
-            return (
-                <p
-                    key={index}
-                    className={`text-gray-600 dark:text-gray-300 ${isSubPoint ? 'pl-4' : ''}`} // Add padding for sub-points
-                >
-                    {paragraph.trim()} {/* Trim to remove extra spaces or tabs */}
-                </p>
-            );
-        });
-    };
-
-    // Function to render skills in categories
-    const renderSkillCategories = (event: TimelineEvent) => {
-        return (
-            <div className="space-y-4 mt-6">
-                <div>
-                    <h4 className="text-lg font-semibold mb-2">General Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {event.skills.map((skill, index) => (
-                            <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-                {event.soft_skills && event.soft_skills.length > 0 && (
-                    <div>
-                        <h4 className="text-lg font-semibold mb-2">Soft Skills</h4>
-                        <div className="flex flex-wrap gap-2">
-                            {event.soft_skills.map((skill, index) => (
-                                <span key={index} className="bg-green-100 text-green-800 px-2 py-1 rounded-md">
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    };
-
-    // Get current period description
     const currentPeriod = timelineData.find(
         (period) => period.yearRange.start === selectedYearRange.start
     );
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold text-center mb-8">- My Proud Moments -</h1>
-            <div className="flex flex-col md:flex-row gap-2 space-x-4">
-                {/* Year blocks grid */}
-                <div className="md:w-2/3 grid grid-cols-2 gap-2">
+            <h1 className="mb-8 text-center text-2xl font-bold">- My Proud Moments -</h1>
+            <div className="flex flex-col gap-2 md:flex-row md:space-x-4">
+                <div className="grid grid-cols-2 gap-2 md:w-2/3">
                     {timelineData.map((period) => (
-                        <div
+                        <button
+                            type="button"
                             key={period.yearRange.start}
                             onClick={() => setSelectedYearRange(period.yearRange)}
-                            className={`aspect-square p-4 rounded-lg cursor-pointer transition-all flex flex-col border-2 relative ${
+                            className={`relative flex aspect-square flex-col rounded-lg border-2 p-4 text-left shadow-sm transition-all hover:shadow-md ${
                                 selectedYearRange.start === period.yearRange.start
-                                    ? "bg-blue-500 text-white border-blue-600"
-                                    : "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-md`}
+                                    ? 'border-blue-600 bg-blue-500 text-white'
+                                    : 'border-gray-300 bg-white hover:bg-gray-100'
+                            }`}
                         >
-                            <div className="flex justify-between items-start">
+                            <div className="flex items-start justify-between">
                                 <div className="text-sm opacity-60">
-                                    {period.events.length} milestone{period.events.length !== 1 ? "s" : ""}
+                                    {period.events.length} milestone{period.events.length !== 1 ? 's' : ''}
                                 </div>
                                 <CalendarIcon />
                             </div>
-                            <div className="flex items-center w-full font-medium justify-center">
+                            <div className="flex w-full items-center justify-center font-medium">
                                 <span className="text-lg">{period.yearRange.start}</span>
                                 <span className="text-lg">-</span>
                                 <span className="text-lg">{period.yearRange.end}</span>
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
 
-                {/* Events list with hoverable description */}
-                <div className="md:w-2/3 bg-white dark:bg-gray-900 p-1 rounded-lg">
-                    <div className="w-full text-center relative">
-
-                        <h2 className="inline-flex items-center gap-2 text-xl font-bold mb-4 p-2 rounded-lg cursor-default transition-all
-                            border-2 shadow-sm hover:shadow-md bg-blue-500 text-white border-blue-600 group ">
-                            <MoreHorizontal
-                                className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-default"
-                            />
+                <div className="rounded-lg bg-white p-1 md:w-2/3">
+                    <div className="relative w-full text-center">
+                        <h2 className="group mb-4 inline-flex cursor-default items-center gap-2 rounded-lg border-2 border-blue-600 bg-blue-500 p-2 text-xl font-bold text-white shadow-sm transition-all hover:shadow-md">
+                            <MoreHorizontal className="h-4 w-4 opacity-60 transition-opacity group-hover:opacity-100" />
                             <span>{`${selectedYearRange.start} - ${selectedYearRange.end}`}</span>
-                            <div className="relative">
-                                <MoreHorizontal
-                                    className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity cursor-default"
-                                    onMouseEnter={() => setShowYearDescription(true)}
-                                    onMouseLeave={() => setShowYearDescription(false)}
-                                />
-                                {/* Tooltip for year range description */}
-                                {showYearDescription && currentPeriod?.yearRange.description && (
-                                    <div
-                                        className="absolute left-1/2 transform -translate-x-1/2 mt-3 w-48 h-48">
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1"></p>
-                                    </div>
-                                )}
-                            </div>
+                            <MoreHorizontal className="h-4 w-4 opacity-60 transition-opacity group-hover:opacity-100" />
                         </h2>
                         {currentPeriod?.yearRange.description && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{currentPeriod.yearRange.description}</p>
+                            <p className="mt-1 text-sm text-gray-500">{currentPeriod.yearRange.description}</p>
                         )}
                     </div>
 
                     <div className="mt-2 space-y-3">
-                        {timelineData
-                            .find((period) => period.yearRange.start === selectedYearRange.start)
-                            ?.events.map((event, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => selectEvent(event)}
-                                    className="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:shadow-md transition-all
-                                group flex flex-col hover:bg-gray-100 dark:hover:bg-gray-600"
+                        {currentPeriod?.events.map((event) => {
+                            const yearSlug = getYearSlug(currentPeriod.yearRange.start, currentPeriod.yearRange.end);
+                            const milestoneSlug = getMilestoneSlug(event.title);
+
+                            return (
+                                <Link
+                                    key={event.title}
+                                    href={`/milestone/${yearSlug}/${milestoneSlug}`}
+                                    className="group flex flex-col rounded-lg bg-gray-50 p-2 transition-all hover:bg-gray-100 hover:shadow-md"
                                 >
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-lg font-medium">{event.title}</h3>
-                                        <ChevronRight
-                                            className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"/>
+                                        <ChevronRight className="h-4 w-4 opacity-50 transition-opacity group-hover:opacity-100" />
                                     </div>
-                                    <SkillTags
-                                        skills={event.skills}
-                                        maxVisible={3}
-                                        onClick={() => selectEvent(event)}
-                                    />
-                                </div>
-                            ))}
+                                    <SkillTags skills={event.skills} maxVisible={3} />
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
-
-            {/* Modal with newline handling */}
-            {isModalOpen && selectedEvent && (
-                <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
-                    <div
-                        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-[90%] max-w-[500px] overflow-hidden relative">
-                        <div className="max-h-[80vh] overflow-y-auto">
-                            <div className="p-6">
-                                <button
-                                    onClick={closeModal}
-                                    className="absolute right-4 top-4 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
-                                    aria-label="Close modal"
-                                >
-                                    <X className="h-4 w-4"/>
-                                </button>
-                                <h3 className="text-xl font-semibold mb-4">{selectedEvent.title}</h3>
-                                <div className="space-y-2 mb-4">
-                                    {renderDescription(selectedEvent.description)}
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                {renderSkillCategories(selectedEvent)}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
