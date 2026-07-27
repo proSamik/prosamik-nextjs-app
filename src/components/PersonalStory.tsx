@@ -6,7 +6,7 @@ export default function PersonalStory() {
     const [isMounted, setIsMounted] = useState(false);
     const [typedText, setTypedText] = useState('');
 
-    const fullText = "By degree, I'm an Electronics and Telecommunication engineer, but I've been into coding since class 11 — I was just so curious about how it all works. That curiosity led me to choose engineering, and now I'm here, coding my way through life!" + "\n\n" + "You could say I'm a Jack of all trades, but I'm mastering product development. I love exploring different domains and creating projects that make a real impact. Let's just say, I'm all about turning curiosity into code!";
+    const fullText = "By degree, I'm an Electronics and Telecommunication engineer. I started coding in class 11 because I wanted to understand how software worked, and I never really stopped pulling things apart and building my own versions." + "\n\n" + "These days, I build small products across the web, macOS, iOS, and browser extensions. Some work, some don't, but each one teaches me something I can carry into the next. I care less about staying in one technical lane and more about finding a real problem, shipping a useful solution, and being honest about what I learned along the way.";
     const typingSpeed = 20;
 
     useEffect(() => {
