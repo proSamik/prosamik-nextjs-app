@@ -167,49 +167,6 @@ const Navigation = () => {
                 />
 
                 <NavLink
-                    href="/blogs"
-                    icon={
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512"
-                            width={isMobile ? '36' : '36'}
-                            height={isMobile ? '36' : '36'}
-                            className="fill-current"
-                        >
-                            <g>
-                                <rect x="293.186" y="307.184" width="131.572" height="112.986"/>
-                                <rect x="87.243" y="308.893" width="154.448" height="17.162"/>
-                                <rect x="87.243" y="401.298" width="154.448" height="17.162"/>
-                                <rect x="87.243" y="355.1" width="154.448" height="17.162"/>
-                                <path
-                                    d="M416.428,0.004H95.58C42.787,0.013,0.016,42.792,0,95.577v303.685 c0.025,62.262,50.463,112.717,112.742,112.734h286.524c62.27-0.017,112.717-50.464,112.734-112.734V95.577 C511.992,42.792,469.212,0.013,416.428,0.004z M464.805,399.262c-0.008,18.15-7.308,34.424-19.198,46.34 c-11.916,11.891-28.19,19.19-46.34,19.198H112.742c-18.15-0.009-34.433-7.308-46.348-19.198 c-11.892-11.916-19.182-28.19-19.198-46.34V118.696h417.61V399.262z"/>
-                            </g>
-                        </svg>
-                    }
-                    label="Blogs"
-                    isMenuOpen={isMenuOpen}
-                />
-
-                <NavLink
-                    href="/projects"
-                    icon={
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            width={isMobile ? '36' : '36'}
-                            height={isMobile ? '36' : '36'}
-                            stroke="currentColor"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M6,6H2V2h4V6z M14,2h-4v4h4V2z M22,2h-4v4h4V2z M6,10H2v4h4V10z M14,10h-4v4h4V10z M22,10h-4v4h4V10z M6,18H2v4h4V18z M14,18h-4v4h4V18z M22,18h-4v4h4V18z"/>
-                        </svg>
-                    }
-                    label="Projects"
-                    isMenuOpen={isMenuOpen}
-                />
-
-                <NavLink
                     href="/about"
                     icon={
                         <svg
@@ -232,28 +189,6 @@ const Navigation = () => {
                     isMenuOpen={isMenuOpen}
                 />
 
-                <NavLink
-                    href="/feedback"
-                    icon={
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            width={isMobile ? '36' : '36'}
-                            height={isMobile ? '36' : '36'}
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    }
-                    label="Roast Here"
-                    isMenuOpen={isMenuOpen}
-                />
             </div>
         </nav>
     );
