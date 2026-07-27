@@ -1,9 +1,8 @@
-// components/layout/MainLayout.tsx
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
-import CustomBackButton from "@/components/layout/CustomBackButton";
-import CustomNextButton from "@/components/layout/CustomNextButton";
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -37,12 +36,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 </div>
 
                 <main className={layoutClasses.main}>
-                    {isMobile && (
-                        <div className="flex justify-between mb-6 mt-5">
-                            <CustomBackButton />
-                            <CustomNextButton />
-                        </div>
-                    )}
                     {children}
                 </main>
 
