@@ -1,80 +1,28 @@
-.
+src
 |-- components
-|   |-- ContentDetailPage.tsx
-|   |-- ContentList.tsx
-|   |-- ContentPage.tsx
-|   |-- ContentPreviewCards.tsx
 |   |-- HeroSection.tsx
 |   |-- MainLayout.tsx
 |   |-- PersonalStory.tsx
 |   |-- ProfileHeader.tsx
-|   |-- RecommendationLayout.tsx
 |   |-- Skills.tsx
 |   |-- Timeline.tsx
-|   |-- article
-|   |   |-- ArticleHeader.tsx
-|   |   |-- ArticleLayout.tsx
-|   |   |-- CodeBlockSyntaxHighlighter.tsx
-|   |   |-- RepoLoader.tsx
-|   |   `-- SocialShareButton.tsx
-|   |-- layout
-|   |   |-- CustomBackButton.tsx
-|   |   |-- CustomNextButton.tsx
-|   |   |-- ErrorMessage.tsx
-|   |   |-- Footer.tsx
-|   |   |-- Loading.tsx
-|   |   |-- LoadingBar.tsx
-|   |   |-- Navigation.tsx
-|   |   |-- SEO.tsx
-|   |   `-- ThemeToggle.tsx
-|   `-- shared
-|       |-- AnimateCardStack.tsx
-|       |-- ItemCard.tsx
-|       |-- ItemList.tsx
-|       |-- SearchPanel.tsx
-|       `-- StyledItemCard.tsx
-|-- config
-|   `-- index.ts
-|-- hooks
-|   |-- useCachedRecommendations.ts
-|   |-- useCodeBlockSyntaxHighlighter.ts
-|   |-- useContentList.ts
-|   |-- useMarkdownData.ts
-|   |-- useMermaidProcessor.ts
-|   |-- useProcessedContent.ts
-|   |-- useRepoHandler.ts
-|   |-- useShareContent.ts
-|   `-- useSlug.ts
+|   `-- layout
+|       |-- CustomBackButton.tsx
+|       |-- CustomNextButton.tsx
+|       |-- Footer.tsx
+|       |-- LoadingBar.tsx
+|       |-- Navigation.tsx
+|       |-- SEO.tsx
+|       `-- ThemeToggle.tsx
 |-- pages
 |   |-- 404.tsx
 |   |-- _app.tsx
 |   |-- about.tsx
-|   |-- blogs
-|   |   `-- [slug].tsx
-|   |-- blogs.tsx
-|   |-- index.tsx
-|   |-- projects
-|   |   `-- [slug].tsx
-|   `-- projects.tsx
-|-- project-structure.txt
+|   `-- index.tsx
 |-- styles
 |   `-- globals.css
 |-- types
-|   |-- article.ts
 |   `-- timeline.ts
 `-- utils
-    |-- contentProcessors
-    |   |-- blockquoteProcessor.ts
-    |   |-- codeBlockProcessor.ts
-    |   |-- inlineCodeProcessor.ts
-    |   |-- listItemProcessor.ts
-    |   |-- mediaCenterProcessor.ts
-    |   |-- svgProcessor.ts
-    |   |-- tableProcessor.ts
-    |   `-- youtubeProcessor.ts
     |-- dataTimelineData.ts
-    |-- dateUtils.ts
-    |-- siteMetadata.ts
-    `-- typeGuards.ts
-
-14 directories, 64 files
+    `-- siteMetadata.ts
