@@ -1,265 +1,39 @@
-# ProSamik Next.js Application 
+# ProSamik Next.js Application
 
-## Project Overview
+## Overview
 
-A modern Next.js application that serves as the frontend for the ProSamik portfolio platform, featuring dynamic content rendering and advanced markdown processing.
+This repository contains the standalone frontend for `prosamik.com`. It presents Samik's products, profile, experience, and skills without relying on a separate backend service.
 
-### Home Page
-![Home Page](./images/home-page.png)
+## Routes
 
-### List Page
-![Blog Page](./images/List-page.png)
-
-### Article Page
-![Article page](./images/Article-page.png)
+- `/` — product portfolio and landing page
+- `/about` — profile, story, timeline, and skills
+- `/404` — not-found page
 
 ## Architecture
 
-### Component Hierarchy
+The application currently uses the Next.js Pages Router:
 
-```mermaid
-flowchart TD
-   subgraph Navigation
-      Nav[Navigation Component]
-      Home[Home]
-      About[About Me]
-      Blogs[Blogs]
-      Projects[Projects]
+- `src/pages/_app.tsx` provides the application wrapper.
+- `MainLayout` supplies navigation, responsive layout, and footer.
+- `HeroSection` renders the portfolio landing page.
+- The About page is composed from `ProfileHeader`, `PersonalStory`, `Timeline`, and `Skills`.
+- `SEO` manages page metadata and structured data.
 
-      Nav --> Home
-      Nav --> About
-   end
+All displayed content is defined locally in the repository. There are no backend API calls, analytics requests, newsletter forms, feedback forms, blogs, or article routes.
 
-   subgraph ContentFlow
-      CP[ContentPage]
-      CL[ContentList]
-      CDP[ContentDetailPage]
-      AL[ArticleLayout]
-      PC[useProcessedContent Hook]
+## Stack
 
-      CP --> CL
-      CL --> CDP
-      CDP --> AL
-      AL --> PC
-   end
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS 3
 
-   Blogs --> CP
-   Projects --> CP
+## Commands
+
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run start
 ```
-
-### Data Flow and API Intergration
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant CL as ContentList
-    participant H as Custom Hooks
-    participant API as Backend API
-    participant CDP as ContentDetailPage
-    participant PC as useProcessedContent
-
-    U->>+CL: Visit Blogs/Projects
-    CL->>+H: Call API Hook
-    H->>+API: Fetch Content List
-    API-->>-H: Return List Data
-    H-->>-CL: Processed List
-    CL-->>-U: Display Content
-
-    U->>+CDP: Click Content Item
-    CDP->>+PC: Process Content
-    PC->>+API: Fetch Article Content
-    API-->>-PC: Return Raw Content
-    PC-->>-CDP: Processed HTML
-    CDP-->>-U: Display Article
-```
-
-### Content Processing Flow
-```mermaid
-flowchart TD
-    subgraph ContentProcessing
-        PC[useProcessedContent]
-        MD[useMarkdownData]
-        MP[useMermaidProcessor]
-        RH[useRepoHandler]
-        CSH[useCodeBlockSyntaxHighlighter]
-    end
-
-    subgraph Processors
-        BP[blockquoteProcessor]
-        CP[codeBlockProcessor]
-        IP[inlineCodeProcessor]
-        LP[listItemProcessor]
-        MP2[mediaCenterProcessor]
-        SP[svgProcessor]
-        TP[tableProcessor]
-        YP[youtubeProcessor]
-    end
-
-    PC --> MD
-    PC --> MP
-    PC --> RH
-    PC --> CSH
-
-    MD --> BP
-    MD --> CP
-    MD --> IP
-    MD --> LP
-    MD --> MP2
-    MD --> SP
-    MD --> TP
-    MD --> YP
-
-    CDP[ContentDetailPage] --> PC
-```
----
-
-### Core Components Structure
-
-The application is organized into several key areas:
-
-#### Main Components
-- `MainLayout`: Root layout wrapper
-- `ContentPage`: Container for blogs and projects listings
-- `ContentDetailPage`: Individual content display
-- `ArticleLayout`: Article rendering and formatting
-
-#### Supporting Components
-- `HeroSection`: Landing page hero component
-- `ProfileHeader`: About page header
-- `Timeline`: Experience timeline
-- `Skills`: Skills showcase
-- `PersonalStory`: About page content
-
-### Article Components
-
-The `article` directory contains specialized components for content rendering:
-```
-article/
-├── ArticleHeader.tsx       # Article title and metadata
-├── ArticleLayout.tsx      # Main article container
-├── CodeBlockSyntaxHighlighter.tsx
-├── RepoLoader.tsx        # GitHub repository content loader
-└── SocialShareButton.tsx # Social sharing functionality
-```
-
-### Layout Components
-
-Essential UI components in the `layout` directory:
-```
-layout/
-├── Navigation.tsx
-├── Footer.tsx
-├── SEO.tsx
-├── LoadingBar.tsx
-├── ErrorMessage.tsx
-└── ThemeToggle.tsx
-```
-
-### Custom Hooks
-
-The application features extensive custom hooks for various functionalities:
-
-#### Content Processing Hooks
-- `useProcessedContent`: Core content processing
-- `useMarkdownData`: Markdown parsing and processing
-- `useMermaidProcessor`: Mermaid diagram rendering
-- `useCodeBlockSyntaxHighlighter`: Code syntax highlighting
-
-#### Data Management Hooks
-- `useContentList`: Content listing and pagination
-- `useRepoHandler`: GitHub repository interaction
-- `useCachedRecommendations`: Content recommendations
-- `useSlug`: URL slug management
-
-#### Interaction Hooks
-- `useShareContent`: Social sharing functionality
-
-### Content Processing
-
-The `utils/contentProcessors` directory contains specialized processors for different content types:
-
-```
-contentProcessors/
-├── blockquoteProcessor.ts
-├── codeBlockProcessor.ts
-├── inlineCodeProcessor.ts
-├── listItemProcessor.ts
-├── mediaCenterProcessor.ts
-├── svgProcessor.ts
-├── tableProcessor.ts
-└── youtubeProcessor.ts
-```
-
-Each processor handles specific content elements, ensuring proper rendering and formatting.
-
-## Page Structure
-
-The application's routing is handled through the `pages` directory:
-
-```
-pages/
-├── _app.tsx          # Application wrapper
-├── index.tsx         # Home page
-├── about.tsx         # About page
-├── blogs.tsx         # Blogs listing
-├── projects.tsx      # Projects listing
-├── blogs/
-│   └── [slug].tsx    # Individual blog post
-└── projects/
-└── [slug].tsx    # Individual project
-```
-
----
-## Content Flow
-
-1. **Initial Load**
-   - Page component mounted
-   - MainLayout wrapper initialized
-   - Navigation and footer rendered
-
-2. **Content Listing**
-   - ContentPage component loads
-   - useContentList hook fetches data
-   - ContentList renders items
-
-3. **Detail View**
-   - ContentDetailPage loads on slug route
-   - useProcessedContent processes markdown
-   - ArticleLayout renders processed content
-
-## Content Processing Pipeline
-
-The content processing follows a sophisticated pipeline:
-
-1. **Content Fetching**
-   - useRepoHandler fetches raw content
-   - useMarkdownData initiates processing
-
-2. **Processing Steps**
-   - Markdown parsing
-   - Code block processing
-   - Media processing
-   - Special element handling
-
-3. **Final Rendering**
-   - ArticleLayout assembles processed content
-   - Special components render specific elements
-
-## Type System
-
-The application uses TypeScript with defined types in the `types` directory:
-```
-types/
-├── article.ts    # Article-related types
-└── timeline.ts   # Timeline component types
-```
-
-## Styling
-
-Global styles are managed through:
-```
-styles/
-└── globals.css   # Global CSS and Tailwind utilities
-```
-
----
