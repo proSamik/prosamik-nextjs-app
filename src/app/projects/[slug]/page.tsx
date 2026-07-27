@@ -43,14 +43,16 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 }
 
 function ListSection({ title, items }: { title: string; items: string[] }) {
-    if (items.length === 0) return null;
-
     return (
         <section className="space-y-3">
             <h2 className="text-2xl font-bold">{title}</h2>
-            <ul className="list-disc space-y-2 pl-6 text-gray-700">
-                {items.map((item) => <li key={item}>{item}</li>)}
-            </ul>
+            {items.length > 0 ? (
+                <ul className="list-disc space-y-2 pl-6 text-gray-700">
+                    {items.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+            ) : (
+                <p className="text-gray-500">Details will be added here.</p>
+            )}
         </section>
     );
 }
