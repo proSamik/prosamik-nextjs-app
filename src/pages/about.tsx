@@ -3,7 +3,6 @@ import ProfileHeader from "@/components/ProfileHeader";
 import PersonalStory from '@/components/PersonalStory';
 import Timeline from "@/components/Timeline";
 import Skills from '@/components/Skills';
-import CallToAction from "@/components/layout/CallToAction";
 import SEO from "@/components/layout/SEO";
 import { siteMetadata } from "@/utils/siteMetadata";
 import {dataTimelineData} from "@/utils/dataTimelineData";
@@ -96,7 +95,6 @@ export default function About() {
                     <PersonalStory />
                     <Timeline timelineData={timelineData} />
                     <Skills />
-                    <CallToAction />
                 </div>
             </div>
         </>
