@@ -87,7 +87,9 @@ const products: ProductItem[] = [
 
 export default function ProductsSection() {
     return (
-        <section className="flex min-h-[calc(100vh-172px)] items-center px-4 py-4 sm:px-6 min-[1090px]:min-h-[calc(100vh-2rem)]">
+        <section className="flex min-h-[calc(100vh-172px)] flex-col items-center justify-center px-4 py-4 sm:px-6 min-[1090px]:min-h-[calc(100vh-2rem)]">
+            <h1 className="mb-8 w-full text-center text-3xl font-bold">My Honest Experiments</h1>
+
             <div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {products.map(({ icon: Icon, title, description, type, url }) => (
                     <div key={title} className="flex justify-center">
