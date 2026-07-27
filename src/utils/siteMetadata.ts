@@ -4,7 +4,7 @@ export const siteMetadata = {
     siteUrl: 'https://prosamik.com',
     twitterUsername: 'prosamik',
     defaultDescription: 'Building tools and templates that save you time, effort, and money. From automation workflows to SaaS templates — whatever I do, I do it proactively.',
-    defaultImage: 'https://prosamik.com/image/og-image.png', // Updated path
+    defaultImage: 'https://prosamik.com/image/og-Image.png',
     skills: ['Product Development', 'Golang', 'NextJS', 'Tailwind CSS', 'Deployment'],
     currentRole: 'Building Products',
     jobTitle: 'Product Engineer', // Added for structured data
@@ -22,6 +22,7 @@ export const siteMetadata = {
         `https://github.com/prosamik`,
         `https://linkedin.com/in/prosamik`,
         `https://x.com/prosamik`,
+        `https://youtube.com/@prosamik`,
     ],
     ogImageWidth: 2400, // Added for Open Graph
     ogImageHeight: 600, // Added for Open Graph
