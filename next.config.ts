@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    outputFileTracingRoot: process.cwd(),
     images: {
         remotePatterns: [
             {
@@ -44,10 +45,6 @@ const nextConfig: NextConfig = {
     },
     experimental: {
         isrFlushToDisk: false, // Disable ISR flushing during development
-    },
-    devIndicators: {
-        buildActivity: false,  // Disables the build activity indicator
-        appIsrStatus: false,  // Disables ISR status
     },
     reactStrictMode: false,
     productionBrowserSourceMaps: true,
