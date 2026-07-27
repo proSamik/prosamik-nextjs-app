@@ -108,32 +108,6 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
                     ))}
                 </ul>
             </section>
-
-            <section className="space-y-6 border-t border-gray-200 pt-8">
-                <div>
-                    <h2 className="mb-3 text-xl font-bold">Skills</h2>
-                    <div className="flex flex-wrap gap-2">
-                        {item.event.skills.map((skill) => (
-                            <span key={skill} className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-
-                {item.event.soft_skills && item.event.soft_skills.length > 0 && (
-                    <div>
-                        <h2 className="mb-3 text-xl font-bold">Soft Skills</h2>
-                        <div className="flex flex-wrap gap-2">
-                            {item.event.soft_skills.map((skill) => (
-                                <span key={skill} className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </section>
         </article>
     );
 }
