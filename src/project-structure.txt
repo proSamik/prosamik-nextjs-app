@@ -18,11 +18,9 @@
 |   |   |-- RepoLoader.tsx
 |   |   `-- SocialShareButton.tsx
 |   |-- layout
-|   |   |-- CallToAction.tsx
 |   |   |-- CustomBackButton.tsx
 |   |   |-- CustomNextButton.tsx
 |   |   |-- ErrorMessage.tsx
-|   |   |-- FeedbackForm.tsx
 |   |   |-- Footer.tsx
 |   |   |-- Loading.tsx
 |   |   |-- LoadingBar.tsx
@@ -43,14 +41,10 @@
 |   |-- useContentList.ts
 |   |-- useMarkdownData.ts
 |   |-- useMermaidProcessor.ts
-|   |-- usePageAnalytics.ts
 |   |-- useProcessedContent.ts
 |   |-- useRepoHandler.ts
 |   |-- useShareContent.ts
-|   |-- useSlug.ts
-|   |-- useSubmitFeedback.ts
-|   |-- useSubscribeNewsletter.ts
-|   `-- useTrackViews.ts
+|   `-- useSlug.ts
 |-- pages
 |   |-- 404.tsx
 |   |-- _app.tsx
@@ -58,7 +52,6 @@
 |   |-- blogs
 |   |   `-- [slug].tsx
 |   |-- blogs.tsx
-|   |-- feedback.tsx
 |   |-- index.tsx
 |   |-- projects
 |   |   `-- [slug].tsx
@@ -84,4 +77,4 @@
     |-- siteMetadata.ts
     `-- typeGuards.ts
 
-14 directories, 71 files
+14 directories, 64 files

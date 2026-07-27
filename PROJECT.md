@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A modern Next.js application that serves as the frontend for the ProSamik portfolio platform, featuring dynamic content rendering, advanced markdown processing, and analytics tracking.
+A modern Next.js application that serves as the frontend for the ProSamik portfolio platform, featuring dynamic content rendering and advanced markdown processing.
 
 ### Home Page
 ![Home Page](./images/home-page.png)
@@ -12,9 +12,6 @@ A modern Next.js application that serves as the frontend for the ProSamik portfo
 
 ### Article Page
 ![Article page](./images/Article-page.png)
-
-### Feedback Form
-![Feedback page](./images/feedback-form.png)
 
 ## Architecture
 
@@ -28,13 +25,9 @@ flowchart TD
       About[About Me]
       Blogs[Blogs]
       Projects[Projects]
-      Feedback[Feedback]
 
       Nav --> Home
       Nav --> About
-      Nav --> Blogs
-      Nav --> Projects
-      Nav --> Feedback
    end
 
    subgraph ContentFlow
@@ -102,11 +95,6 @@ flowchart TD
         YP[youtubeProcessor]
     end
 
-    subgraph Analytics
-        PA[usePageAnalytics]
-        TV[useTrackViews]
-    end
-
     PC --> MD
     PC --> MP
     PC --> RH
@@ -122,9 +110,6 @@ flowchart TD
     MD --> YP
 
     CDP[ContentDetailPage] --> PC
-    CDP --> PA
-    CDP --> TV
-
 ```
 ---
 
@@ -165,7 +150,6 @@ layout/
 ├── Navigation.tsx
 ├── Footer.tsx
 ├── SEO.tsx
-├── FeedbackForm.tsx
 ├── LoadingBar.tsx
 ├── ErrorMessage.tsx
 └── ThemeToggle.tsx
@@ -187,12 +171,8 @@ The application features extensive custom hooks for various functionalities:
 - `useCachedRecommendations`: Content recommendations
 - `useSlug`: URL slug management
 
-#### Analytics and Interaction Hooks
-- `usePageAnalytics`: Page view tracking
-- `useTrackViews`: Content view analytics
+#### Interaction Hooks
 - `useShareContent`: Social sharing functionality
-- `useSubmitFeedback`: Feedback form handling
-- `useSubscribeNewsletter`: Newsletter subscription
 
 ### Content Processing
 
@@ -223,7 +203,6 @@ pages/
 ├── about.tsx         # About page
 ├── blogs.tsx         # Blogs listing
 ├── projects.tsx      # Projects listing
-├── feedback.tsx      # Feedback form
 ├── blogs/
 │   └── [slug].tsx    # Individual blog post
 └── projects/
@@ -242,13 +221,11 @@ pages/
    - ContentPage component loads
    - useContentList hook fetches data
    - ContentList renders items
-   - ContentPreviewCards displays previews
 
 3. **Detail View**
    - ContentDetailPage loads on slug route
    - useProcessedContent processes markdown
    - ArticleLayout renders processed content
-   - Analytics hooks track views
 
 ## Content Processing Pipeline
 
@@ -267,7 +244,6 @@ The content processing follows a sophisticated pipeline:
 3. **Final Rendering**
    - ArticleLayout assembles processed content
    - Special components render specific elements
-   - Analytics track content interaction
 
 ## Type System
 
