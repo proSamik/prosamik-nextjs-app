@@ -9,30 +9,21 @@
     "dev": "next dev --turbopack",
     "start": "next start",
     "lint": "next lint",
-    "generate-sitemap": "node scripts/generate-sitemaps.mjs",
-    "build": "npm run generate-sitemap && next build"
+    "build": "next build"
   },
   "dependencies": {
-    "@tailwindcss/aspect-ratio": "^0.4.2",
-    "@tailwindcss/typography": "^0.5.15",
-    "html-to-image": "^1.11.11",
     "lucide-react": "^0.469.0",
-    "mermaid": "^11.16.0",
     "next": "15.5.22",
-    "node-fetch": "^3.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.4.0",
-    "react-syntax-highlighter": "^16.1.1"
+    "react-icons": "^5.4.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@svgr/webpack": "^8.1.0",
-    "@types/mermaid": "^9.1.0",
     "@types/node": "20.19.43",
     "@types/react": "19.2.17",
     "@types/react-dom": "^19",
-    "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
     "eslint-config-next": "15.5.22",
     "postcss": "^8.5.23",
