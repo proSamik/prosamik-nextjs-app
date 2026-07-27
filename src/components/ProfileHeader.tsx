@@ -37,14 +37,9 @@ export default function ProfileHeader() {
                         />
           </span>{'  '}
                     {' '}
-                    <a
-                        href="https://prosamik.com/projects"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                    >
+                    <span className="text-blue-600">
                         Proactively
-                    </a>
+                    </span>
                 </h1>
 
             </div>
