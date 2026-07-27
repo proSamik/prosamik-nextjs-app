@@ -28,14 +28,15 @@ export default function Timeline({ timelineData }: TimelineProps) {
         <section className="w-full">
             <h1 className="mb-8 text-center text-2xl font-bold">- My Proud Moments -</h1>
             <div className="mx-auto grid w-full max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3">
-                {timelineData.map((period) => {
+                {timelineData.map((period, index) => {
                     const yearSlug = getYearSlug(period.yearRange.start, period.yearRange.end);
 
                     return (
                         <Link
                             key={yearSlug}
                             href={`/milestone/${yearSlug}`}
-                            className="group relative flex aspect-square flex-col rounded-lg border-2 border-gray-300 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-50 hover:shadow-md"
+                            className="year-card-reveal group relative flex aspect-square flex-col rounded-lg border-2 border-gray-300 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-50 hover:shadow-md"
+                            style={{ animationDelay: `${index * 100 + 100}ms` }}
                         >
                             <div className="flex items-start justify-between">
                                 <span className="text-sm text-gray-500">
