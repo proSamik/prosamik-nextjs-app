@@ -1,5 +1,6 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 // Define TypeScript interface for NavLink props
@@ -40,7 +41,11 @@ const Navigation = () => {
         setIsMenuOpen(false);
     }, [pathname]);
 
-    const isActivePath = (path: string): boolean => pathname === path;
+    const isActivePath = (path: string): boolean => {
+        if (path === '/projects') return pathname.startsWith('/projects');
+        if (path === '/about') return pathname === '/about' || pathname.startsWith('/milestone');
+        return pathname === path;
+    };
 
     const NavLink: React.FC<NavLinkProps> = ({ href, icon, label, isMenuOpen }) => {
         const isActive = isActivePath(href);
@@ -86,6 +91,23 @@ const Navigation = () => {
                     : 'sticky top-0 left-0 w-24 h-screen p-2 flex flex-col items-center justify-center'
             }`}
         >
+            <Link
+                href="/"
+                aria-label="Go to the proSamik homepage"
+                className={`absolute z-20 rounded-full border border-gray-300 bg-white p-1 shadow-sm transition-transform hover:scale-105 ${
+                    isMobile ? 'left-4 top-2' : 'left-5 top-5'
+                }`}
+            >
+                <Image
+                    src="/icon.png"
+                    alt="proSamik logo"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover"
+                    priority
+                />
+            </Link>
+
             {/* Hamburger Menu */}
             {isSmallScreen && (
                 <button
@@ -122,7 +144,7 @@ const Navigation = () => {
                     : 'flex flex-col items-center gap-4 p-4 pr-16 pl-8 ml-5 rounded-2xl backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 w-full border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20'
             }`}>
                 <NavLink
-                    href="/"
+                    href="/projects"
                     icon={
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -133,11 +155,13 @@ const Navigation = () => {
                             width={isMobile ? '36' : '36'}
                             height={isMobile ? '36' : '36'}
                         >
-                            <path
-                                d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
                         </svg>
                     }
-                    label="Home"
+                    label="Projects"
                     isMenuOpen={isMenuOpen}
                 />
 
