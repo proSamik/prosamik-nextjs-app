@@ -1,7 +1,9 @@
 import {
     ArrowUpRight,
+    Ban,
     Brain,
     Chrome,
+    Clapperboard,
     Database,
     GitBranch,
     Globe,
@@ -18,6 +20,20 @@ interface ProductItem {
 }
 
 const products: ProductItem[] = [
+    {
+        icon: Clapperboard,
+        title: 'Subclip.app',
+        type: 'Web, iOS & macOS App',
+        description: 'AI video editor for captions, dubbing, transcription, and translation',
+        url: 'https://subclip.app',
+    },
+    {
+        icon: Ban,
+        title: 'Track Bad Habits',
+        type: 'iOS App',
+        description: 'Log slip-ups, understand your triggers, and stay accountable with streaks and widgets',
+        url: 'https://apps.apple.com/in/app/track-bad-habits/id6756222875',
+    },
     {
         icon: Brain,
         title: 'mapyourideas.com',
@@ -71,8 +87,8 @@ const products: ProductItem[] = [
 
 export default function ProductsSection() {
     return (
-        <section className="px-4 py-4 sm:px-6">
-            <div className="mx-auto grid max-w-screen-xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="flex min-h-[calc(100vh-172px)] items-center px-4 py-4 sm:px-6 min-[1090px]:min-h-[calc(100vh-2rem)]">
+            <div className="mx-auto grid w-full max-w-screen-xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {products.map(({ icon: Icon, title, description, type, url }) => (
                     <div key={title} className="flex justify-center">
                         <a
