@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
@@ -32,27 +32,14 @@ const Footer = () => {
                         : 'flex flex-col justify-center items-center space-y-4 pb-10' // Stack vertically on desktop
                 }`}
             >
-                {/* <a
-                    href="https://www.linkedin.com/in/prosamik"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-600 flex flex-col items-center"
-                >
-                    <FaLinkedin size={30}/>
-                    <span className="mt-2 text-sm">
-                    proSamik
-                    </span>
-                </a> */}
                 <a
-                    href="https://www.twitter.com/prosamik"
+                    href="https://www.youtube.com/@prosamik"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-blue-400 flex flex-col items-center"
+                    className="hover:text-red-600 flex flex-col items-center"
                 >
-                    <FaXTwitter size={30}/>
-                    <span className="mt-2 text-sm">
-                    proSamik
-                    </span>
+                    <FaYoutube size={30}/>
+                    <span className="mt-2 text-sm">prosamik</span>
                 </a>
                 <a
                     href="https://www.github.com/prosamik"
@@ -61,16 +48,27 @@ const Footer = () => {
                     className="hover:text-gray-300 flex flex-col items-center"
                 >
                     <FaGithub size={30}/>
-                    <span className="mt-2 text-sm">
-                    proSamik
-                    </span>
+                    <span className="mt-2 text-sm">prosamik</span>
+                </a>
+                <a
+                    href="https://www.twitter.com/prosamik"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-400 flex flex-col items-center"
+                >
+                    <FaXTwitter size={30}/>
+                    <span className="mt-2 text-sm">prosamik</span>
+                </a>
+                <a
+                    href="https://www.linkedin.com/in/prosamik"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 flex flex-col items-center"
+                >
+                    <FaLinkedin size={30}/>
+                    <span className="mt-2 text-sm">prosamik</span>
                 </a>
             </div>
-
-            {/* Copyright Note */}
-            <p className="mt-2 text-sm break-words text-center pr-2">
-                &copy; {new Date().getFullYear()} proSamik. All Rights Reserved.
-            </p>
         </footer>
     );
 };
