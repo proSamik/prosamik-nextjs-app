@@ -75,6 +75,12 @@ nav a {
     animation: year-card-reveal 480ms ease-out forwards;
 }
 
+.year-timeline-line {
+    transform: scaleY(0);
+    transform-origin: top;
+    animation: milestone-line-reveal 1000ms ease-out 100ms forwards;
+}
+
 .project-timeline-line {
     transform: scaleY(0);
     transform-origin: top;
@@ -90,6 +96,7 @@ nav a {
     .milestone-timeline-line,
     .milestone-timeline-item,
     .year-card-reveal,
+    .year-timeline-line,
     .project-timeline-line,
     .project-timeline-item {
         animation: none;
