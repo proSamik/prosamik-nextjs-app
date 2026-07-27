@@ -6,8 +6,6 @@ import Link from 'next/link';
 
 interface HeroSectionProps {
     isMobile: boolean;
-    onBuildsClick: () => void;
-    onLogsClick: () => void;
 }
 
 // Define interface for product objects with proper typing for Lucide icons
@@ -20,7 +18,7 @@ interface ProductItem {
     status?: string;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLogsClick  }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ isMobile }) => {
     const [step, setStep] = useState(0);
     const steps = ['Initializing build...', 'Optimizing for speed...', 'Removing complexity...', 'Ready to ship! 🚀'];
 
@@ -85,7 +83,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
             icon: Globe, 
             title: 'prosamik.com', 
             type: 'Web App',
-            desc: 'Official portfolio showcasing projects and blogs',
+            desc: 'Personal site and product portfolio',
             url: 'https://prosamik.com' 
         },
     ];
@@ -200,18 +198,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isMobile, onBuildsClick, onLo
                 </div>
             </div>
 
-            <div className="flex gap-4 justify-center">
-                <button
-                    onClick={onLogsClick}
-                    className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                    Explore Featured Projects
-                </button>
-                <button
-                    onClick={onBuildsClick}
-                    className="border border-blue-500 text-blue-500 px-6 py-2 rounded-lg hover:bg-blue-50  hover:text-gray-700 transition-colors">
-                    View Recent Blogs
-                </button>
-            </div>
         </div>
     );
 };
