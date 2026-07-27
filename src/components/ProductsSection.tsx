@@ -63,33 +63,53 @@ function ProjectCard({ project, timeline = false }: { project: Project; timeline
 
 function ProjectTimeline() {
     return (
-        <section className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
-            <h1 className="mb-12 text-center text-3xl font-bold">My HONEST Experiments</h1>
+        <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+            <h1 className="mb-12 text-center text-3xl font-bold">My Top Projects</h1>
 
-            <div className="relative mx-auto max-w-3xl">
+            <div className="relative mx-auto max-w-5xl">
                 <div
                     aria-hidden="true"
-                    className="project-timeline-line absolute bottom-16 left-[15px] top-16 w-0.5 bg-gradient-to-b from-indigo-600 to-purple-300"
+                    className="project-timeline-line absolute bottom-24 left-[15px] top-24 w-0.5 bg-gradient-to-b from-indigo-600 to-purple-300 md:left-1/2 md:-translate-x-1/2"
                 />
 
                 <div className="space-y-8">
-                    {projects.map((project, index) => (
-                        <article
-                            key={project.slug}
-                            className="project-timeline-item relative pl-12"
-                            style={{ animationDelay: `${index * 130 + 220}ms` }}
-                        >
-                            <span
-                                aria-hidden="true"
-                                className="absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-indigo-600 bg-indigo-600 ring-4 ring-white"
-                            />
-                            <span
-                                aria-hidden="true"
-                                className="absolute left-6 top-[35px] h-0.5 w-6 bg-indigo-500"
-                            />
-                            <ProjectCard project={project} timeline />
-                        </article>
-                    ))}
+                    {projects.map((project, index) => {
+                        const isLeft = index % 2 === 0;
+
+                        return (
+                            <article
+                                key={project.slug}
+                                className="project-timeline-item relative pl-12 md:grid md:grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] md:items-center md:pl-0"
+                                style={{ animationDelay: `${index * 130 + 220}ms` }}
+                            >
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-indigo-600 bg-indigo-600 ring-4 ring-white md:hidden"
+                                />
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute left-6 top-[35px] h-0.5 w-6 bg-indigo-500 md:hidden"
+                                />
+
+                                <div className={isLeft ? 'md:col-start-1' : 'md:col-start-3'}>
+                                    <ProjectCard project={project} timeline />
+                                </div>
+
+                                <div className="relative hidden h-full min-h-[190px] md:col-start-2 md:row-start-1 md:block">
+                                    <span
+                                        aria-hidden="true"
+                                        className="absolute left-1/2 top-1/2 z-10 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-indigo-600 bg-indigo-600 ring-4 ring-white"
+                                    />
+                                    <span
+                                        aria-hidden="true"
+                                        className={`absolute top-1/2 h-0.5 -translate-y-1/2 bg-indigo-500 ${
+                                            isLeft ? 'left-0 right-1/2' : 'left-1/2 right-0'
+                                        }`}
+                                    />
+                                </div>
+                            </article>
+                        );
+                    })}
                 </div>
             </div>
         </section>
