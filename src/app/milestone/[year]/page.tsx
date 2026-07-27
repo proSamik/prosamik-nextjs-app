@@ -110,9 +110,11 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                         >
                             <span
                                 aria-hidden="true"
-                                className={`absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-blue-600 ring-4 ring-white ${
-                                    index === 0 ? 'bg-blue-600 shadow-[0_0_0_5px_rgba(37,99,235,0.12)]' : 'bg-white'
-                                }`}
+                                className="absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-blue-600 bg-blue-600 ring-4 ring-white"
+                            />
+                            <span
+                                aria-hidden="true"
+                                className="absolute left-6 top-[35px] h-0.5 w-6 bg-blue-500"
                             />
                             <Link
                                 href={`/milestone/${period.year}/${milestoneSlug}`}
