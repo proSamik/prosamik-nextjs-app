@@ -25,7 +25,7 @@ const products: ProductItem[] = [
         title: 'Subclip.app',
         type: 'Web, iOS & macOS App',
         description: 'AI video editor for captions, dubbing, transcription, and translation',
-        url: 'https://subclip.app',
+        url: 'https://www.subclip.app',
     },
     {
         icon: Ban,
