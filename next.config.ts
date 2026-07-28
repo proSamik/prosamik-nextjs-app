@@ -43,9 +43,6 @@ const nextConfig: NextConfig = {
         dangerouslyAllowSVG: true,
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
-    experimental: {
-        isrFlushToDisk: false, // Disable ISR flushing during development
-    },
     reactStrictMode: false,
     productionBrowserSourceMaps: true,
 };
