@@ -16,6 +16,7 @@ export interface YouTubeVideo {
 export interface YouTubePublishingStats {
     totalUploads: number;
     firstUploadDate: string | null;
+    lastUploadDate: string | null;
     currentStreak: StreakRange;
     longestStreak: StreakRange;
 }
@@ -25,6 +26,7 @@ export interface YouTubeConsistencyData {
     channelTitle: string;
     channelUrl: string;
     videos: YouTubeVideo[];
+    overall: YouTubePublishingStats;
     shorts: YouTubePublishingStats;
     longForm: YouTubePublishingStats;
     syncedAt: string | null;
@@ -186,6 +188,7 @@ function calculatePublishingStats(videos: YouTubeVideo[]): YouTubePublishingStat
     return {
         totalUploads: videos.length,
         firstUploadDate: days[0]?.date ?? null,
+        lastUploadDate: days.at(-1)?.date ?? null,
         currentStreak: stats.currentStreak,
         longestStreak: stats.longestStreak,
     };
@@ -236,6 +239,7 @@ export async function getYouTubeConsistencyData(): Promise<YouTubeConsistencyDat
         channelTitle,
         channelUrl: `https://www.youtube.com/@${handle}`,
         videos,
+        overall: calculatePublishingStats(videos),
         shorts: calculatePublishingStats(videos.filter((video) => video.type === 'short')),
         longForm: calculatePublishingStats(videos.filter((video) => video.type === 'long-form')),
         syncedAt: rows.at(-1)?.synced_at ?? null,
