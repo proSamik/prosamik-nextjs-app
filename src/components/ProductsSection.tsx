@@ -2,21 +2,21 @@ import {
     ArrowUpRight,
     Ban,
     Brain,
-    Chrome,
     Clapperboard,
     Database,
     GitBranch,
     Globe,
     Monitor,
-    type LucideIcon,
 } from 'lucide-react';
+import type { ElementType } from 'react';
+import { FaChrome } from 'react-icons/fa';
 import Link from 'next/link';
 import { projects, type Project, type ProjectIcon } from '@/data/projects';
 
-const icons: Record<ProjectIcon, LucideIcon> = {
+const icons: Record<ProjectIcon, ElementType> = {
     ban: Ban,
     brain: Brain,
-    chrome: Chrome,
+    chrome: FaChrome,
     clapperboard: Clapperboard,
     database: Database,
     'git-branch': GitBranch,
