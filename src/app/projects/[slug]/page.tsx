@@ -47,10 +47,14 @@ function escapeRegularExpression(value: string) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function ProjectStoryText({ text, currentSlug }: { text: string; currentSlug: string }) {
-    const linkableProjects = projects.filter((candidate) => candidate.slug !== currentSlug);
-    const titlePattern = linkableProjects
-        .map((candidate) => escapeRegularExpression(candidate.title))
+function ProjectStoryText({ text, project }: { text: string; project: (typeof projects)[number] }) {
+    const linkableProjects = projects.filter((candidate) => candidate.slug !== project.slug);
+    const linkableText = [
+        ...linkableProjects.map((candidate) => candidate.title),
+        ...(project.storyLinks || []).map((link) => link.label),
+    ];
+    const titlePattern = linkableText
+        .map(escapeRegularExpression)
         .sort((first, second) => second.length - first.length)
         .join('|');
 
@@ -59,6 +63,24 @@ function ProjectStoryText({ text, currentSlug }: { text: string; currentSlug: st
     const titleMatcher = new RegExp(`(${titlePattern})`, 'gi');
 
     return text.split(titleMatcher).map((part, index) => {
+        const externalLink = project.storyLinks?.find(
+            (link) => link.label.toLowerCase() === part.toLowerCase()
+        );
+
+        if (externalLink) {
+            return (
+                <a
+                    key={`${externalLink.url}-${index}`}
+                    href={externalLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-indigo-600 underline decoration-indigo-200 underline-offset-2 transition-colors hover:text-indigo-800 hover:decoration-indigo-500"
+                >
+                    {part}
+                </a>
+            );
+        }
+
         const linkedProject = linkableProjects.find(
             (candidate) => candidate.title.toLowerCase() === part.toLowerCase()
         );
@@ -77,17 +99,17 @@ function ProjectStoryText({ text, currentSlug }: { text: string; currentSlug: st
     });
 }
 
-function StorySection({ title, paragraphs, currentSlug }: {
+function StorySection({ title, paragraphs, project }: {
     title: string;
     paragraphs: string[];
-    currentSlug: string;
+    project: (typeof projects)[number];
 }) {
     return (
         <section className="space-y-4">
             <h2 className="text-2xl font-bold">{title}</h2>
             {paragraphs.map((paragraph, index) => (
                 <p key={index} className="leading-7 text-gray-700">
-                    <ProjectStoryText text={paragraph} currentSlug={currentSlug} />
+                    <ProjectStoryText text={paragraph} project={project} />
                 </p>
             ))}
         </section>
@@ -139,11 +161,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </header>
 
             <div className="space-y-12 py-10">
-                <StorySection title="The Problem" paragraphs={project.problem} currentSlug={project.slug} />
-                <StorySection title="The Motivation" paragraphs={project.motivation} currentSlug={project.slug} />
-                <StorySection title="Mistakes" paragraphs={project.mistakes} currentSlug={project.slug} />
-                <StorySection title="Learning" paragraphs={project.learnings} currentSlug={project.slug} />
-                <StorySection title="Achievements" paragraphs={project.achievements} currentSlug={project.slug} />
+                <StorySection title="The Problem" paragraphs={project.problem} project={project} />
+                <StorySection title="The Motivation" paragraphs={project.motivation} project={project} />
+                <StorySection title="Mistakes" paragraphs={project.mistakes} project={project} />
+                <StorySection title="Learning" paragraphs={project.learnings} project={project} />
+                <StorySection title="Achievements" paragraphs={project.achievements} project={project} />
             </div>
 
             <section className="border-t border-gray-200 pt-10">
