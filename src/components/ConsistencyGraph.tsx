@@ -199,7 +199,7 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
                     </div>
                 </div>
 
-                <div className="flex gap-2 overflow-x-auto xl:w-32 xl:flex-col" aria-label="Contribution range">
+                <div className="flex gap-2 overflow-x-auto xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1" aria-label="Contribution range">
                     <button
                         type="button"
                         onClick={() => setView({ mode: 'rolling' })}
