@@ -3,6 +3,7 @@ export interface TimelineEvent {
     description: string;
     skills: string[];
     soft_skills?: string[];
+    projectSlug?: string;
 }
 
 export interface YearRange {
