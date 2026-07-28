@@ -52,6 +52,10 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
 
     const pageUrl = `${siteMetadata.siteUrl}/milestone/${period.year}`;
     const orderedEvents = [...period.events].reverse();
+    const getEventUrl = (event: (typeof orderedEvents)[number]) =>
+        event.projectSlug
+            ? `${siteMetadata.siteUrl}/projects/${event.projectSlug}`
+            : `${pageUrl}/${getMilestoneSlug(event.title)}`;
     const itemListJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
@@ -64,7 +68,7 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                 '@type': 'ListItem',
                 position: index + 1,
                 name: event.title,
-                url: `${pageUrl}/${getMilestoneSlug(event.title)}`,
+                url: getEventUrl(event),
             })),
         },
     };
@@ -100,11 +104,14 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                 <div className="space-y-8">
                 {orderedEvents.map((event, index) => {
                     const milestoneSlug = getMilestoneSlug(event.title);
+                    const href = event.projectSlug
+                        ? `/projects/${event.projectSlug}`
+                        : `/milestone/${period.year}/${milestoneSlug}`;
                     const revealDelay = (orderedEvents.length - index - 1) * 140 + 250;
 
                     return (
                         <article
-                            key={milestoneSlug}
+                            key={event.projectSlug ?? milestoneSlug}
                             className="milestone-timeline-item relative pl-12"
                             style={{ animationDelay: `${revealDelay}ms` }}
                         >
@@ -117,20 +124,16 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
                                 className="absolute left-6 top-[35px] h-0.5 w-6 bg-blue-500"
                             />
                             <Link
-                                href={`/milestone/${period.year}/${milestoneSlug}`}
-                                className={`group block rounded-xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md ${
-                                    index === 0 ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-200'
-                                }`}
+                                href={href}
+                                className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
                             >
-                                {index === 0 && (
-                                    <span className="mb-3 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
-                                        Latest
-                                    </span>
-                                )}
                                 <div className="flex items-start justify-between gap-4">
                                     <h2 className="text-xl font-semibold">{event.title}</h2>
                                     <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600" />
                                 </div>
+                                {event.projectSlug && (
+                                    <p className="mt-2 text-sm leading-6 text-gray-600">{event.description}</p>
+                                )}
                             </Link>
                         </article>
                     );
