@@ -54,6 +54,12 @@ export const projects: Project[] = [
             "The product has also generated recurring revenue. My goal now is to make it self-sustaining and eventually profitable. I do not know whether that will take a few months or another year, but that is what I am working toward.",
         ],
         projectUrl: "https://www.subclip.app",
+        storyLinks: [
+            {
+                label: "YouTube channel",
+                url: "https://www.youtube.com/@prosamik",
+            },
+        ],
     },
     {
         slug: "track-bad-habits",
