@@ -19,6 +19,7 @@ export function getDatabase() {
             idle_timeout: 20,
             connect_timeout: 15,
             prepare: false,
+            onnotice: () => undefined,
         });
     }
 
