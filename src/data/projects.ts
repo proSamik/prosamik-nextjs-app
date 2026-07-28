@@ -20,6 +20,10 @@ export interface Project {
     learnings: string[];
     achievements: string[];
     projectUrl: string;
+    storyLinks?: Array<{
+        label: string;
+        url: string;
+    }>;
 }
 
 // This is the single content source for /projects and /projects/[slug].
@@ -125,6 +129,12 @@ export const projects: Project[] = [
             "The Reddit post received more than 20,000 visits, and the YouTube video received roughly 200 to 300 views. I also saw conversions. If I had made the app paid, some people may have bought it, but my goal at the time was to release the idea, test the response, and learn. That part worked better than I expected.",
         ],
         projectUrl: "https://github.com/proSamik/freescreenshot",
+        storyLinks: [
+            {
+                label: "posted it on Reddit",
+                url: "https://www.reddit.com/r/macapps/comments/1jtpoow/i_have_made_an_opensource_alternative_to/",
+            },
+        ],
     },
     {
         slug: "githubme",
