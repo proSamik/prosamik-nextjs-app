@@ -1,25 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface MainLayoutProps {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1090);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const isMobile = useMediaQuery('(max-width: 1090px)');
 
     const layoutClasses = {
         container: `min-h-screen flex flex-col`,
