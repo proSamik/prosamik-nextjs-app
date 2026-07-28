@@ -5,8 +5,8 @@
   },
   "crons": [
     {
-      "path": "/api/cron/github-contributions",
-      "schedule": "0 0 * * *"
+      "path": "/api/cron/consistency",
+      "schedule": "0 */4 * * *"
     }
   ]
 }
