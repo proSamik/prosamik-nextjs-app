@@ -170,7 +170,7 @@ const Navigation = () => {
                 <NavLink
                     href="/consistency"
                     icon={<Flame width={36} height={36} />}
-                    label="Streak"
+                    label="Efforts"
                     isMenuOpen={isMenuOpen}
                 />
 
