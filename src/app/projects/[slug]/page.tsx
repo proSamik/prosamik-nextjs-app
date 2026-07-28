@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -24,35 +25,71 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     }
 
     return {
-        title: `${project.title} — Project Story`,
+        title: `${project.title} | Project Story`,
         description: project.description,
         keywords: [project.title, project.type, 'Samik projects', 'product development'],
         alternates: { canonical: `/projects/${project.slug}` },
         openGraph: {
             type: 'article',
             url: `/projects/${project.slug}`,
-            title: `${project.title} — Project Story`,
+            title: `${project.title} | Project Story`,
             description: project.description,
         },
         twitter: {
             card: 'summary_large_image',
-            title: `${project.title} — Project Story`,
+            title: `${project.title} | Project Story`,
             description: project.description,
         },
     };
 }
 
-function ListSection({ title, items }: { title: string; items: string[] }) {
+function escapeRegularExpression(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function ProjectStoryText({ text, currentSlug }: { text: string; currentSlug: string }) {
+    const linkableProjects = projects.filter((candidate) => candidate.slug !== currentSlug);
+    const titlePattern = linkableProjects
+        .map((candidate) => escapeRegularExpression(candidate.title))
+        .sort((first, second) => second.length - first.length)
+        .join('|');
+
+    if (!titlePattern) return text;
+
+    const titleMatcher = new RegExp(`(${titlePattern})`, 'gi');
+
+    return text.split(titleMatcher).map((part, index) => {
+        const linkedProject = linkableProjects.find(
+            (candidate) => candidate.title.toLowerCase() === part.toLowerCase()
+        );
+
+        if (!linkedProject) return part;
+
+        return (
+            <Link
+                key={`${linkedProject.slug}-${index}`}
+                href={`/projects/${linkedProject.slug}`}
+                className="font-medium text-indigo-600 underline decoration-indigo-200 underline-offset-2 transition-colors hover:text-indigo-800 hover:decoration-indigo-500"
+            >
+                {part}
+            </Link>
+        );
+    });
+}
+
+function StorySection({ title, paragraphs, currentSlug }: {
+    title: string;
+    paragraphs: string[];
+    currentSlug: string;
+}) {
     return (
-        <section className="space-y-3">
+        <section className="space-y-4">
             <h2 className="text-2xl font-bold">{title}</h2>
-            {items.length > 0 ? (
-                <ul className="list-disc space-y-2 pl-6 text-gray-700">
-                    {items.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-            ) : (
-                <p className="text-gray-500">Details will be added here.</p>
-            )}
+            {paragraphs.map((paragraph, index) => (
+                <p key={index} className="leading-7 text-gray-700">
+                    <ProjectStoryText text={paragraph} currentSlug={currentSlug} />
+                </p>
+            ))}
         </section>
     );
 }
@@ -102,19 +139,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </header>
 
             <div className="space-y-12 py-10">
-                <section className="space-y-3">
-                    <h2 className="text-2xl font-bold">The Problem</h2>
-                    <p className="leading-7 text-gray-700">{project.problem}</p>
-                </section>
-
-                <section className="space-y-3">
-                    <h2 className="text-2xl font-bold">The Motivation</h2>
-                    <p className="leading-7 text-gray-700">{project.motivation}</p>
-                </section>
-
-                <ListSection title="Mistakes" items={project.mistakes} />
-                <ListSection title="Learning" items={project.learnings} />
-                <ListSection title="Achievements" items={project.achievements} />
+                <StorySection title="The Problem" paragraphs={project.problem} currentSlug={project.slug} />
+                <StorySection title="The Motivation" paragraphs={project.motivation} currentSlug={project.slug} />
+                <StorySection title="Mistakes" paragraphs={project.mistakes} currentSlug={project.slug} />
+                <StorySection title="Learning" paragraphs={project.learnings} currentSlug={project.slug} />
+                <StorySection title="Achievements" paragraphs={project.achievements} currentSlug={project.slug} />
             </div>
 
             <section className="border-t border-gray-200 pt-10">
