@@ -1,4 +1,32 @@
-import {TimePeriod} from "@/types/timeline";
+import { projects } from "@/data/projects";
+import { TimePeriod, TimelineEvent } from "@/types/timeline";
+
+const projectSlugsInChronologicalOrder = [
+  "prosamik",
+  "githubme",
+  "onlinedb",
+  "tweet-copier",
+  "consistency-tracker",
+  "freescreenshot",
+  "mapyourideas",
+  "track-bad-habits",
+  "subclip",
+];
+
+const projectTimelineEvents: TimelineEvent[] = projectSlugsInChronologicalOrder.map((slug) => {
+  const project = projects.find((item) => item.slug === slug);
+
+  if (!project) {
+    throw new Error(`Missing project timeline data for ${slug}`);
+  }
+
+  return {
+    title: project.title,
+    description: project.description,
+    skills: [],
+    projectSlug: project.slug,
+  };
+});
 
 export const dataTimelineData: TimePeriod[] = [
     // 2025-Present
@@ -6,15 +34,9 @@ export const dataTimelineData: TimePeriod[] = [
     yearRange: {
       start: "2025",
       end: "Present",
-      description: "Loading…"
+      description: "The products I have built and shipped during my indie hacking journey"
     },
-    events: [
-      {
-        title: "Launched githubme.com and prosamik.com",
-        description: "- Started the year by launching two products - prosamik.com and githubme.com\n- prosamik.com is a unique website that uses GitHub for blogging, built in 20 days\n- githubme.com is a platform that helps developers create stylish markdown blogs and documentation using their GitHub markdown files\n- Both projects showcase my commitment to building and shipping fast while maintaining quality",
-        skills: ["#WebDevelopment", "#TypeScript", "#NextJs", "#Golang"]
-      }
-    ]
+    events: projectTimelineEvents
   },
 
     // July 24 - Dec 24
