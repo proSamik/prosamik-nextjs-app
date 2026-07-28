@@ -74,11 +74,20 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
             const week = Math.floor(
                 (monthCursor.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS / 7
             );
-            monthLabels.push({
+            const monthLabel = {
                 label: MONTH_FORMATTER.format(monthCursor),
                 left: Math.max(week, 0) * 15,
                 key: `${monthCursor.getUTCFullYear()}-${monthCursor.getUTCMonth()}`,
-            });
+            };
+            const previousLabel = monthLabels.at(-1);
+
+            // A rolling range can begin at the very end of a month, placing that
+            // label in the same grid week as the next month. Keep the newer label.
+            if (previousLabel && monthLabel.left - previousLabel.left < 30) {
+                monthLabels[monthLabels.length - 1] = monthLabel;
+            } else {
+                monthLabels.push(monthLabel);
+            }
             monthCursor = new Date(Date.UTC(
                 monthCursor.getUTCFullYear(),
                 monthCursor.getUTCMonth() + 1,
