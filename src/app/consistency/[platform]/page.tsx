@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Flame, Github } from 'lucide-react';
+import { Flame } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ConsistencyGraph from '@/components/ConsistencyGraph';
@@ -101,7 +102,7 @@ async function GitHubConsistencyPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
                 >
-                    <Github className="h-4 w-4" />
+                    <FaGithub className="h-4 w-4" />
                     github.com/{data.username}
                 </a>
                 <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">My GitHub Consistency</h1>
