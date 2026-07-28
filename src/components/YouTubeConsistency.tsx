@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useRef, useState, type MouseEvent } from 'react';
-import { ExternalLink, Youtube } from 'lucide-react';
+import { ExternalLink, Flame } from 'lucide-react';
+import { FaYoutube } from 'react-icons/fa';
 import type {
     StreakRange,
 } from '@/lib/githubContributions';
 import type {
     YouTubeConsistencyData,
+    YouTubePublishingStats,
     YouTubeVideo,
 } from '@/lib/youtubeConsistency';
 
@@ -30,8 +32,7 @@ interface TooltipState extends CalendarDay {
 
 const DAY_IN_MILLISECONDS = 86_400_000;
 const EMPTY_COLOR = '#ebedf0';
-const SHORT_COLORS = ['#ebedf0', '#ffb3b3', '#ff7b7b', '#ef4444', '#b91c1c'];
-const VIDEO_COLORS = ['#ebedf0', '#bfdbfe', '#60a5fa', '#2563eb', '#1e40af'];
+const UPLOAD_COLORS = ['#ebedf0', '#fecaca', '#f87171', '#ef4444', '#b91c1c'];
 const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' });
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -59,39 +60,75 @@ function formatStreak(streak: StreakRange) {
     return start === end ? start : `${start} - ${end}`;
 }
 
+function formatUploadRange(firstDate: string | null, lastDate: string | null) {
+    if (!firstDate || !lastDate) return 'Waiting for first sync';
+    const first = DATE_FORMATTER.format(new Date(`${firstDate}T00:00:00.000Z`));
+    const last = DATE_FORMATTER.format(new Date(`${lastDate}T00:00:00.000Z`));
+    return first === last ? first : `${first} - ${last}`;
+}
+
+function OverallStatsCard({ stats }: { stats: YouTubePublishingStats }) {
+    return (
+        <article className="mx-auto my-8 grid max-w-4xl grid-cols-3 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                <strong className="text-2xl font-bold sm:text-3xl">{stats.totalUploads}</strong>
+                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Uploads</span>
+                <span className="mt-2 text-[10px] leading-4 text-gray-500 sm:mt-3 sm:text-sm">
+                    {formatUploadRange(stats.firstUploadDate, stats.lastUploadDate)}
+                </span>
+            </div>
+
+            <div className="flex min-h-36 flex-col items-center justify-center border-x border-gray-200 px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-red-500 sm:h-24 sm:w-24 sm:border-[5px]">
+                    <Flame className="absolute -top-4 h-6 w-6 fill-red-500 text-red-500 sm:-top-5 sm:h-8 sm:w-8" />
+                    <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
+                </div>
+                <span className="mt-2 text-xs font-semibold text-red-600 sm:mt-3 sm:text-base">Current Streak</span>
+                <span className="mt-1 text-[10px] leading-4 text-gray-500 sm:mt-2 sm:text-sm">
+                    {formatStreak(stats.currentStreak)}
+                </span>
+            </div>
+
+            <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                <strong className="text-2xl font-bold sm:text-3xl">{stats.longestStreak.length}</strong>
+                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Longest Streak</span>
+                <span className="mt-2 text-[10px] leading-4 text-gray-500 sm:mt-3 sm:text-sm">
+                    {formatStreak(stats.longestStreak)}
+                </span>
+            </div>
+        </article>
+    );
+}
+
 function PublishingStatsCard({
     title,
-    total,
-    currentStreak,
-    longestStreak,
+    stats,
     colorClass,
+    ringClass,
 }: {
     title: string;
-    total: number;
-    currentStreak: StreakRange;
-    longestStreak: StreakRange;
+    stats: YouTubePublishingStats;
     colorClass: string;
+    ringClass: string;
 }) {
     return (
         <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
             <h3 className={`text-xl font-bold ${colorClass}`}>{title}</h3>
-            <div className="mt-5 grid grid-cols-3 divide-x divide-gray-200 text-center">
+            <div className="mt-5 grid grid-cols-2 divide-x divide-gray-200 text-center">
                 <div className="px-2">
-                    <strong className="text-2xl font-bold sm:text-3xl">{total}</strong>
+                    <strong className="text-2xl font-bold sm:text-3xl">{stats.totalUploads}</strong>
                     <p className="mt-2 text-xs text-gray-600 sm:text-sm">Uploads</p>
-                </div>
-                <div className="px-2">
-                    <strong className="text-2xl font-bold sm:text-3xl">{currentStreak.length}</strong>
-                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">Current streak</p>
                     <p className="mt-2 text-[10px] leading-4 text-gray-500 sm:text-xs">
-                        {formatStreak(currentStreak)}
+                        {formatUploadRange(stats.firstUploadDate, stats.lastUploadDate)}
                     </p>
                 </div>
-                <div className="px-2">
-                    <strong className="text-2xl font-bold sm:text-3xl">{longestStreak.length}</strong>
-                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">Longest streak</p>
+                <div className="flex flex-col items-center px-2">
+                    <div className={`flex h-16 w-16 items-center justify-center rounded-full border-4 ${ringClass}`}>
+                        <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">Current streak</p>
                     <p className="mt-2 text-[10px] leading-4 text-gray-500 sm:text-xs">
-                        {formatStreak(longestStreak)}
+                        {formatStreak(stats.currentStreak)}
                     </p>
                 </div>
             </div>
@@ -150,11 +187,20 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
             const week = Math.floor(
                 (monthCursor.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS / 7
             );
-            monthLabels.push({
+            const monthLabel = {
                 label: MONTH_FORMATTER.format(monthCursor),
                 left: Math.max(week, 0) * 15,
                 key: `${monthCursor.getUTCFullYear()}-${monthCursor.getUTCMonth()}`,
-            });
+            };
+            const previousLabel = monthLabels.at(-1);
+
+            // Avoid overlapping labels when the rolling range starts in the final
+            // few days of one month and the following month shares its grid week.
+            if (previousLabel && monthLabel.left - previousLabel.left < 30) {
+                monthLabels[monthLabels.length - 1] = monthLabel;
+            } else {
+                monthLabels.push(monthLabel);
+            }
             monthCursor = new Date(Date.UTC(
                 monthCursor.getUTCFullYear(),
                 monthCursor.getUTCMonth() + 1,
@@ -208,7 +254,7 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
                 >
-                    <Youtube className="h-5 w-5 fill-current" />
+                    <FaYoutube className="h-5 w-5" aria-hidden="true" />
                     youtube.com/@{data.handle}
                 </a>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -219,20 +265,20 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                 </p>
             </header>
 
+            <OverallStatsCard stats={data.overall} />
+
             <div className="my-8 grid gap-5 lg:grid-cols-2">
                 <PublishingStatsCard
                     title="Shorts"
-                    total={data.shorts.totalUploads}
-                    currentStreak={data.shorts.currentStreak}
-                    longestStreak={data.shorts.longestStreak}
+                    stats={data.shorts}
                     colorClass="text-red-600"
+                    ringClass="border-red-500"
                 />
                 <PublishingStatsCard
                     title="Long-form videos"
-                    total={data.longForm.totalUploads}
-                    currentStreak={data.longForm.currentStreak}
-                    longestStreak={data.longForm.longestStreak}
+                    stats={data.longForm}
                     colorClass="text-blue-600"
+                    ringClass="border-blue-600"
                 />
             </div>
 
@@ -287,26 +333,14 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                                                         onMouseLeave={scheduleTooltipHide}
                                                         onFocus={(event) => showTooltip(event, day)}
                                                         onBlur={scheduleTooltipHide}
-                                                        className="flex h-3 w-3 cursor-pointer overflow-hidden rounded-[2px] outline-none ring-blue-500 hover:ring-2 focus:ring-2"
+                                                        className="h-3 w-3 cursor-pointer rounded-[2px] outline-none ring-red-500 hover:ring-2 focus:ring-2"
                                                         aria-label={`${day.shorts.length} Shorts and ${day.longForm.length} long-form videos on ${day.date}`}
-                                                    >
-                                                        <span
-                                                            className="h-full w-1/2"
-                                                            style={{
-                                                                backgroundColor: day.isFuture
-                                                                    ? EMPTY_COLOR
-                                                                    : SHORT_COLORS[Math.min(day.shorts.length, 4)],
-                                                            }}
-                                                        />
-                                                        <span
-                                                            className="h-full w-1/2"
-                                                            style={{
-                                                                backgroundColor: day.isFuture
-                                                                    ? EMPTY_COLOR
-                                                                    : VIDEO_COLORS[Math.min(day.longForm.length, 4)],
-                                                            }}
-                                                        />
-                                                    </span>
+                                                        style={{
+                                                            backgroundColor: day.isFuture
+                                                                ? EMPTY_COLOR
+                                                                : UPLOAD_COLORS[Math.min(day.shorts.length + day.longForm.length, 4)],
+                                                        }}
+                                                    />
                                                 ) : (
                                                     <span key={`empty-${index}`} className="h-3 w-3" />
                                                 )
@@ -316,16 +350,17 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                                 </div>
                             </div>
 
-                            <div className="mt-3 flex flex-wrap items-center justify-end gap-4 text-xs text-gray-600">
-                                <span className="inline-flex items-center gap-1.5">
-                                    <span className="h-3 w-3 rounded-[2px] bg-red-500" /> Shorts
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <span className="h-3 w-3 rounded-[2px] bg-blue-600" /> Long-form
-                                </span>
-                                <span className="inline-flex items-center gap-1.5">
-                                    <span className="h-3 w-3 rounded-[2px] bg-[#ebedf0]" /> No upload
-                                </span>
+                            <div className="mt-3 flex flex-wrap items-center justify-end gap-1 text-xs text-gray-600">
+                                <span className="mr-1">Less</span>
+                                {UPLOAD_COLORS.map((color, index) => (
+                                    <span
+                                        key={color}
+                                        className="h-3 w-3 rounded-[2px]"
+                                        style={{ backgroundColor: color }}
+                                        aria-label={index === 0 ? 'No uploads' : `${index}${index === 4 ? '+' : ''} uploads`}
+                                    />
+                                ))}
+                                <span className="ml-1">More</span>
                             </div>
                         </div>
 
