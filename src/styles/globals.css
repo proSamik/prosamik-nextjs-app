@@ -1,13 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
     color-scheme: light;
 }
 
 body {
-    @apply bg-white text-black dark:bg-gray-900 dark:text-white;
+    @apply bg-white text-black;
 }
 
 nav {
