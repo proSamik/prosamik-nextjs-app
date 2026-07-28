@@ -14,6 +14,7 @@ import type {
 
 interface YouTubeConsistencyProps {
     data: YouTubeConsistencyData;
+    standalone?: boolean;
 }
 
 type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
@@ -139,7 +140,7 @@ function PublishingStatsCard({
     );
 }
 
-export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
+export default function YouTubeConsistency({ data, standalone = false }: YouTubeConsistencyProps) {
     const availableYears = useMemo(() => {
         const years = [...new Set(data.videos.map((video) => Number(video.date.slice(0, 4))))];
         return years.sort((first, second) => second - first);
@@ -249,7 +250,7 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
     };
 
     return (
-        <section className="mt-16 border-t border-gray-200 pt-12">
+        <section className={standalone ? 'mt-8' : 'mt-16 border-t border-gray-200 pt-12'}>
             <header className="text-center">
                 <a
                     href={data.channelUrl}
@@ -263,8 +264,8 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                 <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
                     My YouTube Consistency
                 </h2>
-                <p className="mt-3 text-gray-600">
-                    Shorts and long-form publishing streaks, grouped by their UTC publish date.
+                <p className="mt-3 text-sm font-medium text-gray-500">
+                    Timezone - UTC
                 </p>
             </header>
 
@@ -281,9 +282,9 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                 <PublishingStatsCard
                     title="Long-form videos"
                     stats={data.longForm}
-                    colorClass="text-blue-600"
-                    ringClass="border-blue-600"
-                    flameClass="fill-blue-600 text-blue-600"
+                    colorClass="text-red-600"
+                    ringClass="border-red-500"
+                    flameClass="fill-red-500 text-red-500"
                 />
             </div>
 
@@ -438,7 +439,7 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                             )}
                             {tooltip.longForm.length > 0 && (
                                 <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">Long-form videos</p>
+                                    <p className="text-xs font-semibold uppercase tracking-wide text-red-600">Long-form videos</p>
                                     <ul className="mt-2 space-y-2">
                                         {tooltip.longForm.map((video) => (
                                             <li key={video.id}>
@@ -446,7 +447,7 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                                                     href={video.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex items-start gap-2 text-sm text-gray-700 hover:text-blue-600"
+                                                    className="flex items-start gap-2 text-sm text-gray-700 hover:text-red-600"
                                                 >
                                                     <span className="line-clamp-2 flex-1">{video.title}</span>
                                                     <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0" />
