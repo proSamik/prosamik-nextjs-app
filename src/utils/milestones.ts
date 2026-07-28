@@ -8,12 +8,14 @@ export const milestoneYears = dataTimelineData.map((period) => ({
 }));
 
 export const milestones = dataTimelineData.flatMap((period) =>
-    period.events.map((event) => ({
-        year: getYearSlug(period.yearRange.start, period.yearRange.end),
-        slug: getMilestoneSlug(event.title),
-        yearRange: period.yearRange,
-        event,
-    }))
+    period.events
+        .filter((event) => !event.projectSlug)
+        .map((event) => ({
+            year: getYearSlug(period.yearRange.start, period.yearRange.end),
+            slug: getMilestoneSlug(event.title),
+            yearRange: period.yearRange,
+            event,
+        }))
 );
 
 export function getMilestone(year: string, milestone: string) {
