@@ -7,6 +7,8 @@ interface ConsistencyGraphProps {
     days: ContributionDay[];
 }
 
+type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
+
 const DAY_IN_MILLISECONDS = 86_400_000;
 const LEVEL_COLORS = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
 const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' });
@@ -25,60 +27,78 @@ function addDays(date: Date, amount: number) {
     return new Date(date.getTime() + amount * DAY_IN_MILLISECONDS);
 }
 
+function startOfUtcDay(date = new Date()) {
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
 export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
     const availableYears = useMemo(() => {
         const years = [...new Set(days.map((day) => Number(day.date.slice(0, 4))))];
-        return years.sort((first, second) => second - first);
+        return years.filter((year) => year >= 2020).sort((first, second) => second - first);
     }, [days]);
-    const [selectedYear, setSelectedYear] = useState(
-        availableYears[0] ?? new Date().getUTCFullYear()
-    );
+    const [view, setView] = useState<GraphView>({ mode: 'rolling' });
 
     const graph = useMemo(() => {
-        const now = new Date();
-        const currentYear = now.getUTCFullYear();
-        const yearStart = new Date(Date.UTC(selectedYear, 0, 1));
-        const yearEnd = selectedYear === currentYear
-            ? new Date(Date.UTC(currentYear, now.getUTCMonth(), now.getUTCDate()))
+        const today = startOfUtcDay();
+        const selectedYear = view.mode === 'year' ? view.year : today.getUTCFullYear();
+        const rangeStart = view.mode === 'rolling'
+            ? addDays(today, -364)
+            : new Date(Date.UTC(selectedYear, 0, 1));
+        const rangeEnd = view.mode === 'rolling'
+            ? today
             : new Date(Date.UTC(selectedYear, 11, 31));
-        const graphStart = addDays(yearStart, -yearStart.getUTCDay());
-        const graphEnd = addDays(yearEnd, 6 - yearEnd.getUTCDay());
+        const graphStart = addDays(rangeStart, -rangeStart.getUTCDay());
+        const graphEnd = addDays(rangeEnd, 6 - rangeEnd.getUTCDay());
         const numberOfDays = Math.round((graphEnd.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS) + 1;
         const numberOfWeeks = Math.ceil(numberOfDays / 7);
         const valuesByDate = new Map(days.map((day) => [day.date, day]));
         const cells = Array.from({ length: numberOfWeeks * 7 }, (_, index) => {
             const date = addDays(graphStart, index);
             const dateString = toDateString(date);
-            const isOutsideYear = date < yearStart || date > yearEnd;
-            return isOutsideYear ? null : valuesByDate.get(dateString) ?? {
-                date: dateString,
-                count: 0,
-                level: 0 as const,
+            const isOutsideRange = date < rangeStart || date > rangeEnd;
+            if (isOutsideRange) return null;
+
+            return {
+                ...(valuesByDate.get(dateString) ?? {
+                    date: dateString,
+                    count: 0,
+                    level: 0 as const,
+                }),
+                isFuture: date > today,
             };
         });
-        const monthLabels = Array.from(
-            { length: yearEnd.getUTCMonth() + 1 },
-            (_, month) => {
-                const firstOfMonth = new Date(Date.UTC(selectedYear, month, 1));
-                const week = Math.floor(
-                    (firstOfMonth.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS / 7
-                );
-                return {
-                    label: MONTH_FORMATTER.format(firstOfMonth),
-                    left: week * 15,
-                };
-            }
-        );
+        const monthLabels: Array<{ label: string; left: number; key: string }> = [];
+        let monthCursor = new Date(Date.UTC(rangeStart.getUTCFullYear(), rangeStart.getUTCMonth(), 1));
+
+        while (monthCursor <= rangeEnd) {
+            const week = Math.floor(
+                (monthCursor.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS / 7
+            );
+            monthLabels.push({
+                label: MONTH_FORMATTER.format(monthCursor),
+                left: Math.max(week, 0) * 15,
+                key: `${monthCursor.getUTCFullYear()}-${monthCursor.getUTCMonth()}`,
+            });
+            monthCursor = new Date(Date.UTC(
+                monthCursor.getUTCFullYear(),
+                monthCursor.getUTCMonth() + 1,
+                1
+            ));
+        }
+
+        const rangeStartString = toDateString(rangeStart);
+        const rangeEndString = toDateString(rangeEnd);
 
         return {
             cells,
             monthLabels,
             numberOfWeeks,
+            selectedYear,
             total: days
-                .filter((day) => Number(day.date.slice(0, 4)) === selectedYear)
+                .filter((day) => day.date >= rangeStartString && day.date <= rangeEndString)
                 .reduce((sum, day) => sum + day.count, 0),
         };
-    }, [days, selectedYear]);
+    }, [days, view]);
 
     if (days.length === 0) {
         return (
@@ -96,7 +116,7 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
             <div className="flex flex-col gap-6 xl:flex-row">
                 <div className="min-w-0 flex-1">
                     <h2 className="text-lg font-medium text-gray-700">
-                        {graph.total.toLocaleString('en-US')} contributions in {selectedYear}
+                        {graph.total.toLocaleString('en-US')} contributions {view.mode === 'rolling' ? 'in the last 365 days' : `in ${graph.selectedYear}`}
                     </h2>
 
                     <div className="mt-5 overflow-x-auto pb-3">
@@ -119,7 +139,7 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
                                 >
                                     {graph.monthLabels.map((month) => (
                                         <span
-                                            key={`${selectedYear}-${month.label}`}
+                                            key={month.key}
                                             className="absolute top-0"
                                             style={{ left: `${month.left}px` }}
                                         >
@@ -130,7 +150,9 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
 
                                 <div
                                     role="img"
-                                    aria-label={`GitHub contribution calendar for ${selectedYear}`}
+                                    aria-label={view.mode === 'rolling'
+                                        ? 'GitHub contribution calendar for the last 365 days'
+                                        : `GitHub contribution calendar for ${graph.selectedYear}`}
                                     className="grid grid-flow-col grid-rows-7 gap-[3px]"
                                     style={{ gridAutoColumns: '12px' }}
                                 >
@@ -144,7 +166,9 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
                                                     : 'transparent',
                                             }}
                                             title={day
-                                                ? `${day.count.toLocaleString('en-US')} ${day.count === 1 ? 'contribution' : 'contributions'} on ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
+                                                ? day.isFuture
+                                                    ? `No contribution data yet for ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
+                                                    : `${day.count.toLocaleString('en-US')} ${day.count === 1 ? 'contribution' : 'contributions'} on ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
                                                 : undefined}
                                         />
                                     ))}
@@ -166,15 +190,27 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
                     </div>
                 </div>
 
-                <div className="flex gap-2 overflow-x-auto xl:w-28 xl:flex-col" aria-label="Contribution year">
+                <div className="flex gap-2 overflow-x-auto xl:w-32 xl:flex-col" aria-label="Contribution range">
+                    <button
+                        type="button"
+                        onClick={() => setView({ mode: 'rolling' })}
+                        aria-pressed={view.mode === 'rolling'}
+                        className={`shrink-0 rounded-md px-4 py-2 text-left text-sm transition-colors ${
+                            view.mode === 'rolling'
+                                ? 'bg-blue-600 font-medium text-white'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        }`}
+                    >
+                        Last 365 days
+                    </button>
                     {availableYears.map((year) => (
                         <button
                             key={year}
                             type="button"
-                            onClick={() => setSelectedYear(year)}
-                            aria-pressed={selectedYear === year}
+                            onClick={() => setView({ mode: 'year', year })}
+                            aria-pressed={view.mode === 'year' && view.year === year}
                             className={`shrink-0 rounded-md px-4 py-2 text-left text-sm transition-colors ${
-                                selectedYear === year
+                                view.mode === 'year' && view.year === year
                                     ? 'bg-blue-600 font-medium text-white'
                                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                             }`}
