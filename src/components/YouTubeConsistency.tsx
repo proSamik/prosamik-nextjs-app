@@ -105,11 +105,13 @@ function PublishingStatsCard({
     stats,
     colorClass,
     ringClass,
+    flameClass,
 }: {
     title: string;
     stats: YouTubePublishingStats;
     colorClass: string;
     ringClass: string;
+    flameClass: string;
 }) {
     return (
         <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
@@ -123,7 +125,8 @@ function PublishingStatsCard({
                     </p>
                 </div>
                 <div className="flex flex-col items-center px-2">
-                    <div className={`flex h-16 w-16 items-center justify-center rounded-full border-4 ${ringClass}`}>
+                    <div className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 ${ringClass}`}>
+                        <Flame className={`absolute -top-4 h-6 w-6 ${flameClass}`} />
                         <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
                     </div>
                     <p className="mt-2 text-xs text-gray-600 sm:text-sm">Current streak</p>
@@ -273,12 +276,14 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                     stats={data.shorts}
                     colorClass="text-red-600"
                     ringClass="border-red-500"
+                    flameClass="fill-red-500 text-red-500"
                 />
                 <PublishingStatsCard
                     title="Long-form videos"
                     stats={data.longForm}
                     colorClass="text-blue-600"
                     ringClass="border-blue-600"
+                    flameClass="fill-blue-600 text-blue-600"
                 />
             </div>
 
@@ -364,7 +369,7 @@ export default function YouTubeConsistency({ data }: YouTubeConsistencyProps) {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 overflow-x-auto xl:w-32 xl:flex-col" aria-label="YouTube range">
+                        <div className="flex gap-2 overflow-x-auto xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1" aria-label="YouTube range">
                             <button
                                 type="button"
                                 onClick={() => setView({ mode: 'rolling' })}
