@@ -1,89 +1,78 @@
-import React, { useEffect, useState, ReactNode } from 'react';
+'use client';
+
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Flame } from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // Define TypeScript interface for NavLink props
 interface NavLinkProps {
     href: string;
     icon: ReactNode;
     label: string;
-    isMenuOpen?: boolean;
+    isActive: boolean;
+    isMobile: boolean;
+    isSmallScreen: boolean;
+    isMenuOpen: boolean;
     onNavigate?: () => void;
 }
 
-const Navigation = () => {
-    const pathname = usePathname();
-    const [isMounted, setIsMounted] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const [isSmallScreen, setIsSmallScreen] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+function isActivePath(pathname: string, path: string) {
+    if (path === '/projects') return pathname.startsWith('/projects');
+    if (path === '/about') return pathname === '/about' || pathname.startsWith('/milestone');
+    if (path === '/consistency') return pathname.startsWith('/consistency');
+    return pathname === path;
+}
 
-    useEffect(() => {
-
-        // Set mounted state
-        setIsMounted(true);
-
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 1090);
-            setIsSmallScreen(window.innerWidth < 630);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    useEffect(() => {
-        setIsMenuOpen(false);
-    }, [pathname]);
-
-    const isActivePath = (path: string): boolean => {
-        if (path === '/projects') return pathname.startsWith('/projects');
-        if (path === '/about') return pathname === '/about' || pathname.startsWith('/milestone');
-        if (path === '/consistency') return pathname.startsWith('/consistency');
-        return pathname === path;
-    };
-
-    const NavLink: React.FC<NavLinkProps> = ({ href, icon, label, isMenuOpen }) => {
-        const isActive = isActivePath(href);
-
-        return (
-            <Link
-                href={href}
-                className="relative group ml-5 w-full"
-            >
-                <div className={`pr-4 pl-6 pt-2 pb-1 rounded-lg backdrop-blur-md
+function NavLink({
+    href,
+    icon,
+    label,
+    isActive,
+    isMobile,
+    isSmallScreen,
+    isMenuOpen,
+    onNavigate,
+}: NavLinkProps) {
+    return (
+        <Link
+            href={href}
+            onClick={onNavigate}
+            className="relative group ml-5 w-full"
+        >
+            <div className={`pr-4 pl-6 pt-2 pb-1 rounded-lg backdrop-blur-md
                           transition-all duration-200
                           flex flex-col items-center
                           group-hover:scale-110
                           ${isMobile ? (isSmallScreen && isMenuOpen ? 'scale-125' : '') : 'w-full'}`}>
-                    <div className={`${
-                        isActive
-                            ? 'text-blue-600 dark:text-blue-500 fill-blue-600 dark:fill-blue-500'
-                            : 'text-gray-700 dark:text-gray-300 fill-gray-700 dark:fill-gray-300 hover:text-blue-600 hover:dark:text-blue-500 hover:fill-blue-600 hover:dark:fill-blue-500'
-                    } transition-colors duration-200`}>
-                        {icon}
-                    </div>
-                    <span className={`mt-2 text-sm text-nowrap ${
-                        isActive
-                            ? 'text-blue-600 dark:text-blue-500'
-                            : 'text-gray-700 dark:text-gray-300'
-                    } ${isSmallScreen && isMenuOpen ? 'text-base' : ''}`}>
+                <div className={`${
+                    isActive
+                        ? 'text-blue-600 dark:text-blue-500 fill-blue-600 dark:fill-blue-500'
+                        : 'text-gray-700 dark:text-gray-300 fill-gray-700 dark:fill-gray-300 hover:text-blue-600 hover:dark:text-blue-500 hover:fill-blue-600 hover:dark:fill-blue-500'
+                } transition-colors duration-200`}>
+                    {icon}
+                </div>
+                <span className={`mt-2 text-sm text-nowrap ${
+                    isActive
+                        ? 'text-blue-600 dark:text-blue-500'
+                        : 'text-gray-700 dark:text-gray-300'
+                } ${isSmallScreen && isMenuOpen ? 'text-base' : ''}`}>
                 {label}
             </span>
-                </div>
-            </Link>
-        );
-    };
+            </div>
+        </Link>
+    );
+}
 
-    if (!isMounted) {
-        return null;
-    }
+const Navigation = () => {
+    const pathname = usePathname();
+    const isMobile = useMediaQuery('(max-width: 1089px)');
+    const isSmallScreen = useMediaQuery('(max-width: 629px)');
+    const [openMenuPath, setOpenMenuPath] = useState<string | null>(null);
+    const isMenuOpen = openMenuPath === pathname;
+    const closeMenu = () => setOpenMenuPath(null);
 
     return (
         <nav
@@ -113,7 +102,9 @@ const Navigation = () => {
             {/* Hamburger Menu */}
             {isSmallScreen && (
                 <button
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    onClick={() => setOpenMenuPath(isMenuOpen ? null : pathname)}
+                    aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                    aria-expanded={isMenuOpen}
                     className="absolute right-0 px-5 py-4"
                 >
                     <svg
@@ -154,8 +145,8 @@ const Navigation = () => {
                             viewBox="0 0 24 24"
                             strokeWidth="1.5"
                             stroke="currentColor"
-                            width={isMobile ? '36' : '36'}
-                            height={isMobile ? '36' : '36'}
+                            width="36"
+                            height="36"
                         >
                             <rect x="3" y="3" width="7" height="7" rx="1" />
                             <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -164,14 +155,22 @@ const Navigation = () => {
                         </svg>
                     }
                     label="Projects"
+                    isActive={isActivePath(pathname, '/projects')}
+                    isMobile={isMobile}
+                    isSmallScreen={isSmallScreen}
                     isMenuOpen={isMenuOpen}
+                    onNavigate={closeMenu}
                 />
 
                 <NavLink
                     href="/consistency"
                     icon={<Flame width={36} height={36} />}
                     label="Efforts"
+                    isActive={isActivePath(pathname, '/consistency')}
+                    isMobile={isMobile}
+                    isSmallScreen={isSmallScreen}
                     isMenuOpen={isMenuOpen}
+                    onNavigate={closeMenu}
                 />
 
                 <NavLink
@@ -183,8 +182,8 @@ const Navigation = () => {
                             viewBox="0 0 24 24"
                             strokeWidth="1.5"
                             stroke="currentColor"
-                            width={isMobile ? '36' : '36'}
-                            height={isMobile ? '36' : '36'}
+                            width="36"
+                            height="36"
                         >
                             <path
                                 fillRule="evenodd"
@@ -194,7 +193,11 @@ const Navigation = () => {
                         </svg>
                     }
                     label="Who is Samik"
+                    isActive={isActivePath(pathname, '/about')}
+                    isMobile={isMobile}
+                    isSmallScreen={isSmallScreen}
                     isMenuOpen={isMenuOpen}
+                    onNavigate={closeMenu}
                 />
 
             </div>
