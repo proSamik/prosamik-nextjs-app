@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { getMilestone, milestones } from '@/utils/milestones';
+import { getMilestoneSummary } from '@/utils/milestoneSummaries';
 import { siteMetadata } from '@/utils/siteMetadata';
 
 interface MilestonePageProps {
@@ -20,10 +21,7 @@ export async function generateMetadata({ params }: MilestonePageProps): Promise<
 
     if (!item) return { title: 'Milestone Not Found' };
 
-    const description = item.event.description
-        .replace(/^[-\s]+/, '')
-        .split('\n')[0]
-        .slice(0, 160);
+    const description = getMilestoneSummary(item.event);
 
     return {
         title: `${item.event.title} — Samik's Milestone`,
@@ -50,6 +48,8 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
 
     if (!item) notFound();
 
+    const summary = getMilestoneSummary(item.event);
+
     const descriptionLines = item.event.description
         .split('\n')
         .map((line) => ({
@@ -62,7 +62,7 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: item.event.title,
-        description: descriptionLines[0]?.text,
+        description: summary,
         url: `${siteMetadata.siteUrl}/milestone/${item.year}/${item.slug}`,
         author: {
             '@type': 'Person',
@@ -93,9 +93,7 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
                     {item.yearRange.start} – {item.yearRange.end}
                 </p>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{item.event.title}</h1>
-                {item.yearRange.description && (
-                    <p className="text-lg text-gray-600">{item.yearRange.description}</p>
-                )}
+                <p className="text-lg leading-8 text-gray-600">{summary}</p>
             </header>
 
             <section className="py-10">
