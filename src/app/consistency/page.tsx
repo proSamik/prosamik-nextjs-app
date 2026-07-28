@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Flame, Github } from 'lucide-react';
-import Breadcrumbs from '@/components/Breadcrumbs';
 import ConsistencyGraph from '@/components/ConsistencyGraph';
+import YouTubeConsistency from '@/components/YouTubeConsistency';
 import type { ConsistencyData, StreakRange } from '@/lib/githubContributions';
 import { getConsistencyData } from '@/lib/githubContributions';
+import type { YouTubeConsistencyData } from '@/lib/youtubeConsistency';
+import { getYouTubeConsistencyData } from '@/lib/youtubeConsistency';
 import { siteMetadata } from '@/utils/siteMetadata';
 
 export const dynamic = 'force-dynamic';
@@ -53,15 +55,41 @@ const emptyData: ConsistencyData = {
     syncedAt: null,
 };
 
+const emptyYouTubeData: YouTubeConsistencyData = {
+    handle: 'proSamik',
+    channelTitle: 'proSamik',
+    channelUrl: 'https://www.youtube.com/@proSamik',
+    videos: [],
+    shorts: {
+        totalUploads: 0,
+        firstUploadDate: null,
+        currentStreak: { length: 0, start: null, end: null },
+        longestStreak: { length: 0, start: null, end: null },
+    },
+    longForm: {
+        totalUploads: 0,
+        firstUploadDate: null,
+        currentStreak: { length: 0, start: null, end: null },
+        longestStreak: { length: 0, start: null, end: null },
+    },
+    syncedAt: null,
+};
+
 export default async function ConsistencyPage() {
     let data = emptyData;
+    let youtubeData = emptyYouTubeData;
     const today = new Date().toISOString().slice(0, 10);
 
-    try {
-        data = await getConsistencyData();
-    } catch (error) {
-        console.error('Unable to render consistency page:', error);
-    }
+    const [githubResult, youtubeResult] = await Promise.allSettled([
+        getConsistencyData(),
+        getYouTubeConsistencyData(),
+    ]);
+
+    if (githubResult.status === 'fulfilled') data = githubResult.value;
+    else console.error('Unable to render GitHub consistency data:', githubResult.reason);
+
+    if (youtubeResult.status === 'fulfilled') youtubeData = youtubeResult.value;
+    else console.error('Unable to render YouTube consistency data:', youtubeResult.reason);
 
     const { stats } = data;
     const jsonLd = {
@@ -84,9 +112,7 @@ export default async function ConsistencyPage() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
-            <Breadcrumbs items={[{ label: 'Consistency' }]} />
-
-            <header className="mx-auto mt-8 max-w-3xl text-center">
+            <header className="mx-auto max-w-3xl text-center">
                 <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
                     <Github className="h-4 w-4" />
                     github.com/{data.username}
@@ -97,46 +123,55 @@ export default async function ConsistencyPage() {
                 <p className="mt-4 text-lg leading-8 text-gray-600">
                     A daily record of the work GitHub counts on my public contribution graph.
                 </p>
+                <p className="mt-2 text-sm font-medium text-gray-500">
+                    Every streak day uses UTC and resets at 00:00 UTC.
+                </p>
             </header>
 
-            <section className="mx-auto my-10 grid max-w-4xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm sm:grid-cols-3">
-                <div className="flex min-h-44 flex-col items-center justify-center px-6 py-7 text-center">
-                    <strong className="text-3xl font-bold">
+            <section className="mx-auto my-10 grid max-w-4xl grid-cols-3 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                    <strong className="text-2xl font-bold sm:text-3xl">
                         {stats.totalContributions.toLocaleString('en-US')}
                     </strong>
-                    <span className="mt-3 text-gray-700">Total Contributions</span>
-                    <span className="mt-3 text-sm text-gray-500">
+                    <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Contributions</span>
+                    <span className="mt-2 text-[10px] text-gray-500 sm:mt-3 sm:text-sm">
                         {stats.firstContributionDate ? `${formatDate(stats.firstContributionDate)} - Present` : 'Waiting for first sync'}
                     </span>
                 </div>
 
-                <div className="flex min-h-44 flex-col items-center justify-center border-y border-gray-200 px-6 py-7 text-center sm:border-x sm:border-y-0">
-                    <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-[5px] border-orange-500">
-                        <Flame className="absolute -top-5 h-8 w-8 fill-orange-500 text-orange-500" />
-                        <strong className="text-3xl font-bold">{stats.currentStreak.length}</strong>
+                <div className="flex min-h-36 flex-col items-center justify-center border-x border-gray-200 px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                    <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-orange-500 sm:h-24 sm:w-24 sm:border-[5px]">
+                        <Flame className="absolute -top-4 h-6 w-6 fill-orange-500 text-orange-500 sm:-top-5 sm:h-8 sm:w-8" />
+                        <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
                     </div>
-                    <span className="mt-3 font-semibold text-orange-600">Current Streak</span>
-                    <span className="mt-2 text-sm text-gray-500">
+                    <span className="mt-2 text-xs font-semibold text-orange-600 sm:mt-3 sm:text-base">Current Streak</span>
+                    <span className="mt-1 text-[10px] text-gray-500 sm:mt-2 sm:text-sm">
                         {stats.currentStreak.length > 0
                             ? formatStreakRange(stats.currentStreak)
                             : formatDate(today)}
                     </span>
                 </div>
 
-                <div className="flex min-h-44 flex-col items-center justify-center px-6 py-7 text-center">
-                    <strong className="text-3xl font-bold">{stats.longestStreak.length}</strong>
-                    <span className="mt-3 text-gray-700">Longest Streak</span>
-                    <span className="mt-3 text-sm text-gray-500">
+                <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
+                    <strong className="text-2xl font-bold sm:text-3xl">{stats.longestStreak.length}</strong>
+                    <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Longest Streak</span>
+                    <span className="mt-2 text-[10px] text-gray-500 sm:mt-3 sm:text-sm">
                         {formatStreakRange(stats.longestStreak)}
                     </span>
                 </div>
             </section>
 
             <ConsistencyGraph days={data.days} />
+            <YouTubeConsistency data={youtubeData} />
 
-            {data.syncedAt && (
+            {(data.syncedAt || youtubeData.syncedAt) && (
                 <p className="mt-4 text-right text-xs text-gray-500">
-                    Last synced {new Date(data.syncedAt).toLocaleString('en-US', { timeZone: 'UTC' })} UTC
+                    Last synced {new Date(
+                        [data.syncedAt, youtubeData.syncedAt]
+                            .filter((value): value is string => Boolean(value))
+                            .sort()
+                            .at(-1) as string
+                    ).toLocaleString('en-US', { timeZone: 'UTC' })} UTC
                 </p>
             )}
         </main>
