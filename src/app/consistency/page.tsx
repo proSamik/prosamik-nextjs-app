@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Flame, Github } from 'lucide-react';
-import { FaYoutube } from 'react-icons/fa';
+import { ArrowRight, Flame } from 'lucide-react';
+import { FaGithub, FaYoutube } from 'react-icons/fa';
 import {
     emptyGitHubConsistencyData,
     emptyYouTubeConsistencyData,
@@ -175,7 +175,7 @@ export default async function ConsistencyPage() {
                     href="/consistency/github"
                     name="GitHub"
                     description={`github.com/${githubData.username}`}
-                    icon={<Github className="h-6 w-6" />}
+                    icon={<FaGithub className="h-6 w-6" />}
                     iconClassName="text-gray-900"
                     total={githubStats.totalContributions}
                     totalLabel="Total Contributions"
