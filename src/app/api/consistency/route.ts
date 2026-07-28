@@ -1,12 +1,16 @@
 import { getConsistencyData } from '@/lib/githubContributions';
+import { getYouTubeConsistencyData } from '@/lib/youtubeConsistency';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET() {
     try {
-        const data = await getConsistencyData();
-        return Response.json(data, {
+        const [github, youtube] = await Promise.all([
+            getConsistencyData(),
+            getYouTubeConsistencyData(),
+        ]);
+        return Response.json({ github, youtube }, {
             headers: {
                 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600',
             },
