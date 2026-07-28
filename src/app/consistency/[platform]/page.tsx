@@ -105,11 +105,8 @@ async function GitHubConsistencyPage() {
                     github.com/{data.username}
                 </a>
                 <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">My GitHub Consistency</h1>
-                <p className="mt-4 text-lg leading-8 text-gray-600">
-                    A daily record of the work GitHub counts on my public contribution graph.
-                </p>
-                <p className="mt-2 text-sm font-medium text-gray-500">
-                    Every streak day uses UTC and resets at 00:00 UTC.
+                <p className="mt-4 text-sm font-medium text-gray-500">
+                    Timezone - UTC
                 </p>
             </header>
 
@@ -177,7 +174,7 @@ export default async function PlatformConsistencyPage({ params }: PlatformConsis
     return (
         <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
             <Breadcrumbs items={[
-                { label: 'Streak', href: '/consistency' },
+                { label: 'Efforts', href: '/consistency' },
                 { label: platform === 'github' ? 'GitHub' : 'YouTube' },
             ]} />
             {platform === 'github' ? <GitHubConsistencyPage /> : <YouTubePlatformPage />}
