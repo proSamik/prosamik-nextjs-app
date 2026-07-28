@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { Flame } from 'lucide-react';
 
 // Define TypeScript interface for NavLink props
 interface NavLinkProps {
@@ -44,6 +45,7 @@ const Navigation = () => {
     const isActivePath = (path: string): boolean => {
         if (path === '/projects') return pathname.startsWith('/projects');
         if (path === '/about') return pathname === '/about' || pathname.startsWith('/milestone');
+        if (path === '/consistency') return pathname.startsWith('/consistency');
         return pathname === path;
     };
 
@@ -162,6 +164,13 @@ const Navigation = () => {
                         </svg>
                     }
                     label="Projects"
+                    isMenuOpen={isMenuOpen}
+                />
+
+                <NavLink
+                    href="/consistency"
+                    icon={<Flame width={36} height={36} />}
+                    label="Streak"
                     isMenuOpen={isMenuOpen}
                 />
 
