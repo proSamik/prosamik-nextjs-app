@@ -24,6 +24,22 @@ const icons: Record<ProjectIcon, LucideIcon> = {
     monitor: Monitor,
 };
 
+const projectTimelineOrder = [
+    'subclip',
+    'track-bad-habits',
+    'mapyourideas',
+    'freescreenshot',
+    'consistency-tracker',
+    'tweet-copier',
+    'onlinedb',
+    'githubme',
+    'prosamik',
+];
+
+const timelineProjects = projectTimelineOrder
+    .map((slug) => projects.find((project) => project.slug === slug))
+    .filter((project): project is Project => Boolean(project));
+
 function ProjectCard({ project, timeline = false }: { project: Project; timeline?: boolean }) {
     const Icon = icons[project.icon];
 
@@ -73,7 +89,7 @@ function ProjectTimeline() {
                 />
 
                 <div className="space-y-8">
-                    {projects.map((project, index) => {
+                    {timelineProjects.map((project, index) => {
                         const isLeft = index % 2 === 0;
 
                         return (
