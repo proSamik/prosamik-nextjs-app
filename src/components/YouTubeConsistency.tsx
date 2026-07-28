@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState, type MouseEvent } from 'react';
+import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { ExternalLink, Flame } from 'lucide-react';
 import { FaYoutube } from 'react-icons/fa';
 import type {
@@ -236,7 +236,7 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
         hideTimer.current = setTimeout(() => setTooltip(null), 180);
     };
 
-    const showTooltip = (event: MouseEvent<HTMLElement>, day: CalendarDay) => {
+    const showTooltip = (event: SyntheticEvent<HTMLElement>, day: CalendarDay) => {
         cancelTooltipHide();
         const bounds = event.currentTarget.getBoundingClientRect();
         const tooltipHeight = 288;
