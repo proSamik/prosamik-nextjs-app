@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { ExternalLink, Flame } from 'lucide-react';
 import { FaYoutube } from 'react-icons/fa';
+import ShareConsistencyCard from '@/components/ShareConsistencyCard';
 import type {
     StreakRange,
 } from '@/lib/githubContributions';
@@ -70,7 +71,8 @@ function formatUploadRange(firstDate: string | null, lastDate: string | null) {
 
 function OverallStatsCard({ stats }: { stats: YouTubePublishingStats }) {
     return (
-        <article className="mx-auto my-8 grid max-w-4xl grid-cols-3 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <article className="relative mx-auto my-8 grid max-w-4xl grid-cols-3 rounded-xl border border-gray-200 bg-white shadow-sm">
+            <ShareConsistencyCard platform="youtube" card="streak" />
             <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
                 <strong className="text-2xl font-bold sm:text-3xl">{stats.totalUploads}</strong>
                 <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Uploads</span>
@@ -288,13 +290,14 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                 />
             </div>
 
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+            <div className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+                <ShareConsistencyCard platform="youtube" card="graph" />
                 {data.videos.length === 0 ? (
                     <p className="text-gray-600">YouTube data will appear after the first sync.</p>
                 ) : (
                     <div className="flex flex-col gap-6 xl:flex-row">
                         <div className="min-w-0 flex-1">
-                            <h3 className="text-lg font-medium text-gray-700">
+                            <h3 className="pr-10 text-lg font-medium text-gray-700">
                                 {graph.shorts} Shorts and {graph.longForm} long-form videos {view.mode === 'rolling' ? 'in the last 365 days' : `in ${graph.selectedYear}`}
                             </h3>
 
