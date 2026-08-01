@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, Code2, Copy, Image as ImageIcon, Share2 } from 'lucide-react';
+import { Check, Copy, Image as ImageIcon, Share2 } from 'lucide-react';
 import type { ConsistencyCardKind, ConsistencyPlatform } from '@/lib/consistencyCardData';
 
 interface ShareConsistencyCardProps {
@@ -23,12 +23,11 @@ export default function ShareConsistencyCard({ platform, card, className = '' }:
         return () => document.removeEventListener('mousedown', close);
     }, []);
 
-    const urls = () => {
-        const origin = window.location.origin;
-        return {
-            image: `${origin}/api/embed/${platform}/${card}`,
-            iframe: `${origin}/embed/${platform}/${card}`,
-        };
+    const imageUrl = () => {
+        const isLocal = window.location.hostname === 'localhost'
+            || window.location.hostname === '127.0.0.1';
+        const origin = isLocal ? window.location.origin : 'https://www.prosamik.com';
+        return `${origin}/api/embed/${platform}/${card}`;
     };
 
     const complete = (label: string) => {
@@ -37,7 +36,7 @@ export default function ShareConsistencyCard({ platform, card, className = '' }:
     };
 
     const copyImage = async () => {
-        const { image } = urls();
+        const image = imageUrl();
         try {
             const blob = await fetch(image).then((response) => response.blob());
             await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
@@ -48,18 +47,9 @@ export default function ShareConsistencyCard({ platform, card, className = '' }:
         }
     };
 
-    const copyIframe = async () => {
-        const { iframe } = urls();
-        const size = card === 'graph' ? 'width="800" height="240"' : 'width="760" height="220"';
-        await navigator.clipboard.writeText(
-            `<iframe src="${iframe}" ${size} style="border:0" loading="lazy"></iframe>`
-        );
-        complete('Embed code copied');
-    };
-
-    const copyIframeUrl = async () => {
-        await navigator.clipboard.writeText(urls().iframe);
-        complete('Iframe URL copied');
+    const copyImageUrl = async () => {
+        await navigator.clipboard.writeText(imageUrl());
+        complete('Image URL copied');
     };
 
     return (
@@ -80,8 +70,7 @@ export default function ShareConsistencyCard({ platform, card, className = '' }:
                     ) : (
                         <>
                             <button type="button" onClick={copyImage} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-gray-100"><ImageIcon className="h-4 w-4" />Copy image</button>
-                            <button type="button" onClick={copyIframe} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-gray-100"><Code2 className="h-4 w-4" />Copy iframe code</button>
-                            <button type="button" onClick={copyIframeUrl} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-gray-100"><Copy className="h-4 w-4" />Copy iframe URL</button>
+                            <button type="button" onClick={copyImageUrl} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-gray-100"><Copy className="h-4 w-4" />Copy image URL</button>
                         </>
                     )}
                 </div>

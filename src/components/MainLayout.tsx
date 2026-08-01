@@ -1,7 +1,6 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -11,12 +10,7 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-    const pathname = usePathname();
     const isMobile = useMediaQuery('(max-width: 1090px)');
-
-    if (pathname.startsWith('/embed/')) {
-        return <>{children}</>;
-    }
 
     const layoutClasses = {
         container: `min-h-screen flex flex-col`,
