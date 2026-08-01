@@ -1,10 +1,12 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import ShareConsistencyCard from '@/components/ShareConsistencyCard';
 import type { ContributionDay } from '@/lib/githubContributions';
 
 interface ConsistencyGraphProps {
     days: ContributionDay[];
+    shareable?: boolean;
 }
 
 type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
@@ -31,7 +33,7 @@ function startOfUtcDay(date = new Date()) {
     return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
+export default function ConsistencyGraph({ days, shareable = false }: ConsistencyGraphProps) {
     const availableYears = useMemo(() => {
         const years = [...new Set(days.map((day) => Number(day.date.slice(0, 4))))];
         return years.filter((year) => year >= 2020).sort((first, second) => second - first);
@@ -111,7 +113,8 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
 
     if (days.length === 0) {
         return (
-            <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <section className="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                {shareable && <ShareConsistencyCard platform="github" card="graph" />}
                 <h2 className="text-xl font-semibold">Contribution graph</h2>
                 <p className="mt-2 text-gray-600">
                     Contribution data will appear after the first scheduled sync.
@@ -121,10 +124,11 @@ export default function ConsistencyGraph({ days }: ConsistencyGraphProps) {
     }
 
     return (
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+            {shareable && <ShareConsistencyCard platform="github" card="graph" />}
             <div className="flex flex-col gap-6 xl:flex-row">
                 <div className="min-w-0 flex-1">
-                    <h2 className="text-lg font-medium text-gray-700">
+                    <h2 className="pr-10 text-lg font-medium text-gray-700">
                         {graph.total.toLocaleString('en-US')} contributions {view.mode === 'rolling' ? 'in the last 365 days' : `in ${graph.selectedYear}`}
                     </h2>
 
