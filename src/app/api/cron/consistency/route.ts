@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { syncGitHubContributions } from '@/lib/githubContributions';
 import { syncYouTubeVideos } from '@/lib/youtubeConsistency';
 
@@ -18,6 +19,8 @@ export async function GET(request: Request) {
             syncGitHubContributions(),
             syncYouTubeVideos(),
         ]);
+        revalidateTag('consistency-embed-github', { expire: 0 });
+        revalidateTag('consistency-embed-youtube', { expire: 0 });
         return Response.json({ success: true, github, youtube });
     } catch (error) {
         console.error('Consistency sync failed:', error);
