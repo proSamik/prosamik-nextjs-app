@@ -4,6 +4,7 @@ import { FaGithub } from 'react-icons/fa';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ConsistencyGraph from '@/components/ConsistencyGraph';
+import ShareConsistencyCard from '@/components/ShareConsistencyCard';
 import YouTubeConsistency from '@/components/YouTubeConsistency';
 import {
     emptyGitHubConsistencyData,
@@ -111,7 +112,8 @@ async function GitHubConsistencyPage() {
                 </p>
             </header>
 
-            <section className="mx-auto my-10 grid max-w-4xl grid-cols-3 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            <section className="relative mx-auto my-10 grid max-w-4xl grid-cols-3 rounded-xl border border-gray-200 bg-white shadow-sm">
+                <ShareConsistencyCard platform="github" card="streak" />
                 <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
                     <strong className="text-2xl font-bold sm:text-3xl">{stats.totalContributions.toLocaleString('en-US')}</strong>
                     <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Contributions</span>
@@ -138,7 +140,7 @@ async function GitHubConsistencyPage() {
                 </div>
             </section>
 
-            <ConsistencyGraph days={data.days} />
+            <ConsistencyGraph days={data.days} shareable />
             {data.syncedAt && (
                 <p className="mt-4 text-right text-xs text-gray-500">
                     Last synced {new Date(data.syncedAt).toLocaleString('en-US', { timeZone: 'UTC' })} UTC
