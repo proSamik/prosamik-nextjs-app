@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/database';
+import { getDatabase, withDatabaseRetry } from '@/lib/database';
 
 export interface ContributionDay {
     date: string;
@@ -175,16 +175,18 @@ async function fetchContributionYear(username: string, year: number, today: stri
 async function ensureContributionTable() {
     const sql = getDatabase();
 
-    await sql`
-        CREATE TABLE IF NOT EXISTS github_contributions (
-            username TEXT NOT NULL,
-            contribution_date DATE NOT NULL,
-            contribution_count INTEGER NOT NULL CHECK (contribution_count >= 0),
-            contribution_level SMALLINT NOT NULL CHECK (contribution_level BETWEEN 0 AND 4),
-            synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (username, contribution_date)
-        )
-    `;
+    await withDatabaseRetry('ensure GitHub contributions table', async () => {
+        await sql`
+            CREATE TABLE IF NOT EXISTS github_contributions (
+                username TEXT NOT NULL,
+                contribution_date DATE NOT NULL,
+                contribution_count INTEGER NOT NULL CHECK (contribution_count >= 0),
+                contribution_level SMALLINT NOT NULL CHECK (contribution_level BETWEEN 0 AND 4),
+                synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (username, contribution_date)
+            )
+        `;
+    });
 }
 
 export function calculateContributionStats(days: ContributionDay[], today = getUtcDateString()): ContributionStats {
@@ -254,21 +256,21 @@ export async function getConsistencyData(): Promise<ConsistencyData> {
     await ensureContributionTable();
     const sql = getDatabase();
     const username = process.env.GITHUB_USERNAME || DEFAULT_GITHUB_USERNAME;
-    const rows = await sql<{
-        date: string;
-        count: number;
-        level: ContributionDay['level'];
-        synced_at: string;
-    }[]>`
-        SELECT
-            contribution_date::text AS date,
-            contribution_count AS count,
-            contribution_level AS level,
-            synced_at::text AS synced_at
-        FROM github_contributions
-        WHERE LOWER(username) = LOWER(${username})
-        ORDER BY contribution_date ASC
-    `;
+    const rows = await withDatabaseRetry('load GitHub contributions', async () => sql<{
+            date: string;
+            count: number;
+            level: ContributionDay['level'];
+            synced_at: string;
+        }[]>`
+            SELECT
+                contribution_date::text AS date,
+                contribution_count AS count,
+                contribution_level AS level,
+                synced_at::text AS synced_at
+            FROM github_contributions
+            WHERE LOWER(username) = LOWER(${username})
+            ORDER BY contribution_date ASC
+        `);
 
     const days = rows.map(({ date, count, level }) => ({ date, count, level }));
 
@@ -287,11 +289,14 @@ export async function syncGitHubContributions(options: { full?: boolean } = {}) 
     const today = getUtcDateString();
     const currentYear = Number(today.slice(0, 4));
     const configuredStartYear = Number(process.env.GITHUB_CONTRIBUTIONS_START_YEAR || DEFAULT_START_YEAR);
-    const [{ stored_days: storedDays }] = await sql<{ stored_days: number }[]>`
-        SELECT COUNT(*)::int AS stored_days
-        FROM github_contributions
-        WHERE LOWER(username) = LOWER(${username})
-    `;
+    const [{ stored_days: storedDays }] = await withDatabaseRetry(
+        'count stored GitHub contributions',
+        async () => sql<{ stored_days: number }[]>`
+            SELECT COUNT(*)::int AS stored_days
+            FROM github_contributions
+            WHERE LOWER(username) = LOWER(${username})
+        `
+    );
 
     const years = options.full || storedDays === 0
         ? (await fetchContributionYears(username))
@@ -303,35 +308,37 @@ export async function syncGitHubContributions(options: { full?: boolean } = {}) 
         await Promise.all(years.map((year) => fetchContributionYear(username, year, today)))
     ).flat();
 
-    await sql.begin(async (transaction) => {
-        await transaction`SELECT pg_advisory_xact_lock(hashtext('prosamik-github-contributions-sync'))`;
+    await withDatabaseRetry('store GitHub contributions', async () => {
+        await sql.begin(async (transaction) => {
+            await transaction`SELECT pg_advisory_xact_lock(hashtext('prosamik-github-contributions-sync'))`;
 
-        if (options.full) {
+            if (options.full) {
+                await transaction`
+                    DELETE FROM github_contributions
+                    WHERE LOWER(username) = LOWER(${username})
+                `;
+            }
+
             await transaction`
-                DELETE FROM github_contributions
-                WHERE LOWER(username) = LOWER(${username})
+                INSERT INTO github_contributions ${transaction(
+                    contributionDays.map((day) => ({
+                        username,
+                        contribution_date: day.date,
+                        contribution_count: day.count,
+                        contribution_level: day.level,
+                    })),
+                    'username',
+                    'contribution_date',
+                    'contribution_count',
+                    'contribution_level'
+                )}
+                ON CONFLICT (username, contribution_date)
+                DO UPDATE SET
+                    contribution_count = EXCLUDED.contribution_count,
+                    contribution_level = EXCLUDED.contribution_level,
+                    synced_at = NOW()
             `;
-        }
-
-        await transaction`
-            INSERT INTO github_contributions ${transaction(
-                contributionDays.map((day) => ({
-                    username,
-                    contribution_date: day.date,
-                    contribution_count: day.count,
-                    contribution_level: day.level,
-                })),
-                'username',
-                'contribution_date',
-                'contribution_count',
-                'contribution_level'
-            )}
-            ON CONFLICT (username, contribution_date)
-            DO UPDATE SET
-                contribution_count = EXCLUDED.contribution_count,
-                contribution_level = EXCLUDED.contribution_level,
-                synced_at = NOW()
-        `;
+        });
     });
 
     return {

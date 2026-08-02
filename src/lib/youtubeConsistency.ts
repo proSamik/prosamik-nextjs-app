@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/database';
+import { getDatabase, withDatabaseRetry } from '@/lib/database';
 import { calculateContributionStats, type StreakRange } from '@/lib/githubContributions';
 
 export type YouTubeVideoType = 'short' | 'long-form';
@@ -155,20 +155,22 @@ async function fetchVideoDetails(videoIds: string[]) {
 async function ensureYouTubeTable() {
     const sql = getDatabase();
 
-    await sql`
-        CREATE TABLE IF NOT EXISTS youtube_videos (
-            video_id TEXT PRIMARY KEY,
-            channel_handle TEXT NOT NULL,
-            channel_title TEXT NOT NULL,
-            title TEXT NOT NULL,
-            published_at TIMESTAMPTZ NOT NULL,
-            published_date DATE NOT NULL,
-            video_type TEXT NOT NULL CHECK (video_type IN ('short', 'long-form')),
-            duration_seconds INTEGER NOT NULL CHECK (duration_seconds >= 0),
-            video_url TEXT NOT NULL,
-            synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        )
-    `;
+    await withDatabaseRetry('ensure YouTube videos table', async () => {
+        await sql`
+            CREATE TABLE IF NOT EXISTS youtube_videos (
+                video_id TEXT PRIMARY KEY,
+                channel_handle TEXT NOT NULL,
+                channel_title TEXT NOT NULL,
+                title TEXT NOT NULL,
+                published_at TIMESTAMPTZ NOT NULL,
+                published_date DATE NOT NULL,
+                video_type TEXT NOT NULL CHECK (video_type IN ('short', 'long-form')),
+                duration_seconds INTEGER NOT NULL CHECK (duration_seconds >= 0),
+                video_url TEXT NOT NULL,
+                synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        `;
+    });
 }
 
 function calculatePublishingStats(videos: YouTubeVideo[]): YouTubePublishingStats {
@@ -198,31 +200,31 @@ export async function getYouTubeConsistencyData(): Promise<YouTubeConsistencyDat
     await ensureYouTubeTable();
     const sql = getDatabase();
     const handle = (process.env.YOUTUBE_HANDLE || DEFAULT_YOUTUBE_HANDLE).replace(/^@/, '');
-    const rows = await sql<{
-        id: string;
-        channel_title: string;
-        title: string;
-        published_at: string;
-        date: string;
-        type: YouTubeVideoType;
-        duration_seconds: number;
-        url: string;
-        synced_at: string;
-    }[]>`
-        SELECT
-            video_id AS id,
-            channel_title,
-            title,
-            published_at::text,
-            published_date::text AS date,
-            video_type AS type,
-            duration_seconds,
-            video_url AS url,
-            synced_at::text
-        FROM youtube_videos
-        WHERE LOWER(channel_handle) = LOWER(${handle})
-        ORDER BY published_at ASC
-    `;
+    const rows = await withDatabaseRetry('load YouTube videos', async () => sql<{
+            id: string;
+            channel_title: string;
+            title: string;
+            published_at: string;
+            date: string;
+            type: YouTubeVideoType;
+            duration_seconds: number;
+            url: string;
+            synced_at: string;
+        }[]>`
+            SELECT
+                video_id AS id,
+                channel_title,
+                title,
+                published_at::text,
+                published_date::text AS date,
+                video_type AS type,
+                duration_seconds,
+                video_url AS url,
+                synced_at::text
+            FROM youtube_videos
+            WHERE LOWER(channel_handle) = LOWER(${handle})
+            ORDER BY published_at ASC
+        `);
     const videos = rows.map((row) => ({
         id: row.id,
         title: row.title,
@@ -258,43 +260,45 @@ export async function syncYouTubeVideos() {
         throw new Error(`YouTube returned no public uploads for @${handle}.`);
     }
 
-    await sql.begin(async (transaction) => {
-        await transaction`SELECT pg_advisory_xact_lock(hashtext('prosamik-youtube-videos-sync'))`;
-        await transaction`
-            INSERT INTO youtube_videos ${transaction(
-                videos.map((video) => ({
-                    video_id: video.id,
-                    channel_handle: handle,
-                    channel_title: channel.snippet.title,
-                    title: video.title,
-                    published_at: video.publishedAt,
-                    published_date: video.date,
-                    video_type: video.type,
-                    duration_seconds: video.durationSeconds,
-                    video_url: video.url,
-                })),
-                'video_id',
-                'channel_handle',
-                'channel_title',
-                'title',
-                'published_at',
-                'published_date',
-                'video_type',
-                'duration_seconds',
-                'video_url'
-            )}
-            ON CONFLICT (video_id)
-            DO UPDATE SET
-                channel_handle = EXCLUDED.channel_handle,
-                channel_title = EXCLUDED.channel_title,
-                title = EXCLUDED.title,
-                published_at = EXCLUDED.published_at,
-                published_date = EXCLUDED.published_date,
-                video_type = EXCLUDED.video_type,
-                duration_seconds = EXCLUDED.duration_seconds,
-                video_url = EXCLUDED.video_url,
-                synced_at = NOW()
-        `;
+    await withDatabaseRetry('store YouTube videos', async () => {
+        await sql.begin(async (transaction) => {
+            await transaction`SELECT pg_advisory_xact_lock(hashtext('prosamik-youtube-videos-sync'))`;
+            await transaction`
+                INSERT INTO youtube_videos ${transaction(
+                    videos.map((video) => ({
+                        video_id: video.id,
+                        channel_handle: handle,
+                        channel_title: channel.snippet.title,
+                        title: video.title,
+                        published_at: video.publishedAt,
+                        published_date: video.date,
+                        video_type: video.type,
+                        duration_seconds: video.durationSeconds,
+                        video_url: video.url,
+                    })),
+                    'video_id',
+                    'channel_handle',
+                    'channel_title',
+                    'title',
+                    'published_at',
+                    'published_date',
+                    'video_type',
+                    'duration_seconds',
+                    'video_url'
+                )}
+                ON CONFLICT (video_id)
+                DO UPDATE SET
+                    channel_handle = EXCLUDED.channel_handle,
+                    channel_title = EXCLUDED.channel_title,
+                    title = EXCLUDED.title,
+                    published_at = EXCLUDED.published_at,
+                    published_date = EXCLUDED.published_date,
+                    video_type = EXCLUDED.video_type,
+                    duration_seconds = EXCLUDED.duration_seconds,
+                    video_url = EXCLUDED.video_url,
+                    synced_at = NOW()
+            `;
+        });
     });
 
     return {
