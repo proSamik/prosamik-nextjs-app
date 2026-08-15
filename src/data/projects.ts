@@ -30,6 +30,40 @@ export interface Project {
 // Each array item renders as a separate paragraph on the project story page.
 export const projects: Project[] = [
     {
+        slug: "rankizz",
+        icon: "chrome",
+        title: "Rankizz",
+        type: "Web App & Chrome Extension",
+        description: "Affordable SEO, AI search, social discovery, and analytics in one workspace",
+        problem: [
+            "While building Subclip, I tried several marketing methods and SEO stood out because it brought compounding results over time. The problem was that SEO tools such as Ahrefs and Semrush are expensive for beginners, and the return on investment is difficult to justify when someone is only starting out.",
+            "Search is also no longer limited to web rankings. People need to understand AI citations and visibility in listicles, Reddit, YouTube, and LinkedIn, while also checking Google Search Console, Bing Webmaster, and Google Analytics. These tools and platforms are usually scattered across separate dashboards.",
+        ],
+        motivation: [
+            "I wanted to bridge that gap for indie hackers, solo founders, and solopreneurs who need useful research before they have the resources to take a large software subscription risk. Rankizz brings data from multiple AI providers and search platforms into one place so users can understand where they are visible and where they need to improve.",
+            "I also wanted Rankizz to work with the way people build today. Instead of requiring everyone to live inside another dashboard, the product offers REST API and MCP access so users can build custom workflows and connect SEO and AI-search data to their own agents.",
+        ],
+        mistakes: [
+            "The scope is much larger than a traditional keyword research tool. Combining web search, AI citations, social discovery, analytics, APIs, MCP access, and a browser extension means every part needs clear boundaries and a useful workflow instead of becoming another collection of disconnected reports.",
+        ],
+        learnings: [
+            "Rankizz has reinforced that modern visibility is distributed. Ranking on Google is only one part of being discovered; being mentioned by AI systems and appearing in the platforms those systems learn from can matter just as much.",
+            "The product has also made me think more deeply about the difference between collecting data and making it actionable. A common dashboard is useful when it helps someone decide what to research, publish, monitor, or automate next.",
+        ],
+        achievements: [
+            "Rankizz brings web rankings, AI citations, listicle research, Reddit, YouTube, LinkedIn, Search Console, Bing Webmaster, and Google Analytics into a common workspace for people who want a more accessible alternative to expensive enterprise SEO tools.",
+            "The free Chrome extension lets users save competitor and inspiration websites for later SEO research. Depending on their preference, those saves can sync to the Rankizz database or stay local on the device.",
+            "Rankizz is available as a web app with REST API and MCP access, giving users a way to use the same research inside custom workflows and agent-powered automation.",
+        ],
+        projectUrl: "https://www.rankizz.com",
+        storyLinks: [
+            {
+                label: "Chrome extension",
+                url: "https://chromewebstore.google.com/detail/rankizz-seo-extension/gihmcajchokaobbcbpmdjoafbdlikcfe",
+            },
+        ],
+    },
+    {
         slug: "subclip",
         icon: "clapperboard",
         title: "Subclip.app",
