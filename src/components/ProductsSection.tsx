@@ -25,6 +25,7 @@ const icons: Record<ProjectIcon, ElementType> = {
 };
 
 const projectTimelineOrder = [
+    'rankizz',
     'subclip',
     'track-bad-habits',
     'mapyourideas',
