@@ -2,7 +2,6 @@ import { projects } from "@/data/projects";
 import { TimePeriod, TimelineEvent } from "@/types/timeline";
 
 const projectSlugsInChronologicalOrder = [
-  "rankizz",
   "prosamik",
   "githubme",
   "onlinedb",
@@ -12,6 +11,7 @@ const projectSlugsInChronologicalOrder = [
   "mapyourideas",
   "track-bad-habits",
   "subclip",
+  "rankizz",
 ];
 
 const projectTimelineEvents: TimelineEvent[] = projectSlugsInChronologicalOrder.map((slug) => {
