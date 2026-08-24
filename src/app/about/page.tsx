@@ -4,6 +4,7 @@ import PersonalStory from '@/components/PersonalStory';
 import Timeline from '@/components/Timeline';
 import { dataTimelineData } from '@/utils/dataTimelineData';
 import { siteMetadata } from '@/utils/siteMetadata';
+import Link from 'next/link';
 
 const description = "Hey, I'm Samik Choudhury and by degree, I'm an Electronics and Telecommunication Engineer but I'm all about turning curiosity into code and understanding software products.";
 
@@ -92,6 +93,14 @@ export default function About() {
                 <div className="w-full max-w-[800px] space-y-8">
                     <ProfileHeader />
                     <PersonalStory />
+                    <p className="text-sm leading-6 text-gray-700">
+                        I also keep a quiet corner for the unfiltered things on my mind.
+                        {' '}
+                        <Link className="font-semibold text-blue-600 underline underline-offset-4" href="/random-thoughts">
+                            Read my random thoughts
+                        </Link>
+                        .
+                    </p>
                     <Timeline timelineData={dataTimelineData} />
                 </div>
             </div>
