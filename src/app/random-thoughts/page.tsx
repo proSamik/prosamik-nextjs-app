@@ -41,7 +41,7 @@ export default async function RandomThoughtsPage() {
     const thoughts = await listRandomThoughts(50);
 
     return (
-        <main className="mx-auto flex w-full max-w-[760px] flex-col gap-7 px-4 py-10 sm:py-14">
+        <main className="mx-auto flex w-full max-w-[680px] flex-col gap-7 px-4 py-10 sm:py-14">
             <header className="border-b border-stone-200 pb-6">
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#d94722]">A quiet corner of the internet</p>
                 <h1 className="text-4xl font-black tracking-[-0.04em] text-stone-950 sm:text-5xl">Random Thoughts</h1>
