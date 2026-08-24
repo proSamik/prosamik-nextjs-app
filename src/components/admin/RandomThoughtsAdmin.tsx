@@ -713,7 +713,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                 </div>
             </form>
 
-            <section>
+            <section className="mx-auto w-full max-w-[780px]">
                 <div className="mb-5 flex items-end justify-between">
                     <div>
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d94722]">Your archive</p>
