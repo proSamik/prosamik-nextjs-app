@@ -42,22 +42,24 @@ export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
             ) : null}
 
             {thought.media.length > 0 ? (
-                <div className={`mt-4 grid gap-1.5 overflow-hidden rounded-2xl bg-stone-100 ${thought.media.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                <div className={`mt-4 grid gap-1.5 overflow-hidden rounded-2xl bg-transparent ${thought.media.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
                     {thought.media.map((media, index) => {
                         const featureFirst = thought.media.length > 2 && index === 0;
                         return (
                             <div
                                 key={media.id}
-                                className={`relative overflow-hidden bg-stone-200 ${
-                                    thought.media.length === 1 ? 'max-h-[620px]' : 'aspect-[4/3]'
-                                } ${featureFirst ? 'col-span-2 aspect-[16/9]' : ''}`}
+                                className={`relative overflow-hidden bg-transparent ${
+                                    thought.media.length === 1
+                                        ? 'h-[clamp(220px,42vw,380px)]'
+                                        : 'h-[clamp(160px,24vw,260px)]'
+                                } ${featureFirst ? 'col-span-2 h-[clamp(200px,36vw,340px)]' : ''}`}
                             >
                                 {media.type === 'video' ? (
                                     <video
                                         controls
                                         preload="metadata"
                                         playsInline
-                                        className="h-full max-h-[620px] w-full bg-black object-contain"
+                                        className="h-full w-full bg-black object-contain"
                                         src={media.url}
                                     />
                                 ) : (
@@ -65,7 +67,7 @@ export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
                                         src={media.url}
                                         alt={`Random thought attachment ${index + 1}`}
                                         loading="lazy"
-                                        className="h-full max-h-[620px] w-full object-cover"
+                                        className={`h-full w-full ${thought.media.length === 1 ? 'object-contain' : 'object-cover'}`}
                                     />
                                 )}
                             </div>
