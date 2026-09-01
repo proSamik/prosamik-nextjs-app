@@ -8,14 +8,20 @@ type LocalizedDateTimeProps = {
 };
 
 function formatDate(dateIso: string, timeZone: string): string {
-    return new Intl.DateTimeFormat(undefined, {
+    const date = new Date(dateIso);
+    const localizedDate = new Intl.DateTimeFormat(undefined, {
         year: 'numeric',
         month: 'short',
         day: '2-digit',
+        timeZone,
+    }).format(date);
+    const localizedTime = new Intl.DateTimeFormat(undefined, {
         hour: 'numeric',
         minute: '2-digit',
         timeZone,
-    }).format(new Date(dateIso));
+    }).format(date);
+
+    return `${localizedDate} · ${localizedTime}`;
 }
 
 export default function LocalizedDateTime({ dateIso, timeZone }: LocalizedDateTimeProps) {
