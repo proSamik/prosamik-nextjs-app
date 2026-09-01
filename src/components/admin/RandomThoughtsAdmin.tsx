@@ -3,6 +3,7 @@
 import {
     useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
     type DragEvent,
@@ -14,6 +15,7 @@ import {
     LoaderCircle,
     Pencil,
     RotateCcw,
+    Search,
     Send,
     Trash2,
     UploadCloud,
@@ -22,6 +24,7 @@ import {
 } from 'lucide-react';
 import type { RandomThought, RandomThoughtMedia } from '@/lib/random-thoughts';
 import RandomThoughtCard from '@/components/RandomThoughtCard';
+import DateTimeRangeFilter, { type DateTimeRangeValue } from '@/components/admin/DateTimeRangeFilter';
 
 type RandomThoughtsAdminProps = {
     initialThoughts: RandomThought[];
@@ -398,7 +401,7 @@ function ThoughtManager({
 
         setIsSaving(true);
         setNotice(null);
-        let uploaded: UploadedMedia[] = [];
+        let uploaded: UploadedMedia[];
 
         try {
             uploaded = await uploadAttachments(pending.items, setUploadProgress);
@@ -572,6 +575,30 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
     const [notice, setNotice] = useState<Notice>(null);
     const [isPublishing, setIsPublishing] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [dateRange, setDateRange] = useState<DateTimeRangeValue>({ start: null, end: null });
+
+    const searchPattern = useMemo(() => {
+        if (!searchQuery.trim()) return { regex: null, error: '' };
+
+        try {
+            return { regex: new RegExp(searchQuery, 'i'), error: '' };
+        } catch {
+            return { regex: null, error: 'That regular expression is not valid yet.' };
+        }
+    }, [searchQuery]);
+
+    const filteredThoughts = useMemo(() => thoughts.filter((thought) => {
+        if (searchPattern.error) return false;
+        if (searchPattern.regex && !searchPattern.regex.test(thought.content)) return false;
+
+        const createdAt = new Date(thought.createdAt).getTime();
+        if (dateRange.start && createdAt < dateRange.start.getTime()) return false;
+        if (dateRange.end && createdAt > dateRange.end.getTime()) return false;
+        return true;
+    }), [dateRange.end, dateRange.start, searchPattern.error, searchPattern.regex, thoughts]);
+
+    const hasArchiveFilters = Boolean(searchQuery || dateRange.start || dateRange.end);
 
     const onFiles = (files: File[]) => {
         const rejected = pending.add(files);
@@ -599,14 +626,18 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
 
         setIsPublishing(true);
         setNotice(null);
-        let uploaded: UploadedMedia[] = [];
+        let uploaded: UploadedMedia[];
 
         try {
             uploaded = await uploadAttachments(pending.items, setUploadProgress);
             const response = await fetch('/api/random-thoughts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: text, media: uploaded }),
+                body: JSON.stringify({
+                    content: text,
+                    media: uploaded,
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                }),
             });
             const payload = await response.json().catch(() => null);
             if (!response.ok || !payload?.data) {
@@ -714,19 +745,71 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
             </form>
 
             <section className="mx-auto w-full max-w-[780px]">
-                <div className="mb-5 flex items-end justify-between">
+                <div className="mb-5 flex items-end justify-between gap-4">
                     <div>
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d94722]">Your archive</p>
                         <h2 className="mt-1 text-2xl font-black tracking-tight text-stone-950">Published thoughts</h2>
                     </div>
                     <span className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-bold text-stone-500">
-                        {thoughts.length} total
+                        {hasArchiveFilters ? `${filteredThoughts.length} of ${thoughts.length}` : `${thoughts.length} total`}
                     </span>
                 </div>
 
-                {thoughts.length > 0 ? (
+                <div className="mb-5 rounded-[24px] border border-stone-200 bg-white p-3 shadow-[0_12px_40px_rgba(28,25,23,0.06)] sm:p-4">
+                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(280px,0.9fr)]">
+                        <div>
+                            <label htmlFor="archive-search" className="sr-only">Search published thoughts with a regular expression</label>
+                            <div className={`flex min-h-12 items-center gap-3 rounded-2xl border bg-white px-4 transition focus-within:ring-4 focus-within:ring-[#e85d36]/10 ${
+                                searchPattern.error ? 'border-red-300' : 'border-stone-200 focus-within:border-stone-400'
+                            }`}>
+                                <Search size={18} className="shrink-0 text-[#d94722]" />
+                                <input
+                                    id="archive-search"
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(event) => setSearchQuery(event.target.value)}
+                                    placeholder="Search text or regex, e.g. video|journal"
+                                    className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-stone-900 outline-none placeholder:font-medium placeholder:text-stone-400"
+                                />
+                                {searchQuery ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearchQuery('')}
+                                        aria-label="Clear archive search"
+                                        className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-800"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                ) : null}
+                            </div>
+                            {searchPattern.error ? <p className="mt-1.5 px-1 text-xs font-semibold text-red-600">{searchPattern.error}</p> : null}
+                        </div>
+
+                        <DateTimeRangeFilter value={dateRange} onChange={setDateRange} />
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
+                        <p className="text-[11px] font-medium text-stone-400">
+                            Text patterns are case-insensitive. Dates use your device time zone.
+                        </p>
+                        {hasArchiveFilters ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    setDateRange({ start: null, end: null });
+                                }}
+                                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-bold text-stone-600 hover:bg-stone-100"
+                            >
+                                <X size={12} /> Clear all filters
+                            </button>
+                        ) : null}
+                    </div>
+                </div>
+
+                {filteredThoughts.length > 0 ? (
                     <div className="space-y-5">
-                        {thoughts.map((thought) => (
+                        {filteredThoughts.map((thought) => (
                             <ThoughtManager
                                 key={thought.id}
                                 thought={thought}
@@ -737,10 +820,15 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                             />
                         ))}
                     </div>
-                ) : (
+                ) : thoughts.length === 0 ? (
                     <div className="rounded-[26px] border border-dashed border-stone-300 bg-white/60 px-6 py-14 text-center">
                         <p className="text-base font-bold text-stone-700">Nothing published yet.</p>
                         <p className="mt-1 text-sm text-stone-400">Your first thought will appear here and on the public feed.</p>
+                    </div>
+                ) : (
+                    <div className="rounded-[26px] border border-dashed border-stone-300 bg-white/60 px-6 py-14 text-center">
+                        <p className="text-base font-bold text-stone-700">No thoughts match these filters.</p>
+                        <p className="mt-1 text-sm text-stone-400">Try a broader pattern or clear the date and time range.</p>
                     </div>
                 )}
             </section>
