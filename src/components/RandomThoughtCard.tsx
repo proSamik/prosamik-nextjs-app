@@ -22,7 +22,7 @@ export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
                         className="h-10 w-10 shrink-0 rounded-full object-cover"
                     />
                     <div className="min-w-0">
-                        <p className="text-sm font-bold text-stone-950">prosamik</p>
+                        <p className="text-sm font-bold text-stone-950">Samik</p>
                         <p className="text-xs text-stone-400">
                             <LocalizedDateTime dateIso={thought.createdAt} timeZone={thought.createdTimeZone} />{wasEdited ? ' · edited' : ''}
                         </p>
