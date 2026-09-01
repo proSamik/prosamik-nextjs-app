@@ -58,6 +58,7 @@ function createRandomThoughtsMigration() {
             created_by_email TEXT NOT NULL,
             created_by_name TEXT NOT NULL,
             created_by_avatar TEXT,
+            created_time_zone TEXT NOT NULL DEFAULT 'UTC',
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             CONSTRAINT random_thoughts_media_type_check
@@ -66,6 +67,41 @@ function createRandomThoughtsMigration() {
 
         ALTER TABLE random_thoughts
             ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+        ALTER TABLE random_thoughts
+            ADD COLUMN IF NOT EXISTS slug TEXT;
+
+        ALTER TABLE random_thoughts
+            ADD COLUMN IF NOT EXISTS created_time_zone TEXT;
+
+        UPDATE random_thoughts
+        SET created_time_zone = 'Asia/Kolkata'
+        WHERE created_time_zone IS NULL OR BTRIM(created_time_zone) = '';
+
+        ALTER TABLE random_thoughts
+            ALTER COLUMN created_time_zone SET DEFAULT 'UTC';
+
+        ALTER TABLE random_thoughts
+            ALTER COLUMN created_time_zone SET NOT NULL;
+
+        WITH generated_slugs AS (
+            SELECT
+                id,
+                TRIM(BOTH '-' FROM REGEXP_REPLACE(LOWER(LEFT(content, 80)), '[^a-z0-9]+', '-', 'g')) AS base_slug
+            FROM random_thoughts
+            WHERE slug IS NULL OR BTRIM(slug) = ''
+        )
+        UPDATE random_thoughts AS thought
+        SET slug = CASE
+            WHEN generated.base_slug = '' THEN 'thought-' || thought.id
+            ELSE generated.base_slug || '-' || thought.id
+        END
+        FROM generated_slugs AS generated
+        WHERE generated.id = thought.id;
+
+        CREATE UNIQUE INDEX IF NOT EXISTS random_thoughts_slug_idx
+            ON random_thoughts (slug)
+            WHERE slug IS NOT NULL;
 
         CREATE TABLE IF NOT EXISTS random_thought_media (
             id BIGSERIAL PRIMARY KEY,
