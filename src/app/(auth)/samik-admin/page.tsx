@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowUpRight, LockKeyhole } from 'lucide-react';
 
 export default async function SamikAdminPage() {
-    const thoughts = await listRandomThoughts(50);
+    const thoughts = await listRandomThoughts(100);
 
     return (
         <main className="mx-auto w-full max-w-[980px] px-4 pb-16 sm:px-6">
