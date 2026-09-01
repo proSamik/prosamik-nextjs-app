@@ -82,6 +82,8 @@ export async function PATCH(request: Request, context: RouteContext) {
 
         await Promise.allSettled(result.removedMedia.map((item) => deleteFromR2(item.url)));
         revalidatePath('/random-thoughts');
+        revalidatePath(`/t/${result.thought.slug}`);
+        revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: result.thought });
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unable to update this thought.';
@@ -102,5 +104,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
 
     await Promise.allSettled(thought.media.map((item) => deleteFromR2(item.url)));
     revalidatePath('/random-thoughts');
+    revalidatePath(`/t/${thought.slug}`);
+    revalidatePath('/sitemap.xml');
     return NextResponse.json({ ok: true });
 }
