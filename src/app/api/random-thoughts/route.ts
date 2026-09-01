@@ -48,6 +48,7 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null) as {
         content?: unknown;
         media?: unknown;
+        timeZone?: unknown;
     } | null;
     const content = typeof body?.content === 'string' ? body.content.trim() : '';
     const media = Array.isArray(body?.media)
@@ -60,6 +61,16 @@ export async function POST(request: Request) {
             return [{ url: candidate.url, type: candidate.type as 'image' | 'video' }];
         })
         : [];
+    const requestedTimeZone = typeof body?.timeZone === 'string' ? body.timeZone.trim() : '';
+    let createdTimeZone = 'Asia/Kolkata';
+    if (requestedTimeZone && requestedTimeZone.length <= 100) {
+        try {
+            new Intl.DateTimeFormat('en-US', { timeZone: requestedTimeZone }).format();
+            createdTimeZone = requestedTimeZone;
+        } catch {
+            return NextResponse.json({ error: 'Invalid posting time zone.' }, { status: 400 });
+        }
+    }
 
     if (!content && media.length === 0) {
         return NextResponse.json({ error: 'Please add text or at least one attachment.' }, { status: 400 });
@@ -75,9 +86,12 @@ export async function POST(request: Request) {
             media,
             createdByEmail: session.user.email,
             createdByName: session.user.name || 'prosamik',
+            createdTimeZone,
         });
 
         revalidatePath('/random-thoughts');
+        revalidatePath(`/t/${thought.slug}`);
+        revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: thought }, { status: 201 });
     } catch (error) {
         console.error('Could not create random thought:', error);
