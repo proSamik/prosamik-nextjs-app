@@ -1,16 +1,7 @@
 import Image from 'next/image';
+import LocalizedDateTime from '@/components/LocalizedDateTime';
+import ShareThoughtButton from '@/components/ShareThoughtButton';
 import type { RandomThought } from '@/lib/random-thoughts';
-
-function formatDate(dateIso: string) {
-    const date = new Date(dateIso);
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: 'numeric',
-        minute: '2-digit',
-    }).format(date);
-}
 
 type RandomThoughtCardProps = {
     thought: RandomThought;
@@ -21,20 +12,23 @@ export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
 
     return (
         <article className="w-full bg-white p-4 sm:p-5">
-            <header className="mb-4 flex items-center gap-3">
-                <Image
-                    src="/me-here.jpg"
-                    alt="Samik"
-                    width={42}
-                    height={42}
-                    className="h-10 w-10 rounded-full object-cover"
-                />
-                <div>
-                    <p className="text-sm font-bold text-stone-950">prosamik</p>
-                    <p className="text-xs text-stone-400">
-                        {formatDate(thought.createdAt)}{wasEdited ? ' · edited' : ''}
-                    </p>
+            <header className="mb-4 flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                    <Image
+                        src="/me-here.jpg"
+                        alt="Samik"
+                        width={42}
+                        height={42}
+                        className="h-10 w-10 shrink-0 rounded-full object-cover"
+                    />
+                    <div className="min-w-0">
+                        <p className="text-sm font-bold text-stone-950">prosamik</p>
+                        <p className="text-xs text-stone-400">
+                            <LocalizedDateTime dateIso={thought.createdAt} timeZone={thought.createdTimeZone} />{wasEdited ? ' · edited' : ''}
+                        </p>
+                    </div>
                 </div>
+                <ShareThoughtButton slug={thought.slug} />
             </header>
 
             {thought.content ? (
