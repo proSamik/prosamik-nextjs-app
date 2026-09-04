@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import LocalizedDateTime from '@/components/LocalizedDateTime';
+import PostImageViewer from '@/components/PostImageViewer';
 import PostVideoPlayer from '@/components/PostVideoPlayer';
 import QuotedThoughtPreview from '@/components/QuotedThoughtPreview';
 import ShareThoughtButton from '@/components/ShareThoughtButton';
@@ -54,11 +55,10 @@ export default function RandomThoughtCard({ thought, showQuotedPreview = true }:
                                 {media.type === 'video' ? (
                                     <PostVideoPlayer src={media.url} />
                                 ) : (
-                                    <img
+                                    <PostImageViewer
                                         src={media.url}
                                         alt={`Random thought attachment ${index + 1}`}
-                                        loading="lazy"
-                                        className={`h-full w-full ${thought.media.length === 1 ? 'object-contain' : 'object-cover'}`}
+                                        imageClassName={`h-full w-full ${thought.media.length === 1 ? 'object-contain' : 'object-cover'}`}
                                     />
                                 )}
                             </div>
