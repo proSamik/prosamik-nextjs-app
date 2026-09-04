@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/lib/auth';
-import { createRandomThought, listRandomThoughts } from '@/lib/random-thoughts';
+import { createRandomThought, getRandomThoughtById, listRandomThoughts } from '@/lib/random-thoughts';
 import { isAllowedAdminEmail } from '@/lib/admin-auth';
 import { isR2PublicMediaUrl } from '@/lib/r2';
 import { consumeRateLimit, getIpFromHeaders } from '@/lib/rate-limit';
@@ -49,6 +49,7 @@ export async function POST(request: Request) {
         content?: unknown;
         media?: unknown;
         timeZone?: unknown;
+        quotedThoughtId?: unknown;
     } | null;
     const content = typeof body?.content === 'string' ? body.content.trim() : '';
     const media = Array.isArray(body?.media)
@@ -71,9 +72,19 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Invalid posting time zone.' }, { status: 400 });
         }
     }
+    const quotedThoughtId = body?.quotedThoughtId === null || body?.quotedThoughtId === undefined
+        ? null
+        : Number(body.quotedThoughtId);
+    if (quotedThoughtId !== null && (!Number.isSafeInteger(quotedThoughtId) || quotedThoughtId <= 0)) {
+        return NextResponse.json({ error: 'Invalid quoted post.' }, { status: 400 });
+    }
+    const quotedThought = quotedThoughtId ? await getRandomThoughtById(quotedThoughtId) : null;
+    if (quotedThoughtId && !quotedThought) {
+        return NextResponse.json({ error: 'The quoted post no longer exists.' }, { status: 400 });
+    }
 
-    if (!content && media.length === 0) {
-        return NextResponse.json({ error: 'Please add text or at least one attachment.' }, { status: 400 });
+    if (!content && media.length === 0 && !quotedThought) {
+        return NextResponse.json({ error: 'Please add text, an attachment, or a quoted post.' }, { status: 400 });
     }
 
     if (content.length > 3000) {
@@ -87,10 +98,12 @@ export async function POST(request: Request) {
             createdByEmail: session.user.email,
             createdByName: session.user.name || 'prosamik',
             createdTimeZone,
+            quotedThoughtId,
         });
 
         revalidatePath('/random-thoughts');
         revalidatePath(`/t/${thought.slug}`);
+        revalidatePath('/t/[slug]', 'page');
         revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: thought }, { status: 201 });
     } catch (error) {
