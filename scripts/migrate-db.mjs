@@ -59,10 +59,13 @@ function createRandomThoughtsMigration() {
             created_by_name TEXT NOT NULL,
             created_by_avatar TEXT,
             created_time_zone TEXT NOT NULL DEFAULT 'UTC',
+            quoted_thought_id BIGINT REFERENCES random_thoughts(id) ON DELETE SET NULL,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             CONSTRAINT random_thoughts_media_type_check
-                CHECK (media_type IS NULL OR media_type IN ('image', 'video'))
+                CHECK (media_type IS NULL OR media_type IN ('image', 'video')),
+            CONSTRAINT random_thoughts_no_self_quote_check
+                CHECK (quoted_thought_id IS NULL OR quoted_thought_id <> id)
         );
 
         ALTER TABLE random_thoughts
@@ -83,6 +86,29 @@ function createRandomThoughtsMigration() {
 
         ALTER TABLE random_thoughts
             ALTER COLUMN created_time_zone SET NOT NULL;
+
+        ALTER TABLE random_thoughts
+            ADD COLUMN IF NOT EXISTS quoted_thought_id BIGINT
+            REFERENCES random_thoughts(id) ON DELETE SET NULL;
+
+        DO $migration$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM pg_constraint
+                WHERE conname = 'random_thoughts_no_self_quote_check'
+                  AND conrelid = 'random_thoughts'::regclass
+            ) THEN
+                ALTER TABLE random_thoughts
+                    ADD CONSTRAINT random_thoughts_no_self_quote_check
+                    CHECK (quoted_thought_id IS NULL OR quoted_thought_id <> id);
+            END IF;
+        END
+        $migration$;
+
+        CREATE INDEX IF NOT EXISTS random_thoughts_quoted_thought_idx
+            ON random_thoughts (quoted_thought_id)
+            WHERE quoted_thought_id IS NOT NULL;
 
         WITH generated_slugs AS (
             SELECT
