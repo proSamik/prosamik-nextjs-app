@@ -143,19 +143,11 @@ export default async function ThoughtPage({ params }: ThoughtPageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            {thread.length > 1 ? (
-                <div className="mb-5 flex items-center gap-2 pl-9 text-[10px] font-black uppercase tracking-[0.18em] text-stone-400 sm:pl-11">
-                    <span className="h-px flex-1 bg-stone-200" />
-                    Quote history · {thread.length} posts
-                    <span className="h-px flex-1 bg-stone-200" />
-                </div>
-            ) : null}
-
             <section aria-label="Quoted post history" className="relative">
                 {thread.length > 1 ? (
                     <span
                         aria-hidden="true"
-                        className="absolute bottom-8 left-[11px] top-8 w-0.5 bg-gradient-to-b from-[#d94722] via-stone-300 to-stone-200 sm:left-[15px]"
+                        className="absolute bottom-8 left-[11px] top-8 w-0.5 bg-gradient-to-b from-stone-950 via-stone-400 to-stone-200 sm:left-[15px]"
                     />
                 ) : null}
 
@@ -170,15 +162,12 @@ export default async function ThoughtPage({ params }: ThoughtPageProps) {
                                     aria-hidden="true"
                                     className={`absolute left-1 top-8 z-10 h-4 w-4 rounded-full border-2 ring-4 ring-white sm:left-2 ${
                                         index === 0
-                                            ? 'border-[#d94722] bg-[#d94722]'
+                                            ? 'border-stone-950 bg-stone-950'
                                             : 'border-stone-400 bg-white'
                                     }`}
                                 />
                             ) : null}
 
-                            <div className="mb-2 text-[10px] font-black uppercase tracking-[0.15em] text-stone-400">
-                                {index === 0 ? 'Current post' : index === thread.length - 1 ? 'Original post' : `${index} quote${index === 1 ? '' : 's'} earlier`}
-                            </div>
                             <div className="overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_14px_45px_rgba(28,25,23,0.06)]">
                                 <RandomThoughtCard thought={threadThought} showQuotedPreview={false} />
                             </div>
