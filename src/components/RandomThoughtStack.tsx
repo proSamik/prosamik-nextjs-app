@@ -70,7 +70,7 @@ export default function RandomThoughtStack({ thoughts }: RandomThoughtStackProps
                 <section
                     key={thought.id}
                     data-gsap-stack-panel
-                    className="sticky top-0 flex min-h-[100svh] items-start bg-white py-6 sm:py-10"
+                    className="sticky top-0 bg-white pb-5 sm:pb-6"
                     style={{ zIndex: (index + 1) * 10 }}
                 >
                     <div className="w-full will-change-transform">
