@@ -83,6 +83,7 @@ export async function PATCH(request: Request, context: RouteContext) {
         await Promise.allSettled(result.removedMedia.map((item) => deleteFromR2(item.url)));
         revalidatePath('/random-thoughts');
         revalidatePath(`/t/${result.thought.slug}`);
+        revalidatePath('/t/[slug]', 'page');
         revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: result.thought });
     } catch (error) {
@@ -105,6 +106,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     await Promise.allSettled(thought.media.map((item) => deleteFromR2(item.url)));
     revalidatePath('/random-thoughts');
     revalidatePath(`/t/${thought.slug}`);
+    revalidatePath('/t/[slug]', 'page');
     revalidatePath('/sitemap.xml');
     return NextResponse.json({ ok: true });
 }
