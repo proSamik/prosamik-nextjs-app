@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { listRandomThoughtsPage } from '@/lib/random-thoughts';
-import RandomThoughtCard from '@/components/RandomThoughtCard';
+import RandomThoughtStack from '@/components/RandomThoughtStack';
 
 export const revalidate = 120;
 
@@ -93,30 +93,29 @@ export default async function RandomThoughtsPage({ searchParams }: RandomThought
                     </div>
                     {result.totalCount > 0 ? (
                         <span className="mb-1 shrink-0 rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-bold text-stone-500">
-                            {result.totalCount} total
+                            {result.totalCount}
                         </span>
                     ) : null}
                 </div>
             </header>
 
-            <div className="space-y-5">
-                {result.thoughts.map((thought) => (
-                    <div key={thought.id} className="overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_14px_45px_rgba(28,25,23,0.06)]">
-                        <RandomThoughtCard thought={thought} />
-                    </div>
-                ))}
-                {result.thoughts.length === 0 ? (
-                    <div className="rounded-3xl border border-dashed border-stone-300 px-6 py-16 text-center text-sm text-stone-400">
-                        Nothing shared here yet.
-                    </div>
-                ) : null}
-            </div>
+            {result.thoughts.length > 0 ? (
+                <RandomThoughtStack thoughts={result.thoughts} />
+            ) : (
+                <div className="rounded-3xl border border-dashed border-stone-300 px-6 py-16 text-center text-sm text-stone-400">
+                    Nothing shared here yet.
+                </div>
+            )}
 
             {result.totalPages > 1 ? (
                 <nav aria-label="Random thoughts pagination" className="flex flex-wrap items-center justify-center gap-2 border-t border-stone-200 pt-7">
                     <Link
                         href={pageHref(result.page - 1)}
                         aria-disabled={result.page === 1}
+                        style={{
+                            color: result.page === 1 ? '#d6d3d1' : '#44403c',
+                            fontSize: '0.875rem',
+                        }}
                         className={`inline-flex h-10 items-center gap-1 rounded-xl border px-3 text-sm font-bold transition ${
                             result.page === 1
                                 ? 'pointer-events-none border-stone-100 text-stone-300'
@@ -131,6 +130,10 @@ export default async function RandomThoughtsPage({ searchParams }: RandomThought
                             key={page}
                             href={pageHref(page)}
                             aria-current={page === result.page ? 'page' : undefined}
+                            style={{
+                                color: page === result.page ? '#ffffff' : '#57534e',
+                                fontSize: '0.875rem',
+                            }}
                             className={`grid h-10 min-w-10 place-items-center rounded-xl px-2 text-sm font-bold transition ${
                                 page === result.page
                                     ? 'bg-stone-950 text-white shadow-lg shadow-stone-950/15'
@@ -146,6 +149,10 @@ export default async function RandomThoughtsPage({ searchParams }: RandomThought
                     <Link
                         href={pageHref(result.page + 1)}
                         aria-disabled={result.page === result.totalPages}
+                        style={{
+                            color: result.page === result.totalPages ? '#d6d3d1' : '#44403c',
+                            fontSize: '0.875rem',
+                        }}
                         className={`inline-flex h-10 items-center gap-1 rounded-xl border px-3 text-sm font-bold transition ${
                             result.page === result.totalPages
                                 ? 'pointer-events-none border-stone-100 text-stone-300'
