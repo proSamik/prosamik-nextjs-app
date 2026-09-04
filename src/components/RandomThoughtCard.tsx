@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import LocalizedDateTime from '@/components/LocalizedDateTime';
+import QuotedThoughtPreview from '@/components/QuotedThoughtPreview';
 import ShareThoughtButton from '@/components/ShareThoughtButton';
 import type { RandomThought } from '@/lib/random-thoughts';
 
 type RandomThoughtCardProps = {
     thought: RandomThought;
+    showQuotedPreview?: boolean;
 };
 
-export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
+export default function RandomThoughtCard({ thought, showQuotedPreview = true }: RandomThoughtCardProps) {
     const wasEdited = thought.updatedAt !== thought.createdAt;
 
     return (
@@ -67,6 +69,12 @@ export default function RandomThoughtCard({ thought }: RandomThoughtCardProps) {
                             </div>
                         );
                     })}
+                </div>
+            ) : null}
+
+            {showQuotedPreview && thought.quotedThought ? (
+                <div className="mt-4">
+                    <QuotedThoughtPreview quote={thought.quotedThought} />
                 </div>
             ) : null}
         </article>
