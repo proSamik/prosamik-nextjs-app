@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import LocalizedDateTime from '@/components/LocalizedDateTime';
 import PostImageViewer from '@/components/PostImageViewer';
+import PostMediaCarousel from '@/components/PostMediaCarousel';
 import PostVideoPlayer from '@/components/PostVideoPlayer';
 import QuotedThoughtPreview from '@/components/QuotedThoughtPreview';
 import ShareThoughtButton from '@/components/ShareThoughtButton';
@@ -40,31 +41,23 @@ export default function RandomThoughtCard({ thought, showQuotedPreview = true }:
             ) : null}
 
             {thought.media.length > 0 ? (
-                <div className={`mt-4 grid gap-1.5 overflow-hidden rounded-2xl bg-transparent ${thought.media.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                    {thought.media.map((media, index) => {
-                        const featureFirst = thought.media.length > 2 && index === 0;
-                        return (
-                            <div
-                                key={media.id}
-                                className={`relative overflow-hidden bg-transparent ${
-                                    thought.media.length === 1
-                                        ? 'h-[clamp(220px,42vw,380px)]'
-                                        : 'h-[clamp(160px,24vw,260px)]'
-                                } ${featureFirst ? 'col-span-2 h-[clamp(200px,36vw,340px)]' : ''}`}
-                            >
-                                {media.type === 'video' ? (
-                                    <PostVideoPlayer src={media.url} />
-                                ) : (
-                                    <PostImageViewer
-                                        src={media.url}
-                                        alt={`Random thought attachment ${index + 1}`}
-                                        imageClassName={`h-full w-full ${thought.media.length === 1 ? 'object-contain' : 'object-cover'}`}
-                                    />
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
+                thought.media.length > 1 ? (
+                    <div className="mt-4">
+                        <PostMediaCarousel media={thought.media} />
+                    </div>
+                ) : (
+                    <div className="mt-4 h-[clamp(220px,42vw,380px)] overflow-hidden rounded-2xl bg-transparent">
+                        {thought.media[0].type === 'video' ? (
+                            <PostVideoPlayer src={thought.media[0].url} />
+                        ) : (
+                            <PostImageViewer
+                                src={thought.media[0].url}
+                                alt="Random thought attachment 1"
+                                imageClassName="h-full w-full object-contain"
+                            />
+                        )}
+                    </div>
+                )
             ) : null}
 
             {showQuotedPreview && thought.quotedThought ? (
