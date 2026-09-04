@@ -9,11 +9,21 @@ export type RandomThoughtMedia = {
     position: number;
 };
 
+export type RandomThoughtQuote = {
+    id: number;
+    slug: string;
+    content: string;
+    media: RandomThoughtMedia | null;
+    createdTimeZone: string;
+    createdAt: string;
+};
+
 export type RandomThought = {
     id: number;
     slug: string;
     content: string;
     media: RandomThoughtMedia[];
+    quotedThought: RandomThoughtQuote | null;
     createdTimeZone: string;
     createdAt: string;
     updatedAt: string;
@@ -25,6 +35,7 @@ export type CreateRandomThoughtInput = {
     createdByEmail: string;
     createdByName: string;
     createdTimeZone: string;
+    quotedThoughtId: number | null;
 };
 
 type ThoughtRow = {
@@ -32,6 +43,7 @@ type ThoughtRow = {
     slug: string;
     content: string;
     media: unknown;
+    quoted_thought: unknown;
     created_time_zone: string;
     created_at: Date | string;
     updated_at: Date | string;
@@ -82,12 +94,46 @@ function mapMedia(value: unknown): RandomThoughtMedia[] {
     });
 }
 
+function mapQuotedThought(value: unknown): RandomThoughtQuote | null {
+    let parsed = value;
+    if (typeof value === 'string') {
+        try {
+            parsed = JSON.parse(value);
+        } catch {
+            return null;
+        }
+    }
+
+    if (!parsed || typeof parsed !== 'object') return null;
+    const quote = parsed as {
+        id?: unknown;
+        slug?: unknown;
+        content?: unknown;
+        media?: unknown;
+        createdAt?: unknown;
+        createdTimeZone?: unknown;
+    };
+    if (typeof quote.slug !== 'string' || typeof quote.content !== 'string' || typeof quote.createdAt !== 'string') {
+        return null;
+    }
+
+    return {
+        id: Number(quote.id),
+        slug: quote.slug,
+        content: quote.content,
+        media: mapMedia(quote.media ? [quote.media] : [])[0] ?? null,
+        createdAt: toIsoString(quote.createdAt),
+        createdTimeZone: typeof quote.createdTimeZone === 'string' ? quote.createdTimeZone : 'UTC',
+    };
+}
+
 function mapThought(row: ThoughtRow): RandomThought {
     return {
         id: Number(row.id),
         slug: row.slug,
         content: row.content,
         media: mapMedia(row.media),
+        quotedThought: mapQuotedThought(row.quoted_thought),
         createdTimeZone: row.created_time_zone,
         createdAt: toIsoString(row.created_at),
         updatedAt: toIsoString(row.updated_at),
@@ -101,16 +147,18 @@ export async function createRandomThought(input: CreateRandomThoughtInput): Prom
     const thoughtId = await db.begin(async (sql) => {
         const rows = await sql`
             INSERT INTO random_thoughts (
-                content, media_url, media_type, created_by_email, created_by_name, created_time_zone
+                content, media_url, media_type, created_by_email, created_by_name,
+                created_time_zone, quoted_thought_id
             )
             VALUES (
                 ${input.content}, ${firstMedia?.url ?? null}, ${firstMedia?.type ?? null},
-                ${input.createdByEmail}, ${input.createdByName}, ${input.createdTimeZone}
+                ${input.createdByEmail}, ${input.createdByName}, ${input.createdTimeZone},
+                ${input.quotedThoughtId}
             )
             RETURNING id
         `;
         const id = Number(rows[0].id);
-        const slug = createRandomThoughtSlug(input.content, id);
+        const slug = createRandomThoughtSlug(input.content || 'quoted-thought', id);
 
         await sql`
             UPDATE random_thoughts
@@ -145,6 +193,29 @@ export async function listRandomThoughts(limit = 20, offset = 0): Promise<Random
             thought.created_time_zone,
             thought.created_at,
             thought.updated_at,
+            (
+                SELECT json_build_object(
+                    'id', quoted.id,
+                    'slug', quoted.slug,
+                    'content', quoted.content,
+                    'createdAt', quoted.created_at,
+                    'createdTimeZone', quoted.created_time_zone,
+                    'media', (
+                        SELECT json_build_object(
+                            'id', quoted_media.id,
+                            'url', quoted_media.url,
+                            'type', quoted_media.media_type,
+                            'position', quoted_media.position
+                        )
+                        FROM random_thought_media AS quoted_media
+                        WHERE quoted_media.thought_id = quoted.id
+                        ORDER BY quoted_media.position, quoted_media.id
+                        LIMIT 1
+                    )
+                )
+                FROM random_thoughts AS quoted
+                WHERE quoted.id = thought.quoted_thought_id
+            ) AS quoted_thought,
             COALESCE(
                 json_agg(
                     json_build_object(
@@ -202,6 +273,29 @@ export async function getRandomThoughtById(id: number): Promise<RandomThought | 
             thought.created_time_zone,
             thought.created_at,
             thought.updated_at,
+            (
+                SELECT json_build_object(
+                    'id', quoted.id,
+                    'slug', quoted.slug,
+                    'content', quoted.content,
+                    'createdAt', quoted.created_at,
+                    'createdTimeZone', quoted.created_time_zone,
+                    'media', (
+                        SELECT json_build_object(
+                            'id', quoted_media.id,
+                            'url', quoted_media.url,
+                            'type', quoted_media.media_type,
+                            'position', quoted_media.position
+                        )
+                        FROM random_thought_media AS quoted_media
+                        WHERE quoted_media.thought_id = quoted.id
+                        ORDER BY quoted_media.position, quoted_media.id
+                        LIMIT 1
+                    )
+                )
+                FROM random_thoughts AS quoted
+                WHERE quoted.id = thought.quoted_thought_id
+            ) AS quoted_thought,
             COALESCE(
                 json_agg(
                     json_build_object(
@@ -232,6 +326,29 @@ export async function getRandomThoughtBySlug(slug: string): Promise<RandomThough
             thought.created_time_zone,
             thought.created_at,
             thought.updated_at,
+            (
+                SELECT json_build_object(
+                    'id', quoted.id,
+                    'slug', quoted.slug,
+                    'content', quoted.content,
+                    'createdAt', quoted.created_at,
+                    'createdTimeZone', quoted.created_time_zone,
+                    'media', (
+                        SELECT json_build_object(
+                            'id', quoted_media.id,
+                            'url', quoted_media.url,
+                            'type', quoted_media.media_type,
+                            'position', quoted_media.position
+                        )
+                        FROM random_thought_media AS quoted_media
+                        WHERE quoted_media.thought_id = quoted.id
+                        ORDER BY quoted_media.position, quoted_media.id
+                        LIMIT 1
+                    )
+                )
+                FROM random_thoughts AS quoted
+                WHERE quoted.id = thought.quoted_thought_id
+            ) AS quoted_thought,
             COALESCE(
                 json_agg(
                     json_build_object(
@@ -250,6 +367,25 @@ export async function getRandomThoughtBySlug(slug: string): Promise<RandomThough
     `;
 
     return rows[0] ? mapThought(rows[0] as ThoughtRow) : null;
+}
+
+export async function getRandomThoughtThreadBySlug(slug: string): Promise<RandomThought[]> {
+    const firstThought = await getRandomThoughtBySlug(slug);
+    if (!firstThought) return [];
+
+    const thread: RandomThought[] = [];
+    const seenIds = new Set<number>();
+    let current: RandomThought | null = firstThought;
+
+    while (current && !seenIds.has(current.id) && thread.length < 100) {
+        thread.push(current);
+        seenIds.add(current.id);
+        current = current.quotedThought
+            ? await getRandomThoughtById(current.quotedThought.id)
+            : null;
+    }
+
+    return thread;
 }
 
 export type RandomThoughtSitemapEntry = {
@@ -290,8 +426,8 @@ export async function updateRandomThought(input: UpdateRandomThoughtInput): Prom
     const removedMedia = current.media.filter((media) => removeIds.has(media.id));
     const remainingMedia = current.media.filter((media) => !removeIds.has(media.id));
 
-    if (!input.content && remainingMedia.length === 0 && input.media.length === 0) {
-        throw new Error('A thought needs text or at least one attachment.');
+    if (!input.content && remainingMedia.length === 0 && input.media.length === 0 && !current.quotedThought) {
+        throw new Error('A thought needs text, an attachment, or a quoted post.');
     }
 
     const firstMedia = remainingMedia[0] ?? input.media[0] ?? null;
