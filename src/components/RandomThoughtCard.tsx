@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import LocalizedDateTime from '@/components/LocalizedDateTime';
+import PostVideoPlayer from '@/components/PostVideoPlayer';
 import QuotedThoughtPreview from '@/components/QuotedThoughtPreview';
 import ShareThoughtButton from '@/components/ShareThoughtButton';
 import type { RandomThought } from '@/lib/random-thoughts';
@@ -51,13 +52,7 @@ export default function RandomThoughtCard({ thought, showQuotedPreview = true }:
                                 } ${featureFirst ? 'col-span-2 h-[clamp(200px,36vw,340px)]' : ''}`}
                             >
                                 {media.type === 'video' ? (
-                                    <video
-                                        controls
-                                        preload="metadata"
-                                        playsInline
-                                        className="h-full w-full bg-black object-contain"
-                                        src={media.url}
-                                    />
+                                    <PostVideoPlayer src={media.url} />
                                 ) : (
                                     <img
                                         src={media.url}
