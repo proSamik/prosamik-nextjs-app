@@ -14,6 +14,7 @@ import {
     ImagePlus,
     LoaderCircle,
     Pencil,
+    Quote,
     RotateCcw,
     Search,
     Send,
@@ -22,8 +23,9 @@ import {
     Video,
     X,
 } from 'lucide-react';
-import type { RandomThought, RandomThoughtMedia } from '@/lib/random-thoughts';
+import type { RandomThought, RandomThoughtMedia, RandomThoughtQuote } from '@/lib/random-thoughts';
 import RandomThoughtCard from '@/components/RandomThoughtCard';
+import QuotedThoughtPreview from '@/components/QuotedThoughtPreview';
 import DateTimeRangeFilter, { type DateTimeRangeValue } from '@/components/admin/DateTimeRangeFilter';
 
 type RandomThoughtsAdminProps = {
@@ -52,6 +54,17 @@ type Notice = {
     kind: 'success' | 'error';
     text: string;
 } | null;
+
+function toQuotePreview(thought: RandomThought): RandomThoughtQuote {
+    return {
+        id: thought.id,
+        slug: thought.slug,
+        content: thought.content,
+        media: thought.media[0] ?? null,
+        createdTimeZone: thought.createdTimeZone,
+        createdAt: thought.createdAt,
+    };
+}
 
 function formatBytes(bytes: number): string {
     if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -361,10 +374,12 @@ function ExistingMediaEditor({
 
 function ThoughtManager({
     thought,
+    onQuote,
     onSaved,
     onDeleted,
 }: {
     thought: RandomThought;
+    onQuote: (thought: RandomThought) => void;
     onSaved: (thought: RandomThought) => void;
     onDeleted: (id: number) => void;
 }) {
@@ -394,8 +409,8 @@ function ThoughtManager({
         event.preventDefault();
         const text = content.trim();
         const remainingCount = thought.media.length - removedIds.size + pending.items.length;
-        if (!text && remainingCount === 0) {
-            setNotice({ kind: 'error', text: 'Keep some text or at least one attachment.' });
+        if (!text && remainingCount === 0 && !thought.quotedThought) {
+            setNotice({ kind: 'error', text: 'Keep some text, an attachment, or the quoted post.' });
             return;
         }
 
@@ -547,6 +562,13 @@ function ThoughtManager({
                 <div className="flex items-center gap-2">
                     <button
                         type="button"
+                        onClick={() => onQuote(thought)}
+                        className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-[#b83b19] hover:bg-[#fff0e9]"
+                    >
+                        <Quote size={14} /> Quote
+                    </button>
+                    <button
+                        type="button"
                         onClick={() => setIsEditing(true)}
                         className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-stone-700 hover:bg-white hover:shadow-sm"
                     >
@@ -570,8 +592,11 @@ function ThoughtManager({
 
 export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsAdminProps) {
     const pending = usePendingAttachments();
+    const composerRef = useRef<HTMLFormElement>(null);
+    const contentRef = useRef<HTMLTextAreaElement>(null);
     const [thoughts, setThoughts] = useState<RandomThought[]>(initialThoughts);
     const [content, setContent] = useState('');
+    const [quotedThought, setQuotedThought] = useState<RandomThought | null>(null);
     const [notice, setNotice] = useState<Notice>(null);
     const [isPublishing, setIsPublishing] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -611,6 +636,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
 
     const clearDraft = () => {
         setContent('');
+        setQuotedThought(null);
         pending.clear();
         setNotice(null);
         setUploadProgress(0);
@@ -619,8 +645,8 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
     const publish = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const text = content.trim();
-        if (!text && pending.items.length === 0) {
-            setNotice({ kind: 'error', text: 'Write something or add at least one image or video.' });
+        if (!text && pending.items.length === 0 && !quotedThought) {
+            setNotice({ kind: 'error', text: 'Write something, add media, or quote an earlier post.' });
             return;
         }
 
@@ -637,6 +663,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                     content: text,
                     media: uploaded,
                     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    quotedThoughtId: quotedThought?.id ?? null,
                 }),
             });
             const payload = await response.json().catch(() => null);
@@ -647,6 +674,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
 
             setThoughts((current) => [payload.data, ...current]);
             setContent('');
+            setQuotedThought(null);
             pending.clear();
             setUploadProgress(0);
             setNotice({ kind: 'success', text: 'Published. It is live on your public feed.' });
@@ -657,9 +685,18 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
         }
     };
 
+    const quoteThought = (thought: RandomThought) => {
+        setQuotedThought(thought);
+        setNotice(null);
+        requestAnimationFrame(() => {
+            composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            contentRef.current?.focus({ preventScroll: true });
+        });
+    };
+
     return (
         <div className="space-y-10">
-            <form onSubmit={publish} className="overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-[0_24px_80px_rgba(28,25,23,0.10)]">
+            <form ref={composerRef} onSubmit={publish} className="scroll-mt-6 overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-[0_24px_80px_rgba(28,25,23,0.10)]">
                 <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4 sm:px-7">
                     <div className="flex items-center gap-3">
                         <span className="h-2.5 w-2.5 rounded-full bg-[#e85d36] shadow-[0_0_0_5px_rgba(232,93,54,0.12)]" />
@@ -673,6 +710,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
 
                 <div className="p-5 sm:p-7">
                     <textarea
+                        ref={contentRef}
                         id="thought-content"
                         value={content}
                         onChange={(event) => setContent(event.target.value)}
@@ -683,9 +721,19 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                         className="w-full resize-y border-0 bg-transparent text-lg leading-8 text-stone-900 outline-none placeholder:text-stone-300 sm:text-xl"
                     />
                     <div className="mb-5 flex items-center justify-between border-t border-stone-100 pt-3 text-[11px] font-medium text-stone-400">
-                        <span>Text is optional when media is attached</span>
+                        <span>Text is optional when media or a quoted post is attached</span>
                         <span>{content.length} / 3000</span>
                     </div>
+
+                    {quotedThought ? (
+                        <div className="mb-5">
+                            <QuotedThoughtPreview
+                                quote={toQuotePreview(quotedThought)}
+                                removable
+                                onRemove={() => setQuotedThought(null)}
+                            />
+                        </div>
+                    ) : null}
 
                     <MediaDropzone
                         attachments={pending.items}
@@ -718,11 +766,11 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 bg-stone-50/80 px-5 py-4 sm:px-7">
                     <p className="text-xs font-medium text-stone-500">
                         {pending.items.length === 0
-                            ? 'No media selected'
+                            ? quotedThought ? `Quoting post #${quotedThought.id}` : 'No media selected'
                             : `${pending.items.length} attachment${pending.items.length === 1 ? '' : 's'} ready`}
                     </p>
                     <div className="flex items-center gap-2">
-                        {(content || pending.items.length > 0) ? (
+                        {(content || pending.items.length > 0 || quotedThought) ? (
                             <button
                                 type="button"
                                 disabled={isPublishing}
@@ -734,7 +782,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                         ) : null}
                         <button
                             type="submit"
-                            disabled={isPublishing || (!content.trim() && pending.items.length === 0)}
+                            disabled={isPublishing || (!content.trim() && pending.items.length === 0 && !quotedThought)}
                             className="inline-flex min-w-36 items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-bold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-stone-800 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-40"
                         >
                             {isPublishing ? <LoaderCircle className="animate-spin" size={17} /> : <Send size={16} />}
@@ -813,10 +861,25 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
                             <ThoughtManager
                                 key={thought.id}
                                 thought={thought}
-                                onSaved={(updated) => setThoughts((current) => (
-                                    current.map((item) => item.id === updated.id ? updated : item)
-                                ))}
-                                onDeleted={(id) => setThoughts((current) => current.filter((item) => item.id !== id))}
+                                onQuote={quoteThought}
+                                onSaved={(updated) => {
+                                    setThoughts((current) => current.map((item) => {
+                                        if (item.id === updated.id) return updated;
+                                        if (item.quotedThought?.id === updated.id) {
+                                            return { ...item, quotedThought: toQuotePreview(updated) };
+                                        }
+                                        return item;
+                                    }));
+                                    setQuotedThought((current) => current?.id === updated.id ? updated : current);
+                                }}
+                                onDeleted={(id) => {
+                                    setThoughts((current) => current
+                                        .filter((item) => item.id !== id)
+                                        .map((item) => item.quotedThought?.id === id
+                                            ? { ...item, quotedThought: null }
+                                            : item));
+                                    setQuotedThought((current) => current?.id === id ? null : current);
+                                }}
                             />
                         ))}
                     </div>
