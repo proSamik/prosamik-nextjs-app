@@ -67,8 +67,9 @@ export async function generateMetadata({ params }: ThoughtPageProps): Promise<Me
     const description = compactText(thought.content || thought.quotedThought?.content || '', 158)
         || 'A random thought shared by prosamik.';
     const canonical = `/t/${thought.slug}`;
-    const previewImage = thought.media.find((media) => media.type === 'image')?.url
-        || (thought.quotedThought?.media?.type === 'image' ? thought.quotedThought.media.url : undefined);
+    const firstMedia = thought.media[0];
+    const previewImage = firstMedia?.type === 'image' ? firstMedia.url : firstMedia?.posterUrl;
+    const socialImage = previewImage || `/t/${thought.slug}/opengraph-image`;
 
     return {
         title,
@@ -93,13 +94,13 @@ export async function generateMetadata({ params }: ThoughtPageProps): Promise<Me
             publishedTime: thought.createdAt,
             modifiedTime: thought.updatedAt,
             authors: [siteMetadata.siteUrl],
-            images: previewImage ? [{ url: previewImage, alt: headline }] : [],
+            images: [{ url: socialImage, alt: headline }],
         },
         twitter: {
-            card: previewImage ? 'summary_large_image' : 'summary',
+            card: 'summary_large_image',
             title,
             description,
-            images: previewImage ? [previewImage] : [],
+            images: [socialImage],
         },
     };
 }
@@ -129,7 +130,9 @@ export default async function ThoughtPage({ params }: ThoughtPageProps) {
             url: siteMetadata.siteUrl,
         },
         image: [
-            ...thought.media.filter((media) => media.type === 'image').map((media) => media.url),
+            ...thought.media.flatMap((media) => (
+                media.type === 'image' ? [media.url] : media.posterUrl ? [media.posterUrl] : []
+            )),
             ...(quotedImage ? [quotedImage] : []),
         ],
         ...(thought.quotedThought ? {
