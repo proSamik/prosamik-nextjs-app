@@ -19,7 +19,7 @@ type MediaSlideProps = {
 
 function MediaSlide({ item, index, fullscreen = false, onOpen }: MediaSlideProps) {
     if (item.type === 'video') {
-        return <PostVideoPlayer src={item.url} className="h-full w-full" />;
+        return <PostVideoPlayer src={item.url} poster={item.posterUrl} className="h-full w-full" />;
     }
 
     const image = (
