@@ -48,6 +48,7 @@ type PresignedUpload = {
 type UploadedMedia = {
     url: string;
     type: 'image' | 'video';
+    posterUrl: string | null;
 };
 
 type Notice = {
@@ -136,6 +137,91 @@ async function cleanupUploads(urls: string[]) {
     }).catch(() => undefined);
 }
 
+function uploadedMediaUrls(media: UploadedMedia[]): string[] {
+    return media.flatMap((item) => [item.url, ...(item.posterUrl ? [item.posterUrl] : [])]);
+}
+
+function createVideoPosterFile(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        const objectUrl = URL.createObjectURL(file);
+        let settled = false;
+
+        const cleanup = () => {
+            clearTimeout(timeoutId);
+            video.onloadedmetadata = null;
+            video.onseeked = null;
+            video.onerror = null;
+            video.removeAttribute('src');
+            video.load();
+            URL.revokeObjectURL(objectUrl);
+        };
+        const fail = (message: string) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(new Error(message));
+        };
+        const captureFrame = () => {
+            if (settled) return;
+            const sourceWidth = video.videoWidth;
+            const sourceHeight = video.videoHeight;
+            if (!sourceWidth || !sourceHeight) {
+                fail(`Could not read a poster frame from ${file.name}.`);
+                return;
+            }
+
+            const maximumDimension = 1600;
+            const scale = Math.min(1, maximumDimension / Math.max(sourceWidth, sourceHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+            canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+            const context = canvas.getContext('2d');
+            if (!context) {
+                fail(`Could not create a poster for ${file.name}.`);
+                return;
+            }
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    fail(`Could not encode a poster for ${file.name}.`);
+                    return;
+                }
+
+                settled = true;
+                cleanup();
+                const baseName = file.name.replace(/\.[^.]+$/, '') || 'video';
+                resolve(new File([blob], `${baseName}-poster.jpg`, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now(),
+                }));
+            }, 'image/jpeg', 0.88);
+        };
+
+        const timeoutId = window.setTimeout(
+            () => fail(`Creating a poster for ${file.name} took too long.`),
+            20_000,
+        );
+
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        video.onloadedmetadata = () => {
+            if (!Number.isFinite(video.duration) || video.duration <= 0) {
+                fail(`Could not read the duration of ${file.name}.`);
+                return;
+            }
+
+            video.onseeked = captureFrame;
+            video.currentTime = Math.max(0, Math.min(1, video.duration * 0.1, video.duration - 0.001));
+        };
+        video.onerror = () => fail(`Could not load ${file.name} to create its social preview.`);
+        video.src = objectUrl;
+        video.load();
+    });
+}
+
 function putFileDirectly(
     file: File,
     upload: PresignedUpload,
@@ -170,11 +256,21 @@ async function uploadAttachments(
 ): Promise<UploadedMedia[]> {
     if (attachments.length === 0) return [];
 
+    const posterFiles = await Promise.all(attachments.map((attachment) => (
+        attachment.type === 'video' ? createVideoPosterFile(attachment.file) : Promise.resolve(null)
+    )));
+    const assets: Array<{ file: File; attachmentIndex: number; kind: 'media' | 'poster' }> = [];
+    attachments.forEach((attachment, index) => {
+        assets.push({ file: attachment.file, attachmentIndex: index, kind: 'media' });
+        const posterFile = posterFiles[index];
+        if (posterFile) assets.push({ file: posterFile, attachmentIndex: index, kind: 'poster' });
+    });
+
     const presignResponse = await fetch('/api/random-thoughts/media/presign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            files: attachments.map(({ file }) => ({
+            files: assets.map(({ file }) => ({
                 name: file.name,
                 type: file.type,
                 size: file.size,
@@ -188,7 +284,7 @@ async function uploadAttachments(
     }
 
     const uploads = presignPayload.data as PresignedUpload[];
-    if (uploads.length !== attachments.length) {
+    if (uploads.length !== assets.length) {
         throw new Error('The upload service returned an incomplete response.');
     }
 
@@ -200,14 +296,27 @@ async function uploadAttachments(
 
     try {
         await Promise.all(uploads.map((upload, index) => (
-            putFileDirectly(attachments[index].file, upload, (value) => updateProgress(index, value))
+            putFileDirectly(assets[index].file, upload, (value) => updateProgress(index, value))
         )));
     } catch (error) {
         await cleanupUploads(uploads.map((upload) => upload.url));
         throw error;
     }
 
-    return uploads.map((upload) => ({ url: upload.url, type: upload.mediaType }));
+    return attachments.map((attachment, attachmentIndex) => {
+        const mediaAssetIndex = assets.findIndex((asset) => (
+            asset.attachmentIndex === attachmentIndex && asset.kind === 'media'
+        ));
+        const posterAssetIndex = assets.findIndex((asset) => (
+            asset.attachmentIndex === attachmentIndex && asset.kind === 'poster'
+        ));
+
+        return {
+            url: uploads[mediaAssetIndex].url,
+            type: attachment.type,
+            posterUrl: posterAssetIndex >= 0 ? uploads[posterAssetIndex].url : null,
+        };
+    });
 }
 
 type MediaDropzoneProps = {
@@ -289,6 +398,8 @@ function MediaDropzone({ attachments, disabled, compact, onFiles, onRemove }: Me
                                 {attachment.type === 'video' ? (
                                     <video src={attachment.previewUrl} className="h-full w-full object-cover" muted playsInline />
                                 ) : (
+                                    // Local object URLs cannot be served by the Next.js image optimizer.
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img src={attachment.previewUrl} alt="Selected attachment preview" className="h-full w-full object-cover" />
                                 )}
                             </div>
@@ -346,8 +457,10 @@ function ExistingMediaEditor({
                         <div key={item.id} className={`relative overflow-hidden rounded-2xl bg-stone-100 transition ${removed ? 'opacity-40 grayscale' : ''}`}>
                             <div className="aspect-[4/3]">
                                 {item.type === 'video' ? (
-                                    <video src={item.url} className="h-full w-full object-cover" muted playsInline />
+                                    <video src={item.url} poster={item.posterUrl ?? undefined} className="h-full w-full object-cover" muted playsInline />
                                 ) : (
+                                    // Uploaded media uses dynamic CDN URLs and retains its source dimensions.
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img src={item.url} alt="Published attachment" className="h-full w-full object-cover" />
                                 )}
                             </div>
@@ -431,7 +544,7 @@ function ThoughtManager({
             });
             const payload = await response.json().catch(() => null);
             if (!response.ok || !payload?.data) {
-                await cleanupUploads(uploaded.map((item) => item.url));
+                await cleanupUploads(uploadedMediaUrls(uploaded));
                 throw new Error(payload?.error || 'Unable to update this thought.');
             }
 
@@ -668,7 +781,7 @@ export default function RandomThoughtsAdmin({ initialThoughts }: RandomThoughtsA
             });
             const payload = await response.json().catch(() => null);
             if (!response.ok || !payload?.data) {
-                await cleanupUploads(uploaded.map((item) => item.url));
+                await cleanupUploads(uploadedMediaUrls(uploaded));
                 throw new Error(payload?.error || 'Unable to publish this thought.');
             }
 
