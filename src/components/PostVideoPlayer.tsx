@@ -9,6 +9,7 @@ const PLAYER_FPS = 30;
 
 type PostVideoPlayerProps = {
     src: string;
+    poster?: string | null;
     className?: string;
 };
 
@@ -20,15 +21,17 @@ type VideoMetadata = {
 
 type PostVideoCompositionProps = {
     src: string;
+    poster?: string | null;
 };
 
 const metadataCache = new Map<string, Promise<VideoMetadata>>();
 
-function PostVideoComposition({ src }: PostVideoCompositionProps) {
+function PostVideoComposition({ src, poster }: PostVideoCompositionProps) {
     return (
         <AbsoluteFill style={{ backgroundColor: '#000' }}>
             <Html5Video
                 src={src}
+                poster={poster ?? undefined}
                 playsInline
                 preload="metadata"
                 style={{
@@ -88,7 +91,7 @@ function readVideoMetadata(src: string): Promise<VideoMetadata> {
     return request;
 }
 
-export default function PostVideoPlayer({ src, className = '' }: PostVideoPlayerProps) {
+export default function PostVideoPlayer({ src, poster, className = '' }: PostVideoPlayerProps) {
     const [metadata, setMetadata] = useState<VideoMetadata | null>(null);
     const [failed, setFailed] = useState(false);
 
@@ -130,7 +133,7 @@ export default function PostVideoPlayer({ src, className = '' }: PostVideoPlayer
         <div className={`h-full w-full bg-black ${className}`}>
             <Player
                 component={PostVideoComposition}
-                inputProps={{ src }}
+                inputProps={{ src, poster }}
                 durationInFrames={metadata.durationInFrames}
                 compositionWidth={metadata.width}
                 compositionHeight={metadata.height}
