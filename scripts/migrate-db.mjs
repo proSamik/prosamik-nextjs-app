@@ -135,10 +135,14 @@ function createRandomThoughtsMigration() {
             url TEXT NOT NULL,
             media_type TEXT NOT NULL,
             position INTEGER NOT NULL DEFAULT 0,
+            poster_url TEXT,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             CONSTRAINT random_thought_media_type_check
                 CHECK (media_type IN ('image', 'video'))
         );
+
+        ALTER TABLE random_thought_media
+            ADD COLUMN IF NOT EXISTS poster_url TEXT;
 
         CREATE UNIQUE INDEX IF NOT EXISTS random_thought_media_position_idx
             ON random_thought_media (thought_id, position);
