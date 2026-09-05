@@ -68,11 +68,16 @@ export async function PATCH(request: Request, context: RouteContext) {
     const media = Array.isArray(body?.media)
         ? body.media.flatMap((item) => {
             if (!item || typeof item !== 'object') return [];
-            const candidate = item as { url?: unknown; type?: unknown };
+            const candidate = item as { url?: unknown; type?: unknown; posterUrl?: unknown };
             if (typeof candidate.url !== 'string') return [];
             if (candidate.type !== 'image' && candidate.type !== 'video') return [];
             if (!isR2PublicMediaUrl(candidate.url)) return [];
-            return [{ url: candidate.url, type: candidate.type as 'image' | 'video' }];
+            const posterUrl = candidate.type === 'video'
+                && typeof candidate.posterUrl === 'string'
+                && isR2PublicMediaUrl(candidate.posterUrl)
+                ? candidate.posterUrl
+                : null;
+            return [{ url: candidate.url, type: candidate.type as 'image' | 'video', posterUrl }];
         })
         : [];
 
@@ -80,9 +85,13 @@ export async function PATCH(request: Request, context: RouteContext) {
         const result = await updateRandomThought({ id, content, removeMediaIds, media });
         if (!result) return NextResponse.json({ error: 'Thought not found.' }, { status: 404 });
 
-        await Promise.allSettled(result.removedMedia.map((item) => deleteFromR2(item.url)));
+        await Promise.allSettled(result.removedMedia.flatMap((item) => [
+            deleteFromR2(item.url),
+            ...(item.posterUrl ? [deleteFromR2(item.posterUrl)] : []),
+        ]));
         revalidatePath('/random-thoughts');
         revalidatePath(`/t/${result.thought.slug}`);
+        revalidatePath(`/t/${result.thought.slug}/opengraph-image`);
         revalidatePath('/t/[slug]', 'page');
         revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: result.thought });
@@ -103,9 +112,13 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const thought = await deleteRandomThought(id);
     if (!thought) return NextResponse.json({ error: 'Thought not found.' }, { status: 404 });
 
-    await Promise.allSettled(thought.media.map((item) => deleteFromR2(item.url)));
+    await Promise.allSettled(thought.media.flatMap((item) => [
+        deleteFromR2(item.url),
+        ...(item.posterUrl ? [deleteFromR2(item.posterUrl)] : []),
+    ]));
     revalidatePath('/random-thoughts');
     revalidatePath(`/t/${thought.slug}`);
+    revalidatePath(`/t/${thought.slug}/opengraph-image`);
     revalidatePath('/t/[slug]', 'page');
     revalidatePath('/sitemap.xml');
     return NextResponse.json({ ok: true });
