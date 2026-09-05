@@ -28,10 +28,7 @@ export default function RandomThoughtStack({ thoughts, timeline = false }: Rando
 
             panels.slice(0, -1).forEach((panel, index) => {
                 const card = panel.querySelector<HTMLElement>('[data-gsap-stack-card]') ?? panel;
-                gsap.to(card, {
-                    scale: 0.95,
-                    transformOrigin: 'center top',
-                    ease: 'none',
+                const transition = gsap.timeline({
                     scrollTrigger: {
                         trigger: panels[index + 1],
                         start: 'top bottom',
@@ -40,6 +37,45 @@ export default function RandomThoughtStack({ thoughts, timeline = false }: Rando
                         invalidateOnRefresh: true,
                     },
                 });
+
+                transition.to(card, {
+                    scale: 0.95,
+                    transformOrigin: 'center top',
+                    ease: 'none',
+                }, 0);
+
+                if (timeline) {
+                    const currentMarker = panel.querySelector<HTMLElement>('[data-timeline-marker]');
+                    const nextMarker = panels[index + 1].querySelector<HTMLElement>('[data-timeline-marker]');
+
+                    if (currentMarker) {
+                        transition.fromTo(currentMarker, {
+                            backgroundColor: '#0c0a09',
+                            borderColor: '#0c0a09',
+                            scale: 1,
+                        }, {
+                            backgroundColor: '#ffffff',
+                            borderColor: '#a8a29e',
+                            scale: 0.82,
+                            ease: 'none',
+                            immediateRender: false,
+                        }, 0);
+                    }
+
+                    if (nextMarker) {
+                        transition.fromTo(nextMarker, {
+                            backgroundColor: '#ffffff',
+                            borderColor: '#a8a29e',
+                            scale: 0.82,
+                        }, {
+                            backgroundColor: '#0c0a09',
+                            borderColor: '#0c0a09',
+                            scale: 1,
+                            ease: 'none',
+                            immediateRender: false,
+                        }, 0);
+                    }
+                }
             });
         }, container);
 
@@ -85,6 +121,7 @@ export default function RandomThoughtStack({ thoughts, timeline = false }: Rando
                     <div className={timeline && thoughts.length > 1 ? 'relative pl-8 sm:pl-11' : undefined}>
                         {timeline && thoughts.length > 1 ? (
                             <span
+                                data-timeline-marker
                                 aria-hidden="true"
                                 className={`absolute left-1 top-8 z-10 h-4 w-4 rounded-full border-2 ring-4 ring-white sm:left-2 ${
                                     index === 0
