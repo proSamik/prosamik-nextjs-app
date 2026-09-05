@@ -7,6 +7,7 @@ export type RandomThoughtMedia = {
     url: string;
     type: RandomThoughtMediaType;
     position: number;
+    posterUrl: string | null;
 };
 
 export type RandomThoughtQuote = {
@@ -31,7 +32,7 @@ export type RandomThought = {
 
 export type CreateRandomThoughtInput = {
     content: string;
-    media: Array<{ url: string; type: RandomThoughtMediaType }>;
+    media: Array<{ url: string; type: RandomThoughtMediaType; posterUrl: string | null }>;
     createdByEmail: string;
     createdByName: string;
     createdTimeZone: string;
@@ -82,7 +83,7 @@ function mapMedia(value: unknown): RandomThoughtMedia[] {
 
     return parsed.flatMap((item) => {
         if (!item || typeof item !== 'object') return [];
-        const media = item as { id?: unknown; url?: unknown; type?: unknown; position?: unknown };
+        const media = item as { id?: unknown; url?: unknown; type?: unknown; position?: unknown; posterUrl?: unknown };
         if (typeof media.url !== 'string' || (media.type !== 'image' && media.type !== 'video')) return [];
 
         return [{
@@ -90,6 +91,7 @@ function mapMedia(value: unknown): RandomThoughtMedia[] {
             url: media.url,
             type: media.type,
             position: Number(media.position) || 0,
+            posterUrl: typeof media.posterUrl === 'string' ? media.posterUrl : null,
         }];
     });
 }
@@ -168,8 +170,8 @@ export async function createRandomThought(input: CreateRandomThoughtInput): Prom
 
         for (const [position, media] of input.media.entries()) {
             await sql`
-                INSERT INTO random_thought_media (thought_id, url, media_type, position)
-                VALUES (${id}, ${media.url}, ${media.type}, ${position})
+                INSERT INTO random_thought_media (thought_id, url, media_type, position, poster_url)
+                VALUES (${id}, ${media.url}, ${media.type}, ${position}, ${media.posterUrl})
             `;
         }
 
@@ -205,7 +207,8 @@ export async function listRandomThoughts(limit = 20, offset = 0): Promise<Random
                             'id', quoted_media.id,
                             'url', quoted_media.url,
                             'type', quoted_media.media_type,
-                            'position', quoted_media.position
+                            'position', quoted_media.position,
+                            'posterUrl', quoted_media.poster_url
                         )
                         FROM random_thought_media AS quoted_media
                         WHERE quoted_media.thought_id = quoted.id
@@ -222,7 +225,8 @@ export async function listRandomThoughts(limit = 20, offset = 0): Promise<Random
                         'id', media.id,
                         'url', media.url,
                         'type', media.media_type,
-                        'position', media.position
+                        'position', media.position,
+                        'posterUrl', media.poster_url
                     ) ORDER BY media.position, media.id
                 ) FILTER (WHERE media.id IS NOT NULL),
                 '[]'::json
@@ -285,7 +289,8 @@ export async function getRandomThoughtById(id: number): Promise<RandomThought | 
                             'id', quoted_media.id,
                             'url', quoted_media.url,
                             'type', quoted_media.media_type,
-                            'position', quoted_media.position
+                            'position', quoted_media.position,
+                            'posterUrl', quoted_media.poster_url
                         )
                         FROM random_thought_media AS quoted_media
                         WHERE quoted_media.thought_id = quoted.id
@@ -302,7 +307,8 @@ export async function getRandomThoughtById(id: number): Promise<RandomThought | 
                         'id', media.id,
                         'url', media.url,
                         'type', media.media_type,
-                        'position', media.position
+                        'position', media.position,
+                        'posterUrl', media.poster_url
                     ) ORDER BY media.position, media.id
                 ) FILTER (WHERE media.id IS NOT NULL),
                 '[]'::json
@@ -338,7 +344,8 @@ export async function getRandomThoughtBySlug(slug: string): Promise<RandomThough
                             'id', quoted_media.id,
                             'url', quoted_media.url,
                             'type', quoted_media.media_type,
-                            'position', quoted_media.position
+                            'position', quoted_media.position,
+                            'posterUrl', quoted_media.poster_url
                         )
                         FROM random_thought_media AS quoted_media
                         WHERE quoted_media.thought_id = quoted.id
@@ -355,7 +362,8 @@ export async function getRandomThoughtBySlug(slug: string): Promise<RandomThough
                         'id', media.id,
                         'url', media.url,
                         'type', media.media_type,
-                        'position', media.position
+                        'position', media.position,
+                        'posterUrl', media.poster_url
                     ) ORDER BY media.position, media.id
                 ) FILTER (WHERE media.id IS NOT NULL),
                 '[]'::json
@@ -412,7 +420,7 @@ export type UpdateRandomThoughtInput = {
     id: number;
     content: string;
     removeMediaIds: number[];
-    media: Array<{ url: string; type: RandomThoughtMediaType }>;
+    media: Array<{ url: string; type: RandomThoughtMediaType; posterUrl: string | null }>;
 };
 
 export async function updateRandomThought(input: UpdateRandomThoughtInput): Promise<{
@@ -451,8 +459,8 @@ export async function updateRandomThought(input: UpdateRandomThoughtInput): Prom
 
         for (const [offset, media] of input.media.entries()) {
             await sql`
-                INSERT INTO random_thought_media (thought_id, url, media_type, position)
-                VALUES (${input.id}, ${media.url}, ${media.type}, ${remainingMedia.length + offset})
+                INSERT INTO random_thought_media (thought_id, url, media_type, position, poster_url)
+                VALUES (${input.id}, ${media.url}, ${media.type}, ${remainingMedia.length + offset}, ${media.posterUrl})
             `;
         }
 
