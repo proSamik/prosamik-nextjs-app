@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
-import RandomThoughtCard from '@/components/RandomThoughtCard';
+import RandomThoughtStack from '@/components/RandomThoughtStack';
 import { getRandomThoughtThreadBySlug } from '@/lib/random-thoughts';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -147,36 +147,7 @@ export default async function ThoughtPage({ params }: ThoughtPageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <section aria-label="Quoted post history" className="relative">
-                {thread.length > 1 ? (
-                    <span
-                        aria-hidden="true"
-                        className="absolute bottom-8 left-[11px] top-8 w-0.5 bg-gradient-to-b from-stone-950 via-stone-400 to-stone-200 sm:left-[15px]"
-                    />
-                ) : null}
-
-                <div className="space-y-6">
-                    {thread.map((threadThought, index) => (
-                        <article
-                            key={threadThought.id}
-                            className={thread.length > 1 ? 'relative pl-8 sm:pl-11' : undefined}
-                        >
-                            {thread.length > 1 ? (
-                                <span
-                                    aria-hidden="true"
-                                    className={`absolute left-1 top-8 z-10 h-4 w-4 rounded-full border-2 ring-4 ring-white sm:left-2 ${
-                                        index === 0
-                                            ? 'border-stone-950 bg-stone-950'
-                                            : 'border-stone-400 bg-white'
-                                    }`}
-                                />
-                            ) : null}
-
-                            <div className="overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_14px_45px_rgba(28,25,23,0.06)]">
-                                <RandomThoughtCard thought={threadThought} showQuotedPreview={false} />
-                            </div>
-                        </article>
-                    ))}
-                </div>
+                <RandomThoughtStack thoughts={thread} timeline />
             </section>
         </main>
     );
