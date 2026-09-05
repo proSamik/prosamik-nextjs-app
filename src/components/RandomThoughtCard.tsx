@@ -48,7 +48,7 @@ export default function RandomThoughtCard({ thought, showQuotedPreview = true }:
                 ) : (
                     <div className="mt-4 h-[clamp(220px,42vw,380px)] overflow-hidden rounded-2xl bg-transparent">
                         {thought.media[0].type === 'video' ? (
-                            <PostVideoPlayer src={thought.media[0].url} />
+                            <PostVideoPlayer src={thought.media[0].url} poster={thought.media[0].posterUrl} />
                         ) : (
                             <PostImageViewer
                                 src={thought.media[0].url}
