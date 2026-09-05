@@ -55,11 +55,16 @@ export async function POST(request: Request) {
     const media = Array.isArray(body?.media)
         ? body.media.flatMap((item) => {
             if (!item || typeof item !== 'object') return [];
-            const candidate = item as { url?: unknown; type?: unknown };
+            const candidate = item as { url?: unknown; type?: unknown; posterUrl?: unknown };
             if (typeof candidate.url !== 'string') return [];
             if (candidate.type !== 'image' && candidate.type !== 'video') return [];
             if (!isR2PublicMediaUrl(candidate.url)) return [];
-            return [{ url: candidate.url, type: candidate.type as 'image' | 'video' }];
+            const posterUrl = candidate.type === 'video'
+                && typeof candidate.posterUrl === 'string'
+                && isR2PublicMediaUrl(candidate.posterUrl)
+                ? candidate.posterUrl
+                : null;
+            return [{ url: candidate.url, type: candidate.type as 'image' | 'video', posterUrl }];
         })
         : [];
     const requestedTimeZone = typeof body?.timeZone === 'string' ? body.timeZone.trim() : '';
@@ -103,6 +108,7 @@ export async function POST(request: Request) {
 
         revalidatePath('/random-thoughts');
         revalidatePath(`/t/${thought.slug}`);
+        revalidatePath(`/t/${thought.slug}/opengraph-image`);
         revalidatePath('/t/[slug]', 'page');
         revalidatePath('/sitemap.xml');
         return NextResponse.json({ data: thought }, { status: 201 });
