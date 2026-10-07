@@ -33,6 +33,28 @@ export default async function SamikAdminPage() {
                 </div>
             </header>
 
+            <section className="mb-8 rounded-2xl border border-stone-300 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="accountability-tools-title">
+                <div className="mb-4">
+                    <h2 id="accountability-tools-title" className="text-lg font-extrabold tracking-tight text-stone-950">Accountability tools</h2>
+                    <p className="mt-1 text-sm text-stone-600">Private progress, check-ins, measurements, summaries, and integration controls.</p>
+                </div>
+                <nav aria-label="Accountability tools" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {[
+                        ['Progress', '/samik-admin/progress', 'Review habits and daily status'],
+                        ['Check-ins', '/samik-admin/check-ins', 'Respond to scheduled slots'],
+                        ['Weight', '/samik-admin/weight', 'Review recorded measurements'],
+                        ['Body', '/samik-admin/body', 'Load private media on demand'],
+                        ['Summaries', '/samik-admin/summaries', 'Review drafts before publishing'],
+                        ['Integrations', '/samik-admin/integrations', 'Manage scoped API access'],
+                    ].map(([label, href, description]) => (
+                        <Link key={href} href={href} className="flex min-h-16 items-center justify-between gap-3 rounded-xl border border-stone-200 px-4 py-3 text-stone-800 transition hover:border-stone-500 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700">
+                            <span><span className="block text-sm font-bold">{label}</span><span className="mt-0.5 block text-xs text-stone-600">{description}</span></span>
+                            <ArrowUpRight size={16} aria-hidden="true" />
+                        </Link>
+                    ))}
+                </nav>
+            </section>
+
             <RandomThoughtsAdmin initialThoughts={thoughts} />
         </main>
     );

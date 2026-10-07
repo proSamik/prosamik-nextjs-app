@@ -1,11 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
 import { authClient } from '@/lib/auth-client';
 
 export default function SignOutButton() {
     const router = useRouter();
+    const pathname = usePathname() || '';
 
     return (
         <button
@@ -14,10 +16,16 @@ export default function SignOutButton() {
             onClick={async () => {
                 await authClient.signOut();
 
-                if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+                const isPrivateOrAuthPath = pathname === '/samik-admin'
+                    || pathname.startsWith('/samik-admin/')
+                    || pathname === '/oauth-consent'
+                    || pathname.startsWith('/oauth-consent/')
+                    || pathname === '/sign-in'
+                    || pathname.startsWith('/sign-in/');
+                if (!isPrivateOrAuthPath && process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
                     posthog.capture('user_logged_out');
-                    posthog.reset();
                 }
+                posthog.reset();
 
                 router.push('/sign-in');
             }}

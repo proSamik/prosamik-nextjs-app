@@ -1,9 +1,15 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import PostHogUserIdentity from '@/components/analytics/PostHogUserIdentity';
 import { auth } from '@/lib/auth';
 import { isAllowedAdminEmail } from '@/lib/admin-auth';
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
+
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const metadata: Metadata = {
+    robots: { index: false, follow: false, noarchive: true, nosnippet: true },
+};
 
 export default async function SamikAdminLayout({ children }: { children: ReactNode }) {
     const requestHeaders = await headers();
@@ -14,14 +20,7 @@ export default async function SamikAdminLayout({ children }: { children: ReactNo
     }
 
     return (
-        <div className="min-h-screen bg-[#f4f1e9] py-6 sm:py-10">
-            <PostHogUserIdentity
-                user={{
-                    id: session.user.id,
-                    email: session.user.email,
-                    name: session.user.name,
-                }}
-            />
+        <div className="min-h-screen bg-[#f4f1e9] py-6 sm:py-10" data-private-area>
             {children}
         </div>
     );

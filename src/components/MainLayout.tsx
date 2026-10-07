@@ -4,13 +4,20 @@ import type { ReactNode } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { usePathname } from 'next/navigation';
+import PostHogPublicPageView from '@/components/analytics/PostHogPublicPageView';
 
 interface MainLayoutProps {
     children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
+    const pathname = usePathname() || '';
     const isMobile = useMediaQuery('(max-width: 1090px)');
+
+    if (pathname === '/samik-admin' || pathname.startsWith('/samik-admin/') || pathname === '/oauth-consent') {
+        return <><PostHogPublicPageView />{children}</>;
+    }
 
     const layoutClasses = {
         container: `min-h-screen flex flex-col`,
@@ -21,6 +28,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
     return (
         <div className={layoutClasses.container}>
+            <PostHogPublicPageView />
             <div className={layoutClasses.mainWrapper}>
                 <div className="">
                     <Navigation />

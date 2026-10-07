@@ -7,20 +7,25 @@
   },
   "scripts": {
     "migrate:db": "node ./scripts/migrate-db.mjs",
+    "test:accountability": "node --experimental-strip-types --test ./scripts/test-accountability-contract.mjs ./scripts/test-accountability-domain.mjs ./scripts/test-accountability-summary.mjs ./scripts/test-structured-data.mjs ./src/lib/accountability-*.test.ts && node --import tsx --test ./scripts/test-accountability-services.mjs",
+    "test:pglite": "node --test ./scripts/test-pglite-migrations.mjs",
     "backfill:video-posters": "npm run migrate:db && node --env-file=.env ./scripts/backfill-random-thought-video-posters.mjs",
     "r2:cors": "node ./scripts/configure-r2-cors.mjs",
     "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
-    "prebuild": "npm run migrate:db",
     "typecheck": "tsc --noEmit",
     "build": "next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.851.0",
     "@aws-sdk/s3-request-presigner": "^3.851.0",
+    "@better-auth/cimd": "^1.7.7",
+    "@better-auth/mcp": "^1.7.7",
+    "@better-auth/oauth-provider": "^1.7.7",
+    "@modelcontextprotocol/server": "^2.3.1",
     "@remotion/player": "4.0.520",
-    "better-auth": "^1.2.9",
+    "better-auth": "^1.7.7",
     "gsap": "3.15.0",
     "lucide-react": "^1.27.0",
     "next": "^16.2.12",
@@ -30,9 +35,12 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-icons": "^5.7.0",
-    "remotion": "4.0.520"
+    "remotion": "4.0.520",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.2",
+    "@electric-sql/pglite-socket": "^0.0.7",
     "@eslint/js": "^10.0.1",
     "@next/eslint-plugin-next": "^16.2.12",
     "@svgr/webpack": "^8.1.0",
@@ -45,6 +53,7 @@
     "globals": "^16.4.0",
     "postcss": "^8.5.24",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0"
   },

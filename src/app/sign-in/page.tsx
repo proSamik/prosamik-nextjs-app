@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 import { auth } from '@/lib/auth';
-import { isAllowedAdminEmail } from '@/lib/admin-auth';
+import { getSafeAdminRedirect, isAllowedAdminEmail } from '@/lib/admin-auth';
 
 type SearchParams = {
     next?: string | string[];
@@ -19,14 +19,14 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         headers: headersData,
     });
 
-    if (session?.user?.email && isAllowedAdminEmail(session.user.email)) {
-        redirect('/samik-admin');
-    }
-
     const fallbackFromParam = Array.isArray(resolvedSearchParams?.next)
         ? resolvedSearchParams.next[0]
         : resolvedSearchParams?.next;
-    const fallback = fallbackFromParam || '/samik-admin';
+    const fallback = getSafeAdminRedirect(fallbackFromParam);
+
+    if (session?.user?.email && isAllowedAdminEmail(session.user.email)) {
+        redirect(fallback);
+    }
 
     return (
         <main className="mx-auto flex w-full max-w-[460px] px-4 pt-12">

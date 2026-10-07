@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 
 type GoogleSignInButtonProps = {
@@ -10,13 +9,11 @@ type GoogleSignInButtonProps = {
 
 export default function GoogleSignInButton({ fallbackCallbackURL }: GoogleSignInButtonProps) {
     const [error, setError] = useState('');
-    const params = useSearchParams();
-    const callbackURL = params.get('next') || fallbackCallbackURL;
 
     const onSignIn = async () => {
         const { error: signInError } = await authClient.signIn.social({
             provider: 'google',
-            callbackURL,
+            callbackURL: fallbackCallbackURL,
         });
 
         if (signInError) {
@@ -39,4 +36,3 @@ export default function GoogleSignInButton({ fallbackCallbackURL }: GoogleSignIn
         </div>
     );
 }
-

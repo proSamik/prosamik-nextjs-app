@@ -4,6 +4,7 @@ import { cache } from 'react';
 import RandomThoughtStack from '@/components/RandomThoughtStack';
 import { getRandomThoughtThreadBySlug } from '@/lib/random-thoughts';
 import { siteMetadata } from '@/utils/siteMetadata';
+import { serializeJsonLd } from '@/lib/structured-data';
 
 export const revalidate = 120;
 
@@ -144,7 +145,7 @@ export default async function ThoughtPage({ params }: ThoughtPageProps) {
         <main className="mx-auto w-full max-w-[720px] px-4 py-10 sm:py-14">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
             />
             <section aria-label="Quoted post history" className="relative">
                 <RandomThoughtStack thoughts={thread} timeline />
