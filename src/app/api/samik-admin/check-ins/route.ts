@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { CheckInAnswerRequestSchema } from '@/lib/accountability-contract';
 import { getAccountabilityOwner, isSameOriginRequest, privateJson } from '@/lib/accountability-auth';
 import { consumeAccountabilityRateLimit } from '@/lib/accountability-rate-limit';
-import { answerCheckIn, getCheckIns, getTodayActivityDate, shiftActivityDate } from '@/lib/accountability-service';
+import { answerCheckIn, getCheckIns, getTodayActivityDate } from '@/lib/accountability-service';
 import { assertActivityDate } from '@/lib/accountability-domain';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     try {
         const search = new URL(request.url).searchParams;
         const toDate = search.get('to') ? assertActivityDate(search.get('to')!) : getTodayActivityDate();
-        const fromDate = search.get('from') ? assertActivityDate(search.get('from')!) : shiftActivityDate(toDate, -6);
+        const fromDate = search.get('from') ? assertActivityDate(search.get('from')!) : toDate;
         if (fromDate > toDate) return privateJson({ error: 'Invalid date range.' }, { status: 400 });
         const data = await getCheckIns(authorization.owner.id, fromDate, toDate);
         return privateJson({ data });
