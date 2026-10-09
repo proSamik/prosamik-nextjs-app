@@ -18,7 +18,7 @@ async function runMigrations() {
     // stand-in keeps this a schema smoke test rather than an auth integration.
     await db.exec('CREATE TABLE "user" (id TEXT PRIMARY KEY);');
 
-    for (const name of ['0001_random_thoughts.sql', '0002_accountability.sql']) {
+    for (const name of ['0001_random_thoughts.sql', '0002_accountability.sql', '0003_auth_account_issuer_compatibility.sql']) {
         const sql = await readFile(resolve(migrationsDirectory, name), 'utf8');
         await db.exec(sql);
     }
@@ -90,6 +90,20 @@ await runMigrations();
 
 after(async () => {
     await db.close();
+});
+
+test('legacy account issuer values survive while new inserts can omit issuer', async () => {
+    await db.exec(`CREATE TABLE account (id TEXT PRIMARY KEY, issuer TEXT NOT NULL);
+        INSERT INTO account (id, issuer) VALUES ('legacy-account', 'legacy-issuer');`);
+    const migration = await readFile(resolve(migrationsDirectory, '0003_auth_account_issuer_compatibility.sql'), 'utf8');
+    await db.exec(migration);
+    await db.exec(migration);
+    await db.exec("INSERT INTO account (id) VALUES ('new-account');");
+    const rows = await db.query('SELECT id, issuer FROM account ORDER BY id');
+    assert.deepEqual(rows.rows, [
+        { id: 'legacy-account', issuer: 'legacy-issuer' },
+        { id: 'new-account', issuer: null },
+    ]);
 });
 
 test('owner-scoped habit uniqueness and idempotency/event consistency', async () => {

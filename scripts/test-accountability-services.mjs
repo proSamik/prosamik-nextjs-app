@@ -8,7 +8,7 @@ import { PGLiteSocketServer } from '@electric-sql/pglite-socket';
 // single-connection Postgres-protocol socket. No .env or external DB is read.
 const database = new PGlite();
 await database.exec('CREATE TABLE "user" (id TEXT PRIMARY KEY);');
-for (const migration of ['0001_random_thoughts.sql', '0002_accountability.sql']) {
+for (const migration of ['0001_random_thoughts.sql', '0002_accountability.sql', '0003_auth_account_issuer_compatibility.sql']) {
     await database.exec(await readFile(new URL(`./migrations/${migration}`, import.meta.url), 'utf8'));
 }
 
@@ -77,6 +77,81 @@ test('primary accountability service reads/writes use owner-scoped transactional
         id: ownerId, email: 'owner@example.invalid', name: 'Integration Test',
     }, approval.approvalId);
     assert.equal(retry.duplicate, true);
+});
+
+test('only the admin can confirm or change an image-derived reading', async () => {
+    const ownerId = 'image-confirmation-owner';
+    await sql`INSERT INTO "user" (id) VALUES (${ownerId})`;
+    const date = accountability.getTodayActivityDate();
+    const assetId = randomUUID();
+    await sql`
+        INSERT INTO accountability_media_assets (
+            id, owner_id, local_date, category, storage_provider, object_key,
+            content_type, byte_size, status, content_sha256, uploaded_at
+        ) VALUES (
+            ${assetId}, ${ownerId}, ${date}::date, 'general', 'r2', ${`test/${assetId}.png`},
+            'image/png', 100, 'ready', ${Buffer.alloc(32)}, NOW()
+        )
+    `;
+    const mcp = { kind: 'mcp', id: 'test-client' };
+    const admin = { kind: 'admin', id: ownerId };
+    const candidate = await accountability.createWeightEntry(ownerId, mcp, 'image-candidate', {
+        activityDate: date, originalValue: 80, originalUnit: 'kg', source: 'image',
+        confirmationStatus: 'pending', evidenceAssetIds: [assetId], isPrimary: false,
+    });
+    const id = candidate.entry.id;
+    await assert.rejects(
+        accountability.correctWeightEntry(ownerId, mcp, 'image-confirm', {
+            id, confirmationStatus: 'confirmed', isPrimary: true,
+        }),
+        /admin dashboard/,
+    );
+    assert.equal((await accountability.getWeightEntries(ownerId, date, date)).entries[0].confirmationStatus, 'pending');
+    // The rejected attempt rolls back its idempotency reservation too.
+    await assert.rejects(
+        accountability.correctWeightEntry(ownerId, mcp, 'image-confirm', {
+            id, confirmationStatus: 'confirmed', isPrimary: true,
+        }),
+        /admin dashboard/,
+    );
+    const confirmed = await accountability.correctWeightEntry(ownerId, admin, 'owner-confirm', {
+        id, confirmationStatus: 'confirmed', isPrimary: true,
+    });
+    assert.equal(confirmed.entry.confirmationStatus, 'confirmed');
+    assert.equal(confirmed.entry.isPrimary, true);
+    await assert.rejects(
+        accountability.correctWeightEntry(ownerId, mcp, 'alter-reviewed-image', { id, originalValue: 90 }),
+        /admin dashboard/,
+    );
+    assert.equal((await accountability.getWeightEntries(ownerId, date, date)).latest.weightKg, 80);
+    const manual = await accountability.createWeightEntry(ownerId, mcp, 'manual-weight', {
+        activityDate: date, originalValue: 81, originalUnit: 'kg', source: 'manual',
+    });
+    const corrected = await accountability.correctWeightEntry(ownerId, mcp, 'correct-manual', {
+        id: manual.entry.id, originalValue: 82,
+    });
+    assert.equal(corrected.entry.weightKg, 82);
+});
+
+test('weight corrections can move primary entries between dates', async () => {
+    const ownerId = 'weight-date-owner';
+    await sql`INSERT INTO "user" (id) VALUES (${ownerId})`;
+    const source = { kind: 'admin', id: ownerId };
+    const date = accountability.getTodayActivityDate();
+    const yesterday = accountability.shiftActivityDate(date, -1);
+    const first = await accountability.createWeightEntry(ownerId, source, 'first-primary', {
+        activityDate: yesterday, originalValue: 80, originalUnit: 'kg', isPrimary: true,
+    });
+    await accountability.createWeightEntry(ownerId, source, 'second-primary', {
+        activityDate: date, originalValue: 81, originalUnit: 'kg', isPrimary: true,
+    });
+    await accountability.correctWeightEntry(ownerId, source, 'move-primary', {
+        id: first.entry.id, activityDate: date, measuredAt: `${date}T08:00:00+05:30`,
+    });
+    const readings = await accountability.getWeightEntries(ownerId, yesterday, date);
+    assert.equal(readings.primaryMeasurements.length, 1);
+    assert.equal(readings.latest.id, first.entry.id);
+    assert.deepEqual(readings.missingDates, [yesterday]);
 });
 
 test.after(async () => {
