@@ -45,6 +45,7 @@ import {
     KeyRound,
     LoaderCircle,
     Maximize2,
+    Pencil,
     Utensils,
     Play,
     Plus,
@@ -2619,7 +2620,7 @@ function FoodSection() {
                                                                     </span>
                                                                 </div>
                                                             )}
-                                                            <div className="pointer-events-none absolute inset-0 overflow-y-auto bg-white/95 p-3 pr-12 text-xs opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                                                            <div className="pointer-events-none absolute inset-0 overflow-y-auto bg-white/95 p-3 pt-12 text-xs opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
                                                                 <p className="font-bold">
                                                                     {meal}
                                                                 </p>
@@ -2642,20 +2643,45 @@ function FoodSection() {
                                                                     )}
                                                                 </p>
                                                             </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    setDetailEntry(
-                                                                        entry,
-                                                                    )
-                                                                }
-                                                                aria-label={`View ${meal}`}
-                                                                className="absolute right-2 top-2 rounded-lg border border-stone-200 bg-white p-2 shadow-sm"
-                                                            >
-                                                                <Maximize2
-                                                                    size={16}
-                                                                />
-                                                            </button>
+                                                            <div className="absolute right-2 top-2 flex gap-1">
+                                                                <button
+                                                                    type="button"
+                                                                    disabled={
+                                                                        busy
+                                                                    }
+                                                                    onClick={() =>
+                                                                        edit(
+                                                                            entry,
+                                                                        )
+                                                                    }
+                                                                    aria-label={`Edit ${meal}`}
+                                                                    title="Edit"
+                                                                    className="grid min-h-9 min-w-9 place-items-center rounded-lg border border-stone-200 bg-white p-2 shadow-sm disabled:opacity-50"
+                                                                >
+                                                                    <Pencil
+                                                                        size={
+                                                                            16
+                                                                        }
+                                                                    />
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        setDetailEntry(
+                                                                            entry,
+                                                                        )
+                                                                    }
+                                                                    aria-label={`View ${meal}`}
+                                                                    title="View details"
+                                                                    className="grid min-h-9 min-w-9 place-items-center rounded-lg border border-stone-200 bg-white p-2 shadow-sm"
+                                                                >
+                                                                    <Maximize2
+                                                                        size={
+                                                                            16
+                                                                        }
+                                                                    />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                         <div className="space-y-1 p-3">
                                                             <h4
@@ -2707,16 +2733,6 @@ function FoodSection() {
                                                                     equivalent
                                                                 </p>
                                                             )}
-                                                            <button
-                                                                type="button"
-                                                                disabled={busy}
-                                                                onClick={() =>
-                                                                    edit(entry)
-                                                                }
-                                                                className="mt-2 min-h-9 rounded-lg border border-stone-200 px-3 text-xs font-bold"
-                                                            >
-                                                                Edit
-                                                            </button>
                                                         </div>
                                                     </article>
                                                 );
