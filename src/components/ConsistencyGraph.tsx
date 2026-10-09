@@ -26,17 +26,6 @@ type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
 
 const DAY_IN_MILLISECONDS = 86_400_000;
 const LEVEL_COLORS = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
-const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    timeZone: 'UTC',
-});
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-});
-
 function toDateString(date: Date) {
     return date.toISOString().slice(0, 10);
 }
@@ -64,6 +53,28 @@ export default function ConsistencyGraph({
     renderDayDetails,
     profileUrl = 'https://github.com/proSamik',
 }: ConsistencyGraphProps) {
+    const [locale, setLocale] = useState('en-US');
+    useEffect(() => {
+        setLocale(navigator.languages[0] ?? navigator.language);
+    }, []);
+    const monthFormatter = useMemo(
+        () =>
+            new Intl.DateTimeFormat(locale, {
+                month: 'short',
+                timeZone: 'UTC',
+            }),
+        [locale],
+    );
+    const dateFormatter = useMemo(
+        () =>
+            new Intl.DateTimeFormat(locale, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                timeZone: 'UTC',
+            }),
+        [locale],
+    );
     const availableYears = useMemo(() => {
         const currentYear = Number(
             (todayDate ?? new Date().toISOString()).slice(0, 4),
@@ -138,7 +149,7 @@ export default function ConsistencyGraph({
                     7,
             );
             const monthLabel = {
-                label: MONTH_FORMATTER.format(monthCursor),
+                label: monthFormatter.format(monthCursor),
                 left: Math.max(week, 0) * 15,
                 key: `${monthCursor.getUTCFullYear()}-${monthCursor.getUTCMonth()}`,
             };
@@ -176,7 +187,7 @@ export default function ConsistencyGraph({
                 )
                 .reduce((sum, day) => sum + day.count, 0),
         };
-    }, [days, view, todayDate]);
+    }, [days, view, todayDate, monthFormatter]);
 
     useEffect(() => {
         if (activityLabels && calendar.current)
@@ -215,7 +226,7 @@ export default function ConsistencyGraph({
                                 {title}
                             </span>
                         )}
-                        {graph.total.toLocaleString('en-US')}{' '}
+                        {graph.total.toLocaleString(locale)}{' '}
                         {activityLabels ? 'completed days' : 'contributions'}{' '}
                         {view.mode === 'rolling'
                             ? 'in the last 365 days'
@@ -316,10 +327,10 @@ export default function ConsistencyGraph({
                                             aria-label={
                                                 day
                                                     ? day.isFuture
-                                                        ? `No contribution data yet for ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
+                                                        ? `No contribution data yet for ${dateFormatter.format(new Date(`${day.date}T00:00:00.000Z`))}`
                                                         : activityLabels
-                                                          ? `${statuses?.[day.date] === 'complete' ? 'Completed' : statuses?.[day.date] === 'incomplete' ? 'Incomplete' : 'Not updated'} on ${day.date} IST`
-                                                          : `${day.count.toLocaleString('en-US')} ${day.count === 1 ? 'contribution' : 'contributions'} on ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
+                                                          ? `${statuses?.[day.date] === 'complete' ? 'Completed' : statuses?.[day.date] === 'incomplete' ? 'Incomplete' : 'Not updated'} on ${dateFormatter.format(new Date(`${day.date}T00:00:00Z`))} IST`
+                                                          : `${day.count.toLocaleString(locale)} ${day.count === 1 ? 'contribution' : 'contributions'} on ${dateFormatter.format(new Date(`${day.date}T00:00:00.000Z`))}`
                                                     : undefined
                                             }
                                         />
@@ -441,7 +452,7 @@ export default function ConsistencyGraph({
                     }
                 >
                     <strong className="block text-gray-950">
-                        {DATE_FORMATTER.format(
+                        {dateFormatter.format(
                             new Date(
                                 `${popover.selection.value.date}T00:00:00Z`,
                             ),
