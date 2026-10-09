@@ -15,7 +15,7 @@ const scopeLabels: Record<string, string> = {
     'check-ins:write': 'Record check-in responses and reminder results',
     'media:read': 'Read authorized private body photos/videos and temporary media links',
     'media:write': 'Upload private photos/videos and attach them to progress',
-    'summaries:write': 'Read, create, and revise private daily summary drafts',
+    'summaries:write': 'Read, create, edit, and approve private daily summary revisions',
     'summaries:publish': 'Publish only a separately reviewed public text/media snapshot',
 };
 
