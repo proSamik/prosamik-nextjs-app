@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
+import { clearAccountabilityCache } from '@/lib/accountability-client-cache';
 import { authClient } from '@/lib/auth-client';
 
 export default function SignOutButton() {
@@ -15,6 +16,7 @@ export default function SignOutButton() {
             className="rounded-xl border border-stone-300 bg-transparent px-4 py-2.5 text-sm font-bold text-stone-600 transition hover:border-stone-500 hover:bg-white"
             onClick={async () => {
                 await authClient.signOut();
+                clearAccountabilityCache(true);
 
                 const isPrivateOrAuthPath = pathname === '/samik-admin'
                     || pathname.startsWith('/samik-admin/')
