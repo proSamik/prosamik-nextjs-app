@@ -10,11 +10,11 @@ body {
     @apply bg-white text-black;
 }
 
-nav {
+nav[data-site-navigation] {
     z-index: 1000;
 }
 
-nav a {
+nav[data-site-navigation] a {
     display: flex;
     align-items: center;
     justify-content: center;
