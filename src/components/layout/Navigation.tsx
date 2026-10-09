@@ -76,6 +76,7 @@ const Navigation = () => {
 
     return (
         <nav
+            data-site-navigation
             className={`${
                 isMobile
                     ? `fixed left-0 top-0 w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/95 shadow-lg shadow-slate-200/20 dark:shadow-black/20 z-10 ${isSmallScreen ? 'py-8' : 'py-1'} flex justify-center items-center px-4`
