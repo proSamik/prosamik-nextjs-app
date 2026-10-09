@@ -16,6 +16,12 @@ export default function ShareTracker({
     const [open, setOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const [message, setMessage] = useState('');
+    const [preview, setPreview] = useState('');
+    useEffect(() => {
+        return () => {
+            if (preview) URL.revokeObjectURL(preview);
+        };
+    }, [preview]);
     useEffect(() => {
         const outside = (event: PointerEvent) => {
             if (!container.current?.contains(event.target as Node))
@@ -48,16 +54,29 @@ export default function ShareTracker({
             // browser's user gesture while the local PNG renders asynchronously.
             const png = import('html-to-image').then(async ({ toBlob }) => {
                 const clone = card.cloneNode(true) as HTMLElement;
-                clone.style.position = 'fixed';
-                clone.style.left = '-100000px';
-                clone.style.top = '0';
+                const staging = document.createElement('div');
+                staging.style.position = 'fixed';
+                staging.style.left = '-100000px';
+                staging.style.top = '0';
+                clone.style.position = 'relative';
                 clone.style.width = `${days ? Math.max(1000, card.clientWidth) : card.clientWidth}px`;
-                document.body.appendChild(clone);
+                staging.appendChild(clone);
+                document.body.appendChild(staging);
                 let blob: Blob | null;
                 try {
                     blob = await toBlob(clone, {
                         pixelRatio: 2,
                         backgroundColor: '#ffffff',
+                        // The staging clone is offscreen for layout. Reset its
+                        // position inside the SVG capture so its pixels remain
+                        // within the exported image instead of far outside it.
+                        style: {
+                            position: 'relative',
+                            left: '0',
+                            top: '0',
+                            margin: '0',
+                            transform: 'none',
+                        },
                         filter: (node) =>
                             !(
                                 node instanceof HTMLElement &&
@@ -65,9 +84,10 @@ export default function ShareTracker({
                             ),
                     });
                 } finally {
-                    clone.remove();
+                    staging.remove();
                 }
                 if (!blob) throw new Error('Image export failed.');
+                setPreview(URL.createObjectURL(blob));
                 return blob;
             });
             await navigator.clipboard.write([
@@ -123,6 +143,14 @@ export default function ShareTracker({
                               ? 'Image copied'
                               : 'Copy image'}
                     </button>
+                    {message === 'Image copied' && preview && (
+                        // This is the exact PNG written to the clipboard.
+                        <img
+                            src={preview}
+                            alt={`Copied ${title} card preview`}
+                            className="mt-2 max-h-32 w-full rounded border border-gray-200 object-contain"
+                        />
+                    )}
                     {message && message !== 'Image copied' && (
                         <p
                             role="status"
