@@ -12,6 +12,8 @@ import {
 } from '@/lib/accountability-auth';
 import { consumeAccountabilityRateLimit } from '@/lib/accountability-rate-limit';
 import { getDatabase } from '@/lib/database';
+import { auth } from '@/lib/auth';
+import { resolveAccountabilityMcpResourceUrl } from '@/lib/accountability-mcp-security';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -84,14 +86,20 @@ export async function GET(request: Request) {
 
     const logs =
         await sql`SELECT id, api_key_id, client_id, method, tool_name, outcome, http_status, duration_ms, occurred_at FROM accountability_mcp_access_logs WHERE owner_id=${authorization.owner.id} ORDER BY occurred_at DESC LIMIT 100`;
+    const context = await auth.$context;
+    const resource = resolveAccountabilityMcpResourceUrl(
+        context.baseURL,
+        process.env.MCP_RESOURCE_URL,
+    );
     return privateJson({
         data: {
             logs,
             keys: rows,
             availableScopes: ACCOUNTABILITY_SCOPES,
             oauth: {
-                endpoint: '/api/mcp',
-                authorizationServer: '/api/auth',
+                endpoint: resource.toString(),
+                authorizationServer: context.baseURL,
+                clientRegistration: 'cimd',
                 scopes: ['openid', 'offline_access', ...ACCOUNTABILITY_SCOPES],
                 status: 'configured_after_private_environment_setup',
             },
