@@ -68,7 +68,11 @@ function keyDigest(value: string): Buffer {
 }
 
 function sourceOperationId(source: UpdateSource): string {
-    return `${source.kind}:${source.id}`.replace(/[^a-z0-9._:-]/gi, '_').slice(0, 72);
+    const raw = `${source.kind}:${source.id}`;
+    // Better Auth IDs can contain uppercase letters; operation keys cannot.
+    // Hash those IDs rather than lowercasing two distinct client identities.
+    return /^[a-z0-9._:-]{1,72}$/.test(raw)
+        ? raw : `${source.kind}:${createHash('sha256').update(source.id).digest('hex')}`;
 }
 
 function toHabitRow(row: ProjectionRow) {
@@ -377,42 +381,38 @@ export async function ensureCheckInSlots(
 
     const sql = getDatabase();
     await sql.begin(async (tx) => {
-        for (const slot of CHECK_IN_SLOTS) {
-            await tx`
-                INSERT INTO accountability_reminders (
-                    id, owner_id, slot_id, local_time, time_zone, enabled
-                ) VALUES (
-                    ${randomUUID()}, ${ownerId}, ${slot.id}, ${slot.reminderLocalTime}::time,
-                    'Asia/Kolkata', TRUE
-                )
-                ON CONFLICT (owner_id, slot_id) DO NOTHING
-            `;
-        }
-
-        let date = fromDate;
-        let count = 0;
-        while (date <= toDate) {
-            for (const slot of CHECK_IN_SLOTS) {
-                const reminderRows = await tx`
-                    SELECT id FROM accountability_reminders
-                    WHERE owner_id = ${ownerId} AND slot_id = ${slot.id}
-                `;
-                await tx`
-                    INSERT INTO accountability_check_ins (
-                        id, owner_id, local_date, slot_id, scheduled_local_time,
-                        time_zone, status, reminder_id, reminder_status
-                    ) VALUES (
-                        ${randomUUID()}, ${ownerId}, ${date}::date, ${slot.id},
-                        ${slot.scheduledLocalTime}::time, 'Asia/Kolkata', 'pending',
-                        ${String(reminderRows[0].id)}, 'not_scheduled'
-                    )
-                    ON CONFLICT (owner_id, local_date, slot_id) DO NOTHING
-                `;
+        const reminders = CHECK_IN_SLOTS.map((slot) => ({
+            id: randomUUID(), slot_id: slot.id, local_time: slot.reminderLocalTime,
+        }));
+        const slots: { id: string; local_date: string; slot_id: string; scheduled_local_time: string }[] = [];
+        for (let date = fromDate; date <= toDate; date = addActivityDays(date, 1)) {
+            if (slots.length >= 90 * CHECK_IN_SLOTS.length) {
+                throw new RangeError('Check-in slot initialization is limited to 90 days at a time.');
             }
-            date = addActivityDays(date, 1);
-            count += 1;
-            if (count > 90) throw new RangeError('Check-in slot initialization is limited to 90 days at a time.');
+            for (const slot of CHECK_IN_SLOTS) slots.push({
+                id: randomUUID(), local_date: date, slot_id: slot.id,
+                scheduled_local_time: slot.scheduledLocalTime,
+            });
         }
+        // Set-based inserts avoid 60 network round trips for a single week.
+        await tx`
+            INSERT INTO accountability_reminders (id, owner_id, slot_id, local_time, time_zone, enabled)
+            SELECT r.id, ${ownerId}, r.slot_id, r.local_time, 'Asia/Kolkata', TRUE
+            FROM jsonb_to_recordset(${tx.json(reminders)}) AS r(id uuid, slot_id text, local_time time)
+            ON CONFLICT (owner_id, slot_id) DO NOTHING
+        `;
+        await tx`
+            INSERT INTO accountability_check_ins (
+                id, owner_id, local_date, slot_id, scheduled_local_time,
+                time_zone, status, reminder_id, reminder_status
+            )
+            SELECT s.id, ${ownerId}, s.local_date, s.slot_id, s.scheduled_local_time,
+                   'Asia/Kolkata', 'pending', r.id, 'not_scheduled'
+            FROM jsonb_to_recordset(${tx.json(slots)})
+                AS s(id uuid, local_date date, slot_id text, scheduled_local_time time)
+            JOIN accountability_reminders r ON r.owner_id = ${ownerId} AND r.slot_id = s.slot_id
+            ON CONFLICT (owner_id, local_date, slot_id) DO NOTHING
+        `;
 
         // Missed status and reminder eligibility become true only after one full
         // hour has elapsed in IST. No notification is sent by this projection.
@@ -890,7 +890,7 @@ function makeWeightMeasuredAt(input: WeightEntryInput): Date {
     return getIstDateTime(input.activityDate, '08:00');
 }
 
-async function reserveResourceIdempotency(
+export async function reserveResourceIdempotency(
     tx: postgres.TransactionSql,
     ownerId: string,
     source: UpdateSource,
