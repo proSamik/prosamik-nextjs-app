@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { ActivityDateSchema, CheckInSlotIdSchema } from './accountability-contract.ts';
 
+export const SummaryStatusMcpInputSchema = z.object({
+    activityDate: ActivityDateSchema.optional(),
+}).strict();
+
 export function isReminderDeliveryEnabled(value = process.env.ACCOUNTABILITY_REMINDER_DELIVERY_ENABLED): boolean {
     return value === 'true';
 }
