@@ -1,6 +1,10 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+    CalendarDayPopover,
+    useCalendarPopover,
+} from '@/components/CalendarDayPopover';
 import ShareConsistencyCard from '@/components/ShareConsistencyCard';
 import type { ContributionDay } from '@/lib/githubContributions';
 
@@ -14,6 +18,8 @@ interface ConsistencyGraphProps {
     todayDate?: string;
     onRangeChange?: (from: string, to: string) => void;
     shareControl?: ReactNode;
+    renderDayDetails?: (date: string) => ReactNode;
+    profileUrl?: string;
 }
 
 type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
@@ -55,6 +61,8 @@ export default function ConsistencyGraph({
     todayDate,
     onRangeChange,
     shareControl,
+    renderDayDetails,
+    profileUrl = 'https://github.com/proSamik',
 }: ConsistencyGraphProps) {
     const availableYears = useMemo(() => {
         const currentYear = Number(
@@ -71,6 +79,12 @@ export default function ConsistencyGraph({
             .filter((year) => year >= 2020)
             .sort((first, second) => second - first);
     }, [days, todayDate]);
+    const calendar = useRef<HTMLDivElement>(null);
+    const popover = useCalendarPopover<{
+        date: string;
+        count: number;
+        isFuture: boolean;
+    }>();
     const [view, setView] = useState<GraphView>({ mode: 'rolling' });
 
     const graph = useMemo(() => {
@@ -164,9 +178,14 @@ export default function ConsistencyGraph({
         };
     }, [days, view, todayDate]);
 
+    useEffect(() => {
+        if (activityLabels && calendar.current)
+            calendar.current.scrollLeft = calendar.current.scrollWidth;
+    }, [activityLabels, view]);
+
     if (days.length === 0 && !activityLabels) {
         return (
-            <section className="relative rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <section className="relative min-w-0 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 {shareControl ??
                     (shareable && (
                         <ShareConsistencyCard platform="github" card="graph" />
@@ -181,12 +200,14 @@ export default function ConsistencyGraph({
     }
 
     return (
-        <section className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
+        <section className="relative min-w-0 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
             {shareControl ??
                 (shareable && (
                     <ShareConsistencyCard platform="github" card="graph" />
                 ))}
-            <div className="flex flex-col gap-6 xl:flex-row">
+            <div
+                className={`flex flex-col gap-6 ${activityLabels ? '' : 'xl:flex-row'}`}
+            >
                 <div className="min-w-0 flex-1">
                     <h2 className="pr-10 text-lg font-medium text-gray-700">
                         {title && (
@@ -201,7 +222,7 @@ export default function ConsistencyGraph({
                             : `in ${graph.selectedYear}`}
                     </h2>
 
-                    <div className="mt-5 overflow-x-auto pb-3">
+                    <div ref={calendar} className="mt-5 overflow-x-auto pb-3">
                         <div className="flex min-w-max">
                             <div className="mr-2 mt-7 grid h-[102px] grid-rows-7 gap-[3px] text-xs text-gray-500">
                                 <span />
@@ -233,7 +254,7 @@ export default function ConsistencyGraph({
                                 </div>
 
                                 <div
-                                    role={onSelect ? 'group' : 'img'}
+                                    role="group"
                                     aria-label={
                                         view.mode === 'rolling'
                                             ? `${title ?? 'GitHub contribution'} calendar for the last 365 days`
@@ -245,13 +266,30 @@ export default function ConsistencyGraph({
                                     {graph.cells.map((day, index) => (
                                         <button
                                             type="button"
-                                            disabled={
-                                                !onSelect ||
-                                                !day ||
-                                                day.isFuture
+                                            disabled={!day}
+                                            onMouseEnter={(event) =>
+                                                day &&
+                                                popover.show(
+                                                    day,
+                                                    event.currentTarget,
+                                                )
                                             }
-                                            onClick={() =>
-                                                day && onSelect?.(day.date)
+                                            onMouseLeave={popover.hideLater}
+                                            onFocus={(event) =>
+                                                day &&
+                                                popover.show(
+                                                    day,
+                                                    event.currentTarget,
+                                                )
+                                            }
+                                            onBlur={popover.hideLater}
+                                            onClick={(event) =>
+                                                day &&
+                                                popover.show(
+                                                    day,
+                                                    event.currentTarget,
+                                                    true,
+                                                )
                                             }
                                             key={day?.date ?? `empty-${index}`}
                                             className="h-3 w-3 rounded-[2px] outline-none ring-blue-500 hover:ring-2"
@@ -275,7 +313,7 @@ export default function ConsistencyGraph({
                                                             ]
                                                     : 'transparent',
                                             }}
-                                            title={
+                                            aria-label={
                                                 day
                                                     ? day.isFuture
                                                         ? `No contribution data yet for ${DATE_FORMATTER.format(new Date(`${day.date}T00:00:00.000Z`))}`
@@ -327,7 +365,7 @@ export default function ConsistencyGraph({
                 </div>
 
                 <div
-                    className="flex gap-2 overflow-x-auto xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1"
+                    className={`flex gap-2 overflow-x-auto ${activityLabels ? '' : 'xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1'}`}
                     aria-label="Contribution range"
                 >
                     <button
@@ -380,6 +418,60 @@ export default function ConsistencyGraph({
                     ))}
                 </div>
             </div>
+            {popover.selection && (
+                <CalendarDayPopover
+                    anchor={popover.selection.anchor}
+                    pinned={popover.selection.pinned}
+                    onClose={popover.close}
+                    onEnter={popover.cancelHide}
+                    onLeave={popover.hideLater}
+                >
+                    <strong className="block text-gray-950">
+                        {DATE_FORMATTER.format(
+                            new Date(
+                                `${popover.selection.value.date}T00:00:00Z`,
+                            ),
+                        )}
+                        {activityLabels ? ' · IST' : ''}
+                    </strong>
+                    <p className="mt-2 text-gray-600">
+                        {popover.selection.value.isFuture
+                            ? 'Future date'
+                            : activityLabels
+                              ? statuses?.[popover.selection.value.date] ===
+                                'complete'
+                                  ? 'Completed'
+                                  : statuses?.[popover.selection.value.date] ===
+                                      'incomplete'
+                                    ? 'Incomplete'
+                                    : 'Not updated'
+                              : `${popover.selection.value.count} contributions`}
+                    </p>
+                    {renderDayDetails?.(popover.selection.value.date)}
+                    {!activityLabels && !popover.selection.value.isFuture && (
+                        <a
+                            className="mt-3 inline-block font-medium text-blue-600"
+                            href={`${profileUrl}?tab=overview&from=${popover.selection.value.date}&to=${popover.selection.value.date}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View activity on GitHub ↗
+                        </a>
+                    )}
+                    {onSelect && !popover.selection.value.isFuture && (
+                        <button
+                            type="button"
+                            className="mt-3 rounded-lg bg-stone-950 px-3 py-2 text-white"
+                            onClick={() => {
+                                onSelect(popover.selection!.value.date);
+                                popover.close();
+                            }}
+                        >
+                            Edit this day
+                        </button>
+                    )}
+                </CalendarDayPopover>
+            )}
         </section>
     );
 }
