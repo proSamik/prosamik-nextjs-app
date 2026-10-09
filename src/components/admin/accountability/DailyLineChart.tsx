@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type DailyChartPoint = {
     date: string;
@@ -8,6 +8,12 @@ export type DailyChartPoint = {
     details?: string[];
 };
 const dayMs = 86400000;
+const shortDate = (date: string) =>
+    new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+    });
 export function DailyLineChart({
     points,
     from,
@@ -23,18 +29,40 @@ export function DailyLineChart({
     label: string;
     emptyDetails?: Record<string, string[]>;
 }) {
+    const figure = useRef<HTMLElement>(null);
+    const [width, setWidth] = useState(600);
     const [hover, setHover] = useState<number | null>(null);
+    useEffect(() => {
+        const observer = new ResizeObserver(([entry]) =>
+            setWidth(Math.max(240, entry.contentRect.width)),
+        );
+        if (figure.current) observer.observe(figure.current);
+        return () => observer.disconnect();
+    }, []);
     const count = Math.max(
         1,
         Math.round((Date.parse(to) - Date.parse(from)) / dayMs),
     );
-    const left = 70,
-        right = 900,
-        top = 28,
-        bottom = 244;
-    const low = Math.min(...points.map((p) => p.value));
-    const high = Math.max(...points.map((p) => p.value));
-    const padding = Math.max((high - low) * 0.15, high * 0.02, 1);
+    const visible = points
+        .filter((p) => p.date >= from && p.date <= to)
+        .sort((a, b) => a.date.localeCompare(b.date));
+    const left = unit === 'kcal' ? 60 : 48,
+        right = width - 20,
+        top = 32,
+        bottom = 248;
+    const low = Math.min(
+        ...visible.map((p) => p.value),
+        visible.length ? Infinity : 0,
+    );
+    const high = Math.max(
+        ...visible.map((p) => p.value),
+        visible.length ? -Infinity : 1,
+    );
+    const padding = Math.max(
+        (high - low) * 0.15,
+        high * 0.02,
+        unit === 'kg' ? 0.2 : 1,
+    );
     const min = Math.max(0, low - padding),
         max = high + padding;
     const x = (date: string) =>
@@ -43,30 +71,68 @@ export function DailyLineChart({
             (right - left);
     const y = (value: number) =>
         bottom - ((value - min) / (max - min)) * (bottom - top);
-    const date =
+    const cursorDate =
         hover === null
             ? ''
             : new Date(Date.parse(from) + hover * dayMs)
                   .toISOString()
                   .slice(0, 10);
-    const selected = points.filter((p) => p.date === date);
-    const details = selected.length
-        ? selected.flatMap((p) => [
-              `${p.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`,
-              ...(p.details ?? []),
-          ])
-        : (emptyDetails[date] ?? ['No entry recorded for this day.']);
-    const percent = hover === null ? 0 : (x(date) / 940) * 100;
+    const nearest =
+        hover === null
+            ? undefined
+            : visible.reduce<DailyChartPoint | undefined>(
+                  (best, point) =>
+                      !best ||
+                      Math.abs(
+                          Date.parse(point.date) - Date.parse(cursorDate),
+                      ) <
+                          Math.abs(
+                              Date.parse(best.date) - Date.parse(cursorDate),
+                          )
+                          ? point
+                          : best,
+                  undefined,
+              );
+    const date = nearest?.date ?? cursorDate;
+    const details = nearest
+        ? visible
+              .filter((p) => p.date === date)
+              .flatMap((p) => [
+                  `${p.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`,
+                  ...(p.details ?? []),
+              ])
+        : (emptyDetails[date] ?? ['No recorded values in this range.']);
+    const selectAt = (clientX: number) => {
+        const bounds = figure.current!.getBoundingClientRect();
+        setHover(
+            Math.max(
+                0,
+                Math.min(
+                    count,
+                    Math.round(
+                        ((clientX - bounds.left - left) / (right - left)) *
+                            count,
+                    ),
+                ),
+            ),
+        );
+    };
     return (
-        <figure aria-label={label} className="relative">
+        <figure
+            ref={figure}
+            aria-label={label}
+            className="relative min-w-0"
+            onPointerLeave={() => setHover(null)}
+        >
             <svg
-                viewBox="0 0 940 286"
-                preserveAspectRatio="none"
+                viewBox={`0 0 ${width} 288`}
                 className="h-72 w-full rounded-xl border border-stone-200 bg-stone-50"
                 role="group"
                 aria-label={label}
-                onPointerLeave={() => setHover(null)}
             >
+                <text x={left} y={18} fontSize={11} fill="#78716c">
+                    {unit}
+                </text>
                 {[0, 1, 2, 3].map((i) => {
                     const value = min + ((max - min) * i) / 3;
                     return (
@@ -80,21 +146,22 @@ export function DailyLineChart({
                                 strokeDasharray="3 5"
                             />
                             <text
-                                x={left - 12}
+                                x={left - 10}
                                 y={y(value) + 4}
                                 textAnchor="end"
-                                fontSize="12"
+                                fontSize={12}
                                 fill="#57534e"
                             >
                                 {value.toLocaleString(undefined, {
-                                    maximumFractionDigits: 1,
+                                    maximumFractionDigits:
+                                        unit === 'kg' ? 1 : 0,
                                 })}
                             </text>
                         </g>
                     );
                 })}
                 <path
-                    d={points
+                    d={visible
                         .map(
                             (p, i) =>
                                 `${i ? 'L' : 'M'}${x(p.date)},${y(p.value)}`,
@@ -102,18 +169,18 @@ export function DailyLineChart({
                         .join(' ')}
                     fill="none"
                     stroke="#429367"
-                    strokeWidth="2.5"
+                    strokeWidth={2.5}
                     strokeLinejoin="round"
                 />
-                {points.map((p, i) => (
+                {visible.map((p, i) => (
                     <circle
                         key={`${p.date}-${i}`}
                         cx={x(p.date)}
                         cy={y(p.value)}
-                        r="4"
+                        r={date === p.date ? 5 : 3.5}
                         fill="white"
                         stroke="#429367"
-                        strokeWidth="2"
+                        strokeWidth={2}
                     />
                 ))}
                 {hover !== null && (
@@ -126,17 +193,35 @@ export function DailyLineChart({
                         strokeDasharray="4 4"
                     />
                 )}
-                <text x={left} y="272" fontSize="12" fill="#57534e">
-                    {from}
+                <text x={left} y={276} fontSize={12} fill="#57534e">
+                    {shortDate(from)}
                 </text>
+                {width > 480 && (
+                    <text
+                        x={(left + right) / 2}
+                        y={276}
+                        fontSize={12}
+                        textAnchor="middle"
+                        fill="#57534e"
+                    >
+                        {shortDate(
+                            new Date(
+                                Date.parse(from) +
+                                    Math.floor(count / 2) * dayMs,
+                            )
+                                .toISOString()
+                                .slice(0, 10),
+                        )}
+                    </text>
+                )}
                 <text
                     x={right}
-                    y="272"
+                    y={276}
                     textAnchor="end"
-                    fontSize="12"
+                    fontSize={12}
                     fill="#57534e"
                 >
-                    {to}
+                    {shortDate(to)}
                 </text>
                 <rect
                     x={left}
@@ -146,65 +231,65 @@ export function DailyLineChart({
                     fill="transparent"
                     tabIndex={0}
                     role="slider"
-                    aria-label="Explore chart by day; use left and right arrows"
+                    aria-label="Explore recorded values; use left and right arrows"
                     aria-valuemin={0}
                     aria-valuemax={count}
                     aria-valuenow={hover ?? 0}
                     aria-valuetext={
                         date ? `${date}: ${details.join('. ')}` : from
                     }
-                    onFocus={() => setHover((current) => current ?? 0)}
+                    onFocus={() => setHover(0)}
                     onBlur={() => setHover(null)}
+                    onPointerMove={(e) => selectAt(e.clientX)}
+                    onPointerDown={(e) => selectAt(e.clientX)}
                     onKeyDown={(e) => {
-                        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                            e.preventDefault();
-                            setHover((v) =>
+                        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')
+                            return;
+                        e.preventDefault();
+                        const index = visible.findIndex((p) => p === nearest);
+                        const next =
+                            visible[
                                 Math.max(
                                     0,
                                     Math.min(
-                                        count,
-                                        (v ?? 0) +
+                                        visible.length - 1,
+                                        index +
                                             (e.key === 'ArrowLeft' ? -1 : 1),
                                     ),
+                                )
+                            ];
+                        if (next)
+                            setHover(
+                                Math.round(
+                                    (Date.parse(next.date) - Date.parse(from)) /
+                                        dayMs,
                                 ),
                             );
-                        }
-                    }}
-                    onPointerMove={(e) => {
-                        const bounds =
-                            e.currentTarget.ownerSVGElement!.getBoundingClientRect();
-                        const cursor =
-                            ((e.clientX - bounds.left) / bounds.width) * 940;
-                        setHover(
-                            Math.max(
-                                0,
-                                Math.min(
-                                    count,
-                                    Math.round(
-                                        ((cursor - left) / (right - left)) *
-                                            count,
-                                    ),
-                                ),
-                            ),
-                        );
                     }}
                 />
             </svg>
             {hover !== null && (
                 <div
                     role="status"
-                    className="pointer-events-none absolute top-2 z-10 max-h-64 w-64 overflow-hidden rounded-lg border border-stone-200 bg-white p-3 text-xs shadow-lg"
+                    className="absolute top-2 z-10 max-h-56 w-64 max-w-[calc(100%-16px)] overflow-y-auto overscroll-contain rounded-lg border border-stone-200 bg-white p-3 text-xs shadow-lg"
                     style={{
-                        left: `${Math.min(100, Math.max(0, percent))}%`,
-                        transform:
-                            percent > 65
-                                ? 'translateX(-100%)'
-                                : percent < 25
-                                  ? 'none'
-                                  : 'translateX(-50%)',
+                        left: Math.max(
+                            8,
+                            Math.min(
+                                width - Math.min(256, width - 16) - 8,
+                                x(date) - 128,
+                            ),
+                        ),
                     }}
                 >
-                    <strong className="block mb-2">{date} · IST</strong>
+                    <strong className="mb-2 block">
+                        {shortDate(date)} · IST
+                    </strong>
+                    {nearest && date !== cursorDate && (
+                        <p className="mb-2 text-stone-500">
+                            Nearest record to {shortDate(cursorDate)}
+                        </p>
+                    )}
                     {details.map((text, i) => (
                         <p key={i} className="mt-1">
                             {text}
@@ -213,8 +298,8 @@ export function DailyLineChart({
                 </div>
             )}
             <figcaption className="mt-2 text-xs text-stone-500">
-                Move across the chart to inspect each day. The line connects
-                recorded totals; missing days have no recorded value.
+                Move anywhere across the chart to inspect the nearest recorded
+                day. Lines connect recorded values.
             </figcaption>
         </figure>
     );
