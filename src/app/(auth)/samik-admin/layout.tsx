@@ -20,7 +20,7 @@ export default async function SamikAdminLayout({ children }: { children: ReactNo
     }
 
     return (
-        <div className="min-h-screen bg-[#f4f1e9]" data-private-area>
+        <div className="min-h-screen bg-white" data-private-area>
             {children}
         </div>
     );
