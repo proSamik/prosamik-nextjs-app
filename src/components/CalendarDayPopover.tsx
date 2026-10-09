@@ -60,6 +60,7 @@ export function CalendarDayPopover({
     onEnter,
     onLeave,
     children,
+    footer,
 }: {
     anchor: HTMLElement;
     pinned: boolean;
@@ -67,6 +68,7 @@ export function CalendarDayPopover({
     onEnter: () => void;
     onLeave: () => void;
     children: ReactNode;
+    footer?: ReactNode;
 }) {
     const card = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ left: 12, top: 12 });
@@ -132,20 +134,27 @@ export function CalendarDayPopover({
             aria-label="Day details"
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
-            className="fixed z-[1100] max-h-[min(360px,calc(100dvh-24px))] w-80 max-w-[calc(100vw-24px)] overflow-y-auto overscroll-contain rounded-xl border border-gray-200 bg-white p-4 text-sm shadow-xl"
+            className="fixed z-[1100] flex max-h-[min(360px,calc(100dvh-24px))] w-80 max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-sm shadow-xl"
             style={position}
         >
-            {pinned && (
-                <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label="Close day details"
-                    className="float-right ml-2 rounded px-2 text-gray-500 hover:bg-gray-100"
-                >
-                    ×
-                </button>
+            <div className="min-h-0 overflow-y-auto overscroll-contain p-4">
+                {pinned && (
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close day details"
+                        className="float-right ml-2 rounded px-2 text-gray-500 hover:bg-gray-100"
+                    >
+                        ×
+                    </button>
+                )}
+                {children}
+            </div>
+            {footer && (
+                <div className="shrink-0 border-t border-gray-200 bg-white p-3">
+                    {footer}
+                </div>
             )}
-            {children}
         </div>,
         document.body,
     );
