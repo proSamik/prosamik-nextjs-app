@@ -6,6 +6,8 @@ import { authClient } from '@/lib/auth-client';
 const scopeLabels: Record<string, string> = {
     openid: 'Identify the account authorizing this connection',
     offline_access: 'Keep this connection active using refresh tokens',
+    'food:read': 'Read food entries, calorie estimates, and daily totals',
+    'food:write': 'Record and correct food entries and calorie estimates',
     'content:read': 'Read authorized Prosamik application content',
     'progress:read': 'Read private habits, no-fap records, weight measurements, streaks, and trends',
     'progress:write': 'Record or correct habits, no-fap statuses, and weight measurements',
