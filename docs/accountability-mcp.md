@@ -68,7 +68,10 @@ identifier, storage key, or URL. A signed read URL remains a separate
 owner-scoped tool. Writes reject future dates and use explicit idempotency
 keys. Image-derived weight entries may reference up to five owner-owned still
 images only when the principal also has `media:read`; they are always created as
-pending and cannot be primary until owner confirmation. MCP does not perform
+pending and cannot be primary until owner confirmation in the admin dashboard.
+MCP cannot correct image-derived measurements, including already-confirmed
+readings; this prevents a client from changing a reviewed value while retaining
+its confirmation. MCP may still correct non-image measurements. MCP does not perform
 OCR or infer weight from appearance; the transcribed value remains the caller's
 explicit input. Private media tools return existing short-lived presigned URLs;
 clients should treat those URLs as temporary bearer capabilities and never log

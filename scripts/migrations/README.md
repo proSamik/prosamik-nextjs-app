@@ -18,6 +18,12 @@ All accountability tables reference Better Auth's `"user"(id)` through `owner_id
 
 No personal sample rows or credentials are added by these migrations.
 
+## Auth compatibility (`0003_auth_account_issuer_compatibility.sql`)
+
+The legacy `account.issuer` column becomes nullable when present because the
+current Better Auth version does not write it. Existing values are preserved;
+the migration is a no-op on fresh databases without that column.
+
 ## Local PGlite smoke test
 
 Run `npm run test:accountability` for deterministic domain, request-contract,
@@ -41,3 +47,10 @@ is one user/connection, so this harness cannot validate concurrent-session,
 lock-contention, or multi-connection transaction behavior available in a normal
 PostgreSQL server. It also does not replace testing against the deployment
 PostgreSQL version and production-shaped auth schema.
+
+Run `npm run test:accountability:concurrency` with an explicit
+`ACCOUNTABILITY_TEST_DATABASE_URL` pointing to a disposable PostgreSQL database
+to verify weight write locking across separate application connections. It
+creates and removes a temporary schema, never loads `.env`, and skips when the
+test connection is absent. It checks that creation and correction wait before
+locking rows and that concurrent corrections can move between dates.
