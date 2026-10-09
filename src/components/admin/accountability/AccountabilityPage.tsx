@@ -573,8 +573,9 @@ function DailyHeatmap({
         },
     );
     return (
-        <div className="space-y-4">
+        <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
             <ConsistencyStreakCard
+                compact
                 total={successful.length}
                 current={current}
                 longest={longest}
@@ -615,6 +616,57 @@ function DailyHeatmap({
                 activityLabels
                 todayDate={today}
                 onSelect={onSelect}
+                renderDayDetails={(date) => {
+                    const dayRows = rows.filter(
+                        (row) => getText(row, 'date', 'activityDate') === date,
+                    );
+                    const fields = [
+                        ['activity', 'Activity'],
+                        ['durationMinutes', 'Minutes'],
+                        ['outreachCount', 'Outreach'],
+                        ['outreachChannel', 'Channel'],
+                        ['emailDraftedCount', 'Emails drafted'],
+                        ['emailSentCount', 'Emails sent'],
+                        ['videoStage', 'Video stage'],
+                        ['notes', 'Notes'],
+                    ];
+                    return (
+                        <div className="mt-3 space-y-3">
+                            {dayRows.length ? (
+                                dayRows.map((row, index) => (
+                                    <dl key={index} className="space-y-2">
+                                        {!fields.some(([key]) =>
+                                            getText(row, key),
+                                        ) && (
+                                            <p className="text-stone-500">
+                                                No context added yet.
+                                            </p>
+                                        )}
+                                        {fields.flatMap(([key, label]) => {
+                                            const value = getText(row, key);
+                                            return value
+                                                ? [
+                                                      <div key={key}>
+                                                          <dt className="text-xs font-semibold text-stone-500">
+                                                              {label}
+                                                          </dt>
+                                                          <dd className="whitespace-pre-wrap break-words text-stone-800">
+                                                              {value}
+                                                          </dd>
+                                                      </div>,
+                                                  ]
+                                                : [];
+                                        })}
+                                    </dl>
+                                ))
+                            ) : (
+                                <p className="text-stone-500">
+                                    No details recorded.
+                                </p>
+                            )}
+                        </div>
+                    );
+                }}
                 onRangeChange={(from, to) => setRange({ from, to })}
                 shareControl={<ShareTracker title={title} days={snapshot} />}
             />
@@ -625,7 +677,6 @@ function DailyHeatmap({
 function AccountabilityShell({
     active,
     title,
-    intro,
     children,
 }: {
     active: Section;
@@ -634,33 +685,40 @@ function AccountabilityShell({
     children: ReactNode;
 }) {
     const pathname = usePathname();
+    const nav = useRef<HTMLElement>(null);
+    useEffect(() => {
+        const current = nav.current?.querySelector<HTMLElement>(
+            '[aria-current="page"]',
+        );
+        if (
+            nav.current &&
+            current &&
+            nav.current.scrollWidth > nav.current.clientWidth
+        ) {
+            nav.current.scrollLeft =
+                current.offsetLeft -
+                (nav.current.clientWidth - current.clientWidth) / 2;
+        }
+    }, [pathname]);
     return (
-        <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8">
-            <header className="mb-4 border-b border-stone-200 pb-4">
-                {active === 'integrations' && (
-                    <Link
-                        href="/samik-admin"
-                        className="mb-3 inline-block text-sm font-semibold text-stone-600"
-                    >
-                        ← Samik Admin
-                    </Link>
-                )}
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-[-0.035em] text-stone-950 sm:text-3xl">
-                            {title}
-                        </h1>
-                        <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
-                            {intro}
-                        </p>
-                    </div>
-                </div>
-            </header>
+        <main
+            aria-label={title}
+            className="mx-auto w-full max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8"
+        >
+            {active === 'integrations' && (
+                <Link
+                    href="/samik-admin"
+                    className="mb-4 inline-block text-sm font-semibold text-stone-600"
+                >
+                    ← Samik Admin
+                </Link>
+            )}
 
             {active !== 'integrations' && (
                 <nav
+                    ref={nav}
                     aria-label="Accountability sections"
-                    className="mb-5 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6"
+                    className="relative mb-5 -mx-1 flex gap-2 overflow-x-auto px-1 pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6"
                 >
                     {sections.map(({ key, label, href, icon: Icon }) => {
                         const current = active === key || pathname === href;
@@ -1125,11 +1183,23 @@ function ProgressSection() {
                                 title={habit.label}
                                 from={rangeStart}
                                 to={rangeEnd}
-                                rows={getArray(dataRoot, 'habitHistory').filter(
+                                rows={getArray(dataRoot, 'habits').filter(
                                     (row) =>
                                         getText(row, 'habitKey') === habit.key,
                                 )}
-                                onSelect={setActivityDate}
+                                onSelect={(date) => {
+                                    setActivityDate(date);
+                                    requestAnimationFrame(() =>
+                                        document
+                                            .getElementById(
+                                                'activity-day-editor',
+                                            )
+                                            ?.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'start',
+                                            }),
+                                    );
+                                }}
                             />
                         ))}
                     </div>
@@ -1140,7 +1210,10 @@ function ProgressSection() {
                 title="Update a day"
                 description="Record each activity for the selected date."
             >
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div
+                    id="activity-day-editor"
+                    className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+                >
                     <label className="grid max-w-xs gap-1.5 text-sm font-bold text-stone-800">
                         Activity date (IST)
                         <input
@@ -1745,19 +1818,22 @@ function CheckInsSection() {
             <Panel
                 title="Check-in slots · IST"
                 description="Each day has four scheduled slots. Pending and missed slots can be answered; missed slots accept a late answer."
+                action={
+                    <label className="grid w-full gap-1 sm:w-44 text-xs font-bold">
+                        Day (IST)
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            max={localDateValue()}
+                            onChange={(e) =>
+                                e.target.value &&
+                                setSelectedDate(e.target.value)
+                            }
+                            className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 px-3 text-sm"
+                        />
+                    </label>
+                }
             >
-                <label className="mb-4 grid max-w-xs gap-1 text-xs font-bold">
-                    Day (IST)
-                    <input
-                        type="date"
-                        value={selectedDate}
-                        max={localDateValue()}
-                        onChange={(e) =>
-                            e.target.value && setSelectedDate(e.target.value)
-                        }
-                        className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm"
-                    />
-                </label>
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && dateKeys.length > 0 && (
                     <div
@@ -2194,25 +2270,29 @@ function FoodSection() {
                 title="Daily calories"
                 description="Totals include logged items with known calories. Estimates are approximate; unlogged days stay empty."
             >
-                <div className="mb-4 flex flex-wrap items-end gap-3">
-                    <label className="grid gap-1 text-xs font-bold">
+                <div className="mb-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 sm:flex sm:flex-nowrap">
+                    <label className="grid min-w-0 gap-1 text-xs font-bold">
                         From
                         <input
                             type="date"
                             value={from}
                             max={to}
-                            onChange={(e) => setFrom(e.target.value)}
+                            onChange={(e) =>
+                                e.target.value && setFrom(e.target.value)
+                            }
                             className={field}
                         />
                     </label>
-                    <label className="grid gap-1 text-xs font-bold">
+                    <label className="grid min-w-0 gap-1 text-xs font-bold">
                         To
                         <input
                             type="date"
                             value={to}
                             min={from}
                             max={today}
-                            onChange={(e) => setTo(e.target.value)}
+                            onChange={(e) =>
+                                e.target.value && setTo(e.target.value)
+                            }
                             className={field}
                         />
                     </label>
@@ -2226,69 +2306,6 @@ function FoodSection() {
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && (
                     <>
-                        <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-                            {[
-                                {
-                                    label: 'Logged items',
-                                    value: entries.length,
-                                },
-                                {
-                                    label: 'Logged calories',
-                                    value:
-                                        days
-                                            .reduce(
-                                                (sum, day) =>
-                                                    sum +
-                                                    (getNumber(
-                                                        day,
-                                                        'calories',
-                                                    ) ?? 0),
-                                                0,
-                                            )
-                                            .toLocaleString() + ' kcal',
-                                },
-                                {
-                                    label: 'Average / logged day',
-                                    value: points.length
-                                        ? Math.round(
-                                              points.reduce(
-                                                  (sum, day) =>
-                                                      sum +
-                                                      (getNumber(
-                                                          day,
-                                                          'calories',
-                                                      ) ?? 0),
-                                                  0,
-                                              ) / points.length,
-                                          ).toLocaleString() + ' kcal'
-                                        : '—',
-                                },
-                                {
-                                    label: 'Unknown calories',
-                                    value: days.reduce(
-                                        (sum, day) =>
-                                            sum +
-                                            (getNumber(
-                                                day,
-                                                'unknownCalories',
-                                            ) ?? 0),
-                                        0,
-                                    ),
-                                },
-                            ].map((stat) => (
-                                <div
-                                    key={stat.label}
-                                    className="rounded-xl border border-stone-200 bg-stone-50 p-3"
-                                >
-                                    <p className="text-xs text-stone-500">
-                                        {stat.label}
-                                    </p>
-                                    <p className="mt-2 text-lg font-bold">
-                                        {stat.value}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
                         {points.length ? (
                             <DailyLineChart
                                 points={chartPoints}
@@ -2320,6 +2337,52 @@ function FoodSection() {
                                 graph.
                             </EmptyState>
                         )}
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                            {[
+                                {
+                                    label: 'Logged calories',
+                                    calories: chartPoints.reduce(
+                                        (sum, point) => sum + point.value,
+                                        0,
+                                    ),
+                                },
+                                {
+                                    label: 'Average / logged day',
+                                    calories: chartPoints.length
+                                        ? chartPoints.reduce(
+                                              (sum, point) => sum + point.value,
+                                              0,
+                                          ) / chartPoints.length
+                                        : null,
+                                },
+                            ].map((stat) => (
+                                <div
+                                    key={stat.label}
+                                    className="rounded-xl border border-stone-200 bg-stone-50 p-3"
+                                >
+                                    <p className="text-xs text-stone-500">
+                                        {stat.label}
+                                    </p>
+                                    <p className="mt-2 text-lg font-bold">
+                                        {stat.calories === null
+                                            ? '—'
+                                            : `${Math.round(stat.calories).toLocaleString()} kcal`}
+                                    </p>
+                                    {stat.calories !== null && (
+                                        <p className="mt-1 text-sm text-stone-600">
+                                            ≈{' '}
+                                            {(stat.calories / 7700).toFixed(2)}{' '}
+                                            kg energy equivalent
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <p className="mt-2 text-xs text-stone-500">
+                            Energy equivalent uses roughly 7,700 kcal/kg. This
+                            is food energy, not weight gained; gain depends on
+                            your net surplus and changes in energy expenditure.
+                        </p>
                     </>
                 )}
             </Panel>
@@ -2682,6 +2745,18 @@ function FoodTracker() {
                     rows={getArray(root, 'days').map((day) => ({
                         ...day,
                         status: 'complete',
+                        activity: `${getText(day, 'calories')} kcal logged`,
+                        notes: getArray(root, 'entries')
+                            .filter(
+                                (entry) =>
+                                    getText(entry, 'date') ===
+                                    getText(day, 'date'),
+                            )
+                            .map(
+                                (entry) =>
+                                    `${dateLabel(getText(entry, 'consumedAt'), { hour: '2-digit', minute: '2-digit' })} · ${getText(entry, 'item')} · ${getText(entry, 'portion')} · ${getNumber(entry, 'calories') === null ? 'Unknown calories' : `${getText(entry, 'calories')} kcal`}${getText(entry, 'notes') ? ` — ${getText(entry, 'notes')}` : ''}`,
+                            )
+                            .join('\n'),
                     }))}
                 />
             )}
@@ -2843,8 +2918,13 @@ function WeightReviewEditor({
 }
 
 function WeightSection() {
+    const today = localDateValue();
+    const [chartFrom, setChartFrom] = useState(() =>
+        addActivityDays(today, -29),
+    );
+    const [chartTo, setChartTo] = useState(today);
     const { data, state, error, reload } = usePrivateData(
-        endpointBySection.weight,
+        `${endpointBySection.weight}?from=${chartFrom}&to=${chartTo}`,
     );
     const [date, setDate] = useState(localDateValue);
     const [value, setValue] = useState('');
@@ -3177,6 +3257,33 @@ function WeightSection() {
                 title="Recorded weight"
                 description="Confirmed chart readings. Missing dates stay visible."
             >
+                <div className="mb-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 sm:flex">
+                    <label className="grid min-w-0 gap-1 text-xs font-bold">
+                        From
+                        <input
+                            type="date"
+                            value={chartFrom}
+                            max={chartTo}
+                            onChange={(e) =>
+                                e.target.value && setChartFrom(e.target.value)
+                            }
+                            className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
+                        />
+                    </label>
+                    <label className="grid min-w-0 gap-1 text-xs font-bold">
+                        To
+                        <input
+                            type="date"
+                            value={chartTo}
+                            min={chartFrom}
+                            max={today}
+                            onChange={(e) =>
+                                e.target.value && setChartTo(e.target.value)
+                            }
+                            className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
+                        />
+                    </label>
+                </div>
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && chartEntries.length === 0 && (
                     <EmptyState title="No confirmed primary measurements">
@@ -3232,7 +3339,12 @@ function WeightSection() {
                                 )}
                             </div>
                         )}
-                        <WeightChart entries={chartEntries} unit="kg" />
+                        <WeightChart
+                            entries={chartEntries}
+                            unit="kg"
+                            from={chartFrom}
+                            to={chartTo}
+                        />
                     </>
                 )}
                 {state === 'ready' && missingDates.length > 0 && (
@@ -3266,6 +3378,7 @@ function WeightSection() {
                     </p>
                 )}
             </Panel>
+            <WeightTracker />
             <details className="group rounded-2xl border border-stone-300 bg-white">
                 <summary className="cursor-pointer px-5 py-4 text-sm font-bold text-stone-900">
                     + Add a measurement · manual or image
@@ -3757,9 +3870,45 @@ function WeightSection() {
     );
 }
 
+function WeightTracker() {
+    const today = localDateValue();
+    const resource = usePrivateData(
+        `${endpointBySection.weight}?from=${addActivityDays(today, -3660)}&to=${today}&view=tracker`,
+    );
+    const root =
+        isRecord(resource.data) && isRecord(resource.data.data)
+            ? resource.data.data
+            : resource.data;
+    const rows = getArray(root, 'entries')
+        .filter((entry) => getText(entry, 'confirmationStatus') === 'confirmed')
+        .map((entry) => ({
+            ...entry,
+            date: getText(entry, 'date', 'activityDate'),
+            status: 'completed',
+            activity: `${getText(entry, 'weightKg')} kg · ${getText(entry, 'originalValue')} ${getText(entry, 'originalUnit')}`,
+        }));
+    return (
+        <Panel
+            title="Weight tracker"
+            description="Days with a confirmed measurement. Select a day to see readings and notes."
+        >
+            <StatusPanel
+                state={resource.state}
+                error={resource.error}
+                onRetry={resource.reload}
+            />
+            {resource.state === 'ready' && (
+                <DailyHeatmap title="Weight logged" rows={rows} />
+            )}
+        </Panel>
+    );
+}
+
 function WeightChart({
     entries,
     unit,
+    from,
+    to,
 }: {
     entries: {
         record: JsonRecord;
@@ -3768,6 +3917,8 @@ function WeightChart({
         date: unknown;
     }[];
     unit: string;
+    from: string;
+    to: string;
 }) {
     const points = entries.map((item) => ({
         date: String(item.date).slice(0, 10),
@@ -3777,8 +3928,8 @@ function WeightChart({
     return (
         <DailyLineChart
             points={points}
-            from={points[0].date}
-            to={points[points.length - 1].date}
+            from={from}
+            to={to}
             unit={unit}
             label="Recorded weight over time"
         />
@@ -3904,63 +4055,66 @@ function BodyPlaybackLane({ items }: { items: JsonRecord[] }) {
     return (
         <Panel
             title="Body timeline"
-            description="Compare recorded dates with a fixed-size viewer. The current item and next seven are buffered in memory."
+            description="Compare photos across dates. Filter by pose and choose a playback speed."
         >
-            <label className="mb-3 grid max-w-xs gap-1 text-xs font-bold">
-                Media category
-                <select
-                    value={categoryFilter}
-                    onChange={(e) => {
-                        setCategoryFilter(e.target.value);
-                        setPoseFilter('all');
-                        setPosition(0);
-                        setPlaying(false);
-                    }}
-                    className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm"
-                >
-                    <option value="body">Body</option>
-                    <option value="general">General images</option>
-                    <option value="habit_evidence">Activity evidence</option>
-                    <option value="all">All media</option>
-                </select>
-            </label>
-            <label className="mb-3 grid max-w-xs gap-1 text-xs font-bold">
-                Body pose
-                <select
-                    value={poseFilter}
-                    onChange={(e) => {
-                        setPoseFilter(e.target.value);
-                        setPosition(0);
-                        setPlaying(false);
-                    }}
-                    className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm"
-                >
-                    <option value="all">All poses</option>
-                    {[
-                        ...new Set(
-                            items
-                                .map((item) => getText(item, 'pose'))
-                                .filter(Boolean),
-                        ),
-                    ].map((pose) => (
-                        <option key={pose} value={pose}>
-                            {pose.replaceAll('_', ' ')}
+            <div className="mb-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 lg:grid-cols-5">
+                <label className="grid min-w-0 gap-1 text-xs font-bold">
+                    Media category
+                    <select
+                        value={categoryFilter}
+                        onChange={(e) => {
+                            setCategoryFilter(e.target.value);
+                            setPoseFilter('all');
+                            setPosition(0);
+                            setPlaying(false);
+                        }}
+                        className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 px-3 text-sm"
+                    >
+                        <option value="body">Body</option>
+                        <option value="general">General images</option>
+                        <option value="habit_evidence">
+                            Activity evidence
                         </option>
-                    ))}
-                </select>
-            </label>
-            <div className="mb-4 flex flex-wrap items-end gap-3">
-                <label className="grid gap-1 text-xs font-bold text-stone-700">
+                        <option value="all">All media</option>
+                    </select>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-bold">
+                    Body pose
+                    <select
+                        value={poseFilter}
+                        onChange={(e) => {
+                            setPoseFilter(e.target.value);
+                            setPosition(0);
+                            setPlaying(false);
+                        }}
+                        className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 px-3 text-sm"
+                    >
+                        <option value="all">All poses</option>
+                        {[
+                            ...new Set(
+                                items
+                                    .map((item) => getText(item, 'pose'))
+                                    .filter(Boolean),
+                            ),
+                        ].map((pose) => (
+                            <option key={pose} value={pose}>
+                                {pose.replaceAll('_', ' ')}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <label className="grid min-w-0 gap-1 text-xs font-bold text-stone-700">
                     From
                     <input
                         type="date"
                         value={from}
                         max={to || localDateValue()}
                         onChange={(e) => changeRange(e.target.value, false)}
-                        className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal"
+                        className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 px-3 text-sm font-normal"
                     />
                 </label>
-                <label className="grid gap-1 text-xs font-bold text-stone-700">
+                <label className="grid min-w-0 gap-1 text-xs font-bold text-stone-700">
                     To
                     <input
                         type="date"
@@ -3968,15 +4122,15 @@ function BodyPlaybackLane({ items }: { items: JsonRecord[] }) {
                         min={from}
                         max={localDateValue()}
                         onChange={(e) => changeRange(e.target.value, true)}
-                        className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal"
+                        className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 px-3 text-sm font-normal"
                     />
                 </label>
-                <label className="ml-auto grid gap-1 text-xs font-bold text-stone-700">
+                <label className="grid min-w-0 gap-1 text-xs font-bold text-stone-700">
                     Speed
                     <select
                         value={speed}
                         onChange={(e) => setSpeed(e.target.value)}
-                        className="min-h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm"
+                        className="min-h-10 min-w-0 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm"
                     >
                         <option value="1">1× · 1.5s</option>
                         <option value="2">2× · 0.75s</option>
@@ -4957,50 +5111,55 @@ function SummariesSection() {
             <Panel
                 title="Summary workspace"
                 description="Write, review, then publish. Private source data stays out of automatic drafts."
-            >
-                <div className="flex flex-wrap items-end justify-between gap-4">
-                    <div className="flex items-end gap-2">
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Date (IST)
-                            <input
-                                type="date"
-                                max={localDateValue()}
-                                value={draftDate}
-                                onChange={(e) => {
-                                    if (e.target.value) {
-                                        setDraftDate(e.target.value);
-                                        setSelectedDraftId('');
-                                    }
-                                }}
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal"
-                            />
-                        </label>
-                        <button
-                            type="button"
-                            disabled={Boolean(busyId) || !draftDate}
-                            onClick={() => void createDraft()}
-                            className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white disabled:opacity-40"
-                        >
-                            {busyId === 'create' ? 'Creating…' : '+ New draft'}
-                        </button>
+                action={
+                    <div className="flex min-w-0 flex-wrap items-end justify-between gap-3 lg:flex-nowrap">
+                        <div className="flex min-w-0 flex-wrap items-end gap-2 sm:flex-nowrap">
+                            <label className="grid min-w-0 gap-1 text-xs font-bold text-stone-700">
+                                Date (IST)
+                                <input
+                                    type="date"
+                                    max={localDateValue()}
+                                    value={draftDate}
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            setDraftDate(e.target.value);
+                                            setSelectedDraftId('');
+                                        }
+                                    }}
+                                    className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal"
+                                />
+                            </label>
+                            <button
+                                type="button"
+                                disabled={Boolean(busyId) || !draftDate}
+                                onClick={() => void createDraft()}
+                                className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white disabled:opacity-40"
+                            >
+                                {busyId === 'create'
+                                    ? 'Creating…'
+                                    : '+ New draft'}
+                            </button>
+                        </div>
+                        <p className="text-xs whitespace-nowrap text-stone-500">
+                            {drafts.length} drafts ·{' '}
+                            {
+                                approvals.filter(
+                                    (item) =>
+                                        getValue(item, 'isCurrent') === true,
+                                ).length
+                            }{' '}
+                            approved ·{' '}
+                            {
+                                publications.filter(
+                                    (item) =>
+                                        getText(item, 'status') === 'published',
+                                ).length
+                            }{' '}
+                            published
+                        </p>
                     </div>
-                    <p className="text-xs text-stone-500">
-                        {drafts.length} drafts ·{' '}
-                        {
-                            approvals.filter(
-                                (item) => getValue(item, 'isCurrent') === true,
-                            ).length
-                        }{' '}
-                        approved ·{' '}
-                        {
-                            publications.filter(
-                                (item) =>
-                                    getText(item, 'status') === 'published',
-                            ).length
-                        }{' '}
-                        published
-                    </p>
-                </div>
+                }
+            >
                 {notice && (
                     <div className="mt-3">
                         <Notice kind={notice.kind}>{notice.text}</Notice>
