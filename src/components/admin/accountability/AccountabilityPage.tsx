@@ -1989,7 +1989,7 @@ function FoodSection() {
     const days = getArray(root, 'days');
     const [formOpen, setFormOpen] = useState(false);
     const [detailEntry, setDetailEntry] = useState<JsonRecord | null>(null);
-    const [historyFrom, setHistoryFrom] = useState(addActivityDays(today, -29));
+    const [historyFrom, setHistoryFrom] = useState(addActivityDays(today, -2));
     const [historyTo, setHistoryTo] = useState(today);
     const [imageFilter, setImageFilter] = useState('all');
     const [historySort, setHistorySort] = useState('newest');
