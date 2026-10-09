@@ -71,8 +71,12 @@ export function validateAccountabilityMcpRequest(request: Request, resource: URL
 
     const host = request.headers.get('host');
     if (!host || host.toLowerCase() !== resource.host.toLowerCase()) return false;
-    if (requestUrl.host.toLowerCase() !== resource.host.toLowerCase()
-        || requestUrl.protocol !== resource.protocol
+    // Next.js can construct request.url with an internal HTTP origin behind
+    // the production HTTPS proxy. The configured resource and exact Host
+    // header remain authoritative; forwarded headers never add trusted hosts.
+    if (!['https:', 'http:'].includes(requestUrl.protocol)
+        || requestUrl.username !== ''
+        || requestUrl.password !== ''
         || requestUrl.pathname !== resource.pathname
         || requestUrl.search !== ''
         || requestUrl.hash !== '') return false;
@@ -80,7 +84,7 @@ export function validateAccountabilityMcpRequest(request: Request, resource: URL
     const origin = request.headers.get('origin');
     if (origin === null) return true;
     try {
-        return new URL(origin).origin === resource.origin;
+        return origin === resource.origin;
     } catch {
         return false;
     }

@@ -60,6 +60,30 @@ test('requires the exact endpoint host and rejects cross-origin or malformed ori
     assert.equal(validateAccountabilityMcpRequest(nullOrigin, resource), false);
 });
 
+test('accepts proxy-internal request URLs only with the configured public Host and endpoint', () => {
+    const resource = new URL('https://www.prosamik.com/api/mcp');
+    const request = (url: string, headers: Record<string, string> = {}) => new Request(url, {
+        method: 'POST',
+        headers: { host: resource.host, ...headers },
+    });
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp'), resource), true);
+    assert.equal(validateAccountabilityMcpRequest(request('http://www.prosamik.com/api/mcp'), resource), true);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp', {
+        origin: resource.origin,
+    }), resource), true);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp', {
+        host: 'attacker.example', 'x-forwarded-host': resource.host,
+    }), resource), false);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp', {
+        origin: 'https://attacker.example', 'x-forwarded-host': resource.host,
+    }), resource), false);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/other'), resource), false);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp?token=x'), resource), false);
+    assert.equal(validateAccountabilityMcpRequest(request('http://localhost:3000/api/mcp', {
+        origin: `${resource.origin}/untrusted`,
+    }), resource), false);
+});
+
 test('binds the verified token to its owner, OAuth client, issuer, audience, scope and expiry', () => {
     const resource = new URL('https://accountability.example/api/mcp');
     const claims = {
