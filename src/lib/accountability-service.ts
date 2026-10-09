@@ -955,6 +955,10 @@ export async function createWeightEntry(
     const sql = getDatabase();
 
     const result = await sql.begin(async (tx) => {
+        // Serialize weight writes for this owner before taking any row locks.
+        // A correction may move dates, so a single owner lock also avoids
+        // cycles between the old and new dates across app instances.
+        await tx`SELECT pg_advisory_xact_lock(hashtext('accountability.weight'), hashtext(${ownerId}))`;
         const idem = await reserveResourceIdempotency(tx, ownerId, source, 'weight.create', idempotencyKey, input);
         if (idem.duplicate) {
             if (!idem.resultId) return { duplicate: true as const, entry: null };
@@ -963,8 +967,6 @@ export async function createWeightEntry(
             `;
             return { duplicate: true as const, entry: existing[0] ? mapWeightRow(existing[0]) : null };
         }
-
-        await tx`SELECT pg_advisory_xact_lock(hashtext(${ownerId}), hashtext(${input.activityDate}))`;
 
         if (isPrimary) {
             await tx`
@@ -1032,6 +1034,7 @@ export async function correctWeightEntry(
     const sql = getDatabase();
 
     return sql.begin(async (tx) => {
+        await tx`SELECT pg_advisory_xact_lock(hashtext('accountability.weight'), hashtext(${ownerId}))`;
         const idem = await reserveResourceIdempotency(tx, ownerId, source, 'weight.correct', idempotencyKey, correction);
         if (idem.duplicate) {
             if (!idem.resultId) return { duplicate: true as const, entry: null };
@@ -1048,6 +1051,11 @@ export async function correctWeightEntry(
         `;
         const current = rows[0];
         if (!current) throw new Error('WEIGHT_ENTRY_NOT_FOUND');
+        if (current.source === 'image' && source.kind !== 'admin') {
+            // An MCP correction must not confirm its own transcription, or
+            // alter a previously reviewed value while keeping it confirmed.
+            throw new RangeError('Image-derived measurements can only be corrected or confirmed in the admin dashboard.');
+        }
 
         const activityDate = correction.activityDate ?? databaseDateToActivityDate(current.local_date as Date | string);
         const measuredAt = correction.measuredAt
@@ -1068,10 +1076,6 @@ export async function correctWeightEntry(
         const isPrimary = correction.isPrimary ?? Boolean(current.is_primary);
         if (isPrimary && confirmationStatus !== 'confirmed') throw new RangeError('Only a confirmed measurement can be primary.');
 
-        const lockDates = [...new Set([databaseDateToActivityDate(current.local_date as Date | string), activityDate])].sort();
-        for (const date of lockDates) {
-            await tx`SELECT pg_advisory_xact_lock(hashtext(${ownerId}), hashtext(${date}))`;
-        }
         if (isPrimary) {
             await tx`
                 UPDATE accountability_weight_entries

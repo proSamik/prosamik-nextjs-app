@@ -257,7 +257,7 @@ function addProgressTools(server: McpServer, principal: VerifiedMcpPrincipal): v
 
     server.registerTool('correct_weight_entry', {
         title: 'Correct a weight entry',
-        description: 'Correct an existing owner-scoped measurement using its entry ID and an idempotency key.',
+        description: 'Correct an existing owner-scoped non-image measurement using its entry ID and an idempotency key. Image-derived measurements must be corrected or confirmed in the admin dashboard.',
         inputSchema: WeightCorrectionInputSchema,
         scopeChallenge: requireScopes('progress:write'),
     }, async ({ correction, idempotencyKey }) => {
@@ -276,6 +276,7 @@ function addProgressTools(server: McpServer, principal: VerifiedMcpPrincipal): v
                 return scopedToolError('That idempotency key was already used for a different correction.');
             }
             if (error instanceof Error && error.message === 'WEIGHT_ENTRY_NOT_FOUND') return scopedToolError('Measurement not found.');
+            if (error instanceof RangeError) return scopedToolError(error.message);
             return scopedToolError('Unable to correct the measurement. Check the correction and try again.');
         }
     });
