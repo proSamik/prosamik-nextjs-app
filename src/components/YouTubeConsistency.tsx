@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
+import { useMemo, useState } from 'react';
 import { ExternalLink, Flame } from 'lucide-react';
 import { FaYoutube } from 'react-icons/fa';
+import {
+    CalendarDayPopover,
+    useCalendarPopover,
+} from '@/components/CalendarDayPopover';
 import ShareConsistencyCard from '@/components/ShareConsistencyCard';
-import type {
-    StreakRange,
-} from '@/lib/githubContributions';
+import type { StreakRange } from '@/lib/githubContributions';
 import type {
     YouTubeConsistencyData,
     YouTubePublishingStats,
@@ -27,15 +29,13 @@ interface CalendarDay {
     isFuture: boolean;
 }
 
-interface TooltipState extends CalendarDay {
-    left: number;
-    top: number;
-}
-
 const DAY_IN_MILLISECONDS = 86_400_000;
 const EMPTY_COLOR = '#ebedf0';
 const UPLOAD_COLORS = ['#ebedf0', '#fecaca', '#f87171', '#ef4444', '#b91c1c'];
-const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' });
+const MONTH_FORMATTER = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    timeZone: 'UTC',
+});
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
@@ -52,12 +52,16 @@ function addDays(date: Date, amount: number) {
 }
 
 function startOfUtcDay(date = new Date()) {
-    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    return new Date(
+        Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    );
 }
 
 function formatStreak(streak: StreakRange) {
     if (!streak.start || !streak.end) return 'No active streak';
-    const start = DATE_FORMATTER.format(new Date(`${streak.start}T00:00:00.000Z`));
+    const start = DATE_FORMATTER.format(
+        new Date(`${streak.start}T00:00:00.000Z`),
+    );
     const end = DATE_FORMATTER.format(new Date(`${streak.end}T00:00:00.000Z`));
     return start === end ? start : `${start} - ${end}`;
 }
@@ -74,27 +78,42 @@ function OverallStatsCard({ stats }: { stats: YouTubePublishingStats }) {
         <article className="relative mx-auto my-8 grid max-w-4xl grid-cols-3 rounded-xl border border-gray-200 bg-white shadow-sm">
             <ShareConsistencyCard platform="youtube" card="streak" />
             <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
-                <strong className="text-2xl font-bold sm:text-3xl">{stats.totalUploads}</strong>
-                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Uploads</span>
+                <strong className="text-2xl font-bold sm:text-3xl">
+                    {stats.totalUploads}
+                </strong>
+                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">
+                    Total Uploads
+                </span>
                 <span className="mt-2 text-[10px] leading-4 text-gray-500 sm:mt-3 sm:text-sm">
-                    {formatUploadRange(stats.firstUploadDate, stats.lastUploadDate)}
+                    {formatUploadRange(
+                        stats.firstUploadDate,
+                        stats.lastUploadDate,
+                    )}
                 </span>
             </div>
 
             <div className="flex min-h-36 flex-col items-center justify-center border-x border-gray-200 px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
                 <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-red-500 sm:h-24 sm:w-24 sm:border-[5px]">
                     <Flame className="absolute -top-4 h-6 w-6 fill-red-500 text-red-500 sm:-top-5 sm:h-8 sm:w-8" />
-                    <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
+                    <strong className="text-2xl font-bold sm:text-3xl">
+                        {stats.currentStreak.length}
+                    </strong>
                 </div>
-                <span className="mt-2 text-xs font-semibold text-red-600 sm:mt-3 sm:text-base">Current Streak</span>
+                <span className="mt-2 text-xs font-semibold text-red-600 sm:mt-3 sm:text-base">
+                    Current Streak
+                </span>
                 <span className="mt-1 text-[10px] leading-4 text-gray-500 sm:mt-2 sm:text-sm">
                     {formatStreak(stats.currentStreak)}
                 </span>
             </div>
 
             <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
-                <strong className="text-2xl font-bold sm:text-3xl">{stats.longestStreak.length}</strong>
-                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Longest Streak</span>
+                <strong className="text-2xl font-bold sm:text-3xl">
+                    {stats.longestStreak.length}
+                </strong>
+                <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">
+                    Longest Streak
+                </span>
                 <span className="mt-2 text-[10px] leading-4 text-gray-500 sm:mt-3 sm:text-sm">
                     {formatStreak(stats.longestStreak)}
                 </span>
@@ -121,18 +140,33 @@ function PublishingStatsCard({
             <h3 className={`text-xl font-bold ${colorClass}`}>{title}</h3>
             <div className="mt-5 grid grid-cols-2 divide-x divide-gray-200 text-center">
                 <div className="px-2">
-                    <strong className="text-2xl font-bold sm:text-3xl">{stats.totalUploads}</strong>
-                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">Uploads</p>
+                    <strong className="text-2xl font-bold sm:text-3xl">
+                        {stats.totalUploads}
+                    </strong>
+                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">
+                        Uploads
+                    </p>
                     <p className="mt-2 text-[10px] leading-4 text-gray-500 sm:text-xs">
-                        {formatUploadRange(stats.firstUploadDate, stats.lastUploadDate)}
+                        {formatUploadRange(
+                            stats.firstUploadDate,
+                            stats.lastUploadDate,
+                        )}
                     </p>
                 </div>
                 <div className="flex flex-col items-center px-2">
-                    <div className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 ${ringClass}`}>
-                        <Flame className={`absolute -top-4 h-6 w-6 ${flameClass}`} />
-                        <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
+                    <div
+                        className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 ${ringClass}`}
+                    >
+                        <Flame
+                            className={`absolute -top-4 h-6 w-6 ${flameClass}`}
+                        />
+                        <strong className="text-2xl font-bold sm:text-3xl">
+                            {stats.currentStreak.length}
+                        </strong>
                     </div>
-                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">Current streak</p>
+                    <p className="mt-2 text-xs text-gray-600 sm:text-sm">
+                        Current streak
+                    </p>
                     <p className="mt-2 text-[10px] leading-4 text-gray-500 sm:text-xs">
                         {formatStreak(stats.currentStreak)}
                     </p>
@@ -142,32 +176,52 @@ function PublishingStatsCard({
     );
 }
 
-export default function YouTubeConsistency({ data, standalone = false }: YouTubeConsistencyProps) {
+export default function YouTubeConsistency({
+    data,
+    standalone = false,
+}: YouTubeConsistencyProps) {
     const availableYears = useMemo(() => {
-        const years = [...new Set(data.videos.map((video) => Number(video.date.slice(0, 4))))];
+        const years = [
+            ...new Set(
+                data.videos.map((video) => Number(video.date.slice(0, 4))),
+            ),
+        ];
         return years.sort((first, second) => second - first);
     }, [data.videos]);
     const [view, setView] = useState<GraphView>({ mode: 'rolling' });
-    const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-    const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const popover = useCalendarPopover<CalendarDay>();
+    const tooltip = popover.selection?.value;
 
     const graph = useMemo(() => {
         const today = startOfUtcDay();
-        const selectedYear = view.mode === 'year' ? view.year : today.getUTCFullYear();
-        const rangeStart = view.mode === 'rolling'
-            ? addDays(today, -364)
-            : new Date(Date.UTC(selectedYear, 0, 1));
-        const rangeEnd = view.mode === 'rolling'
-            ? today
-            : new Date(Date.UTC(selectedYear, 11, 31));
+        const selectedYear =
+            view.mode === 'year' ? view.year : today.getUTCFullYear();
+        const rangeStart =
+            view.mode === 'rolling'
+                ? addDays(today, -364)
+                : new Date(Date.UTC(selectedYear, 0, 1));
+        const rangeEnd =
+            view.mode === 'rolling'
+                ? today
+                : new Date(Date.UTC(selectedYear, 11, 31));
         const graphStart = addDays(rangeStart, -rangeStart.getUTCDay());
         const graphEnd = addDays(rangeEnd, 6 - rangeEnd.getUTCDay());
-        const numberOfDays = Math.round((graphEnd.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS) + 1;
+        const numberOfDays =
+            Math.round(
+                (graphEnd.getTime() - graphStart.getTime()) /
+                    DAY_IN_MILLISECONDS,
+            ) + 1;
         const numberOfWeeks = Math.ceil(numberOfDays / 7);
-        const videosByDate = new Map<string, { shorts: YouTubeVideo[]; longForm: YouTubeVideo[] }>();
+        const videosByDate = new Map<
+            string,
+            { shorts: YouTubeVideo[]; longForm: YouTubeVideo[] }
+        >();
 
         data.videos.forEach((video) => {
-            const current = videosByDate.get(video.date) ?? { shorts: [], longForm: [] };
+            const current = videosByDate.get(video.date) ?? {
+                shorts: [],
+                longForm: [],
+            };
             if (video.type === 'short') current.shorts.push(video);
             else current.longForm.push(video);
             videosByDate.set(video.date, current);
@@ -178,7 +232,10 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
             if (date < rangeStart || date > rangeEnd) return null;
 
             const dateString = toDateString(date);
-            const videos = videosByDate.get(dateString) ?? { shorts: [], longForm: [] };
+            const videos = videosByDate.get(dateString) ?? {
+                shorts: [],
+                longForm: [],
+            };
             return {
                 date: dateString,
                 shorts: videos.shorts,
@@ -186,12 +243,17 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                 isFuture: date > today,
             };
         });
-        const monthLabels: Array<{ label: string; left: number; key: string }> = [];
-        let monthCursor = new Date(Date.UTC(rangeStart.getUTCFullYear(), rangeStart.getUTCMonth(), 1));
+        const monthLabels: Array<{ label: string; left: number; key: string }> =
+            [];
+        let monthCursor = new Date(
+            Date.UTC(rangeStart.getUTCFullYear(), rangeStart.getUTCMonth(), 1),
+        );
 
         while (monthCursor <= rangeEnd) {
             const week = Math.floor(
-                (monthCursor.getTime() - graphStart.getTime()) / DAY_IN_MILLISECONDS / 7
+                (monthCursor.getTime() - graphStart.getTime()) /
+                    DAY_IN_MILLISECONDS /
+                    7,
             );
             const monthLabel = {
                 label: MONTH_FORMATTER.format(monthCursor),
@@ -207,17 +269,19 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
             } else {
                 monthLabels.push(monthLabel);
             }
-            monthCursor = new Date(Date.UTC(
-                monthCursor.getUTCFullYear(),
-                monthCursor.getUTCMonth() + 1,
-                1
-            ));
+            monthCursor = new Date(
+                Date.UTC(
+                    monthCursor.getUTCFullYear(),
+                    monthCursor.getUTCMonth() + 1,
+                    1,
+                ),
+            );
         }
 
         const startString = toDateString(rangeStart);
         const endString = toDateString(rangeEnd);
         const uploadsInRange = data.videos.filter(
-            (video) => video.date >= startString && video.date <= endString
+            (video) => video.date >= startString && video.date <= endString,
         );
 
         return {
@@ -225,34 +289,20 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
             monthLabels,
             numberOfWeeks,
             selectedYear,
-            shorts: uploadsInRange.filter((video) => video.type === 'short').length,
-            longForm: uploadsInRange.filter((video) => video.type === 'long-form').length,
+            shorts: uploadsInRange.filter((video) => video.type === 'short')
+                .length,
+            longForm: uploadsInRange.filter(
+                (video) => video.type === 'long-form',
+            ).length,
         };
     }, [data.videos, view]);
 
-    const cancelTooltipHide = () => {
-        if (hideTimer.current) clearTimeout(hideTimer.current);
-    };
-
-    const scheduleTooltipHide = () => {
-        hideTimer.current = setTimeout(() => setTooltip(null), 180);
-    };
-
-    const showTooltip = (event: SyntheticEvent<HTMLElement>, day: CalendarDay) => {
-        cancelTooltipHide();
-        const bounds = event.currentTarget.getBoundingClientRect();
-        const tooltipHeight = 288;
-        setTooltip({
-            ...day,
-            left: Math.max(12, Math.min(bounds.left - 130, window.innerWidth - 332)),
-            top: bounds.bottom + tooltipHeight > window.innerHeight
-                ? Math.max(12, bounds.top - tooltipHeight - 8)
-                : bounds.bottom + 8,
-        });
-    };
-
     return (
-        <section className={standalone ? 'mt-8' : 'mt-16 border-t border-gray-200 pt-12'}>
+        <section
+            className={
+                standalone ? 'mt-8' : 'mt-16 border-t border-gray-200 pt-12'
+            }
+        >
             <header className="text-center">
                 <a
                     href={data.channelUrl}
@@ -293,12 +343,18 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
             <div className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
                 <ShareConsistencyCard platform="youtube" card="graph" />
                 {data.videos.length === 0 ? (
-                    <p className="text-gray-600">YouTube data will appear after the first sync.</p>
+                    <p className="text-gray-600">
+                        YouTube data will appear after the first sync.
+                    </p>
                 ) : (
                     <div className="flex flex-col gap-6 xl:flex-row">
                         <div className="min-w-0 flex-1">
                             <h3 className="pr-10 text-lg font-medium text-gray-700">
-                                {graph.shorts} Shorts and {graph.longForm} long-form videos {view.mode === 'rolling' ? 'in the last 365 days' : `in ${graph.selectedYear}`}
+                                {graph.shorts} Shorts and {graph.longForm}{' '}
+                                long-form videos{' '}
+                                {view.mode === 'rolling'
+                                    ? 'in the last 365 days'
+                                    : `in ${graph.selectedYear}`}
                             </h3>
 
                             <div className="mt-5 overflow-x-auto pb-3">
@@ -315,14 +371,18 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                     <div>
                                         <div
                                             className="relative mb-2 h-5 text-xs text-gray-500"
-                                            style={{ width: `${graph.numberOfWeeks * 15}px` }}
+                                            style={{
+                                                width: `${graph.numberOfWeeks * 15}px`,
+                                            }}
                                             aria-hidden="true"
                                         >
                                             {graph.monthLabels.map((month) => (
                                                 <span
                                                     key={month.key}
                                                     className="absolute top-0"
-                                                    style={{ left: `${month.left}px` }}
+                                                    style={{
+                                                        left: `${month.left}px`,
+                                                    }}
                                                 >
                                                     {month.label}
                                                 </span>
@@ -333,27 +393,63 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                             style={{ gridAutoColumns: '12px' }}
                                             aria-label="YouTube publishing calendar"
                                         >
-                                            {graph.cells.map((day, index) => (
+                                            {graph.cells.map((day, index) =>
                                                 day ? (
-                                                    <span
+                                                    <button
+                                                        type="button"
                                                         key={day.date}
                                                         tabIndex={0}
-                                                        onMouseEnter={(event) => showTooltip(event, day)}
-                                                        onMouseLeave={scheduleTooltipHide}
-                                                        onFocus={(event) => showTooltip(event, day)}
-                                                        onBlur={scheduleTooltipHide}
+                                                        onMouseEnter={(event) =>
+                                                            popover.show(
+                                                                day,
+                                                                event.currentTarget,
+                                                            )
+                                                        }
+                                                        onMouseLeave={
+                                                            popover.hideLater
+                                                        }
+                                                        onFocus={(event) =>
+                                                            popover.show(
+                                                                day,
+                                                                event.currentTarget,
+                                                            )
+                                                        }
+                                                        onClick={(event) =>
+                                                            popover.show(
+                                                                day,
+                                                                event.currentTarget,
+                                                                true,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            popover.hideLater
+                                                        }
                                                         className="h-3 w-3 cursor-pointer rounded-[2px] outline-none ring-red-500 hover:ring-2 focus:ring-2"
                                                         aria-label={`${day.shorts.length} Shorts and ${day.longForm.length} long-form videos on ${day.date}`}
                                                         style={{
-                                                            backgroundColor: day.isFuture
-                                                                ? EMPTY_COLOR
-                                                                : UPLOAD_COLORS[Math.min(day.shorts.length + day.longForm.length, 4)],
+                                                            backgroundColor:
+                                                                day.isFuture
+                                                                    ? EMPTY_COLOR
+                                                                    : UPLOAD_COLORS[
+                                                                          Math.min(
+                                                                              day
+                                                                                  .shorts
+                                                                                  .length +
+                                                                                  day
+                                                                                      .longForm
+                                                                                      .length,
+                                                                              4,
+                                                                          )
+                                                                      ],
                                                         }}
                                                     />
                                                 ) : (
-                                                    <span key={`empty-${index}`} className="h-3 w-3" />
-                                                )
-                                            ))}
+                                                    <span
+                                                        key={`empty-${index}`}
+                                                        className="h-3 w-3"
+                                                    />
+                                                ),
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -366,14 +462,21 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                         key={color}
                                         className="h-3 w-3 rounded-[2px]"
                                         style={{ backgroundColor: color }}
-                                        aria-label={index === 0 ? 'No uploads' : `${index}${index === 4 ? '+' : ''} uploads`}
+                                        aria-label={
+                                            index === 0
+                                                ? 'No uploads'
+                                                : `${index}${index === 4 ? '+' : ''} uploads`
+                                        }
                                     />
                                 ))}
                                 <span className="ml-1">More</span>
                             </div>
                         </div>
 
-                        <div className="flex gap-2 overflow-x-auto xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1" aria-label="YouTube range">
+                        <div
+                            className="flex gap-2 overflow-x-auto xl:max-h-[220px] xl:w-32 xl:flex-col xl:overflow-y-auto xl:pr-1"
+                            aria-label="YouTube range"
+                        >
                             <button
                                 type="button"
                                 onClick={() => setView({ mode: 'rolling' })}
@@ -389,9 +492,12 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                 <button
                                     key={year}
                                     type="button"
-                                    onClick={() => setView({ mode: 'year', year })}
+                                    onClick={() =>
+                                        setView({ mode: 'year', year })
+                                    }
                                     className={`shrink-0 rounded-md px-4 py-2 text-left text-sm transition-colors ${
-                                        view.mode === 'year' && view.year === year
+                                        view.mode === 'year' &&
+                                        view.year === year
                                             ? 'bg-red-600 font-medium text-white'
                                             : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
@@ -405,24 +511,34 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
             </div>
 
             {tooltip && (
-                <aside
-                    className="fixed z-[1100] max-h-72 w-80 overflow-y-auto rounded-lg border border-gray-200 bg-white p-4 shadow-xl"
-                    style={{ left: tooltip.left, top: tooltip.top }}
-                    onMouseEnter={cancelTooltipHide}
-                    onMouseLeave={scheduleTooltipHide}
+                <CalendarDayPopover
+                    anchor={popover.selection!.anchor}
+                    pinned={popover.selection!.pinned}
+                    onClose={popover.close}
+                    onEnter={popover.cancelHide}
+                    onLeave={popover.hideLater}
                 >
                     <p className="font-semibold text-gray-900">
-                        {DATE_FORMATTER.format(new Date(`${tooltip.date}T00:00:00.000Z`))}
+                        {DATE_FORMATTER.format(
+                            new Date(`${tooltip.date}T00:00:00.000Z`),
+                        )}
                     </p>
                     {tooltip.isFuture ? (
-                        <p className="mt-2 text-sm text-gray-500">No publishing data yet.</p>
-                    ) : tooltip.shorts.length + tooltip.longForm.length === 0 ? (
-                        <p className="mt-2 text-sm text-gray-500">No videos published.</p>
+                        <p className="mt-2 text-sm text-gray-500">
+                            No publishing data yet.
+                        </p>
+                    ) : tooltip.shorts.length + tooltip.longForm.length ===
+                      0 ? (
+                        <p className="mt-2 text-sm text-gray-500">
+                            No videos published.
+                        </p>
                     ) : (
                         <div className="mt-3 space-y-4">
                             {tooltip.shorts.length > 0 && (
                                 <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-red-600">Shorts</p>
+                                    <p className="text-xs font-semibold uppercase tracking-wide text-red-600">
+                                        Shorts
+                                    </p>
                                     <ul className="mt-2 space-y-2">
                                         {tooltip.shorts.map((video) => (
                                             <li key={video.id}>
@@ -432,7 +548,9 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                                     rel="noopener noreferrer"
                                                     className="flex items-start gap-2 text-sm text-gray-700 hover:text-red-600"
                                                 >
-                                                    <span className="line-clamp-2 flex-1">{video.title}</span>
+                                                    <span className="line-clamp-2 flex-1">
+                                                        {video.title}
+                                                    </span>
                                                     <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                                                 </a>
                                             </li>
@@ -442,7 +560,9 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                             )}
                             {tooltip.longForm.length > 0 && (
                                 <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-red-600">Long-form videos</p>
+                                    <p className="text-xs font-semibold uppercase tracking-wide text-red-600">
+                                        Long-form videos
+                                    </p>
                                     <ul className="mt-2 space-y-2">
                                         {tooltip.longForm.map((video) => (
                                             <li key={video.id}>
@@ -452,7 +572,9 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                                                     rel="noopener noreferrer"
                                                     className="flex items-start gap-2 text-sm text-gray-700 hover:text-red-600"
                                                 >
-                                                    <span className="line-clamp-2 flex-1">{video.title}</span>
+                                                    <span className="line-clamp-2 flex-1">
+                                                        {video.title}
+                                                    </span>
                                                     <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                                                 </a>
                                             </li>
@@ -462,7 +584,7 @@ export default function YouTubeConsistency({ data, standalone = false }: YouTube
                             )}
                         </div>
                     )}
-                </aside>
+                </CalendarDayPopover>
             )}
         </section>
     );
