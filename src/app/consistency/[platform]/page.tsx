@@ -114,7 +114,7 @@ async function GitHubConsistencyPage() {
 
             <div className="mx-auto my-10 max-w-4xl"><ConsistencyStreakCard total={stats.totalContributions} current={stats.currentStreak.length} longest={stats.longestStreak.length} totalRange={stats.firstContributionDate ? `${formatDate(stats.firstContributionDate)} - Present` : 'Waiting for first sync'} currentRange={stats.currentStreak.length > 0 ? formatStreakRange(stats.currentStreak) : formatDate(today) ?? undefined} longestRange={formatStreakRange(stats.longestStreak)} share={<ShareConsistencyCard platform="github" card="streak" />} /></div>
 
-            <ConsistencyGraph days={data.days} shareable />
+            <ConsistencyGraph days={data.days} profileUrl={`https://github.com/${data.username}`} shareable />
             {data.syncedAt && (
                 <p className="mt-4 text-right text-xs text-gray-500">
                     Last synced {new Date(data.syncedAt).toLocaleString('en-US', { timeZone: 'UTC' })} UTC
