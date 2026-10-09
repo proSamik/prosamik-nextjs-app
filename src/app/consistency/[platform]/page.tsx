@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Flame } from 'lucide-react';
+import ConsistencyStreakCard from '@/components/ConsistencyStreakCard';
 import { FaGithub } from 'react-icons/fa';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -112,33 +112,7 @@ async function GitHubConsistencyPage() {
                 </p>
             </header>
 
-            <section className="relative mx-auto my-10 grid max-w-4xl grid-cols-3 rounded-xl border border-gray-200 bg-white shadow-sm">
-                <ShareConsistencyCard platform="github" card="streak" />
-                <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
-                    <strong className="text-2xl font-bold sm:text-3xl">{stats.totalContributions.toLocaleString('en-US')}</strong>
-                    <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Total Contributions</span>
-                    <span className="mt-2 text-[10px] text-gray-500 sm:mt-3 sm:text-sm">
-                        {stats.firstContributionDate ? `${formatDate(stats.firstContributionDate)} - Present` : 'Waiting for first sync'}
-                    </span>
-                </div>
-
-                <div className="flex min-h-36 flex-col items-center justify-center border-x border-gray-200 px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
-                    <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-4 border-orange-500 sm:h-24 sm:w-24 sm:border-[5px]">
-                        <Flame className="absolute -top-4 h-6 w-6 fill-orange-500 text-orange-500 sm:-top-5 sm:h-8 sm:w-8" />
-                        <strong className="text-2xl font-bold sm:text-3xl">{stats.currentStreak.length}</strong>
-                    </div>
-                    <span className="mt-2 text-xs font-semibold text-orange-600 sm:mt-3 sm:text-base">Current Streak</span>
-                    <span className="mt-1 text-[10px] text-gray-500 sm:mt-2 sm:text-sm">
-                        {stats.currentStreak.length > 0 ? formatStreakRange(stats.currentStreak) : formatDate(today)}
-                    </span>
-                </div>
-
-                <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
-                    <strong className="text-2xl font-bold sm:text-3xl">{stats.longestStreak.length}</strong>
-                    <span className="mt-2 text-xs text-gray-700 sm:mt-3 sm:text-base">Longest Streak</span>
-                    <span className="mt-2 text-[10px] text-gray-500 sm:mt-3 sm:text-sm">{formatStreakRange(stats.longestStreak)}</span>
-                </div>
-            </section>
+            <div className="mx-auto my-10 max-w-4xl"><ConsistencyStreakCard total={stats.totalContributions} current={stats.currentStreak.length} longest={stats.longestStreak.length} totalRange={stats.firstContributionDate ? `${formatDate(stats.firstContributionDate)} - Present` : 'Waiting for first sync'} currentRange={stats.currentStreak.length > 0 ? formatStreakRange(stats.currentStreak) : formatDate(today) ?? undefined} longestRange={formatStreakRange(stats.longestStreak)} share={<ShareConsistencyCard platform="github" card="streak" />} /></div>
 
             <ConsistencyGraph days={data.days} shareable />
             {data.syncedAt && (
