@@ -38,6 +38,7 @@ import {
     PreflightCheckInReminderMcpInputSchema,
     RecordWeightEntryMcpInputSchema,
     RecordCheckInReminderDeliveryMcpInputSchema,
+    SummaryStatusMcpInputSchema,
 } from '@/lib/accountability-mcp-contract';
 import { assertActivityDate } from '@/lib/accountability-domain';
 import {
@@ -890,15 +891,18 @@ function addSummaryTools(
     server.registerTool(
         'get_summary_status',
         {
-            title: 'Read recent summary status',
+            title: 'Read summaries and approval details',
             description:
-                'Read the 50 most recent drafts, approvals, publications and audit events for this owner.',
-            inputSchema: EmptyInputSchema,
+                'Read full summary text, revision numbers, draft/approved/published status, approval snapshots, selected images, publications and audit events for the authenticated owner. Optionally select an IST activityDate to review a specific day in chat; without a date, return the 50 most recent records in each collection.',
+            inputSchema: SummaryStatusMcpInputSchema,
             scopeChallenge: requireScopes('summaries:write'),
         },
-        async () => {
+        async ({ activityDate }) => {
             try {
-                const status = await getSummaryStatus(principal.ownerId);
+                const status = await getSummaryStatus(
+                    principal.ownerId,
+                    activityDate ? assertActivityDate(activityDate) : undefined,
+                );
                 return scopedToolResult({
                     drafts: status.drafts.slice(0, 50),
                     revisions: status.revisions.slice(0, 50),
@@ -942,7 +946,7 @@ function addSummaryTools(
         {
             title: 'Edit a summary draft',
             description:
-                'Save a new immutable revision of a private summary draft, rejecting stale revision numbers.',
+                'Edit a summary for the authenticated owner, including an already approved summary. Save a new immutable draft revision, rejecting stale revision numbers. Previous approval snapshots remain unchanged; approve the new revision separately. Read get_summary_status to show the full text and current revision in chat.',
             inputSchema: SummaryEditInputSchema,
             scopeChallenge: requireScopes('summaries:write'),
         },
@@ -1041,24 +1045,37 @@ function addSummaryTools(
         {
             title: 'Approve a summary revision',
             description:
-                'Approve an exact immutable summary revision and explicit sanitized public image selections. Approval is required before publishing.',
+                'When the owner asks you to approve on their behalf, mark their selected latest summary revision as approved. Use get_summary_status to read and show its full text and current revision in chat, then approve that exact revision and explicit sanitized public image selections. Returns the approved text and status. Approval does not publish; edits require a new revision and approval.',
             inputSchema: SummaryApproveInputSchema,
             scopeChallenge: requireScopes('summaries:write'),
         },
         async ({ draftId, revisionNumber, publicMedia }) => {
             try {
-                return scopedToolResult(
-                    await approveSummaryRevision(
-                        principal.ownerId,
-                        draftId,
-                        revisionNumber,
-                        publicMedia,
-                    ),
+                const approval = await approveSummaryRevision(
+                    principal.ownerId,
+                    draftId,
+                    revisionNumber,
+                    publicMedia,
                 );
+                return scopedToolResult({
+                    ...approval,
+                    draftId,
+                    revisionNumber,
+                    state: 'approved',
+                });
             } catch (error) {
                 if (
                     error instanceof Error &&
-                    error.message === 'SUMMARY_REVISION_NOT_FOUND'
+                    error.message === 'SUMMARY_REVISION_CONFLICT'
+                ) {
+                    return scopedToolError(
+                        'The summary changed. Read get_summary_status again and approve the latest revision.',
+                    );
+                }
+                if (
+                    error instanceof Error &&
+                    (error.message === 'SUMMARY_REVISION_NOT_FOUND' ||
+                        error.message === 'SUMMARY_DRAFT_NOT_FOUND')
                 )
                     return scopedToolError('Summary revision not found.');
                 if (
