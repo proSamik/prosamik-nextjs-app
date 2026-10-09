@@ -18,7 +18,7 @@ async function runMigrations() {
     // stand-in keeps this a schema smoke test rather than an auth integration.
     await db.exec('CREATE TABLE "user" (id TEXT PRIMARY KEY);');
 
-    for (const name of ['0001_random_thoughts.sql', '0002_accountability.sql', '0003_auth_account_issuer_compatibility.sql']) {
+    for (const name of ['0001_random_thoughts.sql', '0002_accountability.sql', '0003_auth_account_issuer_compatibility.sql', '0004_food_log.sql', '0005_mcp_access_logs.sql']) {
         const sql = await readFile(resolve(migrationsDirectory, name), 'utf8');
         await db.exec(sql);
     }

@@ -91,3 +91,13 @@ test('API key scope contract uses separate read/write/publish grants and private
     assert.equal(ApiEnvelopeSchema.safeParse({ data: [] }).success, true);
     assert.equal(ApiEnvelopeSchema.safeParse({ data: [], ownerId: 'unexpected' }).success, false);
 });
+
+test('API keys support precise durations and reject conflicting expiration settings', () => {
+    const settings = { label: 'Temporary client', scopes: ['food:read'] };
+    assert.equal(ApiKeyCreateRequestSchema.parse({...settings,expiresInMinutes:60}).expiresInMinutes,60);
+    assert.equal(ApiKeyCreateRequestSchema.safeParse({...settings,expiresInMinutes:0}).success,false);
+    assert.equal(ApiKeyCreateRequestSchema.safeParse({...settings,expiresInMinutes:1.5}).success,false);
+    assert.equal(ApiKeyCreateRequestSchema.safeParse({...settings,expiresInMinutes:525601}).success,false);
+    assert.equal(ApiKeyCreateRequestSchema.safeParse({...settings,expiresInMinutes:60,expiresInDays:90}).success,false);
+    assert.equal(ApiKeyCreateRequestSchema.safeParse({...settings,expiresAt:'2026-10-09T18:00:00+05:30'}).success,true);
+});

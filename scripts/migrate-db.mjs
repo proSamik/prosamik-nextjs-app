@@ -22,6 +22,8 @@ const ACCOUNTABILITY_MCP_SCOPES = [
     'media:write',
     'summaries:write',
     'summaries:publish',
+    'food:read',
+    'food:write',
 ];
 const MIGRATIONS_DIRECTORY = resolve(dirname(fileURLToPath(import.meta.url)), 'migrations');
 const MIGRATION_LOCK_NAME = 'prosamik:app-schema-migrations';
