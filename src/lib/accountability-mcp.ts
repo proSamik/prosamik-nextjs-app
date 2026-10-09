@@ -247,7 +247,7 @@ function addProgressTools(
         {
             title: 'Record accountability progress',
             description:
-                'Record one habit or no-fap status update. Future dates are not accepted; include a fresh idempotency key for each intended update.',
+                'Record one habit or no-fap status update. Habit context can be supplied as optional free-text notes for that habit and date; no structured activity fields are required. Future dates are not accepted; include a fresh idempotency key for each intended update.',
             inputSchema: RecordProgressInputSchema,
             scopeChallenge: requireScopes('progress:write'),
         },
