@@ -19,6 +19,7 @@ const DATABASE_RETRY_DELAY_MS = 750;
 
 const globalDatabase = globalThis as typeof globalThis & {
     consistencyDatabase?: DatabaseClient;
+    consistencyDatabasePoolMax?: number;
 };
 
 export function getDatabase() {
@@ -28,9 +29,16 @@ export function getDatabase() {
         throw new Error('DATABASE_URL is not configured.');
     }
 
+    const poolMax = Math.max(1, Math.min(6, Math.floor(Number(process.env.DATABASE_POOL_MAX) || 4)));
+    if (globalDatabase.consistencyDatabase && globalDatabase.consistencyDatabasePoolMax !== poolMax) {
+        // A dev hot reload can change pool settings while preserving globals.
+        // Drain the old pool without cancelling its in-flight queries.
+        void globalDatabase.consistencyDatabase.end();
+        globalDatabase.consistencyDatabase = undefined;
+    }
     if (!globalDatabase.consistencyDatabase) {
         globalDatabase.consistencyDatabase = postgres(databaseUrl, {
-            max: 1,
+            max: poolMax,
             idle_timeout: 20,
             connect_timeout: 15,
             prepare: false,
@@ -38,6 +46,7 @@ export function getDatabase() {
         });
     }
 
+    globalDatabase.consistencyDatabasePoolMax = poolMax;
     return globalDatabase.consistencyDatabase;
 }
 

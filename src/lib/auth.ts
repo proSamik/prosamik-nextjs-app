@@ -27,6 +27,8 @@ export const ACCOUNTABILITY_MCP_SCOPES = [
     'media:write',
     'summaries:write',
     'summaries:publish',
+    'food:read',
+    'food:write',
 ] as const;
 
 if (!googleClientId || !googleClientSecret) {
