@@ -15,6 +15,7 @@ import {
 } from '@/lib/accountability-client-cache';
 import Image from 'next/image';
 import {
+    useId,
     useCallback,
     useEffect,
     useMemo,
@@ -43,6 +44,7 @@ import {
     FileText,
     KeyRound,
     LoaderCircle,
+    Maximize2,
     Utensils,
     Play,
     Plus,
@@ -591,21 +593,21 @@ function DailyHeatmap({
                 }
                 totalRange={
                     successful.length
-                        ? `${successful.slice().sort()[0]} — ${today}`
+                        ? `${dateLabel(successful.slice().sort()[0], { dateStyle: 'medium' })} — ${dateLabel(today, { dateStyle: 'medium' })}`
                         : 'No completed days yet'
                 }
                 currentRange={
                     weekly
                         ? `${weeklyStats.currentWeek.successDays} / 7 this week · 5 to win`
                         : daily.currentStartDate
-                          ? `${daily.currentStartDate} — ${daily.currentEndDate}`
+                          ? `${dateLabel(daily.currentStartDate, { dateStyle: 'medium' })} — ${dateLabel(daily.currentEndDate, { dateStyle: 'medium' })}`
                           : 'No active streak'
                 }
                 longestRange={
                     weekly
                         ? 'Weeks with at least five completed days'
                         : daily.longestStartDate
-                          ? `${daily.longestStartDate} — ${daily.longestEndDate}`
+                          ? `${dateLabel(daily.longestStartDate, { dateStyle: 'medium' })} — ${dateLabel(daily.longestEndDate, { dateStyle: 'medium' })}`
                           : 'No completed streak'
                 }
                 share={
@@ -747,7 +749,6 @@ function AccountabilityShell({
 
 function Panel({
     title,
-    description,
     children,
     action,
 }: {
@@ -758,21 +759,149 @@ function Panel({
 }) {
     return (
         <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-5">
-            <div className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+            <div className="mb-4 flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
                 <div>
                     <h2 className="text-base font-bold tracking-tight text-stone-950">
                         {title}
                     </h2>
-                    {description && (
-                        <p className="mt-1 text-sm leading-5 text-stone-600">
-                            {description}
-                        </p>
-                    )}
                 </div>
                 {action}
             </div>
             {children}
         </section>
+    );
+}
+
+function TrackerDialog({
+    title,
+    children,
+    onClose,
+}: {
+    title: string;
+    children: ReactNode;
+    onClose: () => void;
+}) {
+    const dialog = useRef<HTMLDialogElement>(null);
+    const titleId = useId();
+    useEffect(() => {
+        const element = dialog.current;
+        element?.showModal();
+        return () => element?.close();
+    }, []);
+    return (
+        <dialog
+            ref={dialog}
+            onCancel={onClose}
+            aria-labelledby={titleId}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    if (
+                        event.clientX < rect.left ||
+                        event.clientX > rect.right ||
+                        event.clientY < rect.top ||
+                        event.clientY > rect.bottom
+                    )
+                        onClose();
+                }
+            }}
+            className="fixed inset-0 m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] max-w-4xl overflow-hidden rounded-2xl border border-stone-200 bg-white p-0 text-stone-950 shadow-xl backdrop:bg-black/40"
+        >
+            <div className="flex items-center justify-between gap-4 border-b border-stone-200 px-4 py-3 sm:px-6">
+            <h2 id={titleId} className="min-w-0 break-words text-lg font-bold">
+                    {title}
+                </h2>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Close dialog"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-lg hover:bg-stone-100"
+                >
+                    <X size={20} />
+                </button>
+            </div>
+            <div className="max-h-[calc(100dvh_-_7rem)] overflow-y-auto overscroll-contain p-4 sm:p-6">
+                {children}
+            </div>
+        </dialog>
+    );
+}
+
+function evidenceIds(record: JsonRecord): string[] {
+    const ids = getValue(record, 'evidenceAssetIds');
+    return Array.isArray(ids)
+        ? ids.filter((id): id is string => typeof id === 'string')
+        : [];
+}
+
+function HistoryFilters({
+    from,
+    to,
+    onFrom,
+    onTo,
+    images,
+    onImages,
+    sort,
+    onSort,
+}: {
+    from: string;
+    to: string;
+    onFrom: (value: string) => void;
+    onTo: (value: string) => void;
+    images: string;
+    onImages: (value: string) => void;
+    sort: string;
+    onSort: (value: string) => void;
+}) {
+    const field =
+        'min-h-10 min-w-0 w-full rounded-lg border border-stone-300 bg-white px-2 text-sm font-normal';
+    return (
+        <div className="grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 lg:flex lg:flex-nowrap">
+            <label className="grid min-w-0 gap-1 text-xs font-bold">
+                From
+                <input
+                    type="date"
+                    value={from}
+                    max={to}
+                    onChange={(e) => e.target.value && onFrom(e.target.value)}
+                    className={field}
+                />
+            </label>
+            <label className="grid min-w-0 gap-1 text-xs font-bold">
+                To
+                <input
+                    type="date"
+                    value={to}
+                    min={from}
+                    max={localDateValue()}
+                    onChange={(e) => e.target.value && onTo(e.target.value)}
+                    className={field}
+                />
+            </label>
+            <label className="grid min-w-0 gap-1 text-xs font-bold">
+                Images
+                <select
+                    value={images}
+                    onChange={(e) => onImages(e.target.value)}
+                    className={field}
+                >
+                    <option value="all">All entries</option>
+                    <option value="with">With images</option>
+                    <option value="without">Without images</option>
+                </select>
+            </label>
+            <label className="grid min-w-0 gap-1 text-xs font-bold">
+                Sort
+                <select
+                    value={sort}
+                    onChange={(e) => onSort(e.target.value)}
+                    className={field}
+                >
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                </select>
+            </label>
+        </div>
     );
 }
 
@@ -1101,6 +1230,7 @@ function ProgressHistory({
 }
 
 function ProgressSection() {
+    const [editorOpen, setEditorOpen] = useState(false);
     const [activityDate, setActivityDate] = useState(localDateValue);
     const rangeEnd = localDateValue();
     const rangeStart = addActivityDays(rangeEnd, -3660);
@@ -1162,7 +1292,15 @@ function ProgressSection() {
         <>
             <Panel
                 title="Activity tracker"
-                description="Select a year or view the last 365 days. Select a square to update that day."
+                action={
+                    <button
+                        type="button"
+                        onClick={() => setEditorOpen(true)}
+                        className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white"
+                    >
+                        Update a day
+                    </button>
+                }
             >
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && (
@@ -1180,16 +1318,7 @@ function ProgressSection() {
                                 )}
                                 onSelect={(date) => {
                                     setActivityDate(date);
-                                    requestAnimationFrame(() =>
-                                        document
-                                            .getElementById(
-                                                'activity-day-editor',
-                                            )
-                                            ?.scrollIntoView({
-                                                behavior: 'smooth',
-                                                block: 'start',
-                                            }),
-                                    );
+                                    setEditorOpen(true);
                                 }}
                             />
                         ))}
@@ -1197,74 +1326,76 @@ function ProgressSection() {
                 )}
             </Panel>
             <NoFapTracker />
-            <Panel
-                title="Update a day"
-                description="Record each activity for the selected date."
-            >
-                <div
-                    id="activity-day-editor"
-                    className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+            {editorOpen && (
+                <TrackerDialog
+                    title="Update a day"
+                    onClose={() => setEditorOpen(false)}
                 >
-                    <label className="grid max-w-xs gap-1.5 text-sm font-bold text-stone-800">
-                        Activity date (IST)
-                        <input
-                            type="date"
-                            min={rangeStart}
-                            max={rangeEnd}
-                            value={activityDate}
-                            onChange={(event) =>
-                                setActivityDate(event.target.value)
-                            }
-                            className="min-h-11 rounded-lg border border-stone-300 bg-white px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                        />
-                    </label>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600">
-                        <span className="font-bold">Status key</span>
-                        {(
-                            [
-                                'unknown',
-                                'incomplete',
-                                'completed',
-                            ] as HabitStatus[]
-                        ).map((status) => (
-                            <StatusBadge key={status} status={status} />
-                        ))}
+                    <div
+                        id="activity-day-editor"
+                        className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+                    >
+                        <label className="grid max-w-xs gap-1.5 text-sm font-bold text-stone-800">
+                            Activity date (IST)
+                            <input
+                                type="date"
+                                min={rangeStart}
+                                max={rangeEnd}
+                                value={activityDate}
+                                onChange={(event) =>
+                                    setActivityDate(event.target.value)
+                                }
+                                className="min-h-11 rounded-lg border border-stone-300 bg-white px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                            />
+                        </label>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600">
+                            <span className="font-bold">Status key</span>
+                            {(
+                                [
+                                    'unknown',
+                                    'incomplete',
+                                    'completed',
+                                ] as HabitStatus[]
+                            ).map((status) => (
+                                <StatusBadge key={status} status={status} />
+                            ))}
+                        </div>
                     </div>
-                </div>
-                <StatusPanel state={state} error={error} onRetry={reload} />
-                {state === 'ready' && (
-                    <div className="space-y-3">
-                        {habitDefinitions.map((definition) => {
-                            const current = habits.find(
-                                (habit) =>
-                                    getText(
-                                        habit,
-                                        'habitKey',
-                                        'habit_key',
-                                        'key',
-                                    ) === definition.key,
-                            );
-                            return (
-                                <HabitProgressCard
-                                    key={`${activityDate}-${definition.key}`}
-                                    habitKey={definition.key}
-                                    label={definition.label}
-                                    current={current}
-                                    disabled={saving}
-                                    onSave={saveHabit}
-                                />
-                            );
-                        })}
-                    </div>
-                )}
-                {progressNotice && (
-                    <div className="mt-4">
-                        <Notice kind={progressNotice.kind}>
-                            {progressNotice.text}
-                        </Notice>
-                    </div>
-                )}
-            </Panel>
+                    <StatusPanel state={state} error={error} onRetry={reload} />
+                    {state === 'ready' && (
+                        <div className="space-y-3">
+                            {habitDefinitions.map((definition) => {
+                                const current = habits.find(
+                                    (habit) =>
+                                        getText(
+                                            habit,
+                                            'habitKey',
+                                            'habit_key',
+                                            'key',
+                                        ) === definition.key,
+                                );
+                                return (
+                                    <HabitProgressCard
+                                        key={`${activityDate}-${definition.key}`}
+                                        habitKey={definition.key}
+                                        label={definition.label}
+                                        current={current}
+                                        disabled={saving}
+                                        onSave={saveHabit}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
+                    {progressNotice && (
+                        <div className="mt-4">
+                            <Notice kind={progressNotice.kind}>
+                                {progressNotice.text}
+                            </Notice>
+                        </div>
+                    )}
+                </TrackerDialog>
+            )}
             <Panel
                 title="Progress history"
                 description="One row per recorded day. Green is completed; unfilled squares are incomplete or not updated."
@@ -1384,6 +1515,7 @@ function HabitProgressCard({
 }
 
 function NoFapTracker() {
+    const [editorOpen, setEditorOpen] = useState(false);
     const endpoint = `${endpointBySection.progress}?from=${addActivityDays(localDateValue(), -3660)}&to=${localDateValue()}`;
     const noFap = usePrivateData(endpoint);
     const noFapRoot =
@@ -1418,6 +1550,7 @@ function NoFapTracker() {
                 kind: 'success',
                 text: `No-fap status saved for ${dateLabel(date)}.`,
             });
+            setEditorOpen(false);
             noFap.reload();
         } catch (cause) {
             setNoFapNotice({
@@ -1435,7 +1568,15 @@ function NoFapTracker() {
     return (
         <Panel
             title="No-fap tracker"
-            description="Daily squares, weekly wins. A winning week has at least five success days."
+            action={
+                <button
+                    type="button"
+                    onClick={() => setEditorOpen(true)}
+                    className="min-h-10 rounded-lg border border-stone-300 px-4 text-sm font-bold"
+                >
+                    Update a day
+                </button>
+            }
         >
             <StatusPanel
                 state={noFap.state}
@@ -1448,62 +1589,83 @@ function NoFapTracker() {
                         title="No-fap"
                         rows={noFapDays}
                         weekly
-                        onSelect={setNoFapSelectedDate}
+                        onSelect={(date) => {
+                            setNoFapSelectedDate(date);
+                            setEditorOpen(true);
+                        }}
                     />
-                    <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3">
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Update a day
-                            <input
-                                type="date"
-                                value={noFapSelectedDate}
-                                max={localDateValue()}
-                                onChange={(e) =>
-                                    setNoFapSelectedDate(e.target.value)
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm font-normal"
-                            />
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                            {(
-                                ['success', 'relapse', 'not_tracked'] as const
-                            ).map((option) => {
-                                const selectedStatus = getText(
-                                    noFapDays.find(
-                                        (item) =>
-                                            getText(item, 'date') ===
-                                            noFapSelectedDate,
-                                    ) ?? {},
-                                    'status',
-                                );
-                                return (
-                                    <button
-                                        key={option}
-                                        type="button"
-                                        aria-pressed={selectedStatus === option}
-                                        disabled={
-                                            noFapSelectedDate >
-                                                localDateValue() ||
-                                            Boolean(noFapBusy) ||
-                                            selectedStatus === option
+                    {editorOpen && (
+                        <TrackerDialog
+                            title="Update no-fap status"
+                            onClose={() => setEditorOpen(false)}
+                        >
+                            <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3">
+                                <label className="grid gap-1 text-xs font-bold text-stone-700">
+                                    Update a day
+                                    <input
+                                        type="date"
+                                        value={noFapSelectedDate}
+                                        max={localDateValue()}
+                                        onChange={(e) =>
+                                            setNoFapSelectedDate(e.target.value)
                                         }
-                                        onClick={() =>
-                                            void setNoFapStatus(
-                                                noFapSelectedDate,
-                                                option,
-                                            )
-                                        }
-                                        className={`min-h-10 rounded-lg border px-3 text-xs font-bold disabled:opacity-50 ${option === 'success' ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : option === 'relapse' ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-amber-300 bg-amber-50 text-amber-900'}`}
-                                    >
-                                        {option === 'success'
-                                            ? 'Yes · Success'
-                                            : option === 'relapse'
-                                              ? 'No · Relapse'
-                                              : 'Not updated'}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
+                                        className="min-h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm font-normal"
+                                    />
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {(
+                                        [
+                                            'success',
+                                            'relapse',
+                                            'not_tracked',
+                                        ] as const
+                                    ).map((option) => {
+                                        const selectedStatus = getText(
+                                            noFapDays.find(
+                                                (item) =>
+                                                    getText(item, 'date') ===
+                                                    noFapSelectedDate,
+                                            ) ?? {},
+                                            'status',
+                                        );
+                                        return (
+                                            <button
+                                                key={option}
+                                                type="button"
+                                                aria-pressed={
+                                                    selectedStatus === option
+                                                }
+                                                disabled={
+                                                    noFapSelectedDate >
+                                                        localDateValue() ||
+                                                    Boolean(noFapBusy) ||
+                                                    selectedStatus === option
+                                                }
+                                                onClick={() =>
+                                                    void setNoFapStatus(
+                                                        noFapSelectedDate,
+                                                        option,
+                                                    )
+                                                }
+                                                className={`min-h-10 rounded-lg border px-3 text-xs font-bold disabled:opacity-50 ${option === 'success' ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : option === 'relapse' ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-amber-300 bg-amber-50 text-amber-900'}`}
+                                            >
+                                                {option === 'success'
+                                                    ? 'Yes · Success'
+                                                    : option === 'relapse'
+                                                      ? 'No · Relapse'
+                                                      : 'Not updated'}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            {noFapNotice && (
+                                <Notice kind={noFapNotice.kind}>
+                                    {noFapNotice.text}
+                                </Notice>
+                            )}
+                        </TrackerDialog>
+                    )}
                 </>
             )}
             {noFapNotice && (
@@ -1516,6 +1678,11 @@ function NoFapTracker() {
 }
 
 function CheckInsSection() {
+    const [answerSlot, setAnswerSlot] = useState<{
+        date: string;
+        id: string;
+        label: string;
+    } | null>(null);
     const [selectedDate, setSelectedDate] = useState(localDateValue);
     const checkInEndpoint = `${endpointBySection['check-ins']}?from=${selectedDate}&to=${selectedDate}`;
     const { data, state, error, reload } = usePrivateData(checkInEndpoint);
@@ -1570,6 +1737,7 @@ function CheckInsSection() {
                 ...current,
                 [`${date}:${slotId}`]: '',
             }));
+            setAnswerSlot(null);
             reload();
         } catch (cause) {
             setAnswerNotice({
@@ -1634,7 +1802,9 @@ function CheckInsSection() {
                                             })}
                                         </h3>
                                         <span className="text-xs font-semibold text-stone-500">
-                                            {date}
+                                            {dateLabel(date, {
+                                                dateStyle: 'short',
+                                            })}
                                         </span>
                                     </div>
                                     <div className="grid gap-3 sm:grid-cols-2">
@@ -1654,7 +1824,7 @@ function CheckInsSection() {
                                                   : rawStatus === 'missed'
                                                     ? 'missed'
                                                     : 'pending';
-                                            const answerKey = `${date}:${slotDef.id}`;
+
                                             const reminder = isRecord(
                                                 getValue(
                                                     record ?? {},
@@ -1709,90 +1879,29 @@ function CheckInsSection() {
                                                                 'No response text returned.'}
                                                         </p>
                                                     ) : (
-                                                        <div className="mt-3 space-y-2">
-                                                            <label className="grid gap-1 text-xs font-bold text-stone-700">
-                                                                Response
-                                                                <textarea
-                                                                    value={
-                                                                        answerText[
-                                                                            answerKey
-                                                                        ] ?? ''
-                                                                    }
-                                                                    onChange={(
-                                                                        event,
-                                                                    ) =>
-                                                                        setAnswerText(
-                                                                            (
-                                                                                current,
-                                                                            ) => ({
-                                                                                ...current,
-                                                                                [answerKey]:
-                                                                                    event
-                                                                                        .target
-                                                                                        .value,
-                                                                            }),
-                                                                        )
-                                                                    }
-                                                                    rows={1}
-                                                                    maxLength={
-                                                                        4000
-                                                                    }
-                                                                    className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                                                    placeholder="Write a check-in response"
-                                                                />
-                                                            </label>
-                                                            <button
-                                                                type="button"
-                                                                disabled={
-                                                                    !record ||
-                                                                    date >
-                                                                        localDateValue() ||
-                                                                    !answerText[
-                                                                        answerKey
-                                                                    ]?.trim() ||
-                                                                    Boolean(
-                                                                        answerBusy,
-                                                                    )
-                                                                }
-                                                                onClick={() =>
-                                                                    void submitAnswer(
-                                                                        date,
-                                                                        slotDef.id,
-                                                                    )
-                                                                }
-                                                                className="inline-flex min-h-8 items-center gap-2 rounded-lg bg-stone-950 px-3 text-xs font-bold text-white hover:bg-stone-700 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
-                                                            >
-                                                                <Check
-                                                                    size={15}
-                                                                    aria-hidden="true"
-                                                                />
-                                                                {answerBusy ===
-                                                                answerKey
-                                                                    ? 'Saving…'
-                                                                    : status ===
-                                                                        'missed'
-                                                                      ? 'Answer late'
-                                                                      : 'Answer check-in'}
-                                                            </button>
-                                                            {!record && (
-                                                                <p className="text-xs text-stone-500">
-                                                                    This slot is
-                                                                    not present
-                                                                    in the API
-                                                                    response
-                                                                    yet.
-                                                                </p>
-                                                            )}
-                                                            {date >
-                                                                localDateValue() && (
-                                                                <p className="text-xs text-stone-500">
-                                                                    Available on
-                                                                    this
-                                                                    activity
-                                                                    date.
-                                                                </p>
-                                                            )}
-                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            disabled={
+                                                                !record ||
+                                                                date >
+                                                                    localDateValue()
+                                                            }
+                                                            onClick={() => {
+                                                                setAnswerNotice(
+                                                                    null,
+                                                                );
+                                                                setAnswerSlot({
+                                                                    date,
+                                                                    id: slotDef.id,
+                                                                    label: slotDef.label,
+                                                                });
+                                                            }}
+                                                            className="mt-3 min-h-10 rounded-lg bg-stone-950 px-3 text-sm font-bold text-white disabled:opacity-45"
+                                                        >
+                                                            {status === 'missed'
+                                                                ? 'Answer late'
+                                                                : 'Answer check-in'}
+                                                        </button>
                                                     )}
                                                 </article>
                                             );
@@ -1810,6 +1919,60 @@ function CheckInsSection() {
                     </div>
                 )}
             </Panel>
+            {answerSlot && (
+                <TrackerDialog
+                    title={`${answerSlot.label} · ${dateLabel(answerSlot.date, { dateStyle: 'medium' })}`}
+                    onClose={() => setAnswerSlot(null)}
+                >
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            void submitAnswer(answerSlot.date, answerSlot.id);
+                        }}
+                        className="space-y-4"
+                    >
+                        <label className="grid gap-2 text-sm font-bold">
+                            Response
+                            <textarea
+                                autoFocus
+                                rows={5}
+                                maxLength={4000}
+                                required
+                                value={
+                                    answerText[
+                                        `${answerSlot.date}:${answerSlot.id}`
+                                    ] ?? ''
+                                }
+                                onChange={(e) =>
+                                    setAnswerText((current) => ({
+                                        ...current,
+                                        [`${answerSlot.date}:${answerSlot.id}`]:
+                                            e.target.value,
+                                    }))
+                                }
+                                className="w-full rounded-lg border border-stone-300 p-3 font-normal"
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            disabled={
+                                Boolean(answerBusy) ||
+                                !answerText[
+                                    `${answerSlot.date}:${answerSlot.id}`
+                                ]?.trim()
+                            }
+                            className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white disabled:opacity-45"
+                        >
+                            {answerBusy ? 'Saving…' : 'Save answer'}
+                        </button>
+                        {answerNotice && (
+                            <Notice kind={answerNotice.kind}>
+                                {answerNotice.text}
+                            </Notice>
+                        )}
+                    </form>
+                </TrackerDialog>
+            )}
         </>
     );
 }
@@ -1824,6 +1987,22 @@ function FoodSection() {
     const root = isRecord(data) && isRecord(data.data) ? data.data : data;
     const entries = getArray(root, 'entries');
     const days = getArray(root, 'days');
+    const [formOpen, setFormOpen] = useState(false);
+    const [detailEntry, setDetailEntry] = useState<JsonRecord | null>(null);
+    const [historyFrom, setHistoryFrom] = useState(addActivityDays(today, -29));
+    const [historyTo, setHistoryTo] = useState(today);
+    const [imageFilter, setImageFilter] = useState('all');
+    const [historySort, setHistorySort] = useState('newest');
+    const historyResource = usePrivateData(
+        `${endpointBySection.food}?from=${historyFrom}&to=${historyTo}`,
+    );
+    const historyEntries = getArray(historyResource.data, 'entries').filter(
+        (entry) =>
+            imageFilter === 'all' ||
+            (imageFilter === 'with'
+                ? evidenceIds(entry).length > 0
+                : evidenceIds(entry).length === 0),
+    );
     const [editing, setEditing] = useState('');
     const [date, setDate] = useState(today);
     const [time, setTime] = useState('12:00');
@@ -1858,6 +2037,8 @@ function FoodSection() {
     };
     const edit = (entry: JsonRecord) => {
         reset();
+        setDetailEntry(null);
+        setFormOpen(true);
         setEditing(getText(entry, 'id'));
         setDate(getText(entry, 'date'));
         setTime(
@@ -1989,6 +2170,8 @@ function FoodSection() {
             });
             idempotency.complete(fingerprint);
             reset();
+            setFormOpen(false);
+            historyResource.reload();
             setNotice({ kind: 'success', text: 'Food entry saved.' });
             reload();
         } catch (cause) {
@@ -2030,50 +2213,65 @@ function FoodSection() {
     }));
     const foodGroups = [
         ...new Set(
-            entries.map((entry) => getText(entry, 'date', 'activityDate')),
+            historyEntries.map((entry) =>
+                getText(entry, 'date', 'activityDate'),
+            ),
         ),
-    ]
-        .sort()
-        .reverse();
+    ].sort((a, b) =>
+        historySort === 'oldest' ? a.localeCompare(b) : b.localeCompare(a),
+    );
     return (
         <>
             <Panel
                 title="Daily calories"
-                description="Totals include logged items with known calories. Estimates are approximate; unlogged days stay empty."
+                action={
+                    <div className="grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 lg:flex lg:flex-nowrap">
+                        <label className="grid min-w-0 gap-1 text-xs font-bold">
+                            From
+                            <input
+                                type="date"
+                                value={from}
+                                max={to}
+                                onChange={(e) =>
+                                    e.target.value && setFrom(e.target.value)
+                                }
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid min-w-0 gap-1 text-xs font-bold">
+                            To
+                            <input
+                                type="date"
+                                value={to}
+                                min={from}
+                                max={today}
+                                onChange={(e) =>
+                                    e.target.value && setTo(e.target.value)
+                                }
+                                className={field}
+                            />
+                        </label>
+                        <Link
+                            href="/samik-admin/weight"
+                            className="min-h-10 rounded-lg border border-stone-200 px-3 py-2 text-sm"
+                        >
+                            Compare weight →
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                reset();
+                                setDate(today);
+                                setNotice(null);
+                                setFormOpen(true);
+                            }}
+                            className="min-h-10 whitespace-nowrap rounded-lg bg-stone-950 px-3 py-2 text-sm font-bold text-white"
+                        >
+                            + Add food
+                        </button>
+                    </div>
+                }
             >
-                <div className="mb-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 sm:flex sm:flex-nowrap">
-                    <label className="grid min-w-0 gap-1 text-xs font-bold">
-                        From
-                        <input
-                            type="date"
-                            value={from}
-                            max={to}
-                            onChange={(e) =>
-                                e.target.value && setFrom(e.target.value)
-                            }
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid min-w-0 gap-1 text-xs font-bold">
-                        To
-                        <input
-                            type="date"
-                            value={to}
-                            min={from}
-                            max={today}
-                            onChange={(e) =>
-                                e.target.value && setTo(e.target.value)
-                            }
-                            className={field}
-                        />
-                    </label>
-                    <Link
-                        href="/samik-admin/weight"
-                        className="min-h-10 rounded-lg border border-stone-200 px-3 py-2 text-sm"
-                    >
-                        Compare weight →
-                    </Link>
-                </div>
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && (
                     <>
@@ -2157,344 +2355,413 @@ function FoodSection() {
                     </>
                 )}
             </Panel>
-            <Panel
-                title={editing ? 'Edit food entry' : 'Log food'}
-                description="Record what you ate, the portion, and optional calories or a photo."
-            >
-                <form
-                    onSubmit={save}
-                    className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            {notice && !formOpen && (
+                <Notice kind={notice.kind}>{notice.text}</Notice>
+            )}
+            {formOpen && (
+                <TrackerDialog
+                    title={editing ? 'Edit food entry' : 'Add food'}
+                    onClose={() => setFormOpen(false)}
                 >
-                    <label className="grid gap-1 text-sm font-bold">
-                        Date (IST)
-                        <input
-                            required
-                            type="date"
-                            max={today}
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Time (IST)
-                        <input
-                            required
-                            type="time"
-                            value={time}
-                            onChange={(e) => setTime(e.target.value)}
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Food item
-                        <input
-                            required
-                            maxLength={200}
-                            value={item}
-                            onChange={(e) => setItem(e.target.value)}
-                            placeholder="What did you eat?"
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Portion · optional
-                        <input
-                            maxLength={200}
-                            value={portion}
-                            onChange={(e) => setPortion(e.target.value)}
-                            placeholder="1 bowl, 200 g…"
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Calories (kcal) · optional
-                        <input
-                            type="number"
-                            min="0"
-                            max="20000"
-                            step="0.01"
-                            value={calories}
-                            onChange={(e) => setCalories(e.target.value)}
-                            placeholder="Leave blank if unknown"
-                            className={field}
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Calorie source
-                        <select
-                            value={source === 'unknown' ? 'estimated' : source}
-                            onChange={(e) => setSource(e.target.value)}
-                            className={field}
-                        >
-                            <option value="estimated">Estimated</option>
-                            <option value="label">Food label</option>
-                            <option value="measured">Measured</option>
-                        </select>
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold">
-                        Photo · optional
-                        <input
-                            ref={fileRef}
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp"
-                            onChange={(e) => {
-                                setFile(e.target.files?.[0] ?? null);
-                                setImages([]);
-                            }}
-                            className="w-full rounded-lg border border-stone-200 p-2 text-xs"
-                        />
-                    </label>
-                    <label className="grid gap-1 text-sm font-bold sm:col-span-2">
-                        Notes · optional
-                        <input
-                            value={notes}
-                            maxLength={2000}
-                            onChange={(e) => setNotes(e.target.value)}
-                            className={field}
-                        />
-                    </label>
-                    {images.length > 0 && (
-                        <div className="sm:col-span-2 flex gap-3">
-                            {images.map((id) => (
-                                <PrivateImage
-                                    key={id}
-                                    id={id}
-                                    alt="Attached meal image"
-                                    className="h-24 w-24 object-contain"
-                                />
-                            ))}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setImages([]);
-                                    setFile(null);
-                                    if (fileRef.current)
-                                        fileRef.current.value = '';
-                                }}
-                                className="text-xs underline"
+                    <form
+                        onSubmit={save}
+                        className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                    >
+                        <label className="grid gap-1 text-sm font-bold">
+                            Date (IST)
+                            <input
+                                required
+                                type="date"
+                                max={today}
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Time (IST)
+                            <input
+                                required
+                                type="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Food item
+                            <input
+                                required
+                                maxLength={200}
+                                value={item}
+                                onChange={(e) => setItem(e.target.value)}
+                                placeholder="What did you eat?"
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Portion · optional
+                            <input
+                                maxLength={200}
+                                value={portion}
+                                onChange={(e) => setPortion(e.target.value)}
+                                placeholder="1 bowl, 200 g…"
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Calories (kcal) · optional
+                            <input
+                                type="number"
+                                min="0"
+                                max="20000"
+                                step="0.01"
+                                value={calories}
+                                onChange={(e) => setCalories(e.target.value)}
+                                placeholder="Leave blank if unknown"
+                                className={field}
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Calorie source
+                            <select
+                                value={
+                                    source === 'unknown' ? 'estimated' : source
+                                }
+                                onChange={(e) => setSource(e.target.value)}
+                                className={field}
                             >
-                                Remove attachment
+                                <option value="estimated">Estimated</option>
+                                <option value="label">Food label</option>
+                                <option value="measured">Measured</option>
+                            </select>
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold">
+                            Photo · optional
+                            <input
+                                ref={fileRef}
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={(e) => {
+                                    setFile(e.target.files?.[0] ?? null);
+                                    setImages([]);
+                                }}
+                                className="w-full rounded-lg border border-stone-200 p-2 text-xs"
+                            />
+                        </label>
+                        <label className="grid gap-1 text-sm font-bold sm:col-span-2">
+                            Notes · optional
+                            <textarea
+                                rows={3}
+                                value={notes}
+                                maxLength={2000}
+                                onChange={(e) => setNotes(e.target.value)}
+                                className={`${field} py-2`}
+                            />
+                        </label>
+                        {images.length > 0 && (
+                            <div className="sm:col-span-2 flex gap-3">
+                                {images.map((id) => (
+                                    <PrivateImage
+                                        key={id}
+                                        id={id}
+                                        alt="Attached meal image"
+                                        className="h-24 w-24 object-contain"
+                                    />
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setImages([]);
+                                        setFile(null);
+                                        if (fileRef.current)
+                                            fileRef.current.value = '';
+                                    }}
+                                    className="text-xs underline"
+                                >
+                                    Remove attachment
+                                </button>
+                            </div>
+                        )}
+                        <div className="flex gap-3 lg:col-span-3">
+                            <button
+                                disabled={busy}
+                                type="submit"
+                                className="rounded-lg bg-stone-950 px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
+                            >
+                                {busy
+                                    ? 'Saving…'
+                                    : editing
+                                      ? 'Save changes'
+                                      : 'Save food'}
                             </button>
+                            {editing && (
+                                <button
+                                    type="button"
+                                    onClick={() => setFormOpen(false)}
+                                    className="rounded-lg border border-stone-200 px-4 text-sm"
+                                >
+                                    Cancel editing
+                                </button>
+                            )}
+                        </div>
+                    </form>
+                    {notice && (
+                        <div className="mt-3">
+                            <Notice kind={notice.kind}>{notice.text}</Notice>
                         </div>
                     )}
-                    <div className="flex gap-3 lg:col-span-3">
-                        <button
-                            disabled={busy}
-                            type="submit"
-                            className="rounded-lg bg-stone-950 px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
-                        >
-                            {busy
-                                ? 'Saving…'
-                                : editing
-                                  ? 'Save changes'
-                                  : 'Save food'}
-                        </button>
-                        {editing && (
-                            <button
-                                type="button"
-                                onClick={reset}
-                                className="rounded-lg border border-stone-200 px-4 text-sm"
-                            >
-                                Cancel editing
-                            </button>
-                        )}
-                    </div>
-                </form>
-                {notice && (
-                    <div className="mt-3">
-                        <Notice kind={notice.kind}>{notice.text}</Notice>
-                    </div>
-                )}
-            </Panel>
+                </TrackerDialog>
+            )}
             <FoodTracker />
             <Panel
                 title="Food history"
-                description="Review meals and edit calories, notes, or images."
+                action={
+                    <HistoryFilters
+                        from={historyFrom}
+                        to={historyTo}
+                        onFrom={setHistoryFrom}
+                        onTo={setHistoryTo}
+                        images={imageFilter}
+                        onImages={setImageFilter}
+                        sort={historySort}
+                        onSort={setHistorySort}
+                    />
+                }
             >
-                <StatusPanel state={state} error={error} onRetry={reload} />
-                {state === 'ready' &&
-                    (entries.length ? (
-                        <div className="max-h-[460px] overflow-auto rounded-xl border border-stone-200 [scrollbar-gutter:stable]">
-                            <table className="w-full min-w-[650px] text-sm">
-                                <thead className="sticky top-0 bg-stone-50">
-                                    <tr>
-                                        {[
-                                            'Date / time (IST)',
-                                            'Food / portion',
-                                            'Calories',
-                                            'Photo',
-                                            '',
-                                        ].map((label, i) => (
-                                            <th
-                                                key={i}
-                                                className="px-4 py-3 text-left"
-                                            >
-                                                {label}
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                {foodGroups.map((day) => (
-                                    <tbody key={day}>
-                                        <tr className="bg-stone-100">
-                                            <th
-                                                colSpan={5}
-                                                className="px-4 py-3 text-left"
-                                            >
-                                                {dateLabel(day, {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                })}{' '}
-                                                ·{' '}
-                                                {
-                                                    entries.filter(
-                                                        (entry) =>
-                                                            getText(
-                                                                entry,
-                                                                'date',
-                                                                'activityDate',
-                                                            ) === day,
-                                                    ).length
-                                                }{' '}
-                                                items ·{' '}
-                                                {getText(
-                                                    days.find(
-                                                        (d) =>
-                                                            getText(
-                                                                d,
-                                                                'date',
-                                                            ) === day,
-                                                    ) ?? {},
-                                                    'calories',
-                                                )}{' '}
-                                                kcal logged
-                                            </th>
-                                        </tr>
-                                        {entries
-                                            .filter(
-                                                (entry) =>
-                                                    getText(
-                                                        entry,
-                                                        'date',
-                                                        'activityDate',
-                                                    ) === day,
-                                            )
-                                            .sort((a, b) =>
-                                                getText(
-                                                    a,
-                                                    'consumedAt',
-                                                ).localeCompare(
-                                                    getText(b, 'consumedAt'),
-                                                ),
-                                            )
-                                            .map((entry) => (
-                                                <tr
-                                                    key={getText(entry, 'id')}
-                                                    className="border-t border-stone-200"
-                                                >
-                                                    <td className="px-4 py-3">
-                                                        {dateLabel(
-                                                            getText(
-                                                                entry,
-                                                                'consumedAt',
-                                                            ),
-                                                            {
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                            },
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <strong>
-                                                            {getText(
-                                                                entry,
-                                                                'item',
-                                                            )}
-                                                        </strong>
-                                                        <p className="text-xs text-stone-500">
-                                                            {getText(
-                                                                entry,
-                                                                'portion',
-                                                            )}
-                                                        </p>
-                                                        {getText(
-                                                            entry,
-                                                            'notes',
-                                                        ) && (
-                                                            <p className="max-w-xs text-xs text-stone-500">
-                                                                {getText(
-                                                                    entry,
-                                                                    'notes',
-                                                                )}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        {getNumber(
+                <StatusPanel
+                    state={historyResource.state}
+                    error={historyResource.error}
+                    onRetry={historyResource.reload}
+                />
+                {historyResource.state === 'ready' &&
+                    (historyEntries.length ? (
+                        <div className="space-y-5">
+                            {foodGroups.map((day) => {
+                                const meals = historyEntries
+                                    .filter(
+                                        (entry) =>
+                                            getText(
+                                                entry,
+                                                'date',
+                                                'activityDate',
+                                            ) === day,
+                                    )
+                                    .sort((a, b) =>
+                                        historySort === 'oldest'
+                                            ? getText(
+                                                  a,
+                                                  'consumedAt',
+                                              ).localeCompare(
+                                                  getText(b, 'consumedAt'),
+                                              )
+                                            : getText(
+                                                  b,
+                                                  'consumedAt',
+                                              ).localeCompare(
+                                                  getText(a, 'consumedAt'),
+                                              ),
+                                    );
+                                return (
+                                    <section key={day}>
+                                        <h3 className="mb-3 text-sm font-bold">
+                                            {dateLabel(day, {
+                                                dateStyle: 'medium',
+                                            })}{' '}
+                                            · {meals.length} items ·{' '}
+                                            {meals
+                                                .reduce(
+                                                    (sum, entry) =>
+                                                        sum +
+                                                        (getNumber(
                                                             entry,
                                                             'calories',
-                                                        ) === null
-                                                            ? 'Unknown'
-                                                            : `${getText(entry, 'calories')} kcal`}
-                                                        <p className="text-xs text-stone-500">
-                                                            {getText(
-                                                                entry,
-                                                                'calorieSource',
+                                                        ) ?? 0),
+                                                    0,
+                                                )
+                                                .toLocaleString()}{' '}
+                                            kcal logged
+                                        </h3>
+                                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                            {meals.map((entry) => {
+                                                const ids = evidenceIds(entry);
+                                                const meal = getText(
+                                                    entry,
+                                                    'item',
+                                                );
+                                                return (
+                                                    <article
+                                                        key={getText(
+                                                            entry,
+                                                            'id',
+                                                        )}
+                                                        className="group min-w-0 overflow-hidden rounded-xl border border-stone-200 bg-white"
+                                                    >
+                                                        <div className="relative grid h-36 place-items-center bg-stone-100 p-2">
+                                                            {ids[0] ? (
+                                                                <PrivateImage
+                                                                    id={ids[0]}
+                                                                    alt={meal}
+                                                                    className="h-full w-full object-contain"
+                                                                />
+                                                            ) : (
+                                                                <div className="grid place-items-center gap-2 text-stone-400">
+                                                                    <Utensils
+                                                                        size={
+                                                                            36
+                                                                        }
+                                                                    />
+                                                                    <span className="text-xs">
+                                                                        No photo
+                                                                    </span>
+                                                                </div>
                                                             )}
-                                                        </p>
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        {(Array.isArray(
-                                                            getValue(
-                                                                entry,
-                                                                'evidenceAssetIds',
-                                                            ),
-                                                        )
-                                                            ? (getValue(
-                                                                  entry,
-                                                                  'evidenceAssetIds',
-                                                              ) as string[])
-                                                            : []
-                                                        ).map((id) => (
-                                                            <PrivateImage
-                                                                key={id}
-                                                                id={id}
-                                                                alt={getText(
-                                                                    entry,
-                                                                    'item',
+                                                            <div className="pointer-events-none absolute inset-0 overflow-y-auto bg-white/95 p-3 pr-12 text-xs opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+                                                                <p className="font-bold">
+                                                                    {meal}
+                                                                </p>
+                                                                <p className="mt-1">
+                                                                    {getText(
+                                                                        entry,
+                                                                        'portion',
+                                                                    )}
+                                                                </p>
+                                                                <p className="mt-1 whitespace-pre-wrap">
+                                                                    {getText(
+                                                                        entry,
+                                                                        'notes',
+                                                                    )}
+                                                                </p>
+                                                                <p className="mt-2 text-stone-500">
+                                                                    {getText(
+                                                                        entry,
+                                                                        'calorieSource',
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    setDetailEntry(
+                                                                        entry,
+                                                                    )
+                                                                }
+                                                                aria-label={`View ${meal}`}
+                                                                className="absolute right-2 top-2 rounded-lg border border-stone-200 bg-white p-2 shadow-sm"
+                                                            >
+                                                                <Maximize2
+                                                                    size={16}
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                        <div className="space-y-1 p-3">
+                                                            <h4
+                                                                className="truncate text-sm font-bold"
+                                                                title={meal}
+                                                            >
+                                                                {meal}
+                                                            </h4>
+                                                            <p className="text-xs text-stone-500">
+                                                                {dateLabel(
+                                                                    getText(
+                                                                        entry,
+                                                                        'consumedAt',
+                                                                    ),
+                                                                    {
+                                                                        hour: 'numeric',
+                                                                        minute: '2-digit',
+                                                                    },
                                                                 )}
-                                                                className="h-16 w-20 object-contain"
-                                                            />
-                                                        ))}
-                                                    </td>
-                                                    <td className="px-4 py-3">
-                                                        <button
-                                                            type="button"
-                                                            disabled={busy}
-                                                            onClick={() =>
-                                                                edit(entry)
-                                                            }
-                                                            className="rounded-lg border border-stone-200 px-3 py-2 font-semibold"
-                                                        >
-                                                            Edit
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                    </tbody>
-                                ))}
-                            </table>
+                                                            </p>
+                                                            <p className="text-sm font-bold">
+                                                                {getNumber(
+                                                                    entry,
+                                                                    'calories',
+                                                                ) === null
+                                                                    ? 'Unknown calories'
+                                                                    : `${getNumber(entry, 'calories')?.toLocaleString()} kcal`}
+                                                            </p>
+                                                            <button
+                                                                type="button"
+                                                                disabled={busy}
+                                                                onClick={() =>
+                                                                    edit(entry)
+                                                                }
+                                                                className="mt-2 min-h-9 rounded-lg border border-stone-200 px-3 text-xs font-bold"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                        </div>
+                                                    </article>
+                                                );
+                                            })}
+                                        </div>
+                                    </section>
+                                );
+                            })}
                         </div>
                     ) : (
-                        <EmptyState title="No meals logged">
-                            Your food entries will appear here.
+                        <EmptyState title="No meals match these filters">
+                            Choose another range or image filter.
                         </EmptyState>
                     ))}
             </Panel>
+            {detailEntry && (
+                <TrackerDialog
+                    title={getText(detailEntry, 'item')}
+                    onClose={() => setDetailEntry(null)}
+                >
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        {evidenceIds(detailEntry).map((id) => (
+                            <PrivateImage
+                                key={id}
+                                id={id}
+                                alt={getText(detailEntry, 'item')}
+                                className="h-64 w-full object-contain"
+                            />
+                        ))}
+                    </div>
+                    <dl className="mt-4 space-y-3 text-sm">
+                        <div>
+                            <dt className="font-bold">Date / time (IST)</dt>
+                            <dd>
+                                {dateLabel(getText(detailEntry, 'consumedAt'), {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short',
+                                })}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="font-bold">Portion</dt>
+                            <dd>{getText(detailEntry, 'portion') || '—'}</dd>
+                        </div>
+                        <div>
+                            <dt className="font-bold">Calories</dt>
+                            <dd>
+                                {getNumber(detailEntry, 'calories') === null
+                                    ? 'Unknown'
+                                    : `${getNumber(detailEntry, 'calories')?.toLocaleString()} kcal`}{' '}
+                                · {getText(detailEntry, 'calorieSource')}
+                            </dd>
+                        </div>
+                        {getText(detailEntry, 'notes') && (
+                            <div>
+                                <dt className="font-bold">Notes</dt>
+                                <dd className="whitespace-pre-wrap break-words">
+                                    {getText(detailEntry, 'notes')}
+                                </dd>
+                            </div>
+                        )}
+                    </dl>
+                    <button
+                        type="button"
+                        onClick={() => edit(detailEntry)}
+                        className="mt-5 rounded-lg bg-stone-950 px-4 py-3 text-sm font-bold text-white"
+                    >
+                        Edit food entry
+                    </button>
+                </TrackerDialog>
+            )}
         </>
     );
 }
@@ -2688,6 +2955,68 @@ function WeightReviewEditor({
     );
 }
 
+function normalizeWeightEntries(dataRoot: unknown) {
+    return getArray(dataRoot, 'entries', 'weights', 'measurements')
+        .flatMap((record) => {
+            const originalValue = Number(
+                getValue(record, 'originalValue', 'original_value'),
+            );
+            const rawDate = getValue(
+                record,
+                'date',
+                'activityDate',
+                'measuredAt',
+                'createdAt',
+            );
+            const rawMeasuredAt = getValue(
+                record,
+                'measuredAt',
+                'measured_at',
+                'date',
+                'activityDate',
+                'createdAt',
+            );
+            const timestamp = timestampForActivityDate(rawMeasuredAt);
+            const dateValue =
+                getText(record, 'date', 'activityDate') ||
+                (typeof rawDate === 'string' ? rawDate.slice(0, 10) : '');
+            if (
+                !Number.isFinite(originalValue) ||
+                !Number.isFinite(timestamp) ||
+                !dateValue
+            )
+                return [];
+            const weightKgValue = Number(
+                getValue(record, 'weightKg', 'weight_kg'),
+            );
+            const confirmationStatus = getText(
+                record,
+                'confirmationStatus',
+                'confirmation_status',
+            ).toLowerCase();
+            return [
+                {
+                    record,
+                    value: Number.isFinite(weightKgValue)
+                        ? weightKgValue
+                        : Number.NaN,
+                    timestamp,
+                    date: dateValue,
+                    originalValue,
+                    originalUnit:
+                        getText(record, 'originalUnit', 'original_unit') ||
+                        'Unit not set',
+                    isPrimary:
+                        getValue(record, 'isPrimary', 'is_primary') === true,
+                    confirmationStatus,
+                    source: getText(record, 'source') || 'unknown',
+                    id: getText(record, 'id'),
+                },
+            ];
+        })
+        .sort((a, b) => a.timestamp - b.timestamp);
+}
+
 function WeightSection() {
     const today = localDateValue();
     const [chartFrom, setChartFrom] = useState(() =>
@@ -2696,6 +3025,14 @@ function WeightSection() {
     const [chartTo, setChartTo] = useState(today);
     const { data, state, error, reload } = usePrivateData(
         `${endpointBySection.weight}?from=${chartFrom}&to=${chartTo}`,
+    );
+    const [addOpen, setAddOpen] = useState(false);
+    const [historyFrom, setHistoryFrom] = useState(addActivityDays(today, -29));
+    const [historyTo, setHistoryTo] = useState(today);
+    const [imageFilter, setImageFilter] = useState('all');
+    const [historySort, setHistorySort] = useState('newest');
+    const historyResource = usePrivateData(
+        `${endpointBySection.weight}?from=${historyFrom}&to=${historyTo}`,
     );
     const [date, setDate] = useState(localDateValue);
     const [value, setValue] = useState('');
@@ -2726,75 +3063,20 @@ function WeightSection() {
         text: string;
     } | null>(null);
     const dataRoot = isRecord(data) && isRecord(data.data) ? data.data : data;
-    const entries = useMemo(
-        () =>
-            getArray(dataRoot, 'entries', 'weights', 'measurements')
-                .flatMap((record) => {
-                    const originalValue = Number(
-                        getValue(record, 'originalValue', 'original_value'),
-                    );
-                    const rawDate = getValue(
-                        record,
-                        'date',
-                        'activityDate',
-                        'measuredAt',
-                        'createdAt',
-                    );
-                    const rawMeasuredAt = getValue(
-                        record,
-                        'measuredAt',
-                        'measured_at',
-                        'date',
-                        'activityDate',
-                        'createdAt',
-                    );
-                    const timestamp = timestampForActivityDate(rawMeasuredAt);
-                    const dateValue =
-                        getText(record, 'date', 'activityDate') ||
-                        (typeof rawDate === 'string'
-                            ? rawDate.slice(0, 10)
-                            : '');
-                    if (
-                        !Number.isFinite(originalValue) ||
-                        !Number.isFinite(timestamp) ||
-                        !dateValue
-                    )
-                        return [];
-                    const weightKgValue = Number(
-                        getValue(record, 'weightKg', 'weight_kg'),
-                    );
-                    const confirmationStatus = getText(
-                        record,
-                        'confirmationStatus',
-                        'confirmation_status',
-                    ).toLowerCase();
-                    return [
-                        {
-                            record,
-                            value: Number.isFinite(weightKgValue)
-                                ? weightKgValue
-                                : Number.NaN,
-                            timestamp,
-                            date: dateValue,
-                            originalValue,
-                            originalUnit:
-                                getText(
-                                    record,
-                                    'originalUnit',
-                                    'original_unit',
-                                ) || 'Unit not set',
-                            isPrimary:
-                                getValue(record, 'isPrimary', 'is_primary') ===
-                                true,
-                            confirmationStatus,
-                            source: getText(record, 'source') || 'unknown',
-                            id: getText(record, 'id'),
-                        },
-                    ];
-                })
-                .sort((a, b) => a.timestamp - b.timestamp),
-        [dataRoot],
-    );
+    const entries = useMemo(() => normalizeWeightEntries(dataRoot), [dataRoot]);
+    const historyEntries = normalizeWeightEntries(historyResource.data)
+        .filter(
+            (entry) =>
+                imageFilter === 'all' ||
+                (imageFilter === 'with'
+                    ? evidenceIds(entry.record).length > 0
+                    : evidenceIds(entry.record).length === 0),
+        )
+        .sort((a, b) =>
+            historySort === 'oldest'
+                ? a.timestamp - b.timestamp
+                : b.timestamp - a.timestamp,
+        );
     const primaryValue = getValue(
         isRecord(dataRoot) ? dataRoot : {},
         'primaryMeasurements',
@@ -2814,14 +3096,6 @@ function WeightSection() {
             Number.isFinite(entry.value) &&
             (!primaryIds || primaryIds.has(entry.id)),
     );
-    const latest =
-        isRecord(dataRoot) && isRecord(dataRoot.latest)
-            ? dataRoot.latest
-            : null;
-    const firstInRange =
-        isRecord(dataRoot) && isRecord(dataRoot.firstInRange)
-            ? dataRoot.firstInRange
-            : null;
     const missingValue = getValue(
         isRecord(dataRoot) ? dataRoot : {},
         'missingDates',
@@ -2889,10 +3163,12 @@ function WeightSection() {
             });
             idempotency.complete(fingerprint);
             setNotice({ kind: 'success', text: 'Measurement saved.' });
+            setAddOpen(false);
             setValue('');
             setNotes('');
             setPrimary(false);
             reload();
+            historyResource.reload();
         } catch (cause) {
             setNotice({
                 kind: 'error',
@@ -2940,6 +3216,7 @@ function WeightSection() {
                 body: JSON.stringify(payload),
             });
             idempotency.complete(fingerprint);
+            setAddOpen(false);
             setImageNotice({
                 kind: 'success',
                 text: 'Image-derived candidate saved. It is pending your confirmation and is not charted.',
@@ -2949,6 +3226,7 @@ function WeightSection() {
             setImageNotes('');
             setSelectedEvidenceIds([]);
             reload();
+            historyResource.reload();
         } catch (cause) {
             setImageNotice({
                 kind: 'error',
@@ -2978,6 +3256,7 @@ function WeightSection() {
             setReviewId('');
             setConfirmNotice({ kind: 'success', text: 'Measurement saved.' });
             reload();
+            historyResource.reload();
         } catch (cause) {
             setConfirmNotice({
                 kind: 'error',
@@ -3009,6 +3288,7 @@ function WeightSection() {
                 text: 'Primary measurement updated.',
             });
             reload();
+            historyResource.reload();
         } catch (cause) {
             setNotice({
                 kind: 'error',
@@ -3026,35 +3306,48 @@ function WeightSection() {
         <>
             <Panel
                 title="Recorded weight"
-                description="Confirmed chart readings. Missing dates stay visible."
+                action={
+                    <div className="grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 lg:flex lg:flex-nowrap">
+                        <label className="grid min-w-0 gap-1 text-xs font-bold">
+                            From
+                            <input
+                                type="date"
+                                value={chartFrom}
+                                max={chartTo}
+                                onChange={(e) =>
+                                    e.target.value &&
+                                    setChartFrom(e.target.value)
+                                }
+                                className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
+                            />
+                        </label>
+                        <label className="grid min-w-0 gap-1 text-xs font-bold">
+                            To
+                            <input
+                                type="date"
+                                value={chartTo}
+                                min={chartFrom}
+                                max={today}
+                                onChange={(e) =>
+                                    e.target.value && setChartTo(e.target.value)
+                                }
+                                className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
+                            />
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setNotice(null);
+                                setImageNotice(null);
+                                setAddOpen(true);
+                            }}
+                            className="min-h-10 whitespace-nowrap rounded-lg bg-stone-950 px-3 py-2 text-sm font-bold text-white"
+                        >
+                            + Add measurement
+                        </button>
+                    </div>
+                }
             >
-                <div className="mb-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2 sm:flex">
-                    <label className="grid min-w-0 gap-1 text-xs font-bold">
-                        From
-                        <input
-                            type="date"
-                            value={chartFrom}
-                            max={chartTo}
-                            onChange={(e) =>
-                                e.target.value && setChartFrom(e.target.value)
-                            }
-                            className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
-                        />
-                    </label>
-                    <label className="grid min-w-0 gap-1 text-xs font-bold">
-                        To
-                        <input
-                            type="date"
-                            value={chartTo}
-                            min={chartFrom}
-                            max={today}
-                            onChange={(e) =>
-                                e.target.value && setChartTo(e.target.value)
-                            }
-                            className="min-h-10 min-w-0 rounded-lg border border-stone-300 px-3 text-sm"
-                        />
-                    </label>
-                </div>
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && chartEntries.length === 0 && (
                     <EmptyState title="No confirmed primary measurements">
@@ -3065,51 +3358,6 @@ function WeightSection() {
                 )}
                 {state === 'ready' && chartEntries.length > 0 && (
                     <>
-                        {latest && (
-                            <div className="mb-4 flex flex-wrap gap-8 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3">
-                                <div>
-                                    <p className="text-xs text-stone-500">
-                                        Latest confirmed weight
-                                    </p>
-                                    <p className="mt-1 text-2xl font-bold tabular-nums text-stone-950">
-                                        {getNumber(
-                                            latest,
-                                            'weightKg',
-                                        )?.toLocaleString(undefined, {
-                                            maximumFractionDigits: 2,
-                                        })}{' '}
-                                        <span className="text-sm font-normal text-stone-500">
-                                            kg
-                                        </span>
-                                    </p>
-                                </div>
-                                {firstInRange && (
-                                    <div>
-                                        <p className="text-xs text-stone-500">
-                                            Change in this range
-                                        </p>
-                                        <p className="mt-1 text-2xl font-bold tabular-nums text-stone-950">
-                                            {(
-                                                (getNumber(
-                                                    latest,
-                                                    'weightKg',
-                                                ) ?? 0) -
-                                                (getNumber(
-                                                    firstInRange,
-                                                    'weightKg',
-                                                ) ?? 0)
-                                            ).toLocaleString(undefined, {
-                                                maximumFractionDigits: 2,
-                                                signDisplay: 'always',
-                                            })}{' '}
-                                            <span className="text-sm font-normal text-stone-500">
-                                                kg
-                                            </span>
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
                         <WeightChart
                             entries={chartEntries}
                             unit="kg"
@@ -3137,366 +3385,393 @@ function WeightSection() {
                         </ul>
                     </details>
                 )}
-                {firstInRange && (
-                    <p className="mt-2 text-xs text-stone-500">
-                        First confirmed primary in range:{' '}
-                        {dateLabel(getValue(firstInRange, 'date'), {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                        })}
-                        .
-                    </p>
-                )}
             </Panel>
             <WeightTracker />
-            <details className="group rounded-2xl border border-stone-300 bg-white">
-                <summary className="cursor-pointer px-5 py-4 text-sm font-bold text-stone-900">
-                    + Add a measurement · manual or image
-                </summary>
-                <div className="space-y-4 p-3">
-                    {' '}
-                    <Panel
-                        title="Record a measurement"
-                        description="Save the original value and unit. Choose whether this manual entry should be the primary measurement."
-                    >
-                        <form
-                            onSubmit={handleSubmit}
-                            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
+            {notice && !addOpen && (
+                <Notice kind={notice.kind}>{notice.text}</Notice>
+            )}
+            {imageNotice && !addOpen && (
+                <Notice kind={imageNotice.kind}>{imageNotice.text}</Notice>
+            )}
+            {addOpen && (
+                <TrackerDialog
+                    title="Add measurement"
+                    onClose={() => setAddOpen(false)}
+                >
+                    <div className="space-y-4 p-3">
+                        {' '}
+                        <Panel
+                            title="Record a measurement"
+                            description="Save the original value and unit. Choose whether this manual entry should be the primary measurement."
                         >
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Activity date (IST)
-                                <input
-                                    required
-                                    type="date"
-                                    value={date}
-                                    onChange={(event) =>
-                                        changeActivityDate(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                />
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Original value
-                                <input
-                                    required
-                                    type="number"
-                                    inputMode="decimal"
-                                    step="any"
-                                    min="0.01"
-                                    max="1000"
-                                    value={value}
-                                    onChange={(event) =>
-                                        setValue(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                    placeholder="Enter a value"
-                                />
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Original unit
-                                <select
-                                    required
-                                    value={unit}
-                                    onChange={(event) =>
-                                        setUnit(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                >
-                                    <option value="">Choose a unit</option>
-                                    <option value="kg">Kilograms (kg)</option>
-                                    <option value="lb">Pounds (lb)</option>
-                                    <option value="st">Stones (st)</option>
-                                </select>
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Notes (optional)
-                                <input
-                                    maxLength={2000}
-                                    value={notes}
-                                    onChange={(event) =>
-                                        setNotes(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                    placeholder="Optional note"
-                                />
-                            </label>
-                            <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-stone-800 lg:col-span-3">
-                                <input
-                                    type="checkbox"
-                                    checked={primary}
-                                    onChange={(event) =>
-                                        setPrimary(event.target.checked)
-                                    }
-                                    className="h-4 w-4 accent-stone-950"
-                                />
-                                Set this as the primary measurement
-                            </label>
-                            <button
-                                type="submit"
-                                disabled={
-                                    busy ||
-                                    !date ||
-                                    !value ||
-                                    !unit ||
-                                    !Number.isFinite(Number(value)) ||
-                                    Number(value) <= 0
-                                }
-                                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
+                            <form
+                                onSubmit={handleSubmit}
+                                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
                             >
-                                <Plus size={16} aria-hidden="true" />
-                                {busy ? 'Saving…' : 'Save measurement'}
-                            </button>
-                        </form>
-                        {notice && (
-                            <div className="mt-4">
-                                <Notice kind={notice.kind}>
-                                    {notice.text}
-                                </Notice>
-                            </div>
-                        )}
-                    </Panel>
-                    <Panel
-                        title="Add from an image"
-                        description="Select a same-day image and enter its reading. Review it in history before adding it to the chart."
-                    >
-                        <div className="mb-4 rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">
-                            Image-based entries stay pending owner confirmation
-                            and cannot become primary or affect the chart until
-                            confirmed.
-                        </div>
-                        <StatusPanel
-                            state={evidenceResource.state}
-                            error={evidenceResource.error}
-                            onRetry={evidenceResource.reload}
-                        />
-                        {evidenceResource.state === 'ready' &&
-                            evidenceImages.length === 0 && (
-                                <EmptyState title="No same-day weight evidence images">
-                                    Upload or choose a non-body private image
-                                    for{' '}
-                                    {dateLabel(date, {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                    })}{' '}
-                                    in the{' '}
-                                    <Link
-                                        href="/samik-admin/body"
-                                        className="font-bold underline underline-offset-2"
-                                    >
-                                        private media workspace
-                                    </Link>{' '}
-                                    using General or Habit evidence. Body photos
-                                    are excluded.
-                                </EmptyState>
-                            )}
-                        {evidenceResource.state === 'ready' &&
-                            evidenceImages.length > 0 && (
-                                <fieldset className="mb-4 space-y-2">
-                                    <legend className="mb-2 text-sm font-bold text-stone-800">
-                                        Same-day private images for provenance
-                                    </legend>
-                                    {evidenceImages.map((item, index) => {
-                                        const id = getText(
-                                            item,
-                                            'id',
-                                            'assetId',
-                                        );
-                                        const checked =
-                                            selectedEvidenceIds.includes(id);
-                                        return (
-                                            <label
-                                                key={id || `evidence-${index}`}
-                                                className="flex cursor-pointer items-start gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    disabled={!id || imageBusy}
-                                                    checked={checked}
-                                                    onChange={(event) =>
-                                                        setSelectedEvidenceIds(
-                                                            (current) =>
-                                                                event.target
-                                                                    .checked
-                                                                    ? [
-                                                                          ...new Set(
-                                                                              [
-                                                                                  ...current,
-                                                                                  id,
-                                                                              ],
-                                                                          ),
-                                                                      ]
-                                                                    : current.filter(
-                                                                          (
-                                                                              assetId,
-                                                                          ) =>
-                                                                              assetId !==
-                                                                              id,
-                                                                      ),
-                                                        )
-                                                    }
-                                                    className="mt-1 h-4 w-4 accent-stone-950"
-                                                />
-                                                <span className="min-w-0">
-                                                    <span className="block font-bold text-stone-900">
-                                                        {getText(
-                                                            item,
-                                                            'title',
-                                                            'displayName',
-                                                        ) || 'Private image'}
-                                                    </span>
-                                                    <span className="mt-1 block text-xs text-stone-600">
-                                                        {dateLabel(
-                                                            getValue(
-                                                                item,
-                                                                'date',
-                                                            ),
-                                                            {
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                year: 'numeric',
-                                                            },
-                                                        )}{' '}
-                                                        IST ·{' '}
-                                                        {getText(
-                                                            item,
-                                                            'type',
-                                                            'contentType',
-                                                        )
-                                                            .replace(
-                                                                'image/',
-                                                                '',
-                                                            )
-                                                            .toUpperCase()}
-                                                        {getValue(
-                                                            item,
-                                                            'byteSize',
-                                                        )
-                                                            ? ` · ${Math.round(Number(getValue(item, 'byteSize')) / 1024)} KB`
-                                                            : ''}
-                                                    </span>
-                                                </span>
-                                            </label>
-                                        );
-                                    })}
-                                </fieldset>
-                            )}
-                        {evidenceResource.state === 'ready' &&
-                            evidenceImages.length > 0 && (
-                                <form
-                                    onSubmit={handleImageCandidate}
-                                    className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
-                                >
-                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                        Transcribed value
-                                        <input
-                                            required
-                                            type="number"
-                                            inputMode="decimal"
-                                            step="any"
-                                            min="0.01"
-                                            max="1000"
-                                            value={imageValue}
-                                            onChange={(event) =>
-                                                setImageValue(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                            placeholder="Enter the reading yourself"
-                                        />
-                                    </label>
-                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                        Unit
-                                        <select
-                                            required
-                                            value={imageUnit}
-                                            onChange={(event) =>
-                                                setImageUnit(event.target.value)
-                                            }
-                                            className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                        >
-                                            <option value="">
-                                                Choose a unit
-                                            </option>
-                                            <option value="kg">
-                                                Kilograms (kg)
-                                            </option>
-                                            <option value="lb">
-                                                Pounds (lb)
-                                            </option>
-                                            <option value="st">
-                                                Stones (st)
-                                            </option>
-                                        </select>
-                                    </label>
-                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800 lg:col-span-1">
-                                        Notes (optional)
-                                        <input
-                                            maxLength={2000}
-                                            value={imageNotes}
-                                            onChange={(event) =>
-                                                setImageNotes(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                            placeholder="Optional note"
-                                        />
-                                    </label>
-                                    <button
-                                        type="submit"
-                                        disabled={
-                                            imageBusy ||
-                                            !date ||
-                                            !imageValue ||
-                                            !imageUnit ||
-                                            selectedEvidenceIds.length === 0 ||
-                                            !Number.isFinite(
-                                                Number(imageValue),
-                                            ) ||
-                                            Number(imageValue) <= 0
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Activity date (IST)
+                                    <input
+                                        required
+                                        type="date"
+                                        value={date}
+                                        onChange={(event) =>
+                                            changeActivityDate(
+                                                event.target.value,
+                                            )
                                         }
-                                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-sky-300 bg-sky-50 px-4 text-sm font-bold text-sky-900 hover:bg-sky-100 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                    />
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Original value
+                                    <input
+                                        required
+                                        type="number"
+                                        inputMode="decimal"
+                                        step="any"
+                                        min="0.01"
+                                        max="1000"
+                                        value={value}
+                                        onChange={(event) =>
+                                            setValue(event.target.value)
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                        placeholder="Enter a value"
+                                    />
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Original unit
+                                    <select
+                                        required
+                                        value={unit}
+                                        onChange={(event) =>
+                                            setUnit(event.target.value)
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
                                     >
-                                        {imageBusy
-                                            ? 'Saving…'
-                                            : 'Save pending candidate'}
-                                    </button>
-                                </form>
+                                        <option value="">Choose a unit</option>
+                                        <option value="kg">
+                                            Kilograms (kg)
+                                        </option>
+                                        <option value="lb">Pounds (lb)</option>
+                                        <option value="st">Stones (st)</option>
+                                    </select>
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Notes (optional)
+                                    <input
+                                        maxLength={2000}
+                                        value={notes}
+                                        onChange={(event) =>
+                                            setNotes(event.target.value)
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                        placeholder="Optional note"
+                                    />
+                                </label>
+                                <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-stone-800 lg:col-span-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={primary}
+                                        onChange={(event) =>
+                                            setPrimary(event.target.checked)
+                                        }
+                                        className="h-4 w-4 accent-stone-950"
+                                    />
+                                    Set this as the primary measurement
+                                </label>
+                                <button
+                                    type="submit"
+                                    disabled={
+                                        busy ||
+                                        !date ||
+                                        !value ||
+                                        !unit ||
+                                        !Number.isFinite(Number(value)) ||
+                                        Number(value) <= 0
+                                    }
+                                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
+                                >
+                                    <Plus size={16} aria-hidden="true" />
+                                    {busy ? 'Saving…' : 'Save measurement'}
+                                </button>
+                            </form>
+                            {notice && (
+                                <div className="mt-4">
+                                    <Notice kind={notice.kind}>
+                                        {notice.text}
+                                    </Notice>
+                                </div>
                             )}
-                        {imageNotice && (
-                            <div className="mt-4">
-                                <Notice kind={imageNotice.kind}>
-                                    {imageNotice.text}
-                                </Notice>
+                        </Panel>
+                        <Panel
+                            title="Add from an image"
+                            description="Select a same-day image and enter its reading. Review it in history before adding it to the chart."
+                        >
+                            <div className="mb-4 rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">
+                                Image-based entries stay pending owner
+                                confirmation and cannot become primary or affect
+                                the chart until confirmed.
                             </div>
-                        )}
-                    </Panel>
-                </div>
-            </details>
+                            <StatusPanel
+                                state={evidenceResource.state}
+                                error={evidenceResource.error}
+                                onRetry={evidenceResource.reload}
+                            />
+                            {evidenceResource.state === 'ready' &&
+                                evidenceImages.length === 0 && (
+                                    <EmptyState title="No same-day weight evidence images">
+                                        Upload or choose a non-body private
+                                        image for{' '}
+                                        {dateLabel(date, {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                        })}{' '}
+                                        in the{' '}
+                                        <Link
+                                            href="/samik-admin/body"
+                                            className="font-bold underline underline-offset-2"
+                                        >
+                                            private media workspace
+                                        </Link>{' '}
+                                        using General or Habit evidence. Body
+                                        photos are excluded.
+                                    </EmptyState>
+                                )}
+                            {evidenceResource.state === 'ready' &&
+                                evidenceImages.length > 0 && (
+                                    <fieldset className="mb-4 space-y-2">
+                                        <legend className="mb-2 text-sm font-bold text-stone-800">
+                                            Same-day private images for
+                                            provenance
+                                        </legend>
+                                        {evidenceImages.map((item, index) => {
+                                            const id = getText(
+                                                item,
+                                                'id',
+                                                'assetId',
+                                            );
+                                            const checked =
+                                                selectedEvidenceIds.includes(
+                                                    id,
+                                                );
+                                            return (
+                                                <label
+                                                    key={
+                                                        id ||
+                                                        `evidence-${index}`
+                                                    }
+                                                    className="flex cursor-pointer items-start gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        disabled={
+                                                            !id || imageBusy
+                                                        }
+                                                        checked={checked}
+                                                        onChange={(event) =>
+                                                            setSelectedEvidenceIds(
+                                                                (current) =>
+                                                                    event.target
+                                                                        .checked
+                                                                        ? [
+                                                                              ...new Set(
+                                                                                  [
+                                                                                      ...current,
+                                                                                      id,
+                                                                                  ],
+                                                                              ),
+                                                                          ]
+                                                                        : current.filter(
+                                                                              (
+                                                                                  assetId,
+                                                                              ) =>
+                                                                                  assetId !==
+                                                                                  id,
+                                                                          ),
+                                                            )
+                                                        }
+                                                        className="mt-1 h-4 w-4 accent-stone-950"
+                                                    />
+                                                    <span className="min-w-0">
+                                                        <span className="block font-bold text-stone-900">
+                                                            {getText(
+                                                                item,
+                                                                'title',
+                                                                'displayName',
+                                                            ) ||
+                                                                'Private image'}
+                                                        </span>
+                                                        <span className="mt-1 block text-xs text-stone-600">
+                                                            {dateLabel(
+                                                                getValue(
+                                                                    item,
+                                                                    'date',
+                                                                ),
+                                                                {
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                    year: 'numeric',
+                                                                },
+                                                            )}{' '}
+                                                            IST ·{' '}
+                                                            {getText(
+                                                                item,
+                                                                'type',
+                                                                'contentType',
+                                                            )
+                                                                .replace(
+                                                                    'image/',
+                                                                    '',
+                                                                )
+                                                                .toUpperCase()}
+                                                            {getValue(
+                                                                item,
+                                                                'byteSize',
+                                                            )
+                                                                ? ` · ${Math.round(Number(getValue(item, 'byteSize')) / 1024)} KB`
+                                                                : ''}
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            );
+                                        })}
+                                    </fieldset>
+                                )}
+                            {evidenceResource.state === 'ready' &&
+                                evidenceImages.length > 0 && (
+                                    <form
+                                        onSubmit={handleImageCandidate}
+                                        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end"
+                                    >
+                                        <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                            Transcribed value
+                                            <input
+                                                required
+                                                type="number"
+                                                inputMode="decimal"
+                                                step="any"
+                                                min="0.01"
+                                                max="1000"
+                                                value={imageValue}
+                                                onChange={(event) =>
+                                                    setImageValue(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                                placeholder="Enter the reading yourself"
+                                            />
+                                        </label>
+                                        <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                            Unit
+                                            <select
+                                                required
+                                                value={imageUnit}
+                                                onChange={(event) =>
+                                                    setImageUnit(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                            >
+                                                <option value="">
+                                                    Choose a unit
+                                                </option>
+                                                <option value="kg">
+                                                    Kilograms (kg)
+                                                </option>
+                                                <option value="lb">
+                                                    Pounds (lb)
+                                                </option>
+                                                <option value="st">
+                                                    Stones (st)
+                                                </option>
+                                            </select>
+                                        </label>
+                                        <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800 lg:col-span-1">
+                                            Notes (optional)
+                                            <input
+                                                maxLength={2000}
+                                                value={imageNotes}
+                                                onChange={(event) =>
+                                                    setImageNotes(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                                placeholder="Optional note"
+                                            />
+                                        </label>
+                                        <button
+                                            type="submit"
+                                            disabled={
+                                                imageBusy ||
+                                                !date ||
+                                                !imageValue ||
+                                                !imageUnit ||
+                                                selectedEvidenceIds.length ===
+                                                    0 ||
+                                                !Number.isFinite(
+                                                    Number(imageValue),
+                                                ) ||
+                                                Number(imageValue) <= 0
+                                            }
+                                            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-sky-300 bg-sky-50 px-4 text-sm font-bold text-sky-900 hover:bg-sky-100 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
+                                        >
+                                            {imageBusy
+                                                ? 'Saving…'
+                                                : 'Save pending candidate'}
+                                        </button>
+                                    </form>
+                                )}
+                            {imageNotice && (
+                                <div className="mt-4">
+                                    <Notice kind={imageNotice.kind}>
+                                        {imageNotice.text}
+                                    </Notice>
+                                </div>
+                            )}
+                        </Panel>
+                    </div>
+                </TrackerDialog>
+            )}
             <Panel
                 title="Measurement history"
-                description="Review image readings or edit any saved measurement."
+                action={
+                    <HistoryFilters
+                        from={historyFrom}
+                        to={historyTo}
+                        onFrom={setHistoryFrom}
+                        onTo={setHistoryTo}
+                        images={imageFilter}
+                        onImages={setImageFilter}
+                        sort={historySort}
+                        onSort={setHistorySort}
+                    />
+                }
             >
-                <StatusPanel state={state} error={error} onRetry={reload} />
-                {state === 'ready' && entries.length === 0 && (
-                    <EmptyState title="No measurements available">
-                        Saved manual entries and image-derived candidates will
-                        appear here.
-                    </EmptyState>
-                )}
-                {state === 'ready' && entries.length > 0 && (
-                    <ul
-                        tabIndex={0}
-                        aria-label="Measurement history"
-                        className="max-h-[560px] overflow-y-auto overscroll-contain [scrollbar-gutter:stable] divide-y divide-stone-200 pr-2"
-                    >
-                        {entries
-                            .slice()
-                            .reverse()
-                            .map((entry, index) => {
+                <StatusPanel
+                    state={historyResource.state}
+                    error={historyResource.error}
+                    onRetry={historyResource.reload}
+                />
+                {historyResource.state === 'ready' &&
+                    historyEntries.length === 0 && (
+                        <EmptyState title="No measurements available">
+                            Saved manual entries and image-derived candidates
+                            will appear here.
+                        </EmptyState>
+                    )}
+                {historyResource.state === 'ready' &&
+                    historyEntries.length > 0 && (
+                        <ul
+                            tabIndex={0}
+                            aria-label="Measurement history"
+                            className="max-h-[560px] overflow-y-auto overscroll-contain [scrollbar-gutter:stable] divide-y divide-stone-200 pr-2"
+                        >
+                            {historyEntries.map((entry, index) => {
                                 const {
                                     record,
                                     date: itemDate,
@@ -3615,20 +3890,11 @@ function WeightSection() {
                                                     )}
                                             </div>
                                         </div>
-                                        {reviewId === id && (
-                                            <WeightReviewEditor
-                                                key={id}
-                                                record={record}
-                                                busy={Boolean(confirmingId)}
-                                                onCancel={() => setReviewId('')}
-                                                onSave={saveReviewedReading}
-                                            />
-                                        )}
                                     </li>
                                 );
                             })}
-                    </ul>
-                )}
+                        </ul>
+                    )}
                 {confirmNotice && (
                     <div className="mt-4">
                         <Notice kind={confirmNotice.kind}>
@@ -3637,6 +3903,30 @@ function WeightSection() {
                     </div>
                 )}
             </Panel>
+            {reviewId &&
+                historyEntries.find((entry) => entry.id === reviewId) && (
+                    <TrackerDialog
+                        title="Edit / review measurement"
+                        onClose={() => setReviewId('')}
+                    >
+                        <WeightReviewEditor
+                            key={reviewId}
+                            record={
+                                historyEntries.find(
+                                    (entry) => entry.id === reviewId,
+                                )!.record
+                            }
+                            busy={Boolean(confirmingId)}
+                            onCancel={() => setReviewId('')}
+                            onSave={saveReviewedReading}
+                        />
+                        {confirmNotice && (
+                            <Notice kind={confirmNotice.kind}>
+                                {confirmNotice.text}
+                            </Notice>
+                        )}
+                    </TrackerDialog>
+                )}
         </>
     );
 }
@@ -4037,6 +4327,7 @@ function BodyPlaybackLane({ items }: { items: JsonRecord[] }) {
 }
 
 function BodySection() {
+    const [uploadOpen, setUploadOpen] = useState(false);
     const { data, state, error, reload } = usePrivateData(
         endpointBySection.body,
     );
@@ -4119,6 +4410,7 @@ function BodySection() {
                 kind: 'success',
                 text: 'Private media upload verified and added.',
             });
+            setUploadOpen(false);
             reload();
         } catch (cause) {
             setUploadNotice({
@@ -4282,153 +4574,169 @@ function BodySection() {
     return (
         <>
             {state === 'ready' && <BodyPlaybackLane items={items} />}
-            <details className="rounded-2xl border border-stone-300 bg-white">
-                <summary className="cursor-pointer px-5 py-4 text-sm font-bold">
-                    + Upload private media
-                </summary>
-                <div className="p-2">
-                    {' '}
-                    <Panel
-                        title="Add private media"
-                        description="Upload a supported image or video to private storage. The file is not published or shared by this action."
-                    >
-                        <form
-                            onSubmit={uploadFile}
-                            className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            <button
+                type="button"
+                onClick={() => setUploadOpen(true)}
+                className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white"
+            >
+                + Upload private media
+            </button>
+            {uploadNotice && !uploadOpen && (
+                <Notice kind={uploadNotice.kind}>{uploadNotice.text}</Notice>
+            )}
+            {uploadOpen && (
+                <TrackerDialog
+                    title="Upload private media"
+                    onClose={() => setUploadOpen(false)}
+                >
+                    <div className="p-2">
+                        {' '}
+                        <Panel
+                            title="Add private media"
+                            description="Upload a supported image or video to private storage. The file is not published or shared by this action."
                         >
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                File
-                                <input
-                                    required
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
-                                    onChange={(event) =>
-                                        setFile(event.target.files?.[0] ?? null)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-bold"
-                                />
-                                <span className="text-xs font-normal text-stone-500">
-                                    JPEG, PNG, WebP, MP4, WebM · up to 15 MB for
-                                    images, 100 MB for videos
-                                </span>
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Activity date (IST)
-                                <input
-                                    required
-                                    type="date"
-                                    value={activityDate}
-                                    onChange={(event) =>
-                                        setActivityDate(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                />
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Category
-                                <select
-                                    value={category}
-                                    onChange={(event) => {
-                                        setCategory(event.target.value);
-                                        if (event.target.value !== 'body')
-                                            setPose('');
-                                    }}
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                >
-                                    <option value="body">Body</option>
-                                    <option value="habit_evidence">
-                                        Habit evidence
-                                    </option>
-                                    <option value="general">General</option>
-                                </select>
-                            </label>
-                            {category === 'body' && (
+                            <form
+                                onSubmit={uploadFile}
+                                className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                            >
                                 <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                    Pose (optional)
-                                    <select
-                                        value={pose}
+                                    File
+                                    <input
+                                        required
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
                                         onChange={(event) =>
-                                            setPose(event.target.value)
+                                            setFile(
+                                                event.target.files?.[0] ?? null,
+                                            )
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-bold"
+                                    />
+                                    <span className="text-xs font-normal text-stone-500">
+                                        JPEG, PNG, WebP, MP4, WebM · up to 15 MB
+                                        for images, 100 MB for videos
+                                    </span>
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Activity date (IST)
+                                    <input
+                                        required
+                                        type="date"
+                                        value={activityDate}
+                                        onChange={(event) =>
+                                            setActivityDate(event.target.value)
                                         }
                                         className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                    />
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Category
+                                    <select
+                                        value={category}
+                                        onChange={(event) => {
+                                            setCategory(event.target.value);
+                                            if (event.target.value !== 'body')
+                                                setPose('');
+                                        }}
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
                                     >
-                                        <option value="">Not specified</option>
-                                        <option value="front">Front</option>
-                                        <option value="back">Back</option>
-                                        <option value="left_side">
-                                            Left side
+                                        <option value="body">Body</option>
+                                        <option value="habit_evidence">
+                                            Habit evidence
                                         </option>
-                                        <option value="right_side">
-                                            Right side
-                                        </option>
-                                        <option value="other">Other</option>
+                                        <option value="general">General</option>
                                     </select>
                                 </label>
+                                {category === 'body' && (
+                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                        Pose (optional)
+                                        <select
+                                            value={pose}
+                                            onChange={(event) =>
+                                                setPose(event.target.value)
+                                            }
+                                            className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                        >
+                                            <option value="">
+                                                Not specified
+                                            </option>
+                                            <option value="front">Front</option>
+                                            <option value="back">Back</option>
+                                            <option value="left_side">
+                                                Left side
+                                            </option>
+                                            <option value="right_side">
+                                                Right side
+                                            </option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </label>
+                                )}
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800 sm:col-span-2 lg:col-span-2">
+                                    Private notes (optional)
+                                    <textarea
+                                        value={privateNotes}
+                                        onChange={(event) =>
+                                            setPrivateNotes(event.target.value)
+                                        }
+                                        maxLength={2000}
+                                        rows={2}
+                                        className="rounded-lg border border-stone-300 px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                        placeholder="Notes stay private"
+                                    />
+                                </label>
+                                <div className="flex items-end sm:col-span-2 lg:col-span-3">
+                                    <button
+                                        type="submit"
+                                        disabled={
+                                            !file ||
+                                            uploadBusy ||
+                                            !activityDate ||
+                                            Boolean(finalizeAssetId)
+                                        }
+                                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
+                                    >
+                                        <Plus size={16} aria-hidden="true" />
+                                        {uploadBusy
+                                            ? 'Uploading…'
+                                            : freshKeyNeeded
+                                              ? 'Start again'
+                                              : 'Upload privately'}
+                                    </button>
+                                </div>
+                            </form>
+                            {uploadNotice && (
+                                <div className="mt-4">
+                                    <Notice kind={uploadNotice.kind}>
+                                        {uploadNotice.text}
+                                    </Notice>
+                                </div>
                             )}
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800 sm:col-span-2 lg:col-span-2">
-                                Private notes (optional)
-                                <textarea
-                                    value={privateNotes}
-                                    onChange={(event) =>
-                                        setPrivateNotes(event.target.value)
-                                    }
-                                    maxLength={2000}
-                                    rows={2}
-                                    className="rounded-lg border border-stone-300 px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                    placeholder="Notes stay private"
-                                />
-                            </label>
-                            <div className="flex items-end sm:col-span-2 lg:col-span-3">
-                                <button
-                                    type="submit"
-                                    disabled={
-                                        !file ||
-                                        uploadBusy ||
-                                        !activityDate ||
-                                        Boolean(finalizeAssetId)
-                                    }
-                                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
-                                >
-                                    <Plus size={16} aria-hidden="true" />
-                                    {uploadBusy
-                                        ? 'Uploading…'
-                                        : freshKeyNeeded
-                                          ? 'Start again'
-                                          : 'Upload privately'}
-                                </button>
-                            </div>
-                        </form>
-                        {uploadNotice && (
-                            <div className="mt-4">
-                                <Notice kind={uploadNotice.kind}>
-                                    {uploadNotice.text}
-                                </Notice>
-                            </div>
-                        )}
-                        {finalizeAssetId && !uploadBusy && (
-                            <div className="mt-3 flex flex-wrap items-center gap-3">
-                                <p className="text-sm text-stone-700">
-                                    The file is uploaded; final verification is
-                                    still pending.
-                                </p>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        void finalizeUpload(
-                                            finalizeAssetId,
-                                            false,
-                                            uploadIntentFingerprint,
-                                        )
-                                    }
-                                    className="inline-flex min-h-10 items-center rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-800 hover:bg-stone-100"
-                                >
-                                    Retry verification
-                                </button>
-                            </div>
-                        )}
-                    </Panel>
-                </div>
-            </details>
+                            {finalizeAssetId && !uploadBusy && (
+                                <div className="mt-3 flex flex-wrap items-center gap-3">
+                                    <p className="text-sm text-stone-700">
+                                        The file is uploaded; final verification
+                                        is still pending.
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            void finalizeUpload(
+                                                finalizeAssetId,
+                                                false,
+                                                uploadIntentFingerprint,
+                                            )
+                                        }
+                                        className="inline-flex min-h-10 items-center rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-800 hover:bg-stone-100"
+                                    >
+                                        Retry verification
+                                    </button>
+                                </div>
+                            )}
+                        </Panel>
+                    </div>
+                </TrackerDialog>
+            )}
             <Panel
                 title="Body gallery"
                 description="Image previews load as you scroll. Videos load when you choose Play."
@@ -4441,7 +4749,7 @@ function BodySection() {
                     </EmptyState>
                 )}
                 {state === 'ready' && items.length > 0 && (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
                         {items.map((item, index) => {
                             const id = getText(item, 'id', 'mediaId', 'key');
                             const playback = id ? playing[id] : undefined;
@@ -4460,12 +4768,12 @@ function BodySection() {
                                     key={id || `${title}-${index}`}
                                     className="overflow-hidden rounded-xl border border-stone-200 bg-stone-50"
                                 >
-                                    <div className="grid h-56 place-items-center bg-stone-100 p-2">
+                                    <div className="grid h-32 place-items-center sm:h-36 bg-stone-100 p-2">
                                         {!isVideo ? (
                                             <PrivateImage
                                                 id={id}
                                                 alt={title}
-                                                className="h-full w-full rounded-lg"
+                                                className="h-full w-full rounded-lg object-contain"
                                             />
                                         ) : playback?.url ? (
                                             <video
@@ -4497,7 +4805,7 @@ function BodySection() {
                                     <div className="p-3">
                                         <div className="flex items-start justify-between gap-3">
                                             <div>
-                                                <h3 className="font-bold text-stone-900">
+                                                <h3 className="text-sm font-bold text-stone-900">
                                                     {title}
                                                 </h3>
                                                 <p className="mt-1 text-xs text-stone-600">
@@ -4568,6 +4876,7 @@ function SummariesSection() {
         `${endpointBySection.summaries}?date=${draftDate}`,
     );
     const [selectedDraftId, setSelectedDraftId] = useState('');
+    const [createOpen, setCreateOpen] = useState(false);
     const [approvalInvalidated, setApprovalInvalidated] = useState<
         Record<string, boolean>
     >({});
@@ -4658,7 +4967,15 @@ function SummariesSection() {
     };
 
     const createDraft = async () => {
-        await operation('create', 'create', { activityDate: draftDate });
+        const result = await operation('create', 'create', {
+            activityDate: draftDate,
+        });
+        if (isRecord(result)) {
+            const record = isRecord(result.data) ? result.data : result;
+            setCreateOpen(false);
+            const draft = isRecord(record.draft) ? record.draft : record;
+            setSelectedDraftId(getText(draft, 'draftId', 'id'));
+        }
     };
 
     const invalidateApproval = (id: string) => {
@@ -4870,15 +5187,50 @@ function SummariesSection() {
         if (result) invalidateApproval(id);
     };
 
-    const selectedDraft =
-        drafts.find(
-            (draft) => getText(draft, 'draftId', 'id') === selectedDraftId,
-        ) ?? drafts[0];
+    const selectedDraft = drafts.find(
+        (draft) => getText(draft, 'draftId', 'id') === selectedDraftId,
+    );
     const selectedId = selectedDraft
         ? getText(selectedDraft, 'draftId', 'id')
         : '';
     return (
         <>
+            {createOpen && (
+                <TrackerDialog
+                    title="Create summary draft"
+                    onClose={() => setCreateOpen(false)}
+                >
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            void createDraft();
+                        }}
+                        className="space-y-4"
+                    >
+                        <label className="grid gap-2 text-sm font-bold">
+                            Date (IST)
+                            <input
+                                type="date"
+                                required
+                                value={draftDate}
+                                max={localDateValue()}
+                                onChange={(e) => setDraftDate(e.target.value)}
+                                className="min-h-11 rounded-lg border border-stone-300 px-3 font-normal"
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            disabled={Boolean(busyId) || !draftDate}
+                            className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white disabled:opacity-45"
+                        >
+                            {busyId ? 'Creating…' : 'Create draft'}
+                        </button>
+                        {notice && (
+                            <Notice kind={notice.kind}>{notice.text}</Notice>
+                        )}
+                    </form>
+                </TrackerDialog>
+            )}
             <Panel
                 title="Summary workspace"
                 description="Write, review, then publish. Private source data stays out of automatic drafts."
@@ -4903,7 +5255,10 @@ function SummariesSection() {
                             <button
                                 type="button"
                                 disabled={Boolean(busyId) || !draftDate}
-                                onClick={() => void createDraft()}
+                                onClick={() => {
+                                    setNotice(null);
+                                    setCreateOpen(true);
+                                }}
                                 className="min-h-10 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white disabled:opacity-40"
                             >
                                 {busyId === 'create'
@@ -4949,10 +5304,10 @@ function SummariesSection() {
                     </EmptyState>
                 )}
                 {state === 'ready' && drafts.length > 0 && (
-                    <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+                    <div className="space-y-4">
                         <aside
                             aria-label="Summary drafts"
-                            className="flex gap-2 overflow-x-auto lg:max-h-[700px] lg:flex-col lg:overflow-y-auto"
+                            className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
                         >
                             {drafts.map((draft) => {
                                 const draftId = getText(draft, 'draftId', 'id');
@@ -4992,703 +5347,756 @@ function SummariesSection() {
                                 );
                             })}
                         </aside>
-                        <div className="min-w-0">
-                            {drafts
-                                .filter(
-                                    (draft) =>
-                                        getText(draft, 'draftId', 'id') ===
-                                        selectedId,
-                                )
-                                .map((draft, index) => {
-                                    const id =
-                                        getText(draft, 'draftId', 'id') ||
-                                        `draft-${index}`;
-                                    const activityDate = getText(
-                                        draft,
-                                        'activityDate',
-                                    );
-                                    const original = {
-                                        title: getText(draft, 'title'),
-                                        body: getText(draft, 'body'),
-                                    };
-                                    const edit = draftEdits[id] ?? original;
-                                    const revisionNumber = getNumber(
-                                        draft,
-                                        'revisionNumber',
-                                    );
-                                    const dirty =
-                                        edit.title !== original.title ||
-                                        edit.body !== original.body;
-                                    const serverApprovalId = getText(
-                                        draft,
-                                        'approvalId',
-                                    );
-                                    const serverApproval = approvals.find(
-                                        (item) =>
-                                            getText(item, 'approvalId') ===
-                                                serverApprovalId &&
-                                            getValue(item, 'isCurrent') ===
-                                                true,
-                                    );
-                                    const approvalId =
-                                        approvalIds[id] ??
-                                        (!approvalInvalidated[id]
-                                            ? getText(
-                                                  serverApproval ?? {},
-                                                  'approvalId',
-                                              )
-                                            : '');
-                                    const draftMedia = mediaState[id];
-                                    const derivatives = preparedMedia[id] ?? [];
-                                    const serverMediaIds = getArray(
-                                        serverApproval,
-                                        'publicMedia',
+                        {selectedDraft && (
+                            <TrackerDialog
+                                title="Edit / review summary"
+                                onClose={() => setSelectedDraftId('')}
+                            >
+                                {notice && (
+                                    <div className="mb-4">
+                                        <Notice kind={notice.kind}>
+                                            {notice.text}
+                                        </Notice>
+                                    </div>
+                                )}
+                                {drafts
+                                    .filter(
+                                        (draft) =>
+                                            getText(draft, 'draftId', 'id') ===
+                                            selectedId,
                                     )
-                                        .map((item) =>
-                                            getText(
-                                                item,
-                                                'approvedMediaAssetId',
-                                            ),
-                                        )
-                                        .sort();
-                                    const selected = new Set(
-                                        selectedDerivativeIds[id] ??
+                                    .map((draft, index) => {
+                                        const id =
+                                            getText(draft, 'draftId', 'id') ||
+                                            `draft-${index}`;
+                                        const activityDate = getText(
+                                            draft,
+                                            'activityDate',
+                                        );
+                                        const original = {
+                                            title: getText(draft, 'title'),
+                                            body: getText(draft, 'body'),
+                                        };
+                                        const edit = draftEdits[id] ?? original;
+                                        const revisionNumber = getNumber(
+                                            draft,
+                                            'revisionNumber',
+                                        );
+                                        const dirty =
+                                            edit.title !== original.title ||
+                                            edit.body !== original.body;
+                                        const serverApprovalId = getText(
+                                            draft,
+                                            'approvalId',
+                                        );
+                                        const serverApproval = approvals.find(
+                                            (item) =>
+                                                getText(item, 'approvalId') ===
+                                                    serverApprovalId &&
+                                                getValue(item, 'isCurrent') ===
+                                                    true,
+                                        );
+                                        const approvalId =
+                                            approvalIds[id] ??
                                             (!approvalInvalidated[id]
-                                                ? serverMediaIds
-                                                : []),
-                                    );
-                                    const currentMediaIds = [
-                                        ...selected,
-                                    ].sort();
-                                    const approvedSnapshot =
-                                        approvedSnapshots[id] ??
-                                        (!approvalInvalidated[id] &&
-                                        serverApproval
-                                            ? {
-                                                  revisionNumber: getNumber(
-                                                      serverApproval,
-                                                      'revisionNumber',
-                                                  ),
-                                                  title: getText(
-                                                      serverApproval,
-                                                      'titleSnapshot',
-                                                  ),
-                                                  body: getText(
-                                                      serverApproval,
-                                                      'bodySnapshot',
-                                                  ),
-                                                  mediaIds: serverMediaIds,
-                                              }
-                                            : undefined);
-                                    const approvalMatches = Boolean(
-                                        approvalId &&
-                                        approvedSnapshot &&
-                                        revisionNumber !== null &&
-                                        !dirty &&
-                                        approvedSnapshot.revisionNumber ===
-                                            revisionNumber &&
-                                        approvedSnapshot.title === edit.title &&
-                                        approvedSnapshot.body === edit.body &&
-                                        JSON.stringify(
-                                            approvedSnapshot.mediaIds,
-                                        ) === JSON.stringify(currentMediaIds),
-                                    );
-                                    const needsReapproval =
-                                        Boolean(
-                                            serverApprovalId || approvalId,
-                                        ) && !approvalMatches;
-                                    const approvalLabel = approvalMatches
-                                        ? 'Approved for this revision'
-                                        : needsReapproval
-                                          ? 'Stale approval · re-approval needed'
-                                          : 'Needs approval';
-                                    return (
-                                        <article
-                                            key={id}
-                                            className="min-w-0 rounded-xl border border-stone-200 p-4"
-                                        >
-                                            <ol className="mb-5 flex items-center gap-3 border-b border-stone-200 pb-4 text-xs font-bold text-stone-500">
-                                                {[
-                                                    'Edit',
-                                                    'Review',
-                                                    'Publish',
-                                                ].map((step, i) => (
-                                                    <li
-                                                        key={step}
-                                                        className={`flex items-center gap-2 ${i === (dirty ? 0 : approvalMatches ? 2 : 1) ? 'text-stone-950' : ''}`}
-                                                    >
-                                                        <span
-                                                            className={`grid h-6 w-6 place-items-center rounded-full border ${i === (dirty ? 0 : approvalMatches ? 2 : 1) ? 'border-stone-950 bg-stone-950 text-white' : 'border-stone-300'}`}
-                                                        >
-                                                            {i + 1}
-                                                        </span>
-                                                        {step}
-                                                    </li>
-                                                ))}
-                                            </ol>
-                                            <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-                                                <div>
-                                                    <h3 className="font-extrabold text-stone-950">
-                                                        {edit.title ||
-                                                            'Untitled draft'}
-                                                    </h3>
-                                                    <p className="mt-1 text-xs text-stone-500">
-                                                        {dateLabel(
-                                                            activityDate,
-                                                            {
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                year: 'numeric',
-                                                            },
-                                                        )}{' '}
-                                                        IST ·{' '}
-                                                        {revisionNumber === null
-                                                            ? 'revision not returned'
-                                                            : `revision ${revisionNumber}`}
-                                                    </p>
-                                                </div>
-                                                <span className="rounded-full border border-amber-300 bg-amber-100 px-2.5 py-1 text-xs font-extrabold text-amber-900">
-                                                    Draft
-                                                </span>
-                                                <span
-                                                    className={`rounded-full border px-2.5 py-1 text-xs font-extrabold ${approvalMatches ? 'border-emerald-300 bg-emerald-100 text-emerald-900' : needsReapproval ? 'border-rose-300 bg-rose-100 text-rose-900' : 'border-stone-300 bg-stone-100 text-stone-700'}`}
-                                                >
-                                                    {approvalLabel}
-                                                </span>
-                                            </div>
-                                            {needsReapproval && (
-                                                <p
-                                                    className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900"
-                                                    role="status"
-                                                >
-                                                    A previous approval no
-                                                    longer matches the current
-                                                    title, body, revision, or
-                                                    media selection. Approve the
-                                                    current snapshot again
-                                                    before publishing.
-                                                </p>
-                                            )}
-                                            <div className="grid gap-3">
-                                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                                    Title
-                                                    <input
-                                                        value={edit.title}
-                                                        onChange={(event) => {
-                                                            setDraftEdits(
-                                                                (current) => ({
-                                                                    ...current,
-                                                                    [id]: {
-                                                                        ...edit,
-                                                                        title: event
-                                                                            .target
-                                                                            .value,
-                                                                    },
-                                                                }),
-                                                            );
-                                                            invalidateApproval(
-                                                                id,
-                                                            );
-                                                        }}
-                                                        maxLength={160}
-                                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                                    />
-                                                </label>
-                                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                                    Body
-                                                    <textarea
-                                                        value={edit.body}
-                                                        onChange={(event) => {
-                                                            setDraftEdits(
-                                                                (current) => ({
-                                                                    ...current,
-                                                                    [id]: {
-                                                                        ...edit,
-                                                                        body: event
-                                                                            .target
-                                                                            .value,
-                                                                    },
-                                                                }),
-                                                            );
-                                                            invalidateApproval(
-                                                                id,
-                                                            );
-                                                        }}
-                                                        rows={6}
-                                                        maxLength={2750}
-                                                        className="rounded-lg border border-stone-300 px-3 py-2 font-normal leading-6 focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                                    />
-                                                    <span className="text-xs font-normal text-stone-500">
-                                                        The exact final line is
-                                                        kept as “posted by Ullu
-                                                        🦉” when you save.
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            <div className="mt-3 flex flex-wrap items-center gap-2">
-                                                <button
-                                                    type="button"
-                                                    disabled={
-                                                        !dirty ||
-                                                        !getText(
-                                                            draft,
-                                                            'draftId',
-                                                            'id',
-                                                        ) ||
-                                                        revisionNumber ===
-                                                            null ||
-                                                        Boolean(busyId) ||
-                                                        !edit.title.trim()
-                                                    }
-                                                    onClick={() =>
-                                                        void saveEdit(
-                                                            draft,
-                                                            id,
-                                                            edit.title,
-                                                            edit.body,
-                                                        )
-                                                    }
-                                                    className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-800 hover:bg-stone-100 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700"
-                                                >
-                                                    {busyId === id
-                                                        ? 'Saving…'
-                                                        : 'Save new revision'}
-                                                </button>
-                                                {dirty && (
-                                                    <span className="text-xs text-amber-800">
-                                                        Unsaved edits must be
-                                                        saved before approval.
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <details
-                                                className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-3"
-                                                aria-label="Public image derivatives"
+                                                ? getText(
+                                                      serverApproval ?? {},
+                                                      'approvalId',
+                                                  )
+                                                : '');
+                                        const draftMedia = mediaState[id];
+                                        const derivatives =
+                                            preparedMedia[id] ?? [];
+                                        const serverMediaIds = getArray(
+                                            serverApproval,
+                                            'publicMedia',
+                                        )
+                                            .map((item) =>
+                                                getText(
+                                                    item,
+                                                    'approvedMediaAssetId',
+                                                ),
+                                            )
+                                            .sort();
+                                        const selected = new Set(
+                                            selectedDerivativeIds[id] ??
+                                                (!approvalInvalidated[id]
+                                                    ? serverMediaIds
+                                                    : []),
+                                        );
+                                        const currentMediaIds = [
+                                            ...selected,
+                                        ].sort();
+                                        const approvedSnapshot =
+                                            approvedSnapshots[id] ??
+                                            (!approvalInvalidated[id] &&
+                                            serverApproval
+                                                ? {
+                                                      revisionNumber: getNumber(
+                                                          serverApproval,
+                                                          'revisionNumber',
+                                                      ),
+                                                      title: getText(
+                                                          serverApproval,
+                                                          'titleSnapshot',
+                                                      ),
+                                                      body: getText(
+                                                          serverApproval,
+                                                          'bodySnapshot',
+                                                      ),
+                                                      mediaIds: serverMediaIds,
+                                                  }
+                                                : undefined);
+                                        const approvalMatches = Boolean(
+                                            approvalId &&
+                                            approvedSnapshot &&
+                                            revisionNumber !== null &&
+                                            !dirty &&
+                                            approvedSnapshot.revisionNumber ===
+                                                revisionNumber &&
+                                            approvedSnapshot.title ===
+                                                edit.title &&
+                                            approvedSnapshot.body ===
+                                                edit.body &&
+                                            JSON.stringify(
+                                                approvedSnapshot.mediaIds,
+                                            ) ===
+                                                JSON.stringify(currentMediaIds),
+                                        );
+                                        const needsReapproval =
+                                            Boolean(
+                                                serverApprovalId || approvalId,
+                                            ) && !approvalMatches;
+                                        const approvalLabel = approvalMatches
+                                            ? 'Approved for this revision'
+                                            : needsReapproval
+                                              ? 'Stale approval · re-approval needed'
+                                              : 'Needs approval';
+                                        return (
+                                            <article
+                                                key={id}
+                                                className="min-w-0 rounded-xl border border-stone-200 p-4"
                                             >
-                                                <summary className="cursor-pointer text-sm font-bold text-stone-800">
-                                                    Public images (optional) ·{' '}
-                                                    {currentMediaIds.length}{' '}
-                                                    selected
-                                                </summary>
-                                                <div className="mt-3">
-                                                    <div className="flex flex-wrap items-center justify-between gap-2">
-                                                        <div>
-                                                            <h4 className="font-bold text-stone-900">
-                                                                Optional public
-                                                                images
-                                                            </h4>
-                                                            <p className="text-xs text-stone-600">
-                                                                Only same-day
-                                                                photos are
-                                                                shown;
-                                                                weight-linked
-                                                                images are
-                                                                excluded. Body
-                                                                photos stay
-                                                                private by
-                                                                default. Prepare
-                                                                and preview a
-                                                                sanitized WebP,
-                                                                then explicitly
-                                                                select each
-                                                                derivative to
-                                                                publish.
-                                                            </p>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            disabled={
-                                                                Boolean(
-                                                                    busyId,
-                                                                ) ||
-                                                                approvalMatches
-                                                            }
-                                                            onClick={() =>
-                                                                void loadSummaryMedia(
-                                                                    id,
-                                                                    activityDate,
-                                                                )
-                                                            }
-                                                            className="min-h-9 rounded-lg border border-stone-300 bg-white px-3 text-xs font-bold text-stone-800 disabled:opacity-50"
+                                                <ol className="mb-5 flex items-center gap-3 border-b border-stone-200 pb-4 text-xs font-bold text-stone-500">
+                                                    {[
+                                                        'Edit',
+                                                        'Review',
+                                                        'Publish',
+                                                    ].map((step, i) => (
+                                                        <li
+                                                            key={step}
+                                                            className={`flex items-center gap-2 ${i === (dirty ? 0 : approvalMatches ? 2 : 1) ? 'text-stone-950' : ''}`}
                                                         >
-                                                            {draftMedia?.state ===
-                                                            'loading'
-                                                                ? 'Loading…'
-                                                                : draftMedia?.state ===
-                                                                    'ready'
-                                                                  ? 'Refresh images'
-                                                                  : 'Load eligible images'}
-                                                        </button>
-                                                    </div>
-                                                    {draftMedia?.error && (
-                                                        <p
-                                                            className="mt-2 text-sm text-rose-800"
-                                                            role="alert"
-                                                        >
-                                                            {draftMedia.error}
+                                                            <span
+                                                                className={`grid h-6 w-6 place-items-center rounded-full border ${i === (dirty ? 0 : approvalMatches ? 2 : 1) ? 'border-stone-950 bg-stone-950 text-white' : 'border-stone-300'}`}
+                                                            >
+                                                                {i + 1}
+                                                            </span>
+                                                            {step}
+                                                        </li>
+                                                    ))}
+                                                </ol>
+                                                <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+                                                    <div>
+                                                        <h3 className="font-extrabold text-stone-950">
+                                                            {edit.title ||
+                                                                'Untitled draft'}
+                                                        </h3>
+                                                        <p className="mt-1 text-xs text-stone-500">
+                                                            {dateLabel(
+                                                                activityDate,
+                                                                {
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                    year: 'numeric',
+                                                                },
+                                                            )}{' '}
+                                                            IST ·{' '}
+                                                            {revisionNumber ===
+                                                            null
+                                                                ? 'revision not returned'
+                                                                : `revision ${revisionNumber}`}
                                                         </p>
+                                                    </div>
+                                                    <span className="rounded-full border border-amber-300 bg-amber-100 px-2.5 py-1 text-xs font-extrabold text-amber-900">
+                                                        Draft
+                                                    </span>
+                                                    <span
+                                                        className={`rounded-full border px-2.5 py-1 text-xs font-extrabold ${approvalMatches ? 'border-emerald-300 bg-emerald-100 text-emerald-900' : needsReapproval ? 'border-rose-300 bg-rose-100 text-rose-900' : 'border-stone-300 bg-stone-100 text-stone-700'}`}
+                                                    >
+                                                        {approvalLabel}
+                                                    </span>
+                                                </div>
+                                                {needsReapproval && (
+                                                    <p
+                                                        className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900"
+                                                        role="status"
+                                                    >
+                                                        A previous approval no
+                                                        longer matches the
+                                                        current title, body,
+                                                        revision, or media
+                                                        selection. Approve the
+                                                        current snapshot again
+                                                        before publishing.
+                                                    </p>
+                                                )}
+                                                <div className="grid gap-3">
+                                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                                        Title
+                                                        <input
+                                                            value={edit.title}
+                                                            onChange={(
+                                                                event,
+                                                            ) => {
+                                                                setDraftEdits(
+                                                                    (
+                                                                        current,
+                                                                    ) => ({
+                                                                        ...current,
+                                                                        [id]: {
+                                                                            ...edit,
+                                                                            title: event
+                                                                                .target
+                                                                                .value,
+                                                                        },
+                                                                    }),
+                                                                );
+                                                                invalidateApproval(
+                                                                    id,
+                                                                );
+                                                            }}
+                                                            maxLength={160}
+                                                            className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                                        />
+                                                    </label>
+                                                    <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                                        Body
+                                                        <textarea
+                                                            value={edit.body}
+                                                            onChange={(
+                                                                event,
+                                                            ) => {
+                                                                setDraftEdits(
+                                                                    (
+                                                                        current,
+                                                                    ) => ({
+                                                                        ...current,
+                                                                        [id]: {
+                                                                            ...edit,
+                                                                            body: event
+                                                                                .target
+                                                                                .value,
+                                                                        },
+                                                                    }),
+                                                                );
+                                                                invalidateApproval(
+                                                                    id,
+                                                                );
+                                                            }}
+                                                            rows={6}
+                                                            maxLength={2750}
+                                                            className="rounded-lg border border-stone-300 px-3 py-2 font-normal leading-6 focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                                        />
+                                                        <span className="text-xs font-normal text-stone-500">
+                                                            The exact final line
+                                                            is kept as “posted
+                                                            by Ullu 🦉” when you
+                                                            save.
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div className="mt-3 flex flex-wrap items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        disabled={
+                                                            !dirty ||
+                                                            !getText(
+                                                                draft,
+                                                                'draftId',
+                                                                'id',
+                                                            ) ||
+                                                            revisionNumber ===
+                                                                null ||
+                                                            Boolean(busyId) ||
+                                                            !edit.title.trim()
+                                                        }
+                                                        onClick={() =>
+                                                            void saveEdit(
+                                                                draft,
+                                                                id,
+                                                                edit.title,
+                                                                edit.body,
+                                                            )
+                                                        }
+                                                        className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-800 hover:bg-stone-100 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700"
+                                                    >
+                                                        {busyId === id
+                                                            ? 'Saving…'
+                                                            : 'Save new revision'}
+                                                    </button>
+                                                    {dirty && (
+                                                        <span className="text-xs text-amber-800">
+                                                            Unsaved edits must
+                                                            be saved before
+                                                            approval.
+                                                        </span>
                                                     )}
-                                                    {draftMedia?.state ===
-                                                        'ready' &&
-                                                        draftMedia.media
-                                                            .length === 0 && (
-                                                            <p className="mt-3 text-sm text-stone-600">
-                                                                No eligible
-                                                                same-day images
-                                                                are available.
-                                                                You can approve
-                                                                text with no
-                                                                images selected.
+                                                </div>
+                                                <details
+                                                    className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-3"
+                                                    aria-label="Public image derivatives"
+                                                >
+                                                    <summary className="cursor-pointer text-sm font-bold text-stone-800">
+                                                        Public images (optional)
+                                                        ·{' '}
+                                                        {currentMediaIds.length}{' '}
+                                                        selected
+                                                    </summary>
+                                                    <div className="mt-3">
+                                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                                            <div>
+                                                                <h4 className="font-bold text-stone-900">
+                                                                    Optional
+                                                                    public
+                                                                    images
+                                                                </h4>
+                                                                <p className="text-xs text-stone-600">
+                                                                    Only
+                                                                    same-day
+                                                                    photos are
+                                                                    shown;
+                                                                    weight-linked
+                                                                    images are
+                                                                    excluded.
+                                                                    Body photos
+                                                                    stay private
+                                                                    by default.
+                                                                    Prepare and
+                                                                    preview a
+                                                                    sanitized
+                                                                    WebP, then
+                                                                    explicitly
+                                                                    select each
+                                                                    derivative
+                                                                    to publish.
+                                                                </p>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                disabled={
+                                                                    Boolean(
+                                                                        busyId,
+                                                                    ) ||
+                                                                    approvalMatches
+                                                                }
+                                                                onClick={() =>
+                                                                    void loadSummaryMedia(
+                                                                        id,
+                                                                        activityDate,
+                                                                    )
+                                                                }
+                                                                className="min-h-9 rounded-lg border border-stone-300 bg-white px-3 text-xs font-bold text-stone-800 disabled:opacity-50"
+                                                            >
+                                                                {draftMedia?.state ===
+                                                                'loading'
+                                                                    ? 'Loading…'
+                                                                    : draftMedia?.state ===
+                                                                        'ready'
+                                                                      ? 'Refresh images'
+                                                                      : 'Load eligible images'}
+                                                            </button>
+                                                        </div>
+                                                        {draftMedia?.error && (
+                                                            <p
+                                                                className="mt-2 text-sm text-rose-800"
+                                                                role="alert"
+                                                            >
+                                                                {
+                                                                    draftMedia.error
+                                                                }
                                                             </p>
                                                         )}
-                                                    {draftMedia?.media.map(
-                                                        (item) => {
-                                                            const sourceId =
-                                                                getText(
-                                                                    item,
-                                                                    'sourceMediaAssetId',
-                                                                );
-                                                            const prepared =
-                                                                derivatives.find(
-                                                                    (
-                                                                        derivative,
-                                                                    ) =>
-                                                                        derivative.sourceMediaAssetId ===
-                                                                        sourceId,
-                                                                );
-                                                            const checked =
-                                                                Boolean(
-                                                                    prepared &&
-                                                                    selected.has(
-                                                                        prepared.approvedMediaAssetId,
-                                                                    ),
-                                                                );
-                                                            return (
-                                                                <div
-                                                                    key={
-                                                                        sourceId
-                                                                    }
-                                                                    className="mt-3 grid gap-3 rounded-lg border border-stone-200 bg-white p-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center"
-                                                                >
-                                                                    <div>
-                                                                        <Image
-                                                                            unoptimized
-                                                                            src={getText(
-                                                                                item,
-                                                                                'previewUrl',
-                                                                            )}
-                                                                            alt="Private original image preview"
-                                                                            width={
-                                                                                240
-                                                                            }
-                                                                            height={
-                                                                                180
-                                                                            }
-                                                                            className="max-h-36 w-full rounded-lg object-contain"
-                                                                        />
-                                                                        <p className="mt-1 text-xs text-stone-500">
-                                                                            Private
-                                                                            original
-                                                                            ·{' '}
+                                                        {draftMedia?.state ===
+                                                            'ready' &&
+                                                            draftMedia.media
+                                                                .length ===
+                                                                0 && (
+                                                                <p className="mt-3 text-sm text-stone-600">
+                                                                    No eligible
+                                                                    same-day
+                                                                    images are
+                                                                    available.
+                                                                    You can
+                                                                    approve text
+                                                                    with no
+                                                                    images
+                                                                    selected.
+                                                                </p>
+                                                            )}
+                                                        {draftMedia?.media.map(
+                                                            (item) => {
+                                                                const sourceId =
+                                                                    getText(
+                                                                        item,
+                                                                        'sourceMediaAssetId',
+                                                                    );
+                                                                const prepared =
+                                                                    derivatives.find(
+                                                                        (
+                                                                            derivative,
+                                                                        ) =>
+                                                                            derivative.sourceMediaAssetId ===
+                                                                            sourceId,
+                                                                    );
+                                                                const checked =
+                                                                    Boolean(
+                                                                        prepared &&
+                                                                        selected.has(
+                                                                            prepared.approvedMediaAssetId,
+                                                                        ),
+                                                                    );
+                                                                return (
+                                                                    <div
+                                                                        key={
+                                                                            sourceId
+                                                                        }
+                                                                        className="mt-3 grid gap-3 rounded-lg border border-stone-200 bg-white p-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center"
+                                                                    >
+                                                                        <div>
+                                                                            <Image
+                                                                                unoptimized
+                                                                                src={getText(
+                                                                                    item,
+                                                                                    'previewUrl',
+                                                                                )}
+                                                                                alt="Private original image preview"
+                                                                                width={
+                                                                                    240
+                                                                                }
+                                                                                height={
+                                                                                    180
+                                                                                }
+                                                                                className="max-h-36 w-full rounded-lg object-contain"
+                                                                            />
+                                                                            <p className="mt-1 text-xs text-stone-500">
+                                                                                Private
+                                                                                original
+                                                                                ·{' '}
+                                                                                {getText(
+                                                                                    item,
+                                                                                    'category',
+                                                                                ) ===
+                                                                                'body'
+                                                                                    ? 'body photo'
+                                                                                    : getText(
+                                                                                          item,
+                                                                                          'category',
+                                                                                      ).replace(
+                                                                                          '_',
+                                                                                          ' ',
+                                                                                      )}
+                                                                            </p>
                                                                             {getText(
                                                                                 item,
                                                                                 'category',
                                                                             ) ===
-                                                                            'body'
-                                                                                ? 'body photo'
-                                                                                : getText(
-                                                                                      item,
-                                                                                      'category',
-                                                                                  ).replace(
-                                                                                      '_',
-                                                                                      ' ',
-                                                                                  )}
-                                                                        </p>
-                                                                        {getText(
-                                                                            item,
-                                                                            'category',
-                                                                        ) ===
-                                                                            'body' && (
-                                                                            <p className="text-xs font-semibold text-amber-800">
-                                                                                Private
-                                                                                unless
-                                                                                you
-                                                                                select
-                                                                                the
-                                                                                sanitized
-                                                                                derivative
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                    <button
-                                                                        type="button"
-                                                                        disabled={
-                                                                            Boolean(
-                                                                                busyId,
-                                                                            ) ||
-                                                                            Boolean(
-                                                                                prepared,
-                                                                            ) ||
-                                                                            approvalMatches
-                                                                        }
-                                                                        onClick={() =>
-                                                                            void prepareSummaryDerivative(
-                                                                                id,
-                                                                                activityDate,
-                                                                                sourceId,
-                                                                            )
-                                                                        }
-                                                                        className="min-h-10 rounded-lg border border-stone-300 px-3 text-xs font-bold text-stone-800 disabled:opacity-50"
-                                                                    >
-                                                                        {busyId ===
-                                                                        `media:${sourceId}`
-                                                                            ? 'Preparing…'
-                                                                            : prepared
-                                                                              ? 'Prepared'
-                                                                              : 'Prepare safe preview'}
-                                                                    </button>
-                                                                    <div>
-                                                                        {prepared ? (
-                                                                            <>
-                                                                                <Image
-                                                                                    unoptimized
-                                                                                    src={
-                                                                                        prepared.previewUrl
-                                                                                    }
-                                                                                    alt="Sanitized WebP derivative preview"
-                                                                                    width={
-                                                                                        240
-                                                                                    }
-                                                                                    height={
-                                                                                        180
-                                                                                    }
-                                                                                    className="max-h-36 w-full rounded-lg object-contain"
-                                                                                />
-                                                                                <label className="mt-2 flex cursor-pointer items-start gap-2 text-xs leading-5 text-stone-800">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        disabled={
-                                                                                            dirty ||
-                                                                                            Boolean(
-                                                                                                busyId,
-                                                                                            ) ||
-                                                                                            approvalMatches
+                                                                                'body' && (
+                                                                                <p className="text-xs font-semibold text-amber-800">
+                                                                                    Private
+                                                                                    unless
+                                                                                    you
+                                                                                    select
+                                                                                    the
+                                                                                    sanitized
+                                                                                    derivative
+                                                                                </p>
+                                                                            )}
+                                                                        </div>
+                                                                        <button
+                                                                            type="button"
+                                                                            disabled={
+                                                                                Boolean(
+                                                                                    busyId,
+                                                                                ) ||
+                                                                                Boolean(
+                                                                                    prepared,
+                                                                                ) ||
+                                                                                approvalMatches
+                                                                            }
+                                                                            onClick={() =>
+                                                                                void prepareSummaryDerivative(
+                                                                                    id,
+                                                                                    activityDate,
+                                                                                    sourceId,
+                                                                                )
+                                                                            }
+                                                                            className="min-h-10 rounded-lg border border-stone-300 px-3 text-xs font-bold text-stone-800 disabled:opacity-50"
+                                                                        >
+                                                                            {busyId ===
+                                                                            `media:${sourceId}`
+                                                                                ? 'Preparing…'
+                                                                                : prepared
+                                                                                  ? 'Prepared'
+                                                                                  : 'Prepare safe preview'}
+                                                                        </button>
+                                                                        <div>
+                                                                            {prepared ? (
+                                                                                <>
+                                                                                    <Image
+                                                                                        unoptimized
+                                                                                        src={
+                                                                                            prepared.previewUrl
                                                                                         }
-                                                                                        checked={
-                                                                                            checked
+                                                                                        alt="Sanitized WebP derivative preview"
+                                                                                        width={
+                                                                                            240
                                                                                         }
-                                                                                        onChange={(
-                                                                                            event,
-                                                                                        ) => {
-                                                                                            setSelectedDerivativeIds(
-                                                                                                (
-                                                                                                    current,
-                                                                                                ) => ({
-                                                                                                    ...current,
-                                                                                                    [id]: event
-                                                                                                        .target
-                                                                                                        .checked
-                                                                                                        ? [
-                                                                                                              ...(current[
-                                                                                                                  id
-                                                                                                              ] ??
-                                                                                                                  []),
-                                                                                                              prepared.approvedMediaAssetId,
-                                                                                                          ]
-                                                                                                        : (
-                                                                                                              current[
-                                                                                                                  id
-                                                                                                              ] ??
-                                                                                                              []
-                                                                                                          ).filter(
-                                                                                                              (
-                                                                                                                  assetId,
-                                                                                                              ) =>
-                                                                                                                  assetId !==
-                                                                                                                  prepared.approvedMediaAssetId,
-                                                                                                          ),
-                                                                                                }),
-                                                                                            );
-                                                                                            invalidateApproval(
-                                                                                                id,
-                                                                                            );
-                                                                                        }}
-                                                                                        className="mt-1 h-4 w-4 accent-stone-950"
+                                                                                        height={
+                                                                                            180
+                                                                                        }
+                                                                                        className="max-h-36 w-full rounded-lg object-contain"
                                                                                     />
-                                                                                    <span>
-                                                                                        Include
-                                                                                        this
-                                                                                        sanitized
-                                                                                        derivative
-                                                                                        in
-                                                                                        the
-                                                                                        public
-                                                                                        post
-                                                                                    </span>
-                                                                                </label>
-                                                                            </>
-                                                                        ) : (
-                                                                            <p className="text-sm text-stone-500">
-                                                                                No
-                                                                                public
-                                                                                derivative
-                                                                                prepared
-                                                                            </p>
-                                                                        )}
+                                                                                    <label className="mt-2 flex cursor-pointer items-start gap-2 text-xs leading-5 text-stone-800">
+                                                                                        <input
+                                                                                            type="checkbox"
+                                                                                            disabled={
+                                                                                                dirty ||
+                                                                                                Boolean(
+                                                                                                    busyId,
+                                                                                                ) ||
+                                                                                                approvalMatches
+                                                                                            }
+                                                                                            checked={
+                                                                                                checked
+                                                                                            }
+                                                                                            onChange={(
+                                                                                                event,
+                                                                                            ) => {
+                                                                                                setSelectedDerivativeIds(
+                                                                                                    (
+                                                                                                        current,
+                                                                                                    ) => ({
+                                                                                                        ...current,
+                                                                                                        [id]: event
+                                                                                                            .target
+                                                                                                            .checked
+                                                                                                            ? [
+                                                                                                                  ...(current[
+                                                                                                                      id
+                                                                                                                  ] ??
+                                                                                                                      []),
+                                                                                                                  prepared.approvedMediaAssetId,
+                                                                                                              ]
+                                                                                                            : (
+                                                                                                                  current[
+                                                                                                                      id
+                                                                                                                  ] ??
+                                                                                                                  []
+                                                                                                              ).filter(
+                                                                                                                  (
+                                                                                                                      assetId,
+                                                                                                                  ) =>
+                                                                                                                      assetId !==
+                                                                                                                      prepared.approvedMediaAssetId,
+                                                                                                              ),
+                                                                                                    }),
+                                                                                                );
+                                                                                                invalidateApproval(
+                                                                                                    id,
+                                                                                                );
+                                                                                            }}
+                                                                                            className="mt-1 h-4 w-4 accent-stone-950"
+                                                                                        />
+                                                                                        <span>
+                                                                                            Include
+                                                                                            this
+                                                                                            sanitized
+                                                                                            derivative
+                                                                                            in
+                                                                                            the
+                                                                                            public
+                                                                                            post
+                                                                                        </span>
+                                                                                    </label>
+                                                                                </>
+                                                                            ) : (
+                                                                                <p className="text-sm text-stone-500">
+                                                                                    No
+                                                                                    public
+                                                                                    derivative
+                                                                                    prepared
+                                                                                </p>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            );
-                                                        },
-                                                    )}
-                                                    {derivatives.length > 0 && (
-                                                        <p className="mt-3 text-xs text-stone-600">
-                                                            Selected
-                                                            derivatives:{' '}
-                                                            {selected.size}.
-                                                            Unchecked previews
-                                                            stay private.
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </details>
-                                            {approvalMatches && (
-                                                <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
-                                                    This saved version is
-                                                    approved with{' '}
-                                                    {currentMediaIds.length}{' '}
-                                                    public images.
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            invalidateApproval(
-                                                                id,
-                                                            )
-                                                        }
-                                                        className="ml-2 text-xs font-bold underline"
-                                                    >
-                                                        Change image selection
-                                                        or reapprove
-                                                    </button>
-                                                </div>
-                                            )}
-                                            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3 text-sm leading-5 text-stone-800">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={Boolean(
-                                                        exactApproval[id],
-                                                    )}
-                                                    disabled={
-                                                        approvalMatches ||
-                                                        dirty ||
-                                                        Boolean(busyId) ||
-                                                        !edit.body.trim()
-                                                    }
-                                                    onChange={(event) => {
-                                                        setExactApproval(
-                                                            (current) => ({
-                                                                ...current,
-                                                                [id]: event
-                                                                    .target
-                                                                    .checked,
-                                                            }),
-                                                        );
-                                                        setApprovalIds(
-                                                            (current) => {
-                                                                const next = {
-                                                                    ...current,
-                                                                };
-                                                                delete next[id];
-                                                                return next;
+                                                                );
                                                             },
-                                                        );
-                                                        setApprovedSnapshots(
-                                                            (current) => {
-                                                                const next = {
-                                                                    ...current,
-                                                                };
-                                                                delete next[id];
-                                                                return next;
-                                                            },
-                                                        );
-                                                    }}
-                                                    className="mt-1 h-4 w-4 accent-stone-950"
-                                                />
-                                                <span>
-                                                    <strong>
-                                                        I approve this exact
-                                                        title and body, plus
-                                                        only the selected
-                                                        sanitized image
-                                                        derivatives.
-                                                    </strong>
-                                                    <span className="block text-xs text-stone-600">
-                                                        The server records an
-                                                        immutable snapshot for
-                                                        revision{' '}
-                                                        {revisionNumber ?? '—'}.
-                                                        Any edit or
-                                                        media-selection change
-                                                        needs a new approval.
-                                                    </span>
-                                                </span>
-                                            </label>
-                                            <div className="mt-3 flex flex-wrap gap-2">
-                                                <button
-                                                    type="button"
-                                                    disabled={
-                                                        !exactApproval[id] ||
-                                                        dirty ||
-                                                        revisionNumber ===
-                                                            null ||
-                                                        approvalMatches ||
-                                                        Boolean(busyId)
-                                                    }
-                                                    onClick={() =>
-                                                        revisionNumber !==
-                                                            null &&
-                                                        void approveRevision(
-                                                            draft,
-                                                            id,
-                                                            revisionNumber,
-                                                            edit.title,
-                                                            edit.body,
-                                                        )
-                                                    }
-                                                    className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-sky-300 bg-sky-50 px-3 text-sm font-bold text-sky-900 hover:bg-sky-100 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
-                                                >
-                                                    {approvalMatches
-                                                        ? 'Revision approved'
-                                                        : busyId === id
-                                                          ? 'Working…'
-                                                          : 'Approve exact snapshot'}
-                                                </button>
+                                                        )}
+                                                        {derivatives.length >
+                                                            0 && (
+                                                            <p className="mt-3 text-xs text-stone-600">
+                                                                Selected
+                                                                derivatives:{' '}
+                                                                {selected.size}.
+                                                                Unchecked
+                                                                previews stay
+                                                                private.
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </details>
                                                 {approvalMatches && (
+                                                    <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+                                                        This saved version is
+                                                        approved with{' '}
+                                                        {currentMediaIds.length}{' '}
+                                                        public images.
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                invalidateApproval(
+                                                                    id,
+                                                                )
+                                                            }
+                                                            className="ml-2 text-xs font-bold underline"
+                                                        >
+                                                            Change image
+                                                            selection or
+                                                            reapprove
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3 text-sm leading-5 text-stone-800">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={Boolean(
+                                                            exactApproval[id],
+                                                        )}
+                                                        disabled={
+                                                            approvalMatches ||
+                                                            dirty ||
+                                                            Boolean(busyId) ||
+                                                            !edit.body.trim()
+                                                        }
+                                                        onChange={(event) => {
+                                                            setExactApproval(
+                                                                (current) => ({
+                                                                    ...current,
+                                                                    [id]: event
+                                                                        .target
+                                                                        .checked,
+                                                                }),
+                                                            );
+                                                            setApprovalIds(
+                                                                (current) => {
+                                                                    const next =
+                                                                        {
+                                                                            ...current,
+                                                                        };
+                                                                    delete next[
+                                                                        id
+                                                                    ];
+                                                                    return next;
+                                                                },
+                                                            );
+                                                            setApprovedSnapshots(
+                                                                (current) => {
+                                                                    const next =
+                                                                        {
+                                                                            ...current,
+                                                                        };
+                                                                    delete next[
+                                                                        id
+                                                                    ];
+                                                                    return next;
+                                                                },
+                                                            );
+                                                        }}
+                                                        className="mt-1 h-4 w-4 accent-stone-950"
+                                                    />
+                                                    <span>
+                                                        <strong>
+                                                            I approve this exact
+                                                            title and body, plus
+                                                            only the selected
+                                                            sanitized image
+                                                            derivatives.
+                                                        </strong>
+                                                        <span className="block text-xs text-stone-600">
+                                                            The server records
+                                                            an immutable
+                                                            snapshot for
+                                                            revision{' '}
+                                                            {revisionNumber ??
+                                                                '—'}
+                                                            . Any edit or
+                                                            media-selection
+                                                            change needs a new
+                                                            approval.
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                                <div className="mt-3 flex flex-wrap gap-2">
                                                     <button
                                                         type="button"
                                                         disabled={
+                                                            !exactApproval[
+                                                                id
+                                                            ] ||
                                                             dirty ||
-                                                            !approvalId ||
+                                                            revisionNumber ===
+                                                                null ||
+                                                            approvalMatches ||
                                                             Boolean(busyId)
                                                         }
                                                         onClick={() =>
-                                                            void publishApproval(
+                                                            revisionNumber !==
+                                                                null &&
+                                                            void approveRevision(
+                                                                draft,
                                                                 id,
-                                                                approvalId,
-                                                                approvalMatches,
+                                                                revisionNumber,
+                                                                edit.title,
+                                                                edit.body,
                                                             )
                                                         }
-                                                        className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-stone-950 px-3 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700"
+                                                        className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-sky-300 bg-sky-50 px-3 text-sm font-bold text-sky-900 hover:bg-sky-100 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
                                                     >
-                                                        {busyId === id
-                                                            ? 'Publishing…'
-                                                            : 'Publish approved snapshot'}
+                                                        {approvalMatches
+                                                            ? 'Revision approved'
+                                                            : busyId === id
+                                                              ? 'Working…'
+                                                              : 'Approve exact snapshot'}
                                                     </button>
-                                                )}
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-                        </div>
+                                                    {approvalMatches && (
+                                                        <button
+                                                            type="button"
+                                                            disabled={
+                                                                dirty ||
+                                                                !approvalId ||
+                                                                Boolean(busyId)
+                                                            }
+                                                            onClick={() =>
+                                                                void publishApproval(
+                                                                    id,
+                                                                    approvalId,
+                                                                    approvalMatches,
+                                                                )
+                                                            }
+                                                            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-stone-950 px-3 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700"
+                                                        >
+                                                            {busyId === id
+                                                                ? 'Publishing…'
+                                                                : 'Publish approved snapshot'}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
+                            </TrackerDialog>
+                        )}
                     </div>
                 )}
             </Panel>
