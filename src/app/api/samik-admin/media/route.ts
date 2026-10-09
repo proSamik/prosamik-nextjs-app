@@ -7,6 +7,7 @@ import { consumeAccountabilityRateLimit } from '@/lib/accountability-rate-limit'
 import {
     cleanupAbandonedAccountabilityMediaUploads,
     createAccountabilityMediaReadUrl,
+    createAccountabilityMediaReadUrls,
     finalizeAccountabilityMediaUpload,
     initiateAccountabilityMediaUpload,
 } from '@/lib/accountability-media';
@@ -58,6 +59,12 @@ export async function GET(request: Request) {
     if (access.error || !access.owner) return access.error;
     try {
         const search = new URL(request.url).searchParams;
+        const batch = search.get('ids');
+        if (batch !== null) {
+            const parsed = z.array(z.string().uuid()).min(1).max(8).safeParse(batch.split(','));
+            if (!parsed.success) return privateJson({ error: 'Invalid media buffer request.' }, { status: 400 });
+            return privateJson({ items: await createAccountabilityMediaReadUrls(access.owner.id, [...new Set(parsed.data)]) });
+        }
         const assetId = search.get('id');
         if (assetId) {
             if (!z.string().uuid().safeParse(assetId).success) {
