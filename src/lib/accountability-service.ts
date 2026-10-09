@@ -802,7 +802,7 @@ export async function getWeightEntries(
     ownerId: string,
     fromDate: ActivityDate,
     toDate: ActivityDate,
-    options: { includeEvidenceAssetIds?: boolean } = {},
+    options: { includeEvidenceAssetIds?: boolean; includeMissingDates?: boolean } = {},
 ) {
     assertActivityDate(fromDate);
     assertActivityDate(toDate);
@@ -849,7 +849,7 @@ export async function getWeightEntries(
     const missingDates: ActivityDate[] = [];
     let cursor = fromDate;
     let dayCount = 0;
-    while (cursor <= toDate) {
+    while (options.includeMissingDates !== false && cursor <= toDate) {
         if (!measuredDates.has(cursor)) missingDates.push(cursor);
         cursor = addActivityDays(cursor, 1);
         dayCount += 1;
