@@ -425,6 +425,20 @@ export default function ConsistencyGraph({
                     onClose={popover.close}
                     onEnter={popover.cancelHide}
                     onLeave={popover.hideLater}
+                    footer={
+                        onSelect && !popover.selection.value.isFuture ? (
+                            <button
+                                type="button"
+                                className="min-h-11 w-full rounded-lg bg-stone-950 px-3 py-2 font-semibold text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
+                                onClick={() => {
+                                    onSelect(popover.selection!.value.date);
+                                    popover.close();
+                                }}
+                            >
+                                Edit this day
+                            </button>
+                        ) : null
+                    }
                 >
                     <strong className="block text-gray-950">
                         {DATE_FORMATTER.format(
@@ -457,18 +471,6 @@ export default function ConsistencyGraph({
                         >
                             View activity on GitHub ↗
                         </a>
-                    )}
-                    {onSelect && !popover.selection.value.isFuture && (
-                        <button
-                            type="button"
-                            className="mt-3 rounded-lg bg-stone-950 px-3 py-2 text-white"
-                            onClick={() => {
-                                onSelect(popover.selection!.value.date);
-                                popover.close();
-                            }}
-                        >
-                            Edit this day
-                        </button>
                     )}
                 </CalendarDayPopover>
             )}
