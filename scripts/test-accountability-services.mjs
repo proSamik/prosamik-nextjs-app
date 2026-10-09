@@ -25,6 +25,27 @@ const [{ getDatabase }, accountability, summaries] = await Promise.all([
 process.env.DATABASE_POOL_MAX = '1';
 const sql = getDatabase();
 
+test('empty progress returns blank calendars and zero habit and weekly streaks', async () => {
+    const ownerId = 'empty-progress-owner';
+    await sql`INSERT INTO "user" (id) VALUES (${ownerId})`;
+    const today = accountability.getTodayActivityDate();
+    const progress = await accountability.getProgress(ownerId, accountability.shiftActivityDate(today, -3660), today);
+    assert.deepEqual(progress.habits, []);
+    assert.deepEqual(progress.habitHistory, []);
+    assert.deepEqual(progress.noFapDays, []);
+    assert.deepEqual(progress.weights, []);
+    assert.equal(Object.keys(progress.habitStreaks).length, 4);
+    for (const streak of Object.values(progress.habitStreaks)) {
+        assert.equal(streak.currentStreak, 0);
+        assert.equal(streak.longestStreak, 0);
+        assert.equal(streak.currentStartDate, null);
+        assert.equal(streak.longestStartDate, null);
+    }
+    assert.equal(progress.noFapWeek.successDays, 0);
+    assert.equal(progress.noFapStreak.consecutiveWinningWeeks, 0);
+    assert.equal(progress.noFapStreak.longestWinningWeeks, 0);
+});
+
 test('primary accountability service reads/writes use owner-scoped transactional schema', async () => {
     const ownerId = 'pglite-service-owner';
     await sql`INSERT INTO "user" (id) VALUES (${ownerId})`;
