@@ -33,7 +33,7 @@ export const ACCOUNTABILITY_MEDIA_LIMITS = {
     imageBytes: 15 * 1024 * 1024,
     videoBytes: 100 * 1024 * 1024,
     uploadUrlSeconds: 5 * 60,
-    readUrlSeconds: 60,
+    readUrlSeconds: 5 * 60,
 } as const;
 
 export const ACCOUNTABILITY_MEDIA_TYPES = [
@@ -592,30 +592,34 @@ export async function finalizeAccountabilityMediaUpload(ownerId: string, assetId
 }
 
 /** Return a private, inline, one-minute read URL only for this owner's ready asset. */
-export async function createAccountabilityMediaReadUrl(ownerId: string, assetId: string): Promise<{ url: string; expiresInSeconds: number; contentType: AccountabilityMediaContentType }> {
+export async function createAccountabilityMediaReadUrls(ownerId: string, assetIds: string[]) {
+    if (assetIds.length < 1 || assetIds.length > 8) throw new RangeError('Request between one and eight media items.');
     const config = getPrivateConfig();
     const sql = getDatabase();
     const rows = await sql<MediaRow[]>`
         SELECT id, owner_id, storage_provider, object_key, content_type, byte_size, content_sha256, status
         FROM accountability_media_assets
-        WHERE owner_id = ${ownerId} AND id = ${assetId} AND status = 'ready'
-        LIMIT 1
+        WHERE owner_id = ${ownerId} AND id IN ${sql(assetIds)} AND status = 'ready'
     `;
-    const row = rows[0];
-    if (!row || !isAllowedType(row.content_type)) throw new Error('Ready private media asset was not found.');
-    assertOwnerKey(row, ownerId);
-    if (!row.content_sha256 || Buffer.from(row.content_sha256).length !== 32) {
-        throw new Error('Private media asset has not passed content verification.');
-    }
+    return Promise.all(rows.map(async row => {
+        if (!isAllowedType(row.content_type)) throw new Error('Ready private media asset was not found.');
+        assertOwnerKey(row, ownerId);
+        if (!row.content_sha256 || Buffer.from(row.content_sha256).length !== 32) {
+            throw new Error('Private media asset has not passed content verification.');
+        }
+        const url = await getSignedUrl(config.client, new GetObjectCommand({
+            Bucket: config.bucket, Key: row.object_key,
+            ResponseContentType: row.content_type, ResponseContentDisposition: 'inline',
+            ResponseCacheControl: 'private, no-store, max-age=0',
+        }), { expiresIn: ACCOUNTABILITY_MEDIA_LIMITS.readUrlSeconds });
+        return { id: String(row.id), url, expiresInSeconds: ACCOUNTABILITY_MEDIA_LIMITS.readUrlSeconds, contentType: row.content_type };
+    }));
+}
 
-    const url = await getSignedUrl(config.client, new GetObjectCommand({
-        Bucket: config.bucket,
-        Key: row.object_key,
-        ResponseContentType: row.content_type,
-        ResponseContentDisposition: 'inline',
-        ResponseCacheControl: 'private, no-store, max-age=0',
-    }), { expiresIn: ACCOUNTABILITY_MEDIA_LIMITS.readUrlSeconds });
-    return { url, expiresInSeconds: ACCOUNTABILITY_MEDIA_LIMITS.readUrlSeconds, contentType: row.content_type };
+export async function createAccountabilityMediaReadUrl(ownerId: string, assetId: string): Promise<{ url: string; expiresInSeconds: number; contentType: AccountabilityMediaContentType }> {
+    const items = await createAccountabilityMediaReadUrls(ownerId, [assetId]);
+    if (!items[0]) throw new Error('Ready private media asset was not found.');
+    return items[0];
 }
 
 export type ListOwnerPrivateMediaInput = {
