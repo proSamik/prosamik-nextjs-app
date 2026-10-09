@@ -7,7 +7,15 @@ import {
     PreflightCheckInReminderMcpInputSchema,
     RecordCheckInReminderDeliveryMcpInputSchema,
     RecordWeightEntryMcpInputSchema,
+    SummaryStatusMcpInputSchema,
 } from './accountability-mcp-contract.ts';
+
+test('summary reads support a selected date without accepting another owner', () => {
+    assert.deepEqual(SummaryStatusMcpInputSchema.parse({}), {});
+    assert.deepEqual(SummaryStatusMcpInputSchema.parse({ activityDate: '2026-10-07' }), { activityDate: '2026-10-07' });
+    assert.equal(SummaryStatusMcpInputSchema.safeParse({ activityDate: '07/10/2026' }).success, false);
+    assert.equal(SummaryStatusMcpInputSchema.safeParse({ ownerId: 'another-user' }).success, false);
+});
 
 test('reminder claim and preflight gate is fail-closed unless explicitly enabled', () => {
     assert.equal(isReminderDeliveryEnabled(undefined), false);
