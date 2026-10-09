@@ -83,7 +83,9 @@ export async function getSummaryStatus(
             )
             SELECT latest.*,
                    approval.id AS approval_id,
-                   CASE WHEN publication.status = 'published' THEN 'published' ELSE 'draft' END AS state
+                   CASE WHEN publication.status = 'published' THEN 'published'
+                        WHEN approval.id IS NOT NULL THEN 'approved'
+                        ELSE 'draft' END AS state
             FROM latest
             LEFT JOIN accountability_summary_approvals approval
               ON approval.owner_id = ${ownerId} AND approval.draft_revision_id = latest.id
