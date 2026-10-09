@@ -1,105 +1,137 @@
 'use client';
-import { Share2 } from 'lucide-react';
-import { useState } from 'react';
-/** Exports only the card the owner explicitly shares. No public URL is created. */
+
+import { Check, Image as ImageIcon, Share2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+
+/** Copies a private card locally; no public image URL is created. */
 export default function ShareTracker({
     title,
     days,
-    stats,
 }: {
     title: string;
     days?: { date: string; status: string }[];
     stats?: { label: string; value: number }[];
 }) {
+    const container = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState(false);
+    const [busy, setBusy] = useState(false);
     const [message, setMessage] = useState('');
-    const share = async () => {
+    useEffect(() => {
+        const outside = (event: PointerEvent) => {
+            if (!container.current?.contains(event.target as Node))
+                setOpen(false);
+        };
+        const escape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') setOpen(false);
+        };
+        document.addEventListener('pointerdown', outside);
+        document.addEventListener('keydown', escape);
+        return () => {
+            document.removeEventListener('pointerdown', outside);
+            document.removeEventListener('keydown', escape);
+        };
+    }, []);
+    const copy = async () => {
+        const card = container.current?.closest('section');
+        if (!card || busy) return;
+        setBusy(true);
+        setMessage('');
         try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1100;
-            canvas.height = days ? 320 : 240;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) throw new Error('Image export unavailable.');
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#111';
-            ctx.font = 'bold 26px sans-serif';
-            ctx.fillText(title, 32, 45);
-            ctx.font = '14px sans-serif';
-            ctx.fillStyle = '#666';
-            ctx.fillText('IST · Selected tracker snapshot', 32, 72);
-            if (days) {
-                days.forEach((day, i) => {
-                    ctx.fillStyle =
-                        day.status === 'complete' ? '#00b983' : '#ebedf0';
-                    ctx.fillRect(
-                        32 + Math.floor(i / 7) * 19,
-                        100 + (i % 7) * 20,
-                        16,
-                        16,
-                    );
-                });
-                ctx.fillStyle = '#666';
-                ctx.fillText(
-                    `${days[0]?.date ?? ''} — ${days.at(-1)?.date ?? ''} · Completed / Incomplete / Not updated`,
-                    32,
-                    285,
+            if (
+                !navigator.clipboard?.write ||
+                typeof ClipboardItem === 'undefined'
+            )
+                throw new Error(
+                    'Image clipboard is unavailable in this browser.',
                 );
-            }
-            stats?.forEach((stat, i) => {
-                ctx.fillStyle = '#111';
-                ctx.font = 'bold 38px sans-serif';
-                ctx.fillText(String(stat.value), 40 + i * 350, 140);
-                ctx.font = '18px sans-serif';
-                ctx.fillText(stat.label, 40 + i * 350, 180);
+            // Start the clipboard operation in the click handler, preserving the
+            // browser's user gesture while the local PNG renders asynchronously.
+            const png = import('html-to-image').then(async ({ toBlob }) => {
+                const clone = card.cloneNode(true) as HTMLElement;
+                clone.style.position = 'fixed';
+                clone.style.left = '-100000px';
+                clone.style.top = '0';
+                clone.style.width = `${days ? Math.max(1000, card.clientWidth) : card.clientWidth}px`;
+                document.body.appendChild(clone);
+                let blob: Blob | null;
+                try {
+                    blob = await toBlob(clone, {
+                        pixelRatio: 2,
+                        backgroundColor: '#ffffff',
+                        filter: (node) =>
+                            !(
+                                node instanceof HTMLElement &&
+                                node.dataset.cardExport === 'exclude'
+                            ),
+                    });
+                } finally {
+                    clone.remove();
+                }
+                if (!blob) throw new Error('Image export failed.');
+                return blob;
             });
-            const blob = await new Promise<Blob>((resolve, reject) =>
-                canvas.toBlob(
-                    (value) =>
-                        value
-                            ? resolve(value)
-                            : reject(new Error('Export failed.')),
-                    'image/png',
-                ),
-            );
-            const file = new File(
-                [blob],
-                `${title.replace(/[^a-z0-9]/gi, '-')}.png`,
-                { type: 'image/png' },
-            );
-            if (navigator.canShare?.({ files: [file] }))
-                await navigator.share({ title, files: [file] });
-            else {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = file.name;
-                link.click();
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-            }
-            setMessage('Exported');
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': png }),
+            ]);
+            setMessage('Image copied');
         } catch (error) {
             setMessage(
-                error instanceof Error ? error.message : 'Export failed.',
+                error instanceof Error
+                    ? error.message
+                    : 'Image could not be copied.',
             );
+        } finally {
+            setBusy(false);
         }
     };
     return (
-        <div className="absolute right-3 top-3 z-20">
+        <div
+            ref={container}
+            data-card-export="exclude"
+            className="absolute right-3 top-3 z-20"
+        >
             <button
                 type="button"
-                onClick={() => void share()}
+                onClick={() => setOpen((value) => !value)}
                 aria-label={`Share ${title} card`}
-                className="rounded-lg border border-gray-200 bg-white p-2 text-gray-500 shadow-sm"
+                aria-expanded={open}
+                aria-haspopup="menu"
+                className="rounded-lg border border-gray-200 bg-white p-2 text-gray-500 shadow-sm hover:bg-gray-50"
             >
                 <Share2 size={16} />
             </button>
-            {message && (
-                <span
-                    role="status"
-                    className="absolute right-0 top-10 w-44 rounded bg-white p-2 text-xs shadow"
+            {open && (
+                <div
+                    role="menu"
+                    className="absolute right-0 top-11 w-48 rounded-lg border border-gray-200 bg-white p-2 shadow-xl"
                 >
-                    {message}
-                </span>
+                    <button
+                        type="button"
+                        role="menuitem"
+                        disabled={busy}
+                        onClick={() => void copy()}
+                        className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-sm hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        {message === 'Image copied' ? (
+                            <Check size={16} />
+                        ) : (
+                            <ImageIcon size={16} />
+                        )}
+                        {busy
+                            ? 'Copying…'
+                            : message === 'Image copied'
+                              ? 'Image copied'
+                              : 'Copy image'}
+                    </button>
+                    {message && message !== 'Image copied' && (
+                        <p
+                            role="status"
+                            className="px-3 py-2 text-xs text-stone-600"
+                        >
+                            {message}
+                        </p>
+                    )}
+                </div>
             )}
         </div>
     );
