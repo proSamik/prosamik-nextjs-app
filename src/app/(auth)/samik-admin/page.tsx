@@ -10,8 +10,8 @@ export default async function SamikAdminPage() {
     return (
         <main className="mx-auto w-full max-w-[980px] px-4 pb-16 sm:px-6">
             <header className="mb-8 border-b border-stone-300 pb-7 pt-2 sm:mb-10">
-                <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-                    <div>
+                <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+                    <div className="min-w-0">
                         <h1 className="text-4xl font-black tracking-[-0.04em] text-stone-950 sm:text-5xl">
                             Samik Admin
                         </h1>
@@ -20,7 +20,7 @@ export default async function SamikAdminPage() {
                             share whatever feels worth keeping.
                         </p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex shrink-0 flex-wrap items-center gap-2 whitespace-nowrap sm:flex-nowrap">
                         <Link
                             href="/random-thoughts"
                             target="_blank"
