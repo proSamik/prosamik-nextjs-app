@@ -195,7 +195,7 @@ function AccountabilityShell({ active, title, intro, children }: {
                     return (
                         <Link key={key} href={href} aria-current={current ? 'page' : undefined}
                             className={`flex min-w-[120px] items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 sm:min-w-0 ${current ? 'border-stone-950 bg-stone-950 text-white' : 'border-stone-300 bg-white text-stone-700 hover:border-stone-500'}`}>
-                            <Icon size={16} aria-hidden="true" /> {label}
+                            <Icon size={16} className="shrink-0" aria-hidden="true" /> {label}
                         </Link>
                     );
                 })}
