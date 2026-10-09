@@ -6064,7 +6064,11 @@ function IntegrationsSection() {
     const [expirationDate, setExpirationDate] = useState('');
     const [oneTimeSecret, setOneTimeSecret] = useState('');
     const dataRoot = isRecord(data) && isRecord(data.data) ? data.data : data;
-    const keys = getArray(dataRoot, 'keys', 'items');
+    const keys = getArray(dataRoot, 'keys', 'items').filter((key) => {
+        if (getValue(key, 'revokedAt', 'revoked_at')) return false;
+        const expiresAt = getText(key, 'expiresAt', 'expires_at');
+        return !expiresAt || new Date(expiresAt).getTime() > now;
+    });
     const availableScopeValue = getValue(
         isRecord(dataRoot) ? dataRoot : {},
         'availableScopes',
@@ -6342,11 +6346,12 @@ function IntegrationsSection() {
                 {state === 'ready' && (
                     <div>
                         <h3 className="font-bold text-stone-900">
-                            Existing keys
+                            Active keys
                         </h3>
                         {keys.length === 0 ? (
                             <p className="mt-2 text-sm text-stone-600">
-                                No API keys were returned.
+                                No active API keys. Create a new key to connect
+                                an integration.
                             </p>
                         ) : (
                             <ul className="mt-3 divide-y divide-stone-200">
