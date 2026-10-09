@@ -39,7 +39,14 @@ export async function GET(request: Request) {
         const toDate = search.get('to') ? assertActivityDate(search.get('to')!) : getTodayActivityDate();
         const fromDate = search.get('from') ? assertActivityDate(search.get('from')!) : shiftActivityDate(toDate, -364);
         if (fromDate > toDate) return privateJson({ error: 'Invalid date range.' }, { status: 400 });
-        return privateJson({ data: await getWeightEntries(access.owner.id, fromDate, toDate, { includeEvidenceAssetIds: true }) });
+        const tracker = search.get('view') === 'tracker';
+        if (tracker && Date.parse(toDate) - Date.parse(fromDate) > 3660 * 86400000) {
+            return privateJson({ error: 'Tracker range is limited to ten years.' }, { status: 400 });
+        }
+        return privateJson({ data: await getWeightEntries(access.owner.id, fromDate, toDate, {
+            includeEvidenceAssetIds: !tracker,
+            includeMissingDates: !tracker,
+        }) });
     } catch (error) {
         if (error instanceof RangeError) return privateJson({ error: error.message }, { status: 400 });
         return privateJson({ error: 'Unable to load private measurements.' }, { status: 500 });
