@@ -230,7 +230,7 @@ async function requestPrivateJson(
         },
     });
     if (!response.ok) {
-        if (response.status === 401 || response.status === 403)
+        if (response.status === 401)
             clearAccountabilityCache(true);
         let message = 'The request could not be completed. Please try again.';
         try {

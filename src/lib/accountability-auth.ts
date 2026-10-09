@@ -2,6 +2,8 @@ import { auth } from '@/lib/auth';
 import { isAllowedAdminEmail } from '@/lib/admin-auth';
 import { NextResponse } from 'next/server';
 
+export { isSameOriginRequest } from './accountability-origin';
+
 export type AccountabilityOwner = {
     id: string;
     email: string;
@@ -27,19 +29,4 @@ export function privateJson(data: unknown, init: ResponseInit = {}): NextRespons
     headers.set('Vary', 'Cookie, Authorization');
     headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     return NextResponse.json(data, { ...init, headers });
-}
-
-/** Cookie-authenticated mutations are accepted only from the same origin. */
-export function isSameOriginRequest(request: Request): boolean {
-    const requestUrl = new URL(request.url);
-    const host = request.headers.get('host');
-    if (host && host.toLowerCase() !== requestUrl.host.toLowerCase()) return false;
-
-    const origin = request.headers.get('origin');
-    if (!origin) return false;
-    try {
-        return new URL(origin).origin === requestUrl.origin;
-    } catch {
-        return false;
-    }
 }
