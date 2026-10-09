@@ -1,6 +1,7 @@
 'use client';
 
 import { ApiTokenDialog } from './ApiTokenDialog';
+import { ApiKeyFormDialog } from './ApiKeyFormDialog';
 import { DailyLineChart } from './DailyLineChart';
 
 import Link from 'next/link';
@@ -6054,6 +6055,7 @@ function IntegrationsSection() {
         const timer = window.setInterval(() => setNow(Date.now()), 15000);
         return () => window.clearInterval(timer);
     }, []);
+    const [keyFormOpen, setKeyFormOpen] = useState(false);
     const [keyName, setKeyName] = useState('');
     const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
     const [expiration, setExpiration] = useState('90');
@@ -6109,6 +6111,7 @@ function IntegrationsSection() {
                   : { expiresInDays: Number(expiration) }),
         });
         if (!result.ok) return;
+        setKeyFormOpen(false);
         setKeyName('');
         setSelectedScopes([]);
         const createEnvelope =
@@ -6150,239 +6153,194 @@ function IntegrationsSection() {
                 />
             )}
             <Panel
-                title="MCP access log"
-                description="Recent authenticated requests and tool calls. Arguments, image contents, and keys are never logged."
-            >
-                <button
-                    type="button"
-                    onClick={reload}
-                    className="mb-3 rounded-lg border border-stone-300 px-3 py-2 text-xs font-bold"
-                >
-                    Refresh logs
-                </button>
-                <div className="max-h-80 overflow-auto">
-                    <table className="w-full text-left text-xs">
-                        <thead className="sticky top-0 bg-white">
-                            <tr>
-                                {[
-                                    'Time (IST)',
-                                    'Tool / request',
-                                    'Client',
-                                    'Outcome',
-                                    'Duration',
-                                ].map((label) => (
-                                    <th key={label} className="p-2">
-                                        {label}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {getArray(dataRoot, 'logs').map((log) => (
-                                <tr
-                                    key={getText(log, 'id')}
-                                    className="border-t border-stone-200"
-                                >
-                                    <td className="p-2">
-                                        {dateLabel(
-                                            getText(log, 'occurred_at'),
-                                            {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                second: '2-digit',
-                                            },
-                                        )}
-                                    </td>
-                                    <td className="p-2">
-                                        {getText(log, 'tool_name') ||
-                                            getText(log, 'method')}
-                                    </td>
-                                    <td className="p-2 break-all">
-                                        {getText(log, 'client_id')}
-                                    </td>
-                                    <td className="p-2">
-                                        {getText(log, 'outcome')} ·{' '}
-                                        {getText(log, 'http_status')}
-                                    </td>
-                                    <td className="p-2">
-                                        {getText(log, 'duration_ms')} ms
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {!getArray(dataRoot, 'logs').length && (
-                        <p className="p-3 text-sm text-stone-500">
-                            No MCP requests recorded yet.
-                        </p>
-                    )}
-                </div>
-            </Panel>
-            <Panel
                 title="API access"
-                description="Issue keys with only the scopes selected below. The raw token is shown once after creation."
+                description="Manage scoped API keys and their expiration."
+                action={
+                    <button
+                        type="button"
+                        disabled={state !== 'ready' || busy}
+                        onClick={() => {
+                            setMessage(null);
+                            setKeyFormOpen(true);
+                        }}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50"
+                    >
+                        <Plus size={16} aria-hidden="true" /> Create new key
+                    </button>
+                }
             >
                 <StatusPanel state={state} error={error} onRetry={reload} />
-                {state === 'ready' && (
-                    <form onSubmit={issueKey} className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Key label
-                                <input
-                                    required
-                                    maxLength={80}
-                                    value={keyName}
-                                    onChange={(event) =>
-                                        setKeyName(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                    placeholder="A name for this integration"
-                                />
-                            </label>
-                            <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
-                                Expires after
-                                <select
-                                    value={expiration}
-                                    onChange={(event) =>
-                                        setExpiration(event.target.value)
-                                    }
-                                    className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                >
-                                    <option value="30">30 days</option>
-                                    <option value="90">90 days</option>
-                                    <option value="365">365 days</option>
-                                    <option value="custom">
-                                        Custom duration
-                                    </option>
-                                    <option value="date">Date and time</option>
-                                </select>
-                            </label>
-                        </div>
-                        {expiration === 'custom' && (
-                            <div className="flex flex-wrap gap-3">
-                                <label className="grid gap-1 text-xs font-bold">
-                                    Duration
+                {!keyFormOpen && message && (
+                    <Notice kind={message.kind}>{message.text}</Notice>
+                )}
+                {keyFormOpen && (
+                    <ApiKeyFormDialog onClose={() => setKeyFormOpen(false)}>
+                        <form onSubmit={issueKey} className="space-y-4">
+                            <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Key label
                                     <input
-                                        type="number"
-                                        min="1"
-                                        max={
-                                            durationUnit === 'days'
-                                                ? 365
-                                                : durationUnit === 'hours'
-                                                  ? 8760
-                                                  : 525600
-                                        }
-                                        step="1"
-                                        value={duration}
                                         required
+                                        maxLength={80}
+                                        value={keyName}
+                                        onChange={(event) =>
+                                            setKeyName(event.target.value)
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                        placeholder="A name for this integration"
+                                    />
+                                </label>
+                                <label className="grid content-start gap-1.5 text-xs font-semibold text-stone-800">
+                                    Expires after
+                                    <select
+                                        value={expiration}
+                                        onChange={(event) =>
+                                            setExpiration(event.target.value)
+                                        }
+                                        className="min-h-11 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                                    >
+                                        <option value="30">30 days</option>
+                                        <option value="90">90 days</option>
+                                        <option value="365">365 days</option>
+                                        <option value="custom">
+                                            Custom duration
+                                        </option>
+                                        <option value="date">
+                                            Date and time
+                                        </option>
+                                    </select>
+                                </label>
+                            </div>
+                            {expiration === 'custom' && (
+                                <div className="flex flex-wrap gap-3">
+                                    <label className="grid gap-1 text-xs font-bold">
+                                        Duration
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max={
+                                                durationUnit === 'days'
+                                                    ? 365
+                                                    : durationUnit === 'hours'
+                                                      ? 8760
+                                                      : 525600
+                                            }
+                                            step="1"
+                                            value={duration}
+                                            required
+                                            onChange={(e) =>
+                                                setDuration(e.target.value)
+                                            }
+                                            className="min-h-10 rounded-lg border border-stone-300 px-3"
+                                        />
+                                    </label>
+                                    <label className="grid gap-1 text-xs font-bold">
+                                        Unit
+                                        <select
+                                            value={durationUnit}
+                                            onChange={(e) =>
+                                                setDurationUnit(e.target.value)
+                                            }
+                                            className="min-h-10 rounded-lg border border-stone-300 px-3"
+                                        >
+                                            <option value="minutes">
+                                                Minutes
+                                            </option>
+                                            <option value="hours">Hours</option>
+                                            <option value="days">Days</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            )}
+                            {expiration === 'date' && (
+                                <label className="grid max-w-sm gap-1 text-xs font-bold">
+                                    Expires at (local time)
+                                    <input
+                                        type="datetime-local"
+                                        required
+                                        value={expirationDate}
                                         onChange={(e) =>
-                                            setDuration(e.target.value)
+                                            setExpirationDate(e.target.value)
                                         }
                                         className="min-h-10 rounded-lg border border-stone-300 px-3"
                                     />
                                 </label>
-                                <label className="grid gap-1 text-xs font-bold">
-                                    Unit
-                                    <select
-                                        value={durationUnit}
-                                        onChange={(e) =>
-                                            setDurationUnit(e.target.value)
+                            )}
+                            <p className="text-xs text-stone-500">
+                                Access stops automatically at the expiration
+                                time, including keys with a one-hour duration.
+                            </p>
+                            <fieldset disabled={busy} className="space-y-2">
+                                <legend className="mb-2 text-sm font-bold text-stone-800">
+                                    Allowed scopes
+                                </legend>
+                                <label className="mb-3 flex items-center gap-3 rounded-lg border border-stone-300 bg-stone-50 px-3 py-3 text-sm font-bold">
+                                    <input
+                                        type="checkbox"
+                                        checked={
+                                            availableScopes.length > 0 &&
+                                            availableScopes.every((scope) =>
+                                                selectedScopes.includes(scope),
+                                            )
                                         }
-                                        className="min-h-10 rounded-lg border border-stone-300 px-3"
-                                    >
-                                        <option value="minutes">Minutes</option>
-                                        <option value="hours">Hours</option>
-                                        <option value="days">Days</option>
-                                    </select>
+                                        onChange={(event) =>
+                                            setSelectedScopes(
+                                                event.target.checked
+                                                    ? [...availableScopes]
+                                                    : [],
+                                            )
+                                        }
+                                        className="h-4 w-4 accent-stone-950"
+                                    />
+                                    All access{' '}
+                                    <span className="ml-auto text-xs font-normal text-stone-500">
+                                        {selectedScopes.length} /{' '}
+                                        {availableScopes.length} scopes
+                                    </span>
                                 </label>
-                            </div>
-                        )}
-                        {expiration === 'date' && (
-                            <label className="grid max-w-sm gap-1 text-xs font-bold">
-                                Expires at (local time)
-                                <input
-                                    type="datetime-local"
-                                    required
-                                    value={expirationDate}
-                                    onChange={(e) =>
-                                        setExpirationDate(e.target.value)
-                                    }
-                                    className="min-h-10 rounded-lg border border-stone-300 px-3"
-                                />
-                            </label>
-                        )}
-                        <p className="text-xs text-stone-500">
-                            Access stops automatically at the expiration time,
-                            including keys with a one-hour duration.
-                        </p>
-                        <fieldset disabled={busy} className="space-y-2">
-                            <legend className="mb-2 text-sm font-bold text-stone-800">
-                                Allowed scopes
-                            </legend>
-                            <label className="mb-3 flex items-center gap-3 rounded-lg border border-stone-300 bg-stone-50 px-3 py-3 text-sm font-bold">
-                                <input
-                                    type="checkbox"
-                                    checked={
-                                        availableScopes.length > 0 &&
-                                        availableScopes.every((scope) =>
-                                            selectedScopes.includes(scope),
-                                        )
-                                    }
-                                    onChange={(event) =>
-                                        setSelectedScopes(
-                                            event.target.checked
-                                                ? [...availableScopes]
-                                                : [],
-                                        )
-                                    }
-                                    className="h-4 w-4 accent-stone-950"
-                                />
-                                All access{' '}
-                                <span className="ml-auto text-xs font-normal text-stone-500">
-                                    {selectedScopes.length} /{' '}
-                                    {availableScopes.length} scopes
-                                </span>
-                            </label>
-                            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                {availableScopes.map((scope) => (
-                                    <label
-                                        key={scope}
-                                        className="flex min-h-11 items-center gap-3 rounded-lg border border-stone-200 px-3 text-sm font-medium text-stone-800"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedScopes.includes(
-                                                scope,
-                                            )}
-                                            onChange={() => toggleScope(scope)}
-                                            className="h-4 w-4 accent-stone-950"
-                                        />
-                                        {scope}
-                                    </label>
-                                ))}
-                            </div>
-                        </fieldset>
-                        <button
-                            type="submit"
-                            disabled={
-                                busy ||
-                                !keyName.trim() ||
-                                selectedScopes.length === 0
-                            }
-                            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
-                        >
-                            <KeyRound size={15} aria-hidden="true" />
-                            {busy ? 'Working…' : 'Issue scoped key'}
-                        </button>
-                        {message && (
-                            <Notice kind={message.kind}>{message.text}</Notice>
-                        )}
-                    </form>
+                                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                    {availableScopes.map((scope) => (
+                                        <label
+                                            key={scope}
+                                            className="flex min-h-11 items-center gap-3 rounded-lg border border-stone-200 px-3 text-sm font-medium text-stone-800"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedScopes.includes(
+                                                    scope,
+                                                )}
+                                                onChange={() =>
+                                                    toggleScope(scope)
+                                                }
+                                                className="h-4 w-4 accent-stone-950"
+                                            />
+                                            {scope}
+                                        </label>
+                                    ))}
+                                </div>
+                            </fieldset>
+                            <button
+                                type="submit"
+                                disabled={
+                                    busy ||
+                                    !keyName.trim() ||
+                                    selectedScopes.length === 0
+                                }
+                                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
+                            >
+                                <KeyRound size={15} aria-hidden="true" />
+                                {busy ? 'Working…' : 'Issue scoped key'}
+                            </button>
+                            {message && (
+                                <Notice kind={message.kind}>
+                                    {message.text}
+                                </Notice>
+                            )}
+                        </form>
+                    </ApiKeyFormDialog>
                 )}
                 {state === 'ready' && (
-                    <div className="mt-6 border-t border-stone-200 pt-5">
+                    <div>
                         <h3 className="font-bold text-stone-900">
                             Existing keys
                         </h3>
@@ -6501,12 +6459,87 @@ function IntegrationsSection() {
                 )}
             </Panel>
             <Panel
+                title="MCP access log"
+                description="Recent authenticated requests and tool calls. Arguments, image contents, and keys are never logged."
+            >
+                <button
+                    type="button"
+                    onClick={reload}
+                    className="mb-3 rounded-lg border border-stone-300 px-3 py-2 text-xs font-bold"
+                >
+                    Refresh logs
+                </button>
+                <div className="max-h-80 overflow-auto">
+                    <table className="w-full text-left text-xs">
+                        <thead className="sticky top-0 bg-white">
+                            <tr>
+                                {[
+                                    'Time (IST)',
+                                    'Tool / request',
+                                    'Client',
+                                    'Outcome',
+                                    'Duration',
+                                ].map((label) => (
+                                    <th key={label} className="p-2">
+                                        {label}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {getArray(dataRoot, 'logs').map((log) => (
+                                <tr
+                                    key={getText(log, 'id')}
+                                    className="border-t border-stone-200"
+                                >
+                                    <td className="p-2">
+                                        {dateLabel(
+                                            getText(log, 'occurred_at'),
+                                            {
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                second: '2-digit',
+                                            },
+                                        )}
+                                    </td>
+                                    <td className="p-2">
+                                        {getText(log, 'tool_name') ||
+                                            getText(log, 'method')}
+                                    </td>
+                                    <td className="p-2 break-all">
+                                        {getText(log, 'client_id')}
+                                    </td>
+                                    <td className="p-2">
+                                        {getText(log, 'outcome')} ·{' '}
+                                        {getText(log, 'http_status')}
+                                    </td>
+                                    <td className="p-2">
+                                        {getText(log, 'duration_ms')} ms
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {!getArray(dataRoot, 'logs').length && (
+                        <p className="p-3 text-sm text-stone-500">
+                            No MCP requests recorded yet.
+                        </p>
+                    )}
+                </div>
+            </Panel>
+            <Panel
                 title="OAuth provider"
-                description="Provider setup and endpoint values are read from the private integration configuration."
+                description="MCP supports OAuth sign-in and consent, alongside scoped API keys."
             >
                 <div className="mb-4 flex items-center gap-2">
                     <span className="rounded-full border border-stone-300 bg-stone-100 px-2.5 py-1 text-xs font-extrabold text-stone-700">
-                        {getText(oauth, 'status') || 'Inactive · configurable'}
+                        {getText(oauth, 'status') ===
+                        'configured_after_private_environment_setup'
+                            ? 'OAuth supported'
+                            : getText(oauth, 'status') ||
+                              'Loading configuration…'}
                     </span>
                 </div>
                 <dl className="grid gap-3 sm:grid-cols-2">
@@ -6544,30 +6577,30 @@ function IntegrationsSection() {
                     </div>
                 </dl>
                 <p className="mt-3 text-xs leading-5 text-stone-500">
-                    Provider credentials and live delivery remain configurable.
-                    Confirm deployed metadata before sharing endpoint details
-                    with an external client.
+                    OAuth clients sign in and approve scopes through the consent
+                    page. API-key clients use a scoped key instead. OAuth access
+                    is separate from automatic reminder delivery.
                 </p>
             </Panel>
             <Panel
                 title="Delivery status"
-                description="Scheduler and live delivery remain inactive until configured and tested."
+                description="Automatic check-in reminders are not connected. MCP data access works independently."
             >
                 <div className="grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-stone-500">
-                            Scheduled delivery
+                            Reminder scheduler
                         </p>
                         <p className="mt-1 font-extrabold text-stone-900">
-                            Inactive · configurable
+                            Not configured
                         </p>
                     </div>
                     <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
                         <p className="text-xs font-bold uppercase tracking-wide text-stone-500">
-                            Live delivery
+                            Notification provider
                         </p>
                         <p className="mt-1 font-extrabold text-stone-900">
-                            Inactive · not connected
+                            Not connected
                         </p>
                     </div>
                 </div>
