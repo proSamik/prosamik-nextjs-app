@@ -42,7 +42,7 @@
     "@electric-sql/pglite": "^0.3.2",
     "@electric-sql/pglite-socket": "^0.0.7",
     "@eslint/js": "^10.0.1",
-    "@next/eslint-plugin-next": "^16.2.12",
+    "@next/eslint-plugin-next": "^14.2.35",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.1",
