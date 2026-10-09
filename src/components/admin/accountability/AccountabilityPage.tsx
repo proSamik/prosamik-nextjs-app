@@ -506,6 +506,7 @@ function DailyHeatmap({
     rows,
     onSelect,
     weekly = false,
+    notesOnly = false,
 }: {
     title: string;
     rows: JsonRecord[];
@@ -513,6 +514,7 @@ function DailyHeatmap({
     to?: string;
     onSelect?: (date: string) => void;
     weekly?: boolean;
+    notesOnly?: boolean;
 }) {
     const today = localDateValue();
     const [range, setRange] = useState({
@@ -621,16 +623,12 @@ function DailyHeatmap({
                     const dayRows = rows.filter(
                         (row) => getText(row, 'date', 'activityDate') === date,
                     );
-                    const fields = [
-                        ['activity', 'Activity'],
-                        ['durationMinutes', 'Minutes'],
-                        ['outreachCount', 'Outreach'],
-                        ['outreachChannel', 'Channel'],
-                        ['emailDraftedCount', 'Emails drafted'],
-                        ['emailSentCount', 'Emails sent'],
-                        ['videoStage', 'Video stage'],
-                        ['notes', 'Notes'],
-                    ];
+                    const fields = notesOnly
+                        ? [['notes', 'Notes']]
+                        : [
+                              ['activity', 'Details'],
+                              ['notes', 'Notes'],
+                          ];
                     return (
                         <div className="mt-3 space-y-3">
                             {dayRows.length ? (
@@ -966,16 +964,7 @@ function useMutation() {
     return { busy, message, setMessage, submit };
 }
 
-const habitFields = {
-    physical_workout: ['activity', 'durationMinutes'],
-    direct_marketing: ['outreachCount', 'outreachChannel'],
-    email_writing: ['emailDraftedCount', 'emailSentCount'],
-    video_content: ['videoStage', 'notes'],
-} satisfies Record<(typeof HABITS)[number]['key'], readonly string[]>;
-const habitDefinitions = HABITS.map((habit) => ({
-    ...habit,
-    fields: habitFields[habit.key],
-}));
+const habitDefinitions = HABITS;
 
 function ProgressHistory({
     history,
@@ -1182,6 +1171,7 @@ function ProgressSection() {
                             <DailyHeatmap
                                 key={habit.key}
                                 title={habit.label}
+                                notesOnly
                                 from={rangeStart}
                                 to={rangeEnd}
                                 rows={getArray(dataRoot, 'habits').filter(
@@ -1259,7 +1249,6 @@ function ProgressSection() {
                                     key={`${activityDate}-${definition.key}`}
                                     habitKey={definition.key}
                                     label={definition.label}
-                                    fields={definition.fields}
                                     current={current}
                                     disabled={saving}
                                     onSave={saveHabit}
@@ -1278,7 +1267,7 @@ function ProgressSection() {
             </Panel>
             <Panel
                 title="Progress history"
-                description="One row per recorded day. Green is completed, red is incomplete, yellow is not updated."
+                description="One row per recorded day. Green is completed; unfilled squares are incomplete or not updated."
             >
                 <StatusPanel state={state} error={error} onRetry={reload} />
                 {state === 'ready' && (
@@ -1301,14 +1290,12 @@ function ProgressSection() {
 function HabitProgressCard({
     habitKey,
     label,
-    fields,
     current,
     disabled,
     onSave,
 }: {
     habitKey: HabitKey;
     label: string;
-    fields: readonly string[];
     current?: JsonRecord;
     disabled: boolean;
     onSave: (
@@ -1318,71 +1305,11 @@ function HabitProgressCard({
         details: JsonRecord,
     ) => Promise<boolean>;
 }) {
-    const [activity, setActivity] = useState(() =>
-        getText(current ?? {}, 'activity'),
-    );
-    const [durationMinutes, setDurationMinutes] = useState(() =>
-        getText(current ?? {}, 'durationMinutes', 'duration_minutes'),
-    );
-    const [outreachCount, setOutreachCount] = useState(() =>
-        getText(current ?? {}, 'outreachCount', 'outreach_count'),
-    );
-    const [outreachChannel, setOutreachChannel] = useState(() =>
-        getText(current ?? {}, 'outreachChannel', 'outreach_channel'),
-    );
-    const [emailDraftedCount, setEmailDraftedCount] = useState(() =>
-        getText(current ?? {}, 'emailDraftedCount', 'email_drafted_count'),
-    );
-    const [emailSentCount, setEmailSentCount] = useState(() =>
-        getText(current ?? {}, 'emailSentCount', 'email_sent_count'),
-    );
-    const [videoStage, setVideoStage] = useState(() =>
-        getText(current ?? {}, 'videoStage', 'video_stage'),
-    );
     const [notes, setNotes] = useState(() => getText(current ?? {}, 'notes'));
     const [localBusy, setLocalBusy] = useState(false);
     const status = current ? statusOf(current) : 'unknown';
 
-    const detailValue = (field: string): string =>
-        ({
-            activity,
-            durationMinutes,
-            outreachCount,
-            outreachChannel,
-            emailDraftedCount,
-            emailSentCount,
-            videoStage,
-            notes,
-        })[field] ?? '';
-    const setField = (field: string, value: string) => {
-        if (field === 'activity') setActivity(value);
-        if (field === 'durationMinutes') setDurationMinutes(value);
-        if (field === 'outreachCount') setOutreachCount(value);
-        if (field === 'outreachChannel') setOutreachChannel(value);
-        if (field === 'emailDraftedCount') setEmailDraftedCount(value);
-        if (field === 'emailSentCount') setEmailSentCount(value);
-        if (field === 'videoStage') setVideoStage(value);
-        if (field === 'notes') setNotes(value);
-    };
-    const details: JsonRecord = {};
-    for (const field of fields) {
-        const value = detailValue(field);
-        details[field] =
-            value === ''
-                ? null
-                : [
-                        'durationMinutes',
-                        'outreachCount',
-                        'emailDraftedCount',
-                        'emailSentCount',
-                    ].includes(field)
-                  ? Number(value)
-                  : value;
-    }
-    const invalidOutreach =
-        fields.includes('outreachCount') &&
-        Number(outreachCount) > 0 &&
-        !outreachChannel;
+    const details: JsonRecord = { notes: notes.trim() || null };
     const update = async (next: HabitStatus) => {
         setLocalBusy(true);
         try {
@@ -1405,10 +1332,7 @@ function HabitProgressCard({
                     <button
                         type="button"
                         disabled={
-                            disabled ||
-                            localBusy ||
-                            invalidOutreach ||
-                            status === 'completed'
+                            disabled || localBusy || status === 'completed'
                         }
                         onClick={() => void update('completed')}
                         className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-stone-950 px-3 text-sm font-bold text-white hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
@@ -1418,10 +1342,7 @@ function HabitProgressCard({
                     <button
                         type="button"
                         disabled={
-                            disabled ||
-                            localBusy ||
-                            invalidOutreach ||
-                            status === 'incomplete'
+                            disabled || localBusy || status === 'incomplete'
                         }
                         onClick={() => void update('incomplete')}
                         className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-700 hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
@@ -1430,12 +1351,7 @@ function HabitProgressCard({
                     </button>
                     <button
                         type="button"
-                        disabled={
-                            disabled ||
-                            localBusy ||
-                            invalidOutreach ||
-                            status === 'unknown'
-                        }
+                        disabled={disabled || localBusy || status === 'unknown'}
                         onClick={() => void update('unknown')}
                         className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm font-bold text-slate-800 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-600 focus-visible:ring-offset-2"
                     >
@@ -1443,172 +1359,26 @@ function HabitProgressCard({
                     </button>
                     <button
                         type="button"
-                        disabled={disabled || localBusy || invalidOutreach}
+                        disabled={disabled || localBusy}
                         onClick={() => void update(status)}
                         className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-sm font-bold text-stone-700 hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-700 focus-visible:ring-offset-2"
                     >
-                        <Check size={15} aria-hidden="true" /> Save details
+                        <Check size={15} aria-hidden="true" /> Save notes
                     </button>
                 </div>
             </div>
-            <details className="mt-3">
-                <summary className="cursor-pointer text-xs font-semibold text-stone-500">
-                    Activity details
-                </summary>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {fields.includes('activity') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Activity
-                            <input
-                                value={activity}
-                                onChange={(event) =>
-                                    setField('activity', event.target.value)
-                                }
-                                maxLength={200}
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional activity detail"
-                            />
-                        </label>
-                    )}
-                    {fields.includes('durationMinutes') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Duration (minutes)
-                            <input
-                                type="number"
-                                min="0"
-                                max="1440"
-                                step="1"
-                                value={durationMinutes}
-                                onChange={(event) =>
-                                    setField(
-                                        'durationMinutes',
-                                        event.target.value,
-                                    )
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional duration"
-                            />
-                        </label>
-                    )}
-                    {fields.includes('outreachCount') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Outreach count
-                            <input
-                                type="number"
-                                min="0"
-                                max="999"
-                                step="1"
-                                value={outreachCount}
-                                onChange={(event) =>
-                                    setField(
-                                        'outreachCount',
-                                        event.target.value,
-                                    )
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional count"
-                            />
-                        </label>
-                    )}
-                    {fields.includes('outreachChannel') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Outreach channel
-                            <select
-                                value={outreachChannel}
-                                onChange={(event) =>
-                                    setField(
-                                        'outreachChannel',
-                                        event.target.value,
-                                    )
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                            >
-                                <option value="">Not set</option>
-                                <option value="email">Email</option>
-                                <option value="linkedin">LinkedIn</option>
-                                <option value="phone">Phone</option>
-                                <option value="in_person">In person</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </label>
-                    )}
-                    {fields.includes('emailDraftedCount') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Emails drafted
-                            <input
-                                type="number"
-                                min="0"
-                                max="10000"
-                                step="1"
-                                value={emailDraftedCount}
-                                onChange={(event) =>
-                                    setField(
-                                        'emailDraftedCount',
-                                        event.target.value,
-                                    )
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional count"
-                            />
-                        </label>
-                    )}
-                    {fields.includes('emailSentCount') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Emails sent
-                            <input
-                                type="number"
-                                min="0"
-                                max="10000"
-                                step="1"
-                                value={emailSentCount}
-                                onChange={(event) =>
-                                    setField(
-                                        'emailSentCount',
-                                        event.target.value,
-                                    )
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional count"
-                            />
-                        </label>
-                    )}
-                    {fields.includes('videoStage') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700">
-                            Video stage
-                            <select
-                                value={videoStage}
-                                onChange={(event) =>
-                                    setField('videoStage', event.target.value)
-                                }
-                                className="min-h-10 rounded-lg border border-stone-300 px-3 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                            >
-                                <option value="">Not set</option>
-                                <option value="idea">Idea</option>
-                                <option value="planned">Planned</option>
-                                <option value="scripted">Scripted</option>
-                                <option value="recorded">Recorded</option>
-                                <option value="edited">Edited</option>
-                                <option value="published">Published</option>
-                            </select>
-                        </label>
-                    )}
-                    {fields.includes('notes') && (
-                        <label className="grid gap-1 text-xs font-bold text-stone-700 sm:col-span-2">
-                            Notes
-                            <textarea
-                                value={notes}
-                                onChange={(event) =>
-                                    setField('notes', event.target.value)
-                                }
-                                rows={2}
-                                maxLength={2000}
-                                className="rounded-lg border border-stone-300 px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
-                                placeholder="Optional video notes"
-                            />
-                        </label>
-                    )}
-                </div>
-            </details>
+            <label className="mt-4 grid gap-1.5 text-xs font-bold text-stone-700">
+                Notes (optional)
+                <textarea
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                    rows={3}
+                    maxLength={4000}
+                    disabled={disabled || localBusy}
+                    className="w-full resize-y rounded-lg border border-stone-300 px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-stone-300"
+                    placeholder={`What did you do for ${label.toLowerCase()}?`}
+                />
+            </label>
         </article>
     );
 }
