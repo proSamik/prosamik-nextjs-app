@@ -9,7 +9,7 @@ export type DailyChartPoint = {
 };
 const dayMs = 86400000;
 const shortDate = (date: string) =>
-    new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', {
+    new Date(`${date}T00:00:00Z`).toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
         timeZone: 'UTC',
@@ -236,7 +236,9 @@ export function DailyLineChart({
                     aria-valuemax={count}
                     aria-valuenow={hover ?? 0}
                     aria-valuetext={
-                        date ? `${date}: ${details.join('. ')}` : from
+                        date
+                            ? `${shortDate(date)}: ${details.join('. ')}`
+                            : shortDate(from)
                     }
                     onFocus={() => setHover(0)}
                     onBlur={() => setHover(null)}
@@ -297,10 +299,6 @@ export function DailyLineChart({
                     ))}
                 </div>
             )}
-            <figcaption className="mt-2 text-xs text-stone-500">
-                Move anywhere across the chart to inspect the nearest recorded
-                day. Lines connect recorded values.
-            </figcaption>
         </figure>
     );
 }
