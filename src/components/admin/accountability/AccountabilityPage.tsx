@@ -808,7 +808,10 @@ function TrackerDialog({
             className="fixed inset-0 m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] max-w-4xl overflow-hidden rounded-2xl border border-stone-200 bg-white p-0 text-stone-950 shadow-xl backdrop:bg-black/40"
         >
             <div className="flex items-center justify-between gap-4 border-b border-stone-200 px-4 py-3 sm:px-6">
-            <h2 id={titleId} className="min-w-0 break-words text-lg font-bold">
+                <h2
+                    id={titleId}
+                    className="min-w-0 break-words text-lg font-bold"
+                >
                     {title}
                 </h2>
                 <button
@@ -2681,6 +2684,29 @@ function FoodSection() {
                                                                     ? 'Unknown calories'
                                                                     : `${getNumber(entry, 'calories')?.toLocaleString()} kcal`}
                                                             </p>
+                                                            {getNumber(
+                                                                entry,
+                                                                'calories',
+                                                            ) !== null && (
+                                                                <p className="text-xs text-stone-500">
+                                                                    ≈{' '}
+                                                                    {(
+                                                                        (getNumber(
+                                                                            entry,
+                                                                            'calories',
+                                                                        ) ??
+                                                                            0) /
+                                                                        7700
+                                                                    ).toLocaleString(
+                                                                        undefined,
+                                                                        {
+                                                                            maximumFractionDigits: 3,
+                                                                        },
+                                                                    )}{' '}
+                                                                    kg energy
+                                                                    equivalent
+                                                                </p>
+                                                            )}
                                                             <button
                                                                 type="button"
                                                                 disabled={busy}
@@ -2711,55 +2737,89 @@ function FoodSection() {
                     title={getText(detailEntry, 'item')}
                     onClose={() => setDetailEntry(null)}
                 >
-                    <div className="grid gap-3 sm:grid-cols-2">
-                        {evidenceIds(detailEntry).map((id) => (
-                            <PrivateImage
-                                key={id}
-                                id={id}
-                                alt={getText(detailEntry, 'item')}
-                                className="h-64 w-full object-contain"
-                            />
-                        ))}
+                    <div className="grid items-start gap-6 md:grid-cols-2">
+                        <div className="space-y-3">
+                            {evidenceIds(detailEntry).map((id) => (
+                                <PrivateImage
+                                    key={id}
+                                    id={id}
+                                    alt={getText(detailEntry, 'item')}
+                                    className="h-64 w-full rounded-xl object-contain md:h-80"
+                                />
+                            ))}
+                            {evidenceIds(detailEntry).length === 0 && (
+                                <div className="grid h-64 place-content-center justify-items-center gap-3 rounded-xl bg-stone-100 text-stone-400 md:h-80">
+                                    <Utensils size={48} />
+                                    <span className="text-sm">No photo</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="min-w-0">
+                            <dl className="space-y-4 text-sm">
+                                <div>
+                                    <dt className="font-bold">
+                                        Date / time (IST)
+                                    </dt>
+                                    <dd>
+                                        {dateLabel(
+                                            getText(detailEntry, 'consumedAt'),
+                                            {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            },
+                                        )}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-bold">Portion</dt>
+                                    <dd>
+                                        {getText(detailEntry, 'portion') || '—'}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-bold">Calories</dt>
+                                    <dd>
+                                        {getNumber(detailEntry, 'calories') ===
+                                        null
+                                            ? 'Unknown'
+                                            : `${getNumber(detailEntry, 'calories')?.toLocaleString()} kcal`}{' '}
+                                        ·{' '}
+                                        {getText(detailEntry, 'calorieSource')}
+                                    </dd>
+                                    {getNumber(detailEntry, 'calories') !==
+                                        null && (
+                                        <dd className="mt-1 text-xs text-stone-500">
+                                            ≈{' '}
+                                            {(
+                                                (getNumber(
+                                                    detailEntry,
+                                                    'calories',
+                                                ) ?? 0) / 7700
+                                            ).toLocaleString(undefined, {
+                                                maximumFractionDigits: 3,
+                                            })}{' '}
+                                            kg energy equivalent
+                                        </dd>
+                                    )}
+                                </div>
+                                {getText(detailEntry, 'notes') && (
+                                    <div>
+                                        <dt className="font-bold">Notes</dt>
+                                        <dd className="whitespace-pre-wrap break-words">
+                                            {getText(detailEntry, 'notes')}
+                                        </dd>
+                                    </div>
+                                )}
+                            </dl>
+                            <button
+                                type="button"
+                                onClick={() => edit(detailEntry)}
+                                className="mt-5 rounded-lg bg-stone-950 px-4 py-3 text-sm font-bold text-white"
+                            >
+                                Edit food entry
+                            </button>
+                        </div>
                     </div>
-                    <dl className="mt-4 space-y-3 text-sm">
-                        <div>
-                            <dt className="font-bold">Date / time (IST)</dt>
-                            <dd>
-                                {dateLabel(getText(detailEntry, 'consumedAt'), {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short',
-                                })}
-                            </dd>
-                        </div>
-                        <div>
-                            <dt className="font-bold">Portion</dt>
-                            <dd>{getText(detailEntry, 'portion') || '—'}</dd>
-                        </div>
-                        <div>
-                            <dt className="font-bold">Calories</dt>
-                            <dd>
-                                {getNumber(detailEntry, 'calories') === null
-                                    ? 'Unknown'
-                                    : `${getNumber(detailEntry, 'calories')?.toLocaleString()} kcal`}{' '}
-                                · {getText(detailEntry, 'calorieSource')}
-                            </dd>
-                        </div>
-                        {getText(detailEntry, 'notes') && (
-                            <div>
-                                <dt className="font-bold">Notes</dt>
-                                <dd className="whitespace-pre-wrap break-words">
-                                    {getText(detailEntry, 'notes')}
-                                </dd>
-                            </div>
-                        )}
-                    </dl>
-                    <button
-                        type="button"
-                        onClick={() => edit(detailEntry)}
-                        className="mt-5 rounded-lg bg-stone-950 px-4 py-3 text-sm font-bold text-white"
-                    >
-                        Edit food entry
-                    </button>
                 </TrackerDialog>
             )}
         </>
