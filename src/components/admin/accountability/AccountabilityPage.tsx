@@ -2,6 +2,7 @@
 
 import { ApiTokenDialog } from './ApiTokenDialog';
 import { ApiKeyFormDialog } from './ApiKeyFormDialog';
+import { RemoteOAuthConfig } from './RemoteOAuthConfig';
 import { DailyLineChart } from './DailyLineChart';
 
 import Link from 'next/link';
@@ -230,8 +231,7 @@ async function requestPrivateJson(
         },
     });
     if (!response.ok) {
-        if (response.status === 401)
-            clearAccountabilityCache(true);
+        if (response.status === 401) clearAccountabilityCache(true);
         let message = 'The request could not be completed. Please try again.';
         try {
             const body: unknown = await response.json();
@@ -6310,6 +6310,7 @@ function IntegrationsSection() {
         return () => window.clearInterval(timer);
     }, []);
     const [keyFormOpen, setKeyFormOpen] = useState(false);
+    const [connectionOpen, setConnectionOpen] = useState(false);
     const [keyName, setKeyName] = useState('');
     const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
     const [expiration, setExpiration] = useState('90');
@@ -6414,20 +6415,40 @@ function IntegrationsSection() {
                 title="API access"
                 description="Manage scoped API keys and their expiration."
                 action={
-                    <button
-                        type="button"
-                        disabled={state !== 'ready' || busy}
-                        onClick={() => {
-                            setMessage(null);
-                            setKeyFormOpen(true);
-                        }}
-                        className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50"
-                    >
-                        <Plus size={16} aria-hidden="true" /> Create new key
-                    </button>
+                    <div className="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setConnectionOpen(true)}
+                            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 px-4 text-sm font-bold hover:bg-stone-50"
+                        >
+                            Connect remote MCP
+                        </button>
+                        <button
+                            type="button"
+                            disabled={state !== 'ready' || busy}
+                            onClick={() => {
+                                setMessage(null);
+                                setKeyFormOpen(true);
+                            }}
+                            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-stone-950 px-4 text-sm font-bold text-white hover:bg-stone-700 disabled:opacity-50"
+                        >
+                            <Plus size={16} aria-hidden="true" /> Create new key
+                        </button>
+                    </div>
                 }
             >
                 <StatusPanel state={state} error={error} onRetry={reload} />
+                {connectionOpen && (
+                    <TrackerDialog
+                        title="Connect remote MCP with OAuth"
+                        onClose={() => setConnectionOpen(false)}
+                    >
+                        <RemoteOAuthConfig
+                            endpoint={getText(oauth, 'endpoint')}
+                            issuer={getText(oauth, 'authorizationServer')}
+                        />
+                    </TrackerDialog>
+                )}
                 {!keyFormOpen && message && (
                     <Notice kind={message.kind}>{message.text}</Notice>
                 )}
