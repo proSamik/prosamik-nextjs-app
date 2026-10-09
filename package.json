@@ -9,6 +9,7 @@
     "migrate:db": "node ./scripts/migrate-db.mjs",
     "test:accountability": "node --experimental-strip-types --test ./scripts/test-accountability-contract.mjs ./scripts/test-accountability-domain.mjs ./scripts/test-accountability-summary.mjs ./scripts/test-structured-data.mjs ./src/lib/accountability-*.test.ts && node --import tsx --test ./scripts/test-accountability-services.mjs",
     "test:pglite": "node --test ./scripts/test-pglite-migrations.mjs",
+    "test:accountability:concurrency": "node --import tsx --test ./scripts/test-accountability-concurrency.mjs",
     "backfill:video-posters": "npm run migrate:db && node --env-file=.env ./scripts/backfill-random-thought-video-posters.mjs",
     "r2:cors": "node ./scripts/configure-r2-cors.mjs",
     "dev": "next dev",
