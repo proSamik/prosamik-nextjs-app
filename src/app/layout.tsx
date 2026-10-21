@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import MainLayout from '@/components/MainLayout';
 import { siteMetadata } from '@/utils/siteMetadata';
 import '@/styles/globals.css';
@@ -61,6 +62,8 @@ export const viewport: Viewport = {
     themeColor: '#ffffff',
 };
 
+const GA_MEASUREMENT_ID = 'G-YHX110DW69';
+
 const personJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -80,6 +83,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
                 />
+                <Script
+                    src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+                    strategy="afterInteractive"
+                />
+                <Script id="google-analytics" strategy="afterInteractive">
+                    {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+                </Script>
                 <MainLayout>{children}</MainLayout>
             </body>
         </html>
