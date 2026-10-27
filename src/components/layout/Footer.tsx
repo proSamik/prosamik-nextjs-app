@@ -1,76 +1,16 @@
-import { useEffect, useState } from 'react';
-import { FaGithub, FaLinkedin, FaYoutube } from 'react-icons/fa';
-import { FaXTwitter } from "react-icons/fa6";
+import Link from 'next/link';
+import { ArrowUpRight, ArrowUp } from 'lucide-react';
+import { portfolioSocials } from '@/utils/portfolio';
 
-const Footer = () => {
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 1090); // Set isMobile based on screen width
-        };
-
-        handleResize(); // Run initially
-        window.addEventListener('resize', handleResize);
-
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
+export default function Footer() {
     return (
-        <footer
-            className={`${
-                isMobile
-                    ? 'fixed bottom-0 left-0 w-full pb-1 bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/95 shadow-lg shadow-slate-200/20 dark:shadow-black/20 flex justify-center pt-3 items-center'
-                    : 'fixed right-0 top-1/2 transform -translate-y-1/2 pr-5 flex flex-col items-center max-w-[70px] w-full'
-            }`}
-        >
-            {/* Social Icons */}
-            <div
-                className={`${
-                    isMobile
-                        ? 'flex space-x-4 pr-10 pl-2'
-                        : 'flex flex-col justify-center items-center space-y-4 pb-10' // Stack vertically on desktop
-                }`}
-            >
-                <a
-                    href="https://www.youtube.com/@prosamik"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-red-600 flex flex-col items-center"
-                >
-                    <FaYoutube size={30}/>
-                    <span className="mt-2 text-sm">prosamik</span>
-                </a>
-                <a
-                    href="https://www.github.com/prosamik"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-gray-300 flex flex-col items-center"
-                >
-                    <FaGithub size={30}/>
-                    <span className="mt-2 text-sm">prosamik</span>
-                </a>
-                <a
-                    href="https://www.twitter.com/prosamik"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-400 flex flex-col items-center"
-                >
-                    <FaXTwitter size={30}/>
-                    <span className="mt-2 text-sm">prosamik</span>
-                </a>
-                <a
-                    href="https://www.linkedin.com/in/prosamik"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-600 flex flex-col items-center"
-                >
-                    <FaLinkedin size={30}/>
-                    <span className="mt-2 text-sm">prosamik</span>
-                </a>
+        <footer className="portfolio-footer page-width">
+            <div className="footer-top">
+                <h2>Keep<br />in touch.</h2>
+                <nav aria-label="Footer navigation"><span>Explore</span><Link href="/projects">Work</Link><Link href="/about">Journey</Link><Link href="/random-thoughts">Notes</Link><Link href="/consistency">Efforts</Link></nav>
+                <nav aria-label="Social profiles"><span>Find me</span>{portfolioSocials.map(s => <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer">{s.label}<ArrowUpRight size={14} /></a>)}</nav>
             </div>
+            <div className="footer-bottom"><a href="#top">Back to top <ArrowUp size={14} /></a></div>
         </footer>
     );
-};
-
-export default Footer;
+}
