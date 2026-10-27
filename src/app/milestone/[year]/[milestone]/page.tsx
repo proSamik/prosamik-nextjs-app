@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Notebook } from '@/components/portfolio/Visuals';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { getMilestone, milestones } from '@/utils/milestones';
@@ -72,40 +75,13 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
         keywords: [...item.event.skills, ...(item.event.soft_skills || [])].join(', '),
     };
 
-    return (
-        <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(milestoneJsonLd) }}
-            />
-
-            <Breadcrumbs items={[
-                { label: 'About', href: '/about' },
-                {
-                    label: `${item.yearRange.start}-${item.yearRange.end}`,
-                    href: `/milestone/${item.year}`,
-                },
-                { label: item.event.title },
-            ]} />
-
-            <header className="mt-8 space-y-4 border-b border-gray-200 pb-8">
-                <p className="font-medium text-blue-600">
-                    {item.yearRange.start} – {item.yearRange.end}
-                </p>
-                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{item.event.title}</h1>
-                <p className="text-lg leading-8 text-gray-600">{summary}</p>
-            </header>
-
-            <section className="py-10">
-                <h2 className="mb-5 text-2xl font-bold">The Milestone</h2>
-                <ul className="space-y-4 text-gray-700">
-                    {descriptionLines.map(({ nested, text }, index) => (
-                        <li key={`${index}-${text}`} className={`leading-7 ${nested ? 'ml-8 [list-style-type:circle]' : 'ml-5 list-disc'}`}>
-                            {text}
-                        </li>
-                    ))}
-                </ul>
-            </section>
-        </article>
-    );
+    const related = milestones.filter(other => other.year === item.year);
+    const next = related[related.findIndex(other => other.slug === item.slug) + 1];
+    return <article className="portfolio-page page-width">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(milestoneJsonLd) }} />
+        <Breadcrumbs items={[{ label: 'Journey', href: '/about' }, { label: `${item.yearRange.start} — ${item.yearRange.end}`, href: `/milestone/${item.year}` }, { label: item.event.title }]} />
+        <header className="chapter-hero"><div><span className="period-date">{item.yearRange.start} — {item.yearRange.end}</span><h1>{item.event.title}</h1><p>{summary}</p><div className="chapter-author"><Image src="/me-here.jpg" alt="" width={36} height={36} />Samik Choudhury</div></div><Notebook eager /></header>
+        <div className="chapter-prose">{descriptionLines.map(({ nested, text }, index) => <p key={index} className={nested ? 'nested' : undefined}>{text}</p>)}<div className="skills-list" aria-label="Skills and lessons">{[...item.event.skills, ...(item.event.soft_skills || [])].map(skill => <span key={skill}>{skill.replace('#', '').replace(/([a-z])([A-Z])/g, '$1 $2')}</span>)}</div></div>
+        <nav className="chapter-nav" aria-label="More chapters"><Link href={`/milestone/${item.year}`}>← Back to this period</Link>{next && <Link href={`/milestone/${next.year}/${next.slug}`}>Next chapter →</Link>}</nav>
+    </article>;
 }
