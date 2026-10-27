@@ -1,16 +1,5 @@
-export type ProjectIcon =
-    | "ban"
-    | "brain"
-    | "chrome"
-    | "clapperboard"
-    | "database"
-    | "git-branch"
-    | "globe"
-    | "monitor";
-
 export interface Project {
     slug: string;
-    icon: ProjectIcon;
     title: string;
     type: string;
     description: string;
@@ -31,7 +20,6 @@ export interface Project {
 export const projects: Project[] = [
     {
         slug: "rankizz",
-        icon: "chrome",
         title: "Rankizz",
         type: "Web App & Chrome Extension",
         description: "Affordable SEO, AI search, social discovery, and analytics in one workspace",
@@ -65,7 +53,6 @@ export const projects: Project[] = [
     },
     {
         slug: "subclip",
-        icon: "clapperboard",
         title: "Subclip.app",
         type: "Web, iOS & macOS App",
         description: "AI video editor for captions, dubbing, transcription, and translation",
@@ -97,7 +84,6 @@ export const projects: Project[] = [
     },
     {
         slug: "track-bad-habits",
-        icon: "ban",
         title: "Track Bad Habits",
         type: "iOS App",
         description: "Log slip-ups, understand your triggers, and stay accountable with streaks and widgets",
@@ -121,7 +107,6 @@ export const projects: Project[] = [
     },
     {
         slug: "mapyourideas",
-        icon: "brain",
         title: "mapyourideas.com",
         type: "Web App",
         description: "AI powered brainstorming and mind mapping app",
@@ -147,7 +132,6 @@ export const projects: Project[] = [
     },
     {
         slug: "freescreenshot",
-        icon: "monitor",
         title: "FreeScreenshot",
         type: "macOS App",
         description: "Add beautiful colorful backgrounds to your Mac screenshots",
@@ -178,7 +162,6 @@ export const projects: Project[] = [
     },
     {
         slug: "githubme",
-        icon: "globe",
         title: "githubme.com",
         type: "Web App",
         description: "Convert any GitHub README into a readable article format",
@@ -205,7 +188,6 @@ export const projects: Project[] = [
     },
     {
         slug: "consistency-tracker",
-        icon: "git-branch",
         title: "Consistent Tracker",
         type: "Web App",
         description: "Track your consistency across GitHub, Twitter, Instagram, and YouTube",
@@ -232,7 +214,6 @@ export const projects: Project[] = [
     },
     {
         slug: "tweet-copier",
-        icon: "chrome",
         title: "Tweet Copier",
         type: "Chrome Extension",
         description: "Save tweets and threads with one click in text format for analysis and inspiration",
@@ -256,7 +237,6 @@ export const projects: Project[] = [
     },
     {
         slug: "onlinedb",
-        icon: "database",
         title: "OnlineDB",
         type: "Web App",
         description: "Connect localhost or serverless databases to view and edit data easily",
@@ -283,7 +263,6 @@ export const projects: Project[] = [
     },
     {
         slug: "prosamik",
-        icon: "globe",
         title: "prosamik.com",
         type: "Web App",
         description: "Personal site and product portfolio",
