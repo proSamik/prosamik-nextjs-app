@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { ProjectVisual } from '@/components/portfolio/Visuals';
 import { getProjectBySlug, projects } from '@/data/projects';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -74,7 +75,7 @@ function ProjectStoryText({ text, project }: { text: string; project: (typeof pr
                     href={externalLink.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-indigo-600 underline decoration-indigo-200 underline-offset-2 transition-colors hover:text-indigo-800 hover:decoration-indigo-500"
+                    className="story-inline-link"
                 >
                     {part}
                 </a>
@@ -91,7 +92,7 @@ function ProjectStoryText({ text, project }: { text: string; project: (typeof pr
             <Link
                 key={`${linkedProject.slug}-${index}`}
                 href={`/projects/${linkedProject.slug}`}
-                className="font-medium text-indigo-600 underline decoration-indigo-200 underline-offset-2 transition-colors hover:text-indigo-800 hover:decoration-indigo-500"
+                className="story-inline-link"
             >
                 {part}
             </Link>
@@ -105,8 +106,8 @@ function StorySection({ title, paragraphs, project }: {
     project: (typeof projects)[number];
 }) {
     return (
-        <section className="space-y-4">
-            <h2 className="text-2xl font-bold">{title}</h2>
+        <section id={title.toLowerCase().replace(/\s+/g, '-')}>
+            <h2>{title}</h2>
             {paragraphs.map((paragraph, index) => (
                 <p key={index} className="leading-7 text-gray-700">
                     <ProjectStoryText text={paragraph} project={project} />
@@ -136,50 +137,28 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         },
     };
 
+    const headlines: Record<string, string> = { subclip: 'Making room for the edit.', rankizz: 'Search, made clearer.', 'track-bad-habits': 'Notice the patterns.' };
+    const sections = [
+        { title: 'The problem', paragraphs: project.problem },
+        { title: 'The motivation', paragraphs: project.motivation },
+        { title: 'Mistakes', paragraphs: project.mistakes },
+        { title: 'Learning', paragraphs: project.learnings },
+        { title: 'Achievements', paragraphs: project.achievements },
+    ];
+    const next = projects[(projects.findIndex(p => p.slug === project.slug) + 1) % projects.length];
     return (
-        <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
-            />
-
-            <Breadcrumbs items={[
-                { label: 'Projects', href: '/projects' },
-                { label: project.title },
-            ]} />
-
-            <header className="mt-8 space-y-5 border-b border-gray-200 pb-8">
-                <span className="inline-flex rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-700">
-                    {project.type}
-                </span>
-                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{project.title}</h1>
-                <p className="text-lg leading-8 text-gray-600">{project.description}</p>
-                <p className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                    <ArrowDown className="h-4 w-4 shrink-0" />
-                    Note: the project link is at the bottom of this page. Keep scrolling to reach it.
-                </p>
+        <article className="portfolio-page page-width">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }} />
+            <Breadcrumbs items={[{ label: 'Work', href: '/projects' }, { label: project.title }]} />
+            <header className="story-hero">
+                <div><h1>{headlines[project.slug] || project.title}</h1><p className="story-type">{project.title} · {project.type}</p><p className="story-description">{project.description}</p><a className="button button-primary" href={project.projectUrl} target="_blank" rel="noopener noreferrer">Visit {project.title} <ArrowUpRight size={18} /></a></div>
+                <ProjectVisual slug={project.slug} eager />
             </header>
-
-            <div className="space-y-12 py-10">
-                <StorySection title="The Problem" paragraphs={project.problem} project={project} />
-                <StorySection title="The Motivation" paragraphs={project.motivation} project={project} />
-                <StorySection title="Mistakes" paragraphs={project.mistakes} project={project} />
-                <StorySection title="Learning" paragraphs={project.learnings} project={project} />
-                <StorySection title="Achievements" paragraphs={project.achievements} project={project} />
+            <div className="story-layout">
+                <nav className="story-toc" aria-label="Story contents">{sections.map(section => <a key={section.title} href={`#${section.title.toLowerCase().replace(/\s+/g, '-')}`}>{section.title}</a>)}</nav>
+                <div className="story-body">{sections.map(section => <StorySection key={section.title} title={section.title} paragraphs={section.paragraphs} project={project} />)}</div>
             </div>
-
-            <section className="border-t border-gray-200 pt-10">
-                <h2 className="mb-4 text-2xl font-bold">Project Link</h2>
-                <a
-                    href={project.projectUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
-                >
-                    Visit {project.title}
-                    <ArrowUpRight className="h-4 w-4" />
-                </a>
-            </section>
+            <nav className="story-next" aria-label="More projects"><Link href="/projects">← All projects</Link><Link href={`/projects/${next.slug}`}>Next project: {next.title} →</Link></nav>
         </article>
     );
 }
