@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import ProfileHeader from '@/components/ProfileHeader';
-import PersonalStory from '@/components/PersonalStory';
-import Timeline from '@/components/Timeline';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
+import { Notebook } from '@/components/portfolio/Visuals';
+import { milestoneYears } from '@/utils/milestones';
 import { dataTimelineData } from '@/utils/dataTimelineData';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -82,19 +83,11 @@ const profileJsonLd = {
 };
 
 export default function About() {
-    return (
-        <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
-            />
-            <div className="flex w-full flex-col items-center">
-                <div className="w-full max-w-[800px] space-y-8">
-                    <ProfileHeader />
-                    <PersonalStory />
-                    <Timeline timelineData={dataTimelineData} />
-                </div>
-            </div>
-        </>
-    );
+    return <article className="portfolio-page page-width">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
+        <header className="about-intro"><div><h1>A work<br />in progress.</h1><p>The choices, detours,<br />and things I learned.</p></div><Notebook eager /></header>
+        <div className="about-bio"><p>I’m Samik Choudhury. I studied Electronics and Telecommunication Engineering, but curiosity led me to software. I started my independent journey on 17 December 2024.</p><p>I’m still figuring out how to make a living from the things I build. I enjoy making educational content and sharing what I’ve learned. These are the chapters along the way.</p></div>
+        <div className="journey-periods">{milestoneYears.map(period => <Link className="journey-period" key={period.year} href={`/milestone/${period.year}`}><span className="journey-period-time">{period.yearRange.start} — {period.yearRange.end}</span><div><h2>{period.yearRange.description || 'A chapter in the journey'}</h2><p>{period.events.length} moments, lessons, and projects</p></div><ArrowUpRight size={22} /></Link>)}</div>
+        <div className="journal-links"><Link href="/consistency">The everyday effort <ArrowUpRight size={18} /></Link></div>
+    </article>;
 }
