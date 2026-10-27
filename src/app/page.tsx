@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import HomePage from '@/components/portfolio/HomePage';
 import { siteMetadata } from '@/utils/siteMetadata';
 
-const title = 'prosamik — Ideas into apps';
+const title = "hi, I'm Samik 👋";
 
 export const metadata: Metadata = {
     title,
