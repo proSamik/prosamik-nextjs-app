@@ -3,7 +3,7 @@ export const siteMetadata = {
     title: 'proSamik',
     siteUrl: 'https://www.prosamik.com',
     twitterUsername: 'prosamik',
-    defaultDescription: 'Apps, extensions, and room for new ideas. Explore the projects, lessons, and independent journey of Samik Choudhury.',
+    defaultDescription: 'I am the guy who ships end-to-end product, started my journey as a Software Developer for a service based company now pivoted in the journey of an Indie Hacker',
     defaultImage: 'https://www.prosamik.com/image/og-Image.png',
     skills: ['Product Development', 'Golang', 'NextJS', 'Tailwind CSS', 'Deployment'],
     currentRole: 'Building Products',
