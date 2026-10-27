@@ -1,209 +1,42 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Flame } from 'lucide-react';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { portfolioLinks } from '@/utils/portfolio';
 
-// Define TypeScript interface for NavLink props
-interface NavLinkProps {
-    href: string;
-    icon: ReactNode;
-    label: string;
-    isActive: boolean;
-    isMobile: boolean;
-    isSmallScreen: boolean;
-    isMenuOpen: boolean;
-    onNavigate?: () => void;
-}
-
-function isActivePath(pathname: string, path: string) {
-    if (path === '/projects') return pathname.startsWith('/projects');
-    if (path === '/about') return pathname === '/about' || pathname.startsWith('/milestone');
-    if (path === '/consistency') return pathname.startsWith('/consistency');
-    return pathname === path;
-}
-
-function NavLink({
-    href,
-    icon,
-    label,
-    isActive,
-    isMobile,
-    isSmallScreen,
-    isMenuOpen,
-    onNavigate,
-}: NavLinkProps) {
-    return (
-        <Link
-            href={href}
-            onClick={onNavigate}
-            className="relative group ml-5 w-full"
-        >
-            <div className={`pr-4 pl-6 pt-2 pb-1 rounded-lg backdrop-blur-md
-                          transition-all duration-200
-                          flex flex-col items-center
-                          group-hover:scale-110
-                          ${isMobile ? (isSmallScreen && isMenuOpen ? 'scale-125' : '') : 'w-full'}`}>
-                <div className={`${
-                    isActive
-                        ? 'text-blue-600 dark:text-blue-500 fill-blue-600 dark:fill-blue-500'
-                        : 'text-gray-700 dark:text-gray-300 fill-gray-700 dark:fill-gray-300 hover:text-blue-600 hover:dark:text-blue-500 hover:fill-blue-600 hover:dark:fill-blue-500'
-                } transition-colors duration-200`}>
-                    {icon}
-                </div>
-                <span className={`mt-2 text-sm text-nowrap ${
-                    isActive
-                        ? 'text-blue-600 dark:text-blue-500'
-                        : 'text-gray-700 dark:text-gray-300'
-                } ${isSmallScreen && isMenuOpen ? 'text-base' : ''}`}>
-                {label}
-            </span>
-            </div>
-        </Link>
-    );
-}
-
-const Navigation = () => {
+const links = [{ href: '/projects', label: 'Work' }, { href: '/about', label: 'Journey' }, { href: '/random-thoughts', label: 'Notes' }];
+export default function Navigation() {
     const pathname = usePathname();
-    const isMobile = useMediaQuery('(max-width: 1089px)');
-    const isSmallScreen = useMediaQuery('(max-width: 629px)');
-    const [openMenuPath, setOpenMenuPath] = useState<string | null>(null);
-    const isMenuOpen = openMenuPath === pathname;
-    const closeMenu = () => setOpenMenuPath(null);
-
+    const [openPath, setOpenPath] = useState<string | null>(null);
+    const open = openPath === pathname;
+    const toggle = useRef<HTMLButtonElement>(null);
+    const header = useRef<HTMLElement>(null);
+    useEffect(() => {
+        if (!open) return;
+        const dismiss = (e: KeyboardEvent) => { if (e.key === 'Escape') { setOpenPath(null); toggle.current?.focus(); } };
+        const outside = (e: PointerEvent) => { if (!header.current?.contains(e.target as Node)) setOpenPath(null); };
+        document.addEventListener('keydown', dismiss);
+        document.addEventListener('pointerdown', outside);
+        return () => { document.removeEventListener('keydown', dismiss); document.removeEventListener('pointerdown', outside); };
+    }, [open]);
     return (
-        <nav
-            data-site-navigation
-            className={`${
-                isMobile
-                    ? `fixed left-0 top-0 w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/95 shadow-lg shadow-slate-200/20 dark:shadow-black/20 z-10 ${isSmallScreen ? 'py-8' : 'py-1'} flex justify-center items-center px-4`
-                    : 'sticky top-0 left-0 w-24 h-screen p-2 flex flex-col items-center justify-center'
-            }`}
-        >
-            <Link
-                href="/"
-                aria-label="Go to the proSamik homepage"
-                className={`absolute z-20 rounded-full border border-gray-300 bg-white p-1 shadow-sm transition-transform hover:scale-105 ${
-                    isMobile ? 'left-4 top-2' : 'left-5 top-5'
-                }`}
-            >
-                <Image
-                    src="/icon.png"
-                    alt="proSamik logo"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full object-cover"
-                    priority
-                />
-            </Link>
-
-            {/* Hamburger Menu */}
-            {isSmallScreen && (
-                <button
-                    onClick={() => setOpenMenuPath(isMenuOpen ? null : pathname)}
-                    aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                    aria-expanded={isMenuOpen}
-                    className="absolute right-0 px-5 py-4"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        width="24"
-                        height="24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={isMenuOpen
-                                ? "M6 18L18 6M6 6l12 12"
-                                : "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                            }
-                        />
-                    </svg>
-                </button>
-            )}
-
-            {/* Navigation Links Container */}
-            <div className={`${
-                isMobile
-                    ? isSmallScreen
-                        ? `fixed right-0 top-16 left-0 bottom-0 bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/90 dark:to-gray-900/95 shadow-md shadow-slate-200/20 dark:shadow-black/20 flex flex-col items-center gap-8 p-8 transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} border-t-2 border-slate-300 dark:border-gray-800`
-                        : 'flex items-center justify-center'
-                    : 'flex flex-col items-center gap-4 p-4 pr-16 pl-8 ml-5 rounded-2xl backdrop-blur-md bg-gradient-to-b from-slate-200 via-slate-100 to-slate-300 dark:bg-gradient-to-b dark:from-gray-800/75 dark:via-gray-800/85 dark:to-gray-900/90 w-full border-2 border-slate-300 dark:border-white/10 shadow-lg dark:shadow-black/20'
-            }`}>
-                <NavLink
-                    href="/projects"
-                    icon={
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            width="36"
-                            height="36"
-                        >
-                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="7" height="7" rx="1" />
-                            <rect x="14" y="14" width="7" height="7" rx="1" />
-                        </svg>
-                    }
-                    label="Projects"
-                    isActive={isActivePath(pathname, '/projects')}
-                    isMobile={isMobile}
-                    isSmallScreen={isSmallScreen}
-                    isMenuOpen={isMenuOpen}
-                    onNavigate={closeMenu}
-                />
-
-                <NavLink
-                    href="/consistency"
-                    icon={<Flame width={36} height={36} />}
-                    label="Efforts"
-                    isActive={isActivePath(pathname, '/consistency')}
-                    isMobile={isMobile}
-                    isSmallScreen={isSmallScreen}
-                    isMenuOpen={isMenuOpen}
-                    onNavigate={closeMenu}
-                />
-
-                <NavLink
-                    href="/about"
-                    icon={
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            width="36"
-                            height="36"
-                        >
-                            <path
-                                fillRule="evenodd"
-                                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                    }
-                    label="Who is Samik"
-                    isActive={isActivePath(pathname, '/about')}
-                    isMobile={isMobile}
-                    isSmallScreen={isSmallScreen}
-                    isMenuOpen={isMenuOpen}
-                    onNavigate={closeMenu}
-                />
-
+        <header className="site-header" ref={header}>
+            <div className="site-header-inner">
+                <Link className="site-wordmark" href="/" aria-label="prosamik home" onClick={() => setOpenPath(null)}><Image src="/icon.png" alt="" width={38} height={38} /><span>prosamik</span></Link>
+                <nav id="primary-navigation" className={`site-navigation ${open ? 'is-open' : ''}`} aria-label="Main navigation">
+                    {links.map(({ href, label }) => {
+                        const active = href === '/about' ? pathname === href || pathname.startsWith('/milestone/') : href === '/random-thoughts' ? pathname.startsWith(href) || pathname.startsWith('/t/') : pathname.startsWith(href);
+                        return <Link key={href} href={href} aria-current={active ? 'page' : undefined} onClick={() => setOpenPath(null)}>{label}</Link>;
+                    })}
+                    <a className="nav-community" href={portfolioLinks.community} target="_blank" rel="noopener noreferrer">Zero to One <ArrowUpRight size={15} /></a>
+                    <a className="nav-mobile-call" href={portfolioLinks.booking} target="_blank" rel="noopener noreferrer">Book a call <ArrowUpRight size={16} /></a>
+                </nav>
+                <a className="nav-call" href={portfolioLinks.booking} target="_blank" rel="noopener noreferrer">Book a call <ArrowUpRight size={16} /></a>
+                <button ref={toggle} className="nav-toggle" type="button" aria-label={open ? 'Close navigation' : 'Open navigation'} aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpenPath(open ? null : pathname)}>{open ? <X size={25} /> : <Menu size={25} />}</button>
             </div>
-        </nav>
+        </header>
     );
-};
-
-export default Navigation;
+}
