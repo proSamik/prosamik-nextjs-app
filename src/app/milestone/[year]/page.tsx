@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { Notebook } from '@/components/portfolio/Visuals';
+import { getMilestoneSummary } from '@/utils/milestoneSummaries';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { getMilestoneSlug } from '@/utils/slugs';
@@ -73,73 +75,13 @@ export default async function MilestoneYearPage({ params }: MilestoneYearPagePro
         },
     };
 
-    return (
-        <main className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
-            />
-
-            <Breadcrumbs items={[
-                { label: 'About', href: '/about' },
-                { label: `${period.yearRange.start}-${period.yearRange.end}` },
-            ]} />
-
-            <header className="mt-8 border-b border-gray-200 pb-8 text-center">
-                <p className="mb-3 font-medium text-blue-600">My Proud Moments</p>
-                <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-                    {period.yearRange.start} – {period.yearRange.end}
-                </h1>
-                {period.yearRange.description && (
-                    <p className="mt-4 text-lg text-gray-600">{period.yearRange.description}</p>
-                )}
-            </header>
-
-            <section className="relative mx-auto max-w-2xl py-10" aria-label="Milestones">
-                <div
-                    aria-hidden="true"
-                    className="milestone-timeline-line absolute bottom-16 left-[15px] top-16 w-0.5 bg-gradient-to-t from-blue-600 to-blue-200"
-                />
-
-                <div className="space-y-8">
-                {orderedEvents.map((event, index) => {
-                    const milestoneSlug = getMilestoneSlug(event.title);
-                    const href = event.projectSlug
-                        ? `/projects/${event.projectSlug}`
-                        : `/milestone/${period.year}/${milestoneSlug}`;
-                    const revealDelay = (orderedEvents.length - index - 1) * 140 + 250;
-
-                    return (
-                        <article
-                            key={event.projectSlug ?? milestoneSlug}
-                            className="milestone-timeline-item relative pl-12"
-                            style={{ animationDelay: `${revealDelay}ms` }}
-                        >
-                            <span
-                                aria-hidden="true"
-                                className="absolute left-2 top-7 z-10 h-4 w-4 rounded-full border-2 border-blue-600 bg-blue-600 ring-4 ring-white"
-                            />
-                            <span
-                                aria-hidden="true"
-                                className="absolute left-6 top-[35px] h-0.5 w-6 bg-blue-500"
-                            />
-                            <Link
-                                href={href}
-                                className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
-                            >
-                                <div className="flex items-start justify-between gap-4">
-                                    <h2 className="text-xl font-semibold">{event.title}</h2>
-                                    <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600" />
-                                </div>
-                                {event.projectSlug && (
-                                    <p className="mt-2 text-sm leading-6 text-gray-600">{event.description}</p>
-                                )}
-                            </Link>
-                        </article>
-                    );
-                })}
-                </div>
-            </section>
-        </main>
-    );
+    const periodIndex = milestoneYears.findIndex(item => item.year === period.year);
+    const next = milestoneYears[periodIndex - 1];
+    return <article className="portfolio-page page-width">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+        <Breadcrumbs items={[{ label: 'Journey', href: '/about' }, { label: `${period.yearRange.start} — ${period.yearRange.end}` }]} />
+        <header className="period-intro"><div><h1>{period.year === 'july-24-dec-24' ? 'A change of direction.' : `${period.yearRange.start} — ${period.yearRange.end}`}</h1><span className="period-date">{period.yearRange.start} — {period.yearRange.end}</span><p>{period.yearRange.description}</p></div><Notebook eager /></header>
+        <div className="period-list">{orderedEvents.map(event => <Link key={event.title} className="period-entry" href={event.projectSlug ? `/projects/${event.projectSlug}` : `/milestone/${period.year}/${getMilestoneSlug(event.title)}`}><div><h2>{event.title}</h2><p>{getMilestoneSummary(event)}</p></div><ArrowUpRight size={25} /></Link>)}</div>
+        <nav className="chapter-nav" aria-label="Journey periods"><Link href="/about">← All periods</Link>{next && <Link href={`/milestone/${next.year}`}>Next period →</Link>}</nav>
+    </article>;
 }
