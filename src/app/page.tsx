@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import ProductsSection from '@/components/ProductsSection';
+import HomePage from '@/components/portfolio/HomePage';
 import { siteMetadata } from '@/utils/siteMetadata';
 
+const title = 'prosamik — Ideas into apps';
+
 export const metadata: Metadata = {
-    title: "Samik's Builder Toolkit",
+    title,
     description: siteMetadata.defaultDescription,
     alternates: { canonical: '/' },
     openGraph: {
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
         siteName: siteMetadata.title,
         locale: 'en_US',
         url: '/',
-        title: "Samik's Builder Toolkit",
+        title,
         description: siteMetadata.defaultDescription,
         images: [{
             url: siteMetadata.defaultImage,
@@ -24,12 +26,12 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         site: `@${siteMetadata.twitterUsername}`,
         creator: `@${siteMetadata.twitterUsername}`,
-        title: "Samik's Builder Toolkit",
+        title,
         description: siteMetadata.defaultDescription,
         images: [{ url: siteMetadata.defaultImage, alt: siteMetadata.ogImageAlt }],
     },
 };
 
 export default function Home() {
-    return <ProductsSection />;
+    return <HomePage />;
 }
