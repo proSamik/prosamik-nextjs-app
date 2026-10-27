@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowUpRight, Mic, Video, Phone } from 'lucide-react';
+import { ArrowUpRight, Cloud, Monitor, Smartphone, Puzzle, Mic, Video, Phone } from 'lucide-react';
 import DeviceStory from './DeviceStory';
 import SelectedWork from './SelectedWork';
 import Reveal from './Reveal';
@@ -11,11 +11,13 @@ import { portfolioLinks } from '@/utils/portfolio';
 export default function HomePage() {
     return <>
         <DeviceStory intro={<>
-            <h1>Ideas don’t<br />ship themselves.</h1>
-            <p className="hero-description">I make apps, extensions,<br className="desktop-break" /> and room for new ideas.</p>
+            <h1>I love to build<br />end-to-end<br /><span className="sr-only">SaaS, desktop apps, mobile apps, and extensions.</span><span className="hero-flip" aria-hidden="true">
+                <span className="flip-saas"><Cloud /><span className="hero-flip-text">SaaS</span></span>
+                <span className="flip-desktop"><Monitor /><span className="hero-flip-text">Desktop Apps</span></span>
+                <span className="flip-mobile"><Smartphone /><span className="hero-flip-text">Mobile Apps</span></span>
+                <span className="flip-extension"><Puzzle /><span className="hero-flip-text">Extensions</span></span>
+            </span></h1>
             <div className="hero-actions"><a className="button button-primary" href={portfolioLinks.booking} target="_blank" rel="noopener noreferrer">Book a call <ArrowUpRight size={18} /></a><div><a className="button button-secondary" href={portfolioLinks.community} target="_blank" rel="noopener noreferrer">Join Zero to One <ArrowUpRight size={18} /></a><span className="button-caption">Beginner community on <SkoolText /></span></div></div>
-            <div className="hero-platforms">Web <span>·</span> macOS <span>·</span> iOS <span>·</span> Chrome <span>·</span> Safari</div>
-            <a className="scroll-cue" href="#capabilities">Scroll to explore <ArrowDown size={16} /></a>
         </>} capabilities={<>
             <h2 id="capabilities">One idea.<br />Many surfaces.</h2>
             <p>Web, Mac, iPhone —<br />and the browser.</p>
