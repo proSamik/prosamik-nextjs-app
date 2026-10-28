@@ -79,3 +79,37 @@
 @media(min-width:701px){.community-art{width:100%;margin-left:0}.journey-section .section-split,.community-section .section-split,.consultancy-section .section-split{align-items:start}.section-split>.section-copy{padding-top:24px}}
 /* Phones: keep each section's visual small, on the right of its copy. */
 @media(max-width:700px){:is(.journey-section,.community-section,.consultancy-section) .section-split{display:grid;grid-template-columns:minmax(0,1fr) min(50%,calc(100% - 190px));align-items:center;gap:16px}:is(.journey-section,.community-section,.consultancy-section) h2{font-size:clamp(30px,8.6vw,46px)}:is(.journey-section,.community-section,.consultancy-section) .section-description{font-size:15px;margin:14px 0 18px}:is(.journey-section,.community-section,.consultancy-section) .portfolio-site .button,:is(.journey-section,.community-section,.consultancy-section) .button{padding-inline:14px}.journey-section .mini-timeline{margin:18px 0;gap:14px;padding-left:18px}.journey-section .mini-timeline>div{font-size:13px}.journey-section .mini-timeline>div:before{left:-22px}.community-section .community-art{width:calc(100% + 22px);margin:0}.journey-section .notebook-scene{width:calc(100% + 22px)}.consultancy-section .call-portrait{width:100%;border-width:4px;border-radius:14px;transform:rotate(2deg)}.consultancy-section .call-name{top:10px;left:10px;font-size:12px}.consultancy-section .call-controls{bottom:10px;gap:6px}.consultancy-section .call-controls span{width:24px;height:24px}.consultancy-section .call-controls svg{width:12px;height:12px}.consultancy-section .call-note{margin-top:14px}}
+
+/* Footer email under "Keep in touch." */
+.footer-contact>button{display:inline-flex;align-items:center;min-height:44px;margin-top:18px;font-size:18px;color:#111;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.footer-contact>button:hover{color:#707070}
+@media(max-width:700px){.footer-contact{grid-column:span 2}.footer-contact>button{font-size:16px;margin-top:10px}}
+.footer-contact>button{background:none;border:0;padding:0;font-family:inherit;cursor:pointer}
+
+/* Email captcha modal */
+.email-captcha{width:min(100% - 32px,380px);margin:auto;padding:0;border:1px solid #ddd;border-radius:12px;box-shadow:0 24px 60px #0000002a;color:#111;font-family:Arial,Helvetica,sans-serif}
+.email-captcha::backdrop{background:#0006;backdrop-filter:blur(3px)}
+.email-captcha-panel{padding:22px}
+.email-captcha header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.email-captcha h3{font-size:20px;font-weight:700;letter-spacing:-.4px;margin:0}
+.email-captcha p{font-size:14px;color:#777;margin:0 0 16px}
+.email-captcha-close{display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:-8px;background:none;border:0;border-radius:50%;cursor:pointer;color:#555}
+.email-captcha-close:hover{background:#f2f2f2}
+.captcha-box{display:flex;align-items:center;gap:14px;width:100%;padding:16px;background:#f9f9f9;border:1px solid #d6d6d6;border-radius:6px;font:inherit;font-size:15px;color:#111;cursor:pointer;text-align:left}
+.captcha-box:disabled{cursor:progress}
+.captcha-tick{width:26px;height:26px;border:2px solid #c1c1c1;border-radius:3px;background:#fff;flex-shrink:0}
+.captcha-tick.is-spinning{border-radius:50%;border-color:#4a90e2 #4a90e2 #4a90e2 transparent;animation:captcha-spin .8s linear infinite}
+@keyframes captcha-spin{to{transform:rotate(360deg)}}
+.captcha-prompt{background:#111;color:#fff;border-radius:6px;padding:14px 16px;font-size:14px;margin-bottom:10px}
+.captcha-prompt strong{display:block;font-size:20px;margin-top:3px}
+.captcha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.captcha-grid button{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#f4f4f4;border:0;border-radius:6px;color:#333;cursor:pointer;transition:transform .15s,background .15s}
+.captcha-grid button:hover{background:#ececec}
+.captcha-grid button[aria-pressed=true]{transform:scale(.88);background:#e4ecf8}
+.captcha-selected{position:absolute;top:6px;left:6px;display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#4a90e2;color:#fff}
+.email-captcha .captcha-error{min-height:20px;margin:8px 0 4px;font-size:13px;color:#c0392b}
+.captcha-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.captcha-actions>button:not(.button){display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-right:auto;background:none;border:0;border-radius:50%;color:#555;cursor:pointer}
+.captcha-actions>button:not(.button):hover{background:#f2f2f2}
+.portfolio-site .email-captcha .button{min-height:46px;padding:12px 18px;gap:8px;font-family:inherit;cursor:pointer}
+.captcha-email{font-size:19px!important;color:#111!important;font-weight:600;word-break:break-all;padding:16px;background:#f6f6f6;border-radius:6px}
