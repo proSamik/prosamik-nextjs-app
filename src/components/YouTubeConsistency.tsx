@@ -8,6 +8,7 @@ import {
     useCalendarPopover,
 } from '@/components/CalendarDayPopover';
 import ShareConsistencyCard from '@/components/ShareConsistencyCard';
+import type { ConsistencyPlatform } from '@/lib/consistencyCardData';
 import type { StreakRange } from '@/lib/githubContributions';
 import type {
     YouTubeConsistencyData,
@@ -18,6 +19,8 @@ import type {
 interface YouTubeConsistencyProps {
     data: YouTubeConsistencyData;
     standalone?: boolean;
+    platform?: Exclude<ConsistencyPlatform, 'github'>;
+    title?: string;
 }
 
 type GraphView = { mode: 'rolling' } | { mode: 'year'; year: number };
@@ -73,10 +76,10 @@ function formatUploadRange(firstDate: string | null, lastDate: string | null) {
     return first === last ? first : `${first} - ${last}`;
 }
 
-function OverallStatsCard({ stats }: { stats: YouTubePublishingStats }) {
+function OverallStatsCard({ stats, platform }: { stats: YouTubePublishingStats; platform: Exclude<ConsistencyPlatform, 'github'> }) {
     return (
         <article className="relative mx-auto my-8 grid max-w-4xl grid-cols-3 rounded-xl border border-gray-200 bg-white shadow-sm">
-            <ShareConsistencyCard platform="youtube" card="streak" />
+            <ShareConsistencyCard platform={platform} card="streak" />
             <div className="flex min-h-36 flex-col items-center justify-center px-2 py-5 text-center sm:min-h-44 sm:px-6 sm:py-7">
                 <strong className="text-2xl font-bold sm:text-3xl">
                     {stats.totalUploads}
@@ -179,6 +182,8 @@ function PublishingStatsCard({
 export default function YouTubeConsistency({
     data,
     standalone = false,
+    platform = 'youtube',
+    title = 'My YouTube Consistency',
 }: YouTubeConsistencyProps) {
     const availableYears = useMemo(() => {
         const years = [
@@ -314,14 +319,14 @@ export default function YouTubeConsistency({
                     youtube.com/@{data.handle}
                 </a>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-                    My YouTube Consistency
+                    {title}
                 </h2>
                 <p className="mt-3 text-sm font-medium text-gray-500">
                     Timezone - UTC
                 </p>
             </header>
 
-            <OverallStatsCard stats={data.overall} />
+            <OverallStatsCard stats={data.overall} platform={platform} />
 
             <div className="my-8 grid gap-5 lg:grid-cols-2">
                 <PublishingStatsCard
@@ -341,7 +346,7 @@ export default function YouTubeConsistency({
             </div>
 
             <div className="relative rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-7">
-                <ShareConsistencyCard platform="youtube" card="graph" />
+                <ShareConsistencyCard platform={platform} card="graph" />
                 {data.videos.length === 0 ? (
                     <p className="text-gray-600">
                         YouTube data will appear after the first sync.
