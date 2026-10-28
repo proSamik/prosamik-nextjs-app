@@ -21,13 +21,18 @@ const emptyPublishingStats = {
     longestStreak: { length: 0, start: null, end: null },
 };
 
-export const emptyYouTubeConsistencyData: YouTubeConsistencyData = {
-    handle: 'proSamik',
-    channelTitle: 'proSamik',
-    channelUrl: 'https://www.youtube.com/@proSamik',
-    videos: [],
-    overall: emptyPublishingStats,
-    shorts: emptyPublishingStats,
-    longForm: emptyPublishingStats,
-    syncedAt: null,
-};
+function emptyYouTubeData(handle: string): YouTubeConsistencyData {
+    return {
+        handle,
+        channelTitle: handle,
+        channelUrl: `https://www.youtube.com/@${handle}`,
+        videos: [],
+        overall: emptyPublishingStats,
+        shorts: emptyPublishingStats,
+        longForm: emptyPublishingStats,
+        syncedAt: null,
+    };
+}
+
+export const emptyYouTubeConsistencyData = emptyYouTubeData('proSamik');
+export const emptySubclipYouTubeConsistencyData = emptyYouTubeData('subclip_app');
