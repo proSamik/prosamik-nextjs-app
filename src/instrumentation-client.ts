@@ -23,6 +23,9 @@ if (!projectToken) {
         // prevents an admin or OAuth consent URL/query from entering analytics.
         capture_pageview: false,
         capture_pageleave: false,
+        // Animated layouts and SPA navigation can change page height between
+        // scroll samples. Keep pageviews without inaccurate scroll percentages.
+        disable_scroll_properties: true,
         autocapture: false,
         disable_session_recording: true,
     });
