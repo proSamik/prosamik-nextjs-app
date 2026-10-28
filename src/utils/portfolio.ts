@@ -3,6 +3,9 @@ export const portfolioLinks = {
     community: 'https://www.skool.com/zero-to-one-7899/about',
 };
 
+// Portfolio artwork lives in the public R2 bucket behind cdn.prosamik.com.
+export const portfolioAsset = (name: string) => `https://cdn.prosamik.com/portfolio/${name}`;
+
 export const portfolioSocials = [
     { label: 'GitHub', href: 'https://github.com/prosamik' },
     { label: 'YouTube', href: 'https://youtube.com/@prosamik' },
