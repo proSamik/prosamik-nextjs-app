@@ -21,7 +21,7 @@ export const projects: Project[] = [
     {
         slug: "rankizz",
         title: "Rankizz",
-        type: "Web App & Chrome Extension",
+        type: "Web App, Chrome & Safari Extension",
         description: "Affordable SEO, AI search, social discovery, and analytics in one workspace",
         problem: [
             "While building Subclip, I tried several marketing methods and SEO stood out because it brought compounding results over time. The problem was that SEO tools such as Ahrefs and Semrush are expensive for beginners, and the return on investment is difficult to justify when someone is only starting out.",
@@ -54,7 +54,7 @@ export const projects: Project[] = [
     {
         slug: "subclip",
         title: "Subclip.app",
-        type: "Web, iOS & macOS App",
+        type: "Web, macOS, iOS & Windows App",
         description: "AI video editor for captions, dubbing, transcription, and translation",
         problem: [
             "I was recording a video every day for my YouTube channel, and editing became the part I struggled with most. Adding subtitles took time, yet I could not find a tool that let me generate them without limits. I knew how to build apps by then, so this felt like a problem worth solving. Subclip.app began as my first real attempt at an Electron desktop application.",
