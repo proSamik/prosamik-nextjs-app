@@ -1,7 +1,7 @@
 import type { ConsistencyData, ContributionDay, StreakRange } from '@/lib/githubContributions';
 import type { YouTubeConsistencyData } from '@/lib/youtubeConsistency';
 
-export type ConsistencyPlatform = 'github' | 'youtube';
+export type ConsistencyPlatform = 'github' | 'youtube' | 'subclip';
 export type ConsistencyCardKind = 'graph' | 'streak';
 
 export interface ShareableConsistencyData {
@@ -65,7 +65,10 @@ export function githubShareableData(data: ConsistencyData): ShareableConsistency
     };
 }
 
-export function youtubeShareableData(data: YouTubeConsistencyData): ShareableConsistencyData {
+export function youtubeShareableData(
+    data: YouTubeConsistencyData,
+    platform: Exclude<ConsistencyPlatform, 'github'> = 'youtube'
+): ShareableConsistencyData {
     const countsByDate = new Map<string, number>();
     data.videos.forEach((video) => {
         countsByDate.set(video.date, (countsByDate.get(video.date) ?? 0) + 1);
@@ -77,7 +80,7 @@ export function youtubeShareableData(data: YouTubeConsistencyData): ShareableCon
     })).sort((first, second) => first.date.localeCompare(second.date));
 
     return {
-        platform: 'youtube',
+        platform,
         platformName: 'YouTube',
         username: data.handle,
         profileLabel: `youtube.com/@${data.handle}`,
