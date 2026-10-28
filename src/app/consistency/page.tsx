@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     openGraph: {
         type: 'website',
         url: '/consistency',
-        title: 'Samik’s Consistency Streaks',
+        title: 'Samik Choudhury’s Consistency Streaks',
         description: 'Explore Samik’s GitHub contribution and YouTube publishing consistency.',
     },
 };
@@ -45,7 +45,7 @@ export default async function ConsistencyPage() {
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
-        name: 'Samik’s Consistency Streaks',
+        name: 'Samik Choudhury’s Consistency Streaks',
         url: `${siteMetadata.siteUrl}/consistency`,
         hasPart: [
             `${siteMetadata.siteUrl}/consistency/github`,
