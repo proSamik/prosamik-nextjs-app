@@ -23,3 +23,23 @@ Requirements:
 - Use the same `CRON_SECRET` value expected by `/api/cron/consistency`.
 - Select the application container, not the PostgreSQL container.
 - The schedule runs once every four hours.
+
+# Coolify healthcheck
+
+The app exposes `GET /api/health`, which returns `200 {"status":"ok"}` once the Next.js server is accepting requests. Configure it in Coolify under the application's **Healthcheck** settings:
+
+```text
+Enabled: Yes
+Method: GET
+Scheme: http
+Host: localhost
+Port: 3000
+Path: /api/health
+Return code: 200
+Interval (seconds): 30
+Timeout (seconds): 5
+Retries: 3
+Start period (seconds): 30
+```
+
+Coolify runs the check inside the container with `curl` or `wget`. If deployments fail the healthcheck while the site itself works, the image is missing both tools: disable the healthcheck and add `curl` to the build image before turning it back on.
