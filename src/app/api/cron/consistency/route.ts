@@ -15,13 +15,15 @@ export async function GET(request: Request) {
     }
 
     try {
-        const [github, youtube] = await Promise.all([
+        const [github, youtube, subclip] = await Promise.all([
             syncGitHubContributions(),
             syncYouTubeVideos(),
+            syncYouTubeVideos('subclip'),
         ]);
         revalidateTag('consistency-embed-github', { expire: 0 });
         revalidateTag('consistency-embed-youtube', { expire: 0 });
-        return Response.json({ success: true, github, youtube });
+        revalidateTag('consistency-embed-youtube-subclip', { expire: 0 });
+        return Response.json({ success: true, github, youtube, subclip });
     } catch (error) {
         console.error('Consistency sync failed:', error);
         return Response.json({ success: false, error: 'Consistency sync failed.' }, { status: 500 });
