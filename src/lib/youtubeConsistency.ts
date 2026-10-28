@@ -32,7 +32,16 @@ export interface YouTubeConsistencyData {
     syncedAt: string | null;
 }
 
-const DEFAULT_YOUTUBE_HANDLE = 'proSamik';
+// Each tracked channel gets its own consistency page under /consistency/<key>.
+export const youtubeChannels = {
+    youtube: { handle: process.env.YOUTUBE_HANDLE || 'proSamik', name: 'YouTube' },
+    subclip: { handle: 'subclip_app', name: 'Subclip YouTube' },
+} as const;
+export type YouTubeChannelKey = keyof typeof youtubeChannels;
+
+function channelHandle(channel: YouTubeChannelKey) {
+    return youtubeChannels[channel].handle.replace(/^@/, '');
+}
 const SHORT_MAX_SECONDS = 180;
 
 function parseDuration(duration: string) {
@@ -196,10 +205,10 @@ function calculatePublishingStats(videos: YouTubeVideo[]): YouTubePublishingStat
     };
 }
 
-export async function getYouTubeConsistencyData(): Promise<YouTubeConsistencyData> {
+export async function getYouTubeConsistencyData(channel: YouTubeChannelKey = 'youtube'): Promise<YouTubeConsistencyData> {
     await ensureYouTubeTable();
     const sql = getDatabase();
-    const handle = (process.env.YOUTUBE_HANDLE || DEFAULT_YOUTUBE_HANDLE).replace(/^@/, '');
+    const handle = channelHandle(channel);
     const rows = await withDatabaseRetry('load YouTube videos', async () => sql<{
             id: string;
             channel_title: string;
@@ -234,7 +243,7 @@ export async function getYouTubeConsistencyData(): Promise<YouTubeConsistencyDat
         durationSeconds: row.duration_seconds,
         url: row.url,
     }));
-    const channelTitle = rows[0]?.channel_title ?? 'proSamik';
+    const channelTitle = rows[0]?.channel_title ?? handle;
 
     return {
         handle,
@@ -248,10 +257,10 @@ export async function getYouTubeConsistencyData(): Promise<YouTubeConsistencyDat
     };
 }
 
-export async function syncYouTubeVideos() {
+export async function syncYouTubeVideos(channelKey: YouTubeChannelKey = 'youtube') {
     await ensureYouTubeTable();
     const sql = getDatabase();
-    const handle = (process.env.YOUTUBE_HANDLE || DEFAULT_YOUTUBE_HANDLE).replace(/^@/, '');
+    const handle = channelHandle(channelKey);
     const channel = await fetchYouTubeChannel(handle);
     const videoIds = await fetchUploadVideoIds(channel.contentDetails.relatedPlaylists.uploads);
     const videos = await fetchVideoDetails(videoIds);
