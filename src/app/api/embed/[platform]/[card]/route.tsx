@@ -12,11 +12,13 @@ import {
 } from '@/lib/consistencyCardData';
 import {
     emptyGitHubConsistencyData,
+    emptySubclipYouTubeConsistencyData,
     emptyYouTubeConsistencyData,
 } from '@/lib/consistencyFallbacks';
 import {
     EMBED_CACHE_SECONDS,
     getCachedGitHubConsistencyData,
+    getCachedSubclipYouTubeConsistencyData,
     getCachedYouTubeConsistencyData,
 } from '@/lib/consistencyEmbed';
 
@@ -35,7 +37,7 @@ const imageHeaders = {
 };
 
 function isPlatform(value: string): value is ConsistencyPlatform {
-    return value === 'github' || value === 'youtube';
+    return value === 'github' || value === 'youtube' || value === 'subclip';
 }
 
 function isCard(value: string): value is ConsistencyCardKind {
@@ -43,7 +45,7 @@ function isCard(value: string): value is ConsistencyCardKind {
 }
 
 function PlatformIcon({ platform }: { platform: ConsistencyPlatform }) {
-    if (platform === 'youtube') {
+    if (platform !== 'github') {
         return (
             <svg width="25" height="18" viewBox="0 0 29 20">
                 <path fill="#ef0016" d="M28.4 3.1A3.7 3.7 0 0 0 25.8.5C23.5 0 14.5 0 14.5 0S5.5 0 3.2.5A3.7 3.7 0 0 0 .6 3.1C0 5.4 0 10 0 10s0 4.6.6 6.9a3.7 3.7 0 0 0 2.6 2.6c2.3.5 11.3.5 11.3.5s9 0 11.3-.5a3.7 3.7 0 0 0 2.6-2.6c.6-2.3.6-6.9.6-6.9s0-4.6-.6-6.9Z" />
@@ -204,6 +206,15 @@ async function loadData(platform: ConsistencyPlatform) {
         } catch (error) {
             console.error('Unable to render cached GitHub image:', error);
             return githubShareableData(emptyGitHubConsistencyData);
+        }
+    }
+
+    if (platform === 'subclip') {
+        try {
+            return youtubeShareableData(await getCachedSubclipYouTubeConsistencyData(), 'subclip');
+        } catch (error) {
+            console.error('Unable to render cached Subclip YouTube image:', error);
+            return youtubeShareableData(emptySubclipYouTubeConsistencyData, 'subclip');
         }
     }
 
