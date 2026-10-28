@@ -9,14 +9,14 @@ import { siteMetadata } from '@/utils/siteMetadata';
 const description = "Hey, I'm Samik Choudhury and by degree, I'm an Electronics and Telecommunication Engineer but I'm all about turning curiosity into code and understanding software products.";
 
 export const metadata: Metadata = {
-    title: 'Who is Samik?',
+    title: 'Who is Samik Choudhury?',
     description,
     keywords: ['prosamik', 'Army Institute of Technology Pune', 'Google Developer Student Club', 'GDSC', 'AIT Pune'],
     alternates: { canonical: '/about' },
     openGraph: {
         type: 'profile',
         url: '/about',
-        title: 'Who is Samik?',
+        title: 'Who is Samik Choudhury?',
         description,
         images: [{
             url: siteMetadata.defaultImage,
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         site: `@${siteMetadata.twitterUsername}`,
         creator: `@${siteMetadata.twitterUsername}`,
-        title: 'Who is Samik?',
+        title: 'Who is Samik Choudhury?',
         description,
         images: [{ url: siteMetadata.defaultImage, alt: 'Samik | Journey and Experience' }],
     },
