@@ -6,6 +6,7 @@ import ConsistencySummaryCard, {
 } from '@/components/ConsistencySummaryCard';
 import {
     emptyGitHubConsistencyData,
+    emptySubclipYouTubeConsistencyData,
     emptyYouTubeConsistencyData,
 } from '@/lib/consistencyFallbacks';
 import { getConsistencyData } from '@/lib/githubContributions';
@@ -29,9 +30,11 @@ export const metadata: Metadata = {
 export default async function ConsistencyPage() {
     let githubData = emptyGitHubConsistencyData;
     let youtubeData = emptyYouTubeConsistencyData;
-    const [githubResult, youtubeResult] = await Promise.allSettled([
+    let subclipData = emptySubclipYouTubeConsistencyData;
+    const [githubResult, youtubeResult, subclipResult] = await Promise.allSettled([
         getConsistencyData(),
         getYouTubeConsistencyData(),
+        getYouTubeConsistencyData('subclip'),
     ]);
 
     if (githubResult.status === 'fulfilled') githubData = githubResult.value;
@@ -39,6 +42,9 @@ export default async function ConsistencyPage() {
 
     if (youtubeResult.status === 'fulfilled') youtubeData = youtubeResult.value;
     else console.error('Unable to render YouTube consistency data:', youtubeResult.reason);
+
+    if (subclipResult.status === 'fulfilled') subclipData = subclipResult.value;
+    else console.error('Unable to render Subclip YouTube consistency data:', subclipResult.reason);
 
     const githubStats = githubData.stats;
     const youtubeStats = youtubeData.overall;
@@ -50,6 +56,7 @@ export default async function ConsistencyPage() {
         hasPart: [
             `${siteMetadata.siteUrl}/consistency/github`,
             `${siteMetadata.siteUrl}/consistency/youtube`,
+            `${siteMetadata.siteUrl}/consistency/subclip`,
         ],
     };
 
@@ -98,6 +105,24 @@ export default async function ConsistencyPage() {
                     )}
                     currentStreak={youtubeStats.currentStreak}
                     longestStreak={youtubeStats.longestStreak}
+                    accent="red"
+                />
+
+                <ConsistencySummaryCard
+                    href="/consistency/subclip"
+                    name="Subclip YouTube"
+                    description={`youtube.com/@${subclipData.handle}`}
+                    icon={<FaYoutube className="h-6 w-6" />}
+                    iconClassName="text-red-600"
+                    total={subclipData.overall.totalUploads}
+                    totalLabel="Total Uploads"
+                    totalRange={formatConsistencyRange(
+                        subclipData.overall.firstUploadDate,
+                        subclipData.overall.lastUploadDate,
+                        'Waiting for first sync'
+                    )}
+                    currentStreak={subclipData.overall.currentStreak}
+                    longestStreak={subclipData.overall.longestStreak}
                     accent="red"
                 />
             </section>
