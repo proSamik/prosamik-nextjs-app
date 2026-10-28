@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
+                hostname: 'cdn.prosamik.com',
+                pathname: '/portfolio/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'github.com',
                 pathname: '/**',
             },
