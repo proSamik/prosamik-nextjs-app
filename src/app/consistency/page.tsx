@@ -92,7 +92,7 @@ export default async function ConsistencyPage() {
 
                 <ConsistencySummaryCard
                     href="/consistency/youtube"
-                    name="YouTube"
+                    name="Personal Channel"
                     description={`youtube.com/@${youtubeData.handle}`}
                     icon={<FaYoutube className="h-6 w-6" />}
                     iconClassName="text-red-600"
