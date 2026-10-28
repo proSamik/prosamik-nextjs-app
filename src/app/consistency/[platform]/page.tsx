@@ -8,18 +8,19 @@ import ShareConsistencyCard from '@/components/ShareConsistencyCard';
 import YouTubeConsistency from '@/components/YouTubeConsistency';
 import {
     emptyGitHubConsistencyData,
+    emptySubclipYouTubeConsistencyData,
     emptyYouTubeConsistencyData,
 } from '@/lib/consistencyFallbacks';
 import type { StreakRange } from '@/lib/githubContributions';
 import { getConsistencyData } from '@/lib/githubContributions';
-import { getYouTubeConsistencyData } from '@/lib/youtubeConsistency';
+import { getYouTubeConsistencyData, youtubeChannels, type YouTubeChannelKey } from '@/lib/youtubeConsistency';
 import { siteMetadata } from '@/utils/siteMetadata';
 
 interface PlatformConsistencyPageProps {
     params: Promise<{ platform: string }>;
 }
 
-const platforms = ['github', 'youtube'] as const;
+const platforms = ['github', 'youtube', 'subclip'] as const;
 type Platform = (typeof platforms)[number];
 
 export const dynamic = 'force-dynamic';
@@ -29,11 +30,13 @@ export async function generateMetadata({ params }: PlatformConsistencyPageProps)
     if (!platforms.includes(platform as Platform)) return { title: 'Consistency Platform Not Found' };
 
     const isGitHub = platform === 'github';
-    const name = isGitHub ? 'GitHub' : 'YouTube';
+    const name = isGitHub ? 'GitHub' : youtubeChannels[platform as YouTubeChannelKey].name;
     const title = `My ${name} Consistency`;
     const description = isGitHub
         ? 'Samik’s GitHub contribution streak, contribution history, and yearly activity calendar.'
-        : 'Samik’s YouTube publishing streaks for Shorts and long-form videos, with yearly upload calendars.';
+        : platform === 'subclip'
+            ? 'Publishing streaks for the Subclip YouTube channel, with Shorts, long-form videos, and yearly upload calendars.'
+            : 'Samik’s YouTube publishing streaks for Shorts and long-form videos, with yearly upload calendars.';
 
     return {
         title,
@@ -124,17 +127,17 @@ async function GitHubConsistencyPage() {
     );
 }
 
-async function YouTubePlatformPage() {
-    let data = emptyYouTubeConsistencyData;
+async function YouTubePlatformPage({ channel }: { channel: YouTubeChannelKey }) {
+    let data = channel === 'subclip' ? emptySubclipYouTubeConsistencyData : emptyYouTubeConsistencyData;
     try {
-        data = await getYouTubeConsistencyData();
+        data = await getYouTubeConsistencyData(channel);
     } catch (error) {
-        console.error('Unable to render YouTube consistency data:', error);
+        console.error(`Unable to render ${channel} YouTube consistency data:`, error);
     }
 
     return (
         <>
-            <YouTubeConsistency data={data} standalone />
+            <YouTubeConsistency data={data} standalone platform={channel} title={`My ${youtubeChannels[channel].name} Consistency`} />
             {data.syncedAt && (
                 <p className="mt-4 text-right text-xs text-gray-500">
                     Last synced {new Date(data.syncedAt).toLocaleString('en-US', { timeZone: 'UTC' })} UTC
@@ -152,9 +155,9 @@ export default async function PlatformConsistencyPage({ params }: PlatformConsis
         <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
             <Breadcrumbs items={[
                 { label: 'Efforts', href: '/consistency' },
-                { label: platform === 'github' ? 'GitHub' : 'YouTube' },
+                { label: platform === 'github' ? 'GitHub' : youtubeChannels[platform as YouTubeChannelKey].name },
             ]} />
-            {platform === 'github' ? <GitHubConsistencyPage /> : <YouTubePlatformPage />}
+            {platform === 'github' ? <GitHubConsistencyPage /> : <YouTubePlatformPage channel={platform as YouTubeChannelKey} />}
         </main>
     );
 }
