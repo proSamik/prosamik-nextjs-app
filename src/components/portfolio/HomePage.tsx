@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Caveat } from 'next/font/google';
 import { ArrowUpRight, Cloud, Monitor, Smartphone, Puzzle, Mic, Video, Phone } from 'lucide-react';
 import DeviceStory from './DeviceStory';
 import SelectedWork from './SelectedWork';
@@ -9,10 +10,13 @@ import BookCall from './BookCall';
 import { Notebook } from './Visuals';
 import { portfolioLinks, portfolioAsset } from '@/utils/portfolio';
 
+// Handwritten face for the rotating hero word.
+const hand = Caveat({ subsets: ['latin'], weight: ['700'], variable: '--font-hand', display: 'swap' });
+
 export default function HomePage() {
     return <>
         <DeviceStory intro={<>
-            <h1>I love to build<br />end-to-end<br /><span className="sr-only">SaaS, desktop apps, mobile apps, and extensions.</span><span className="hero-flip" aria-hidden="true">
+            <h1 className={`hero-title ${hand.variable}`}>I love to build<br />end-to-end<br /><span className="sr-only">SaaS, desktop apps, mobile apps, and extensions.</span><span className="hero-flip" aria-hidden="true">
                 <span className="flip-saas"><Cloud /><span className="hero-flip-text">SaaS</span></span>
                 <span className="flip-desktop"><Monitor /><span className="hero-flip-text">Desktop Apps</span></span>
                 <span className="flip-mobile"><Smartphone /><span className="hero-flip-text">Mobile Apps</span></span>
