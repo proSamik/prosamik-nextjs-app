@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import HomePage from '@/components/portfolio/HomePage';
 import { siteMetadata } from '@/utils/siteMetadata';
 
-const title = "hi, I'm Samik 👋";
+const title = "hi, I'm Samik Choudhury 👋";
 
 export const metadata: Metadata = {
     title,
