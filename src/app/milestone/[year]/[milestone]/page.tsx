@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: MilestonePageProps): Promise<
     const description = getMilestoneSummary(item.event);
 
     return {
-        title: `${item.event.title} — Samik's Milestone`,
+        title: `${item.event.title} — Samik Choudhury's Milestone`,
         description,
         keywords: [...item.event.skills, ...(item.event.soft_skills || [])].map((skill) => skill.replace('#', '')),
         alternates: { canonical: `/milestone/${item.year}/${item.slug}` },
