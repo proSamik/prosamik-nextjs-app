@@ -113,3 +113,19 @@
 .captcha-actions>button:not(.button):hover{background:#f2f2f2}
 .portfolio-site .email-captcha .button{min-height:46px;padding:12px 18px;gap:8px;font-family:inherit;cursor:pointer}
 .captcha-email{font-size:19px!important;color:#111!important;font-weight:600;word-break:break-all;padding:16px;background:#f6f6f6;border-radius:6px}
+
+/* Hero title: slightly smaller, ink gradient, handwritten rotating word */
+.hero-copy h1.hero-title{font-size:clamp(52px,5.7vw,82px);background:linear-gradient(100deg,#111 20%,#3b3355 60%,#6a4a2f 95%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.04em}
+@media(max-width:1100px) and (min-width:1000px){.hero-copy h1.hero-title{font-size:66px}}
+@media(max-width:999px){.hero-copy h1.hero-title{font-size:clamp(54px,8vw,78px)}}
+@media(max-width:700px){.hero-copy h1.hero-title{font-size:clamp(43px,10.5vw,66px)}}
+@media(max-width:370px){.hero-copy h1.hero-title{font-size:40px}}
+.hero-title .hero-flip{font-size:1.14em;padding-bottom:.24em;margin-top:.02em}
+.hero-title .hero-flip>span{gap:.12em}
+.hero-title .hero-flip svg{width:.42em;height:.42em;stroke-width:1.6;transform:rotate(-8deg)}
+.hero-title .hero-flip-text{position:relative;font-family:var(--font-hand),'Caveat',cursive;font-weight:700;letter-spacing:0;line-height:1;padding:0 .08em .02em;transform:rotate(-2.5deg);text-decoration:none;background:linear-gradient(95deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-title .hero-flip-text::after{content:'';position:absolute;left:0;right:-.05em;bottom:-.16em;height:.22em;background:linear-gradient(95deg,var(--c1),var(--c2));-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M4 15c40-9 92-12 148-9s96 6 144-4M24 20c58-6 128-8 236-3' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M4 15c40-9 92-12 148-9s96 6 144-4M24 20c58-6 128-8 236-3' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.hero-title .flip-saas{--c1:#5b3fd1;--c2:#b26bd8}
+.hero-title .flip-desktop{--c1:#1d4ed8;--c2:#0ea5b7}
+.hero-title .flip-mobile{--c1:#15803d;--c2:#65a30d}
+.hero-title .flip-extension{--c1:#b45309;--c2:#e8590c}
