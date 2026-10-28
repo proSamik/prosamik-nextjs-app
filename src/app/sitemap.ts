@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${siteMetadata.siteUrl}/consistency`, changeFrequency: 'daily', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/consistency/github`, changeFrequency: 'daily', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/consistency/youtube`, changeFrequency: 'daily', priority: 0.9 },
+        { url: `${siteMetadata.siteUrl}/consistency/subclip`, changeFrequency: 'daily', priority: 0.8 },
     ];
 
     const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
