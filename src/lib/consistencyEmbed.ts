@@ -21,3 +21,12 @@ export const getCachedYouTubeConsistencyData = unstable_cache(
         tags: ['consistency-embed-youtube'],
     }
 );
+
+export const getCachedSubclipYouTubeConsistencyData = unstable_cache(
+    () => getYouTubeConsistencyData('subclip'),
+    ['consistency-embed-youtube-subclip-v1'],
+    {
+        revalidate: EMBED_CACHE_SECONDS,
+        tags: ['consistency-embed-youtube-subclip'],
+    }
+);
