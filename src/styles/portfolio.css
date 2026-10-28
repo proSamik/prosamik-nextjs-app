@@ -129,3 +129,10 @@
 .hero-title .flip-desktop{--c1:#1d4ed8;--c2:#0ea5b7}
 .hero-title .flip-mobile{--c1:#15803d;--c2:#65a30d}
 .hero-title .flip-extension{--c1:#b45309;--c2:#e8590c}
+/* Whole hero title in the handwritten face; Caveat runs small, so sizes are scaled up */
+.hero-copy h1.hero-title{font-family:var(--font-hand),'Caveat',cursive;font-weight:700;letter-spacing:-.01em;line-height:.92;font-size:clamp(64px,7vw,100px)}
+@media(max-width:1100px) and (min-width:1000px){.hero-copy h1.hero-title{font-size:82px}}
+@media(max-width:999px){.hero-copy h1.hero-title{font-size:clamp(66px,9.8vw,96px)}}
+@media(max-width:700px){.hero-copy h1.hero-title{font-size:clamp(54px,13vw,80px);line-height:.95}}
+@media(max-width:370px){.hero-copy h1.hero-title{font-size:50px}}
+.hero-title .hero-flip{font-size:1em}
