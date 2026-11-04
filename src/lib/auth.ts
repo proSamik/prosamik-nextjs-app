@@ -127,7 +127,11 @@ export const auth = betterAuth({
             resource: mcpResourceUrl,
             scopes: [...ACCOUNTABILITY_MCP_SCOPES],
             refreshTokenReuseInterval: 30,
-            allowDynamicClientRegistration: false,
+            // MCP clients register themselves before any user session exists,
+            // so open RFC 7591 registration is required. Access is still gated
+            // by the admin-only Google sign-in and the explicit consent page.
+            allowDynamicClientRegistration: true,
+            allowUnauthenticatedClientRegistration: true,
         }),
         cimd({
             fetchClientMetadataResource,
