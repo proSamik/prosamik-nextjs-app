@@ -6,6 +6,8 @@ import { isAllowedAdminEmail } from './admin-auth';
 import { cimd } from '@better-auth/cimd';
 import { fetchClientMetadataResource } from '@better-auth/cimd/node';
 import { mcp } from '@better-auth/mcp';
+import { createAuthMiddleware } from 'better-auth/api';
+import { inferNativeApplicationType } from './accountability-oauth-registration';
 
 const databaseUrl = process.env.DATABASE_URL;
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -113,6 +115,18 @@ export const auth = betterAuth({
                 max: 5,
             },
         },
+    },
+    hooks: {
+        before: createAuthMiddleware(async (ctx) => {
+            if (ctx.path !== '/oauth2/register') {
+                return;
+            }
+
+            const body = inferNativeApplicationType(ctx.body);
+            if (body) {
+                return { context: { body } };
+            }
+        }),
     },
     advanced: {
         ipAddress: {
