@@ -16,12 +16,12 @@ const hand = Caveat({ subsets: ['latin'], weight: ['700'], variable: '--font-han
 export default function HomePage() {
     return <>
         <DeviceStory intro={<>
-            <h1 className={`hero-title ${hand.variable}`}>I love to build<br />end-to-end<br /><span className="sr-only">SaaS, desktop apps, mobile apps, and extensions.</span><span className="hero-flip" aria-hidden="true">
+            <h1 className={`hero-title ${hand.variable}`}>I build<br /><span className="sr-only">SaaS, desktop apps, mobile apps, and extensions </span><span className="hero-flip" aria-hidden="true">
                 <span className="flip-saas"><Cloud /><span className="hero-flip-text">SaaS</span></span>
                 <span className="flip-desktop"><Monitor /><span className="hero-flip-text">Desktop Apps</span></span>
                 <span className="flip-mobile"><Smartphone /><span className="hero-flip-text">Mobile Apps</span></span>
                 <span className="flip-extension"><Puzzle /><span className="hero-flip-text">Extensions</span></span>
-            </span></h1>
+            </span><br />for fun</h1>
             <div className="hero-actions"><BookCall className="button button-primary">Book a call <ArrowUpRight size={18} /></BookCall><div><a className="button button-secondary" href={portfolioLinks.community} target="_blank" rel="noopener noreferrer">Join Zero to One <ArrowUpRight size={18} /></a><span className="button-caption">Beginner community on <SkoolText /></span></div></div>
         </>} />
         <Reveal><SelectedWork /></Reveal>
