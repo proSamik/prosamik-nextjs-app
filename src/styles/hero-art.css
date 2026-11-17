@@ -39,3 +39,38 @@
   .hero-art-slide:focus-visible{outline-offset:6px;border-radius:16px}
 }
 @media(max-width:999px){.hero-art{width:min(100%,520px)}}
+
+/* ---- Backdrop: soft colour washes + a faint black checkerboard grid (light theme only) ---- */
+.device-story{position:relative;isolation:isolate}
+.device-story::before{content:"";position:absolute;inset:-30px 0 0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(48% 55% at 8% 6%,#fff1e2 0,transparent 70%),
+    radial-gradient(50% 60% at 94% 14%,#e6efff 0,transparent 70%),
+    radial-gradient(46% 45% at 52% 100%,#efe9ff 0,transparent 72%),
+    repeating-conic-gradient(#0000000c 0 25%,transparent 0 50%) 0 0/120px 120px,
+    linear-gradient(#0000000f 1px,transparent 1px) 0 0/60px 60px,
+    linear-gradient(90deg,#0000000f 1px,transparent 1px) 0 0/60px 60px;
+  -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent 100%);mask-image:linear-gradient(180deg,#000 60%,transparent 100%)}
+/* Images are on pure white; multiply lets the card gradient show through them. */
+.hero-art-slide img{mix-blend-mode:multiply}
+.hero-art{isolation:isolate}
+@media(max-width:999px){
+  .hero-art{background:linear-gradient(150deg,#fff 0%,#f2f6ff 55%,#fdf3e8 100%)}
+}
+@media(min-width:1000px){
+  /* The framed card: gradient surface, a finer grid that fades out behind the text, glossy hairline edge. */
+  .device-story .hero-frame{position:relative;overflow:hidden;
+    background:
+      radial-gradient(70% 95% at 100% 0%,#e3eeff 0,transparent 62%),
+      radial-gradient(60% 85% at 0% 100%,#fff0df 0,transparent 62%),
+      linear-gradient(135deg,#ffffff 0%,#f8faff 60%,#f3f7fc 100%)}
+  .device-story .hero-frame::before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+    background:
+      linear-gradient(#00000012 1px,transparent 1px) 0 0/44px 44px,
+      linear-gradient(90deg,#00000012 1px,transparent 1px) 0 0/44px 44px;
+    -webkit-mask-image:radial-gradient(75% 95% at 80% 50%,#000 0,transparent 78%);mask-image:radial-gradient(75% 95% at 80% 50%,#000 0,transparent 78%)}
+  .device-story .hero-copy,.device-story .hero-art-wrap{position:relative;z-index:1}
+  /* The image sits on its own frosted panel inside the card. */
+  .hero-art{background:linear-gradient(160deg,#ffffffd9 0%,#ffffff73 100%);border:1px solid #ffffffcc;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px -34px #00000047,inset 0 0 0 1px #0000000d}
+  .hero-art-slide:focus-visible{outline-offset:-4px;border-radius:26px}
+}
