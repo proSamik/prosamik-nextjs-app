@@ -137,7 +137,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         },
     };
 
-    const headlines: Record<string, string> = { subclip: 'Making room for the edit.', rankizz: 'Search, made clearer.', 'track-bad-habits': 'Notice the patterns.' };
+    const headlines: Record<string, string> = { subclip: 'Making room for the edit.', rankizz: 'Search, made clearer.', 'track-bad-habits': 'Notice the patterns.', 'vm-mcp-test-lab': 'Let the agent do the clicking.' };
     const sections = [
         { title: 'The problem', paragraphs: project.problem },
         { title: 'The motivation', paragraphs: project.motivation },
