@@ -3,7 +3,7 @@ import { portfolioAsset } from '@/utils/portfolio';
 
 // One image per rotating hero word, shown inside a single rounded card. They share the word's 12s cycle (see hero-art.css), so
 // the picture changes exactly when the word flips. Only the visible slide is clickable.
-// Order must match the words in HomePage: SaaS, Desktop Apps, Mobile Apps, Extensions, MCP Servers.
+// Order must match the words in HomePage: SaaS, Desktop Apps, Extensions, Mobile Apps, MCP Servers (Rankizz and Subclip alternate).
 const withUtm = (url: string, content: string) => {
     const target = new URL(url);
     target.searchParams.set('utm_source', 'prosamik.com');
@@ -32,18 +32,18 @@ const slides = [
         alt: 'Subclip desktop app, an AI video editor, open on a MacBook Air',
     },
     {
-        id: 'mobile',
-        v: '20261118e',
-        href: 'https://apps.apple.com/in/app/viral-captions-by-subclip/id6784246348',
-        label: 'Subclip mobile app on the App Store',
-        alt: 'Viral Captions by Subclip on iPhone, choosing a caption style',
-    },
-    {
         id: 'extension',
         v: '20261118e',
         href: 'https://chromewebstore.google.com/detail/rankizz-seo-extension/gihmcajchokaobbcbpmdjoafbdlikcfe',
         label: 'Rankizz Chrome extension on the Chrome Web Store',
         alt: 'Rankizz SEO Inspector Chrome extension showing a page overview',
+    },
+    {
+        id: 'mobile',
+        v: '20261118e',
+        href: 'https://apps.apple.com/in/app/viral-captions-by-subclip/id6784246348',
+        label: 'Subclip mobile app on the App Store',
+        alt: 'Viral Captions by Subclip on iPhone, choosing a caption style',
     },
     {
         id: 'mcp',
