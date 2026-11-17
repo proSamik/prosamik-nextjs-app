@@ -1,6 +1,7 @@
 ---
 title: How to Add a Healthcheck to a Next.js App in Coolify (Docker and Railpack)
-description: Add a /api/health route and configure the Coolify healthcheck for Next.js with a Dockerfile or Railpack. Fix curl errors, HOSTNAME pitfalls and slow-start deploys.
+seoTitle: Next.js Healthcheck in Coolify (Docker and Railpack)
+description: Add a /api/health route and a Coolify healthcheck for Next.js on Docker or Railpack. Fix curl errors, HOSTNAME pitfalls and slow-start deploys.
 category: Deployment
 publishedAt: 2026-11-18
 updatedAt: 2026-11-18
