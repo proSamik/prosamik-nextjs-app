@@ -3,7 +3,8 @@ title: VNC vs RDP: Differences, Security and Which to Use From a Mac
 description: VNC vs RDP explained: protocols, ports, security defaults, performance, session model, and which to pick from a Mac for Windows, Linux or macOS targets.
 category: Remote access
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 13
 readTime: 9 min
 primaryKeyword: vnc vs rdp
 keywords: [rdp vs vnc, macos vnc viewer, mac vnc viewer, vnc vs rdp security, ssh tunnel vnc, screen sharing mac]
@@ -97,7 +98,7 @@ For VNC, open Screen Sharing or use Finder:
 
 ```text
 Finder > Go > Connect to Server (Command-K)
-vnc://192.168.64.10
+vnc://<host-ip>
 ```
 
 For RDP, install Windows App from the Mac App Store, add the PC and sign in with the Windows account.
@@ -105,7 +106,7 @@ For RDP, install Windows App from the Mac App Store, add the PC and sign in with
 If you prefer a terminal, you can open a VNC address with:
 
 ```bash
-open vnc://192.168.64.10
+open vnc://<host-ip>
 ```
 
 macOS routes `vnc://` links to Screen Sharing.
