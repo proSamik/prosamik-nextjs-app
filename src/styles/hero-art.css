@@ -1,7 +1,7 @@
-/* Hero: a rounded product card (hairline border, soft shadow) beside the heading, like the Subclip
-   and Rankizz sites. The card stays put; the image inside it changes with the flipping word, on the
+/* Hero: the product image beside the heading (on wide screens inside the framed hero card; on phones
+   with no card of its own). The image changes with the flipping word, on the
    same 15s clock and the same flip as the .hero-flip words, so the picture moves with the text. */
-.hero-art{position:relative;width:min(100%,520px);aspect-ratio:5/4;margin-inline:auto;border-radius:28px;background:#fff;border:1px solid #e9e9e9;box-shadow:0 34px 70px -30px #00000033,0 2px 8px #0000000d;overflow:hidden}
+.hero-art{position:relative;width:min(100%,520px);aspect-ratio:5/4;margin-inline:auto}
 .hero-art{perspective:1100px}
 .hero-art-slide{position:absolute;inset:0;display:block;backface-visibility:hidden;opacity:0;visibility:hidden;animation:hero-art-cycle 15s ease-in-out infinite both;-webkit-tap-highlight-color:transparent}
 .hero-art-slide:nth-child(2){animation-delay:-12s}
@@ -55,9 +55,6 @@
     linear-gradient(90deg,#0000001f 1px,transparent 1px) 0 0/60px 60px,
     #fff}
 /* The hero images have real transparent backgrounds, so the card gradient shows through with no blend mode. */
-@media(max-width:999px){
-  .hero-art{background:linear-gradient(150deg,#fff 0%,#fafafa 100%)}
-}
 @media(min-width:1000px){
   /* The framed card sits on top of the grid: a clean blue/orange gradient surface, no grid of its own. */
   .device-story .hero-frame{position:relative;overflow:hidden;
