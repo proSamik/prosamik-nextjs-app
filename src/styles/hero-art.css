@@ -74,3 +74,4 @@
   .hero-art{background:linear-gradient(160deg,#ffffffbf 0%,#ffffff66 100%);border:1px solid #ffffffcc;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px -34px #00000047,inset 0 0 0 1px #0000000d}
   .hero-art-slide:focus-visible{outline-offset:-4px;border-radius:26px}
 }
+@media(max-width:999px){.device-story::before{opacity:.55}}
