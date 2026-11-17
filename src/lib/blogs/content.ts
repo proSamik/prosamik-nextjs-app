@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_LOCALE, ENABLED_LOCALES, isLocale, type Locale } from '@/lib/i18n/config';
 import { extractFaqs, type BlogFaq } from './faq';
+import { RESERVED_SLUGS } from './pagination';
 
 export type { BlogFaq };
 
@@ -64,7 +65,7 @@ const list = (data: Record<string, string | string[]>, key: string): string[] =>
 export function getBlogSlugs(): string[] {
     if (!existsSync(CONTENT_DIR)) return [];
     return readdirSync(CONTENT_DIR, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory() && existsSync(path.join(CONTENT_DIR, entry.name, `${DEFAULT_LOCALE}.md`)))
+        .filter((entry) => entry.isDirectory() && !RESERVED_SLUGS.includes(entry.name) && existsSync(path.join(CONTENT_DIR, entry.name, `${DEFAULT_LOCALE}.md`)))
         .map((entry) => entry.name)
         .sort();
 }
@@ -75,7 +76,7 @@ export function getBlogLocales(slug: string): Locale[] {
 }
 
 export function getBlogPost(slug: string, locale: Locale = DEFAULT_LOCALE): BlogPost | null {
-    if (!/^[a-z0-9-]+$/.test(slug)) return null;
+    if (!/^[a-z0-9-]+$/.test(slug) || RESERVED_SLUGS.includes(slug)) return null;
     const contentLocale = isLocale(locale) && getBlogLocales(slug).includes(locale) ? locale : DEFAULT_LOCALE;
     const file = path.join(CONTENT_DIR, slug, `${contentLocale}.md`);
     if (!existsSync(file)) return null;

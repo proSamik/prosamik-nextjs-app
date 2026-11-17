@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { extractFaqs } from './faq.ts';
+import { RESERVED_SLUGS } from './pagination.ts';
 
 // Guards the data that feeds structured data, the sitemap and llms.txt: every post must have valid dates,
 // the required frontmatter, a real FAQ (for FAQPage schema) and a unique, explicit position.
@@ -50,13 +51,14 @@ test('post order values are unique numbers', () => {
 
 // Privacy guard: posts get pasted into agents and indexed, so they must never carry the author's real
 // addresses, machine/user names, emails, IDs or secret-shaped strings. Use placeholders (<vm-ip>, <user>),
-// ranges (192.168.64.x) or generic examples instead.
+// ranges (192.168.x.x) or generic examples instead.
 const ALLOWED_IPS = new Set(['0.0.0.0', '127.0.0.1', '0.0.1.0']); // bind-all, loopback, a Windows feature version
 const FORBIDDEN: Array<[string, RegExp]> = [
     ['email address', /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z]{2,}/],
     ['home directory with a real user name', /\/Users\/(?!<)[A-Za-z0-9._-]+|\/home\/(?!<)[A-Za-z0-9._-]+|C:\\Users\\(?![<\\])[A-Za-z0-9._-]+/],
     ['UUID', /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i],
     ['secret-shaped token', /\b(?:sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{12,}|AIza[0-9A-Za-z_-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,})/],
+    ["the author's real subnet (use 192.168.x.x or <vm-ip>)", /192\.168\.64/],
     ['private key block', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
 ];
 
@@ -64,7 +66,7 @@ for (const slug of slugs) {
     test(`${slug}: contains no personal identifiers`, () => {
         const raw = readFileSync(path.join(dir, slug, 'en.md'), 'utf8');
         for (const ip of raw.match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g) ?? []) {
-            assert.ok(ALLOWED_IPS.has(ip), `${slug}: contains a specific IP address (${ip}). Use <vm-ip> or a range like 192.168.64.x`);
+            assert.ok(ALLOWED_IPS.has(ip), `${slug}: contains a specific IP address (${ip}). Use <vm-ip> or a generic range like 192.168.x.x`);
         }
         for (const [label, pattern] of FORBIDDEN) {
             const match = raw.match(pattern);
@@ -72,3 +74,7 @@ for (const slug of slugs) {
         }
     });
 }
+
+test('no post uses a slug reserved for routing (e.g. "page" for /blogs/page/<n>)', () => {
+    for (const slug of slugs) assert.ok(!RESERVED_SLUGS.includes(slug), `${slug} is a reserved slug`);
+});
