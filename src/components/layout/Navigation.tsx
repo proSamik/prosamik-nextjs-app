@@ -40,7 +40,7 @@ export default function Navigation() {
     return (
         <header className={`site-header${isHome ? ' is-home' : ''}${isHome && !scrolled ? ' is-transparent' : ''}`} ref={header}>
             <div className="site-header-inner">
-                <Link className="site-wordmark" href="/" aria-label="prosamik home" onClick={() => setOpenPath(null)}><Image src="/icon.png" alt="" width={38} height={38} /><span>prosamik</span></Link>
+                <Link className="site-wordmark" href="/" aria-label="prosamik home" onClick={() => setOpenPath(null)}><Image src="/icon.png" alt="prosamik logo" width={38} height={38} /><span>prosamik</span></Link>
                 <nav id="primary-navigation" className={`site-navigation ${open ? 'is-open' : ''}`} aria-label="Main navigation">
                     {links.map(({ href, label }) => {
                         const active = href === '/about' ? pathname === href || pathname.startsWith('/milestone/') : pathname.startsWith(href);
