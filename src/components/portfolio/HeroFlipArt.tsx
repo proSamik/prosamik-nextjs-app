@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { portfolioAsset } from '@/utils/portfolio';
 
 // One image per rotating hero word, shown inside a single rounded card. They share the word's 12s cycle (see hero-art.css), so
 // the picture changes exactly when the word flips. Only the visible slide is clickable.
@@ -11,6 +12,10 @@ const withUtm = (url: string, content: string) => {
     target.searchParams.set('utm_content', content);
     return target.toString();
 };
+
+// Images live in the R2 bucket behind cdn.prosamik.com (portfolio/hero/). Upload a new file under a new
+// version and bump this to change an image; the files are cached for a year.
+const HERO_IMAGE_VERSION = '20261118';
 
 const slides = [
     {
@@ -44,7 +49,7 @@ export default function HeroFlipArt() {
         <div className="hero-art">
             {slides.map((slide, index) => (
                 <a key={slide.id} className={`hero-art-slide hero-art-${slide.id}`} href={slide.href} target="_blank" rel="noopener noreferrer" aria-label={slide.label}>
-                    <Image src={`/image/hero/${slide.id}.webp`} alt={slide.alt} width={1280} height={1024} sizes="(max-width: 700px) 92vw, 46vw" loading="eager" fetchPriority={index === 0 ? 'high' : 'auto'} />
+                    <Image src={portfolioAsset(`hero/${slide.id}-${HERO_IMAGE_VERSION}.webp`)} alt={slide.alt} width={1280} height={1024} sizes="(max-width: 700px) 92vw, 46vw" loading="eager" fetchPriority={index === 0 ? 'high' : 'auto'} />
                 </a>
             ))}
         </div>
