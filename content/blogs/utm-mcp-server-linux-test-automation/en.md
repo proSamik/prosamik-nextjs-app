@@ -15,7 +15,7 @@ rankizzBlurb: Rankizz tracks whether your UTM and MCP how-to guides rank and get
 
 After this guide you can boot an Ubuntu guest in UTM on an Apple Silicon Mac, run a desktop-control MCP server inside it, and have an agent on the Mac open your Linux GUI app, click through a flow and report pass or fail. It is UTM-specific. For the general server install and the list of Linux MCP options, read [the Linux MCP server guide](/blogs/linux-mcp-server-ubuntu-desktop-control) first. For other hypervisors, see [the virtual machine guide](/blogs/virtual-machine-mcp-server-linux-test-automation).
 
-This is a researched guide, not a war story. Commands come from UTM's docs and the `computer-use-linux` README, checked 2026-11-17. I have not run this Linux setup yet. I did run the Windows version: a Windows 11 ARM64 guest in UTM on Shared Network (a `192.168.64.x` address), with `windows-mcp` on port 8000. The Linux flow below follows that shape.
+This is a researched guide, not a war story. Commands come from UTM's docs and the `computer-use-linux` README, checked 2026-11-17. I have not run this Linux setup yet. I did run the Windows version: a Windows 11 ARM64 guest in UTM on Shared Network (a `192.168.x.x` address), with `windows-mcp` on port 8000. The Linux flow below follows that shape.
 
 ## Quick answer
 
@@ -45,7 +45,7 @@ Ubuntu Desktop ARM64 ISOs vary by release. If you cannot find one for your relea
 
 Create the VM in UTM, mount the ARM64 ISO, give it at least 4 GB RAM and 40 GB disk, and finish the installer. Use a throwaway username, such as `testuser`. Under Network, leave the mode on Shared Network.
 
-UTM's network page says Shared Network lets the host route traffic directly so guest and host services can reach each other, and it recommends it for new VMs. It does not state an IP range. In practice the guest lands on `192.168.64.x`, the same range my Windows VM got.
+UTM's network page says Shared Network lets the host route traffic directly so guest and host services can reach each other, and it recommends it for new VMs. It does not state an IP range. In practice the guest lands on `192.168.x.x`, the same range my Windows VM got.
 
 ## Step 2: Install guest tools
 
@@ -78,7 +78,7 @@ ip -br addr
 utmctl ip-address "Ubuntu"
 ```
 
-You should see an address like `192.168.64.x/24`. UTM's docs list `ip-address` but give no output sample, so match it against `ip -br addr`. The address can change after a reboot, so reserve or re-check it.
+You should see an address like `192.168.x.x/24`. UTM's docs list `ip-address` but give no output sample, so match it against `ip -br addr`. The address can change after a reboot, so reserve or re-check it.
 
 ## Step 5: Install and start the MCP server
 
@@ -115,7 +115,7 @@ Snapshot after the server works and before the agent touches anything. Restore a
 Open the tunnel from the Mac. SSH setup is in [SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac).
 
 ```bash
-ssh -N -L 5200:127.0.0.1:5200 <user>@192.168.64.x
+ssh -N -L 5200:127.0.0.1:5200 <user>@<vm-ip>
 curl -i http://127.0.0.1:5200/mcp
 ```
 
@@ -148,7 +148,7 @@ To keep evidence, [Subclip](subclip:inline-test-run-clip) can connect MCP server
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `ssh: connect to host 192.168.64.x port 22: Connection refused` | `ssh` service not installed or not running | `sudo apt install openssh-server`, then `sudo systemctl enable --now ssh` |
+| `ssh: connect to host <vm-ip> port 22: Connection refused` | `ssh` service not installed or not running | `sudo apt install openssh-server`, then `sudo systemctl enable --now ssh` |
 | `ssh: connect to host ... Operation timed out` | Wrong IP or the VM is suspended | Re-run `ip -br addr` in the guest |
 | Clipboard does not sync | `spice-vdagent` missing or not running | Install it and reboot |
 | Resolution stuck small | Dynamic resolution needs the SPICE agent on QEMU | Install `spice-vdagent`; try a GPU-accelerated display card |
@@ -176,7 +176,7 @@ UTM itself does not ship one. You run a desktop-control MCP server such as `comp
 Start with QEMU for the SPICE tools and display options. Apple Virtualization is simpler and fast, but UTM marks it experimental and QEMU-specific settings do not apply.
 
 ### What IP will the Ubuntu VM have?
-On Shared Network it is typically `192.168.64.x`. Confirm it with `ip -br addr` in the guest or `utmctl ip-address`.
+On Shared Network it is typically `192.168.x.x`. Confirm it with `ip -br addr` in the guest or `utmctl ip-address`.
 
 ### Can I run x86 Linux apps on an Apple Silicon Mac?
 UTM can emulate x86, but it is slower. Prefer an ARM64 guest and an ARM64 build of your app.
