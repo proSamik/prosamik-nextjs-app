@@ -9,7 +9,7 @@ import { getCalApi } from '@calcom/embed-react';
 import BookCall from '@/components/portfolio/BookCall';
 import { portfolioLinks } from '@/utils/portfolio';
 
-const links = [{ href: '/projects', label: 'Work' }, { href: '/about', label: 'Journey' }];
+const links = [{ href: '/projects', label: 'Work' }, { href: '/blogs', label: 'Blogs' }, { href: '/about', label: 'Journey' }];
 export default function Navigation() {
     const pathname = usePathname();
     const [openPath, setOpenPath] = useState<string | null>(null);
@@ -37,9 +37,9 @@ export default function Navigation() {
                         return <Link key={href} href={href} aria-current={active ? 'page' : undefined} onClick={() => setOpenPath(null)}>{label}</Link>;
                     })}
                     <a className="nav-community" href={portfolioLinks.community} target="_blank" rel="noopener noreferrer">Zero to One <ArrowUpRight size={15} /></a>
-                    <BookCall className="nav-mobile-call" onClick={() => setOpenPath(null)}>Book a call <ArrowUpRight size={16} /></BookCall>
+                    <BookCall className="nav-mobile-call" onClick={() => setOpenPath(null)}>Let&apos;s talk <ArrowUpRight size={16} /></BookCall>
                 </nav>
-                <BookCall className="nav-call">Book a call <ArrowUpRight size={16} /></BookCall>
+                <BookCall className="nav-call">Let&apos;s talk <ArrowUpRight size={16} /></BookCall>
                 <button ref={toggle} className="nav-toggle" type="button" aria-label={open ? 'Close navigation' : 'Open navigation'} aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpenPath(open ? null : pathname)}>{open ? <X size={25} /> : <Menu size={25} />}</button>
             </div>
         </header>
