@@ -3,7 +3,7 @@ export const siteMetadata = {
     title: 'proSamik',
     siteUrl: 'https://www.prosamik.com',
     twitterUsername: 'prosamik',
-    defaultDescription: 'I am the guy who ships end-to-end product, started my journey as a Software Developer for a service based company now pivoted in the journey of an Indie Hacker',
+    defaultDescription: 'Samik Choudhury is an indie hacker who builds and launches SaaS, desktop apps, mobile apps, Chrome extensions and MCP servers, including Subclip and Rankizz.',
     defaultImage: 'https://cdn.prosamik.com/portfolio/og/prosamik-og-20261118.jpg',
     skills: ['Product Development', 'Golang', 'NextJS', 'Tailwind CSS', 'Deployment'],
     currentRole: 'Building Products',
