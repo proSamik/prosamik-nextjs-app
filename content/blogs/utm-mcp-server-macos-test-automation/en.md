@@ -1,5 +1,6 @@
 ---
 title: How to Use a UTM MCP Server for macOS App Test Automation
+seoTitle: How to Use a UTM MCP Server for macOS Test Automation
 description: Run a macOS guest in UTM, enable SSH, install a macOS MCP server inside it, grant the permissions once by hand, and drive app tests from your host agent.
 category: VM test automation
 publishedAt: 2026-11-17

@@ -1,5 +1,6 @@
 ---
 title: How to Use a UTM MCP Server for Linux App Test Automation
+seoTitle: How to Use a UTM MCP Server for Linux Test Automation
 description: Run an Ubuntu ARM64 guest in UTM on Apple Silicon, put a desktop-control MCP server inside it, and let a Mac agent test a Linux GUI app.
 category: VM test automation
 publishedAt: 2026-11-17

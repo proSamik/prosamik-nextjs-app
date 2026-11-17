@@ -1,9 +1,10 @@
 ---
 title: How to Set Up a Virtual Machine MCP Server for macOS Test Automation
+seoTitle: How to Run macOS Tests with a Virtual Machine MCP Server
 description: Compare UTM, Tart, Parallels, VMware Fusion and Lume for macOS guests, then build a repeatable golden image and test loop for an agent with an MCP server.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
 order: 8
 readTime: 12 min
 primaryKeyword: virtual machine mcp server

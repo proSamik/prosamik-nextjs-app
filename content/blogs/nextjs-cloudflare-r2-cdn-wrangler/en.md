@@ -1,5 +1,6 @@
 ---
 title: How to Serve Next.js Images and Assets from Cloudflare R2 on Your Own Domain with Wrangler
+seoTitle: How to Serve Next.js Images from Cloudflare R2 (Wrangler)
 description: Put a Cloudflare R2 bucket on a custom domain, upload versioned files with wrangler, load them with next/image, and optionally serve _next/static from the CDN.
 category: Deployment
 publishedAt: 2026-11-18

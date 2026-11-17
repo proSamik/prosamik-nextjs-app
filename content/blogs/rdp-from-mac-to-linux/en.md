@@ -1,5 +1,6 @@
 ---
 title: How to Use RDP from a Mac to Control Linux
+seoTitle: How to Use RDP from a Mac to Control a Linux Desktop
 description: Set up xrdp with XFCE on Ubuntu, connect from macOS with Windows App, fix the black screen, and know when GNOME Remote Desktop or VNC fits better.
 category: Remote access
 publishedAt: 2026-11-17

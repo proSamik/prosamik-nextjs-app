@@ -1,5 +1,6 @@
 ---
 title: How to Deploy Your Own MCP Server in a Next.js App on Coolify
+seoTitle: How to Deploy an MCP Server in Next.js on Coolify
 description: Add a stateless, OAuth-protected MCP endpoint to a Next.js route handler, deploy it on Coolify, test it with curl, and connect Claude Code or Codex.
 category: Deployment
 publishedAt: 2026-11-18

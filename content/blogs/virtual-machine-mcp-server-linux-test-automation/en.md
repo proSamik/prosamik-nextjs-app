@@ -1,5 +1,6 @@
 ---
 title: How to Set Up a Virtual Machine MCP Server for Linux Test Automation
+seoTitle: How to Run Linux Tests with a Virtual Machine MCP Server
 description: Pick a hypervisor or a dedicated Ubuntu box, give it a desktop, and design agent-driven Linux GUI tests with evidence, golden images and flake control.
 category: VM test automation
 publishedAt: 2026-11-17

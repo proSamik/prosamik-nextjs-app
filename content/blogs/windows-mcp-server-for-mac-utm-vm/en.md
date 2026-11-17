@@ -1,5 +1,6 @@
 ---
 title: How to Set Up a Windows MCP Server on a Mac (UTM Windows 11 VM)
+seoTitle: How to Set Up a Windows MCP Server on a Mac (UTM VM)
 description: Turn a Windows 11 ARM VM in UTM into a Windows MCP server that your Mac agent controls over HTTP. Exact commands, the build errors I hit, and fixes.
 category: MCP servers
 publishedAt: 2026-11-17

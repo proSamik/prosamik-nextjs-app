@@ -1,5 +1,6 @@
 ---
 title: How to Set Up a Linux MCP Server to Control an Ubuntu Desktop
+seoTitle: How to Set Up a Linux MCP Server for an Ubuntu Desktop
 description: Install a Linux desktop-control MCP server on Ubuntu, compare the real options, pick X11 over Wayland, and reach it from a Mac agent over an SSH tunnel.
 category: MCP servers
 publishedAt: 2026-11-17

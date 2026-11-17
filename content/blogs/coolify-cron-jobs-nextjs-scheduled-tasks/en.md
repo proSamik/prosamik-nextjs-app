@@ -1,6 +1,6 @@
 ---
 title: How to Run Cron Jobs for a Next.js App in Coolify (Scheduled Tasks)
-seoTitle: Cron Jobs for Next.js in Coolify (Scheduled Tasks)
+seoTitle: How to Run Next.js Cron Jobs in Coolify (Scheduled Tasks)
 description: Replace Vercel crons with Coolify Scheduled Tasks for Next.js: the 255-character command, a bearer-token route, testing, logs and a local cron.
 category: Deployment
 publishedAt: 2026-11-18

@@ -1,5 +1,6 @@
 ---
 title: How to Move a Next.js App from Vercel to Coolify (Railpack and Dockerfile)
+seoTitle: How to Move a Next.js App from Vercel to Coolify
 description: Move a Next.js app from Vercel to Coolify with Railpack or a Dockerfile. Covers env var scope, crons, migrations, healthchecks, standalone output and rollback.
 category: Deployment
 publishedAt: 2026-11-18

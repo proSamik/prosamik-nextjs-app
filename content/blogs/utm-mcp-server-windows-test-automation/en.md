@@ -1,5 +1,6 @@
 ---
 title: How to Use a UTM MCP Server for Windows App Test Automation
+seoTitle: How to Use a UTM MCP Server for Windows Test Automation
 description: Use UTM as the test rig for an agent-driven Windows MCP server: pick the network mode, find the IP, reset with snapshots, script UTM from the Mac.
 category: VM test automation
 publishedAt: 2026-11-17

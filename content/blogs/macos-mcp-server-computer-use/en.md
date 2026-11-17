@@ -1,9 +1,10 @@
 ---
 title: How to Set Up a macOS MCP Server for AI Computer Use
+seoTitle: How to Set Up a macOS MCP Server for AI Computer Use
 description: Install a macOS MCP server, grant Accessibility and Screen Recording, wire it into Claude Code or Cursor, and learn if you can bundle one in an Electron app.
 category: MCP servers
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
 order: 6
 readTime: 11 min
 primaryKeyword: macos mcp

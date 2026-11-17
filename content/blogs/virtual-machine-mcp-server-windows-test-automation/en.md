@@ -1,5 +1,6 @@
 ---
 title: How to Set Up a Virtual Machine MCP Server for Windows Test Automation
+seoTitle: How to Run Windows Tests with a Virtual Machine MCP Server
 description: A hypervisor-agnostic way to let an agent test Windows apps: architecture, test-case design, golden images, what runs where, and the limits of GUI agents.
 category: VM test automation
 publishedAt: 2026-11-17

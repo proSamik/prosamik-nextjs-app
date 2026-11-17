@@ -1,5 +1,6 @@
 ---
 title: How to SSH into a Linux VM from a Mac
+seoTitle: How to SSH into a Linux VM from a Mac (Step by Step)
 description: Install OpenSSH on Ubuntu, find the VM IP, log in from macOS with ed25519 keys, harden sshd, and tunnel to an MCP server bound to localhost.
 category: Remote access
 publishedAt: 2026-11-17

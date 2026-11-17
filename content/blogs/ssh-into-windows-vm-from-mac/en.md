@@ -1,5 +1,6 @@
 ---
 title: How to SSH into a Windows VM from a Mac (OpenSSH Server on Windows 11)
+seoTitle: How to SSH into a Windows VM from a Mac (OpenSSH Server)
 description: Install OpenSSH Server on a Windows 11 VM, fix the stuck install and admin key gotchas, then SSH from your Mac to restart your MCP server and read logs.
 category: Remote access
 publishedAt: 2026-11-17
