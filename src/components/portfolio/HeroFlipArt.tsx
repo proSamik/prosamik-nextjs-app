@@ -26,7 +26,7 @@ const slides = [
     },
     {
         id: 'desktop',
-        v: '20261118e',
+        v: '20261118f',
         href: withUtm('https://www.subclip.app', 'desktop'),
         label: 'Subclip desktop app, AI video editor',
         alt: 'Subclip desktop app, an AI video editor, open on a MacBook Air',
