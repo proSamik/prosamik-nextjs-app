@@ -29,7 +29,7 @@
 @media(min-width:1000px){
   .device-story{min-height:0}
   .device-story .hero-section{min-height:0;padding-block:20px 48px;pointer-events:auto}
-  .device-story .hero-frame{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:clamp(14px,1.8vw,28px);align-items:center;min-height:clamp(480px,calc(100vh - 220px),640px);padding:clamp(28px,3.4vw,56px) clamp(24px,3vw,48px) clamp(28px,3.4vw,56px) clamp(48px,6vw,96px);background:#fff;border:1px solid #e6e6e6;border-radius:36px;box-shadow:0 46px 90px -42px #00000040,0 3px 12px #0000000d,inset 0 0 0 7px #fff,inset 0 0 0 8px #efefef}
+  .device-story .hero-frame{display:grid;grid-template-columns:max-content max-content;justify-content:center;column-gap:clamp(20px,2.4vw,40px);align-items:center;min-height:clamp(480px,calc(100vh - 220px),640px);padding:clamp(28px,3.4vw,56px) clamp(24px,3vw,48px);background:#fff;border:1px solid #e6e6e6;border-radius:36px;box-shadow:0 46px 90px -42px #00000040,0 3px 12px #0000000d,inset 0 0 0 7px #fff,inset 0 0 0 8px #efefef}
   .device-story .hero-copy{width:auto;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left}
   .device-story .hero-copy h1{margin:0 0 26px}
   .device-story .hero-actions{align-self:flex-start;justify-content:flex-start}
@@ -37,31 +37,26 @@
   .device-story .hero-title .hero-flip{font-size:.72em}
   .device-story .hero-art-wrap{margin:0;display:flex;align-items:center;justify-content:flex-start}
   /* Inside the frame the image needs no card of its own. */
-  .hero-art{width:min(100%,calc(clamp(300px,calc(100vh - 400px),500px) * 1.25));margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:visible}
+  .hero-art{width:min(calc(clamp(300px,calc(100vh - 400px),500px) * 1.25),46vw);margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:visible}
   .hero-art-slide:focus-visible{outline-offset:6px;border-radius:16px}
 }
 @media(max-width:999px){.hero-art{width:min(100%,520px)}}
 
 /* ---- Backdrop: soft colour washes + a faint black checkerboard grid (light theme only) ---- */
 .device-story{position:relative;isolation:isolate}
-.device-story::before,.device-story::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
-/* Blue (Desktop Apps) and orange (Extensions) washes, matching the flipping word colours. */
-.device-story::before{
+/* One flat layer (no mask-image, no element opacity, no blend modes: those repaint on every scroll frame).
+   Top to bottom: a fade into the page white, blue/orange washes, a radial fade that dims only the grid, black grid lines. */
+.device-story::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
-    radial-gradient(52% 62% at 6% 4%,#e8590c33 0,transparent 70%),
-    radial-gradient(56% 66% at 96% 10%,#1d4ed833 0,transparent 70%),
-    radial-gradient(40% 40% at 60% 0%,#0ea5b71f 0,transparent 70%);
-  -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
-/* Black grid lines, faded out downwards. Lines only: no filled checks. */
-.device-story::after{
-  background:
-    linear-gradient(#000 1px,transparent 1px) 0 0/60px 60px,
-    linear-gradient(90deg,#000 1px,transparent 1px) 0 0/60px 60px;
-  opacity:.12;
-  -webkit-mask-image:radial-gradient(110% 100% at 50% 0%,#000 0,transparent 72%);mask-image:radial-gradient(110% 100% at 50% 0%,#000 0,transparent 72%)}
-/* Images are on pure white; multiplying the whole slide lets the card gradient show through them. */
-.hero-art-slide{mix-blend-mode:multiply}
-.hero-art{isolation:isolate}
+    linear-gradient(180deg,#fff0 55%,#fff 100%),
+    radial-gradient(52% 62% at 6% 4%,#e8590c33 0,#e8590c00 70%),
+    radial-gradient(56% 66% at 96% 10%,#1d4ed833 0,#1d4ed800 70%),
+    radial-gradient(40% 40% at 60% 0%,#0ea5b71f 0,#0ea5b700 70%),
+    radial-gradient(110% 100% at 50% 0%,#fff0 0,#fff 72%),
+    linear-gradient(#0000001f 1px,transparent 1px) 0 0/60px 60px,
+    linear-gradient(90deg,#0000001f 1px,transparent 1px) 0 0/60px 60px,
+    #fff}
+/* The hero images have real transparent backgrounds, so the card gradient shows through with no blend mode. */
 @media(max-width:999px){
   .hero-art{background:linear-gradient(150deg,#fff 0%,#fafafa 100%)}
 }
@@ -73,12 +68,10 @@
       radial-gradient(60% 90% at 0% 100%,#e8590c1a 0,transparent 62%),
       linear-gradient(135deg,#ffffff 0%,#fcfcfc 100%)}
   .device-story .hero-copy,.device-story .hero-art-wrap{position:relative}
-  .hero-art{isolation:auto}
-  /* No panel of its own: the image blends into the card (multiply) so the card gradient shows through. */
+  /* No panel of its own: the transparent image sits straight on the card. */
   .hero-art{background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
   .hero-art-slide:focus-visible{outline-offset:-4px;border-radius:26px}
 }
-@media(max-width:999px){.device-story::before{opacity:.55}}
 
 /* ---- Home header: transparent over the hero, solid once scrolled ---- */
 .site-header.is-home{position:sticky;top:0;margin-bottom:-84px;transition:background-color .2s ease,box-shadow .2s ease}
