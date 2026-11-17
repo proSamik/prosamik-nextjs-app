@@ -9,6 +9,11 @@
     color-scheme: light;
 }
 
+/* No elastic bounce at the very top/bottom of the page. */
+html {
+    overscroll-behavior-y: none;
+}
+
 body {
     @apply bg-white text-black;
 }
