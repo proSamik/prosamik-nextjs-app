@@ -45,7 +45,7 @@ You should see `active (running)`. If a login later says `Connection refused`, t
 ip -br addr
 ```
 
-Look for the line with state `UP` and an address such as `192.168.64.x/24`. In UTM with Shared Network, the guest is typically on `192.168.64.x`; my Windows guest was in the same `192.168.64.x` range. You can also run `utmctl ip-address "Ubuntu"` on the Mac, which UTM's docs list, though I could not check its output format. UTM's network page says Shared Network lets the host and guest reach each other directly. A Host Only network blocks internet access, and Bridged puts the VM on your LAN.
+Look for the line with state `UP` and an address such as `192.168.x.x/24`. In UTM with Shared Network, the guest is typically on `192.168.x.x`; my Windows guest was on a private `192.168.x.x` address too. You can also run `utmctl ip-address "Ubuntu"` on the Mac, which UTM's docs list, though I could not check its output format. UTM's network page says Shared Network lets the host and guest reach each other directly. A Host Only network blocks internet access, and Bridged puts the VM on your LAN.
 
 ## Step 3: SSH in from the Mac
 
@@ -171,7 +171,7 @@ Install `openssh-server` in the VM, find its IP with `ip -br addr`, then run `ss
 ### What is the SSH service called on Ubuntu?
 It is `ssh` (`ssh.service`), so use `sudo systemctl enable --now ssh`, as Ubuntu's own docs do.
 
-### Why is my UTM VM IP 192.168.64.x?
+### Why does my UTM VM have a 192.168.x.x address?
 UTM's Shared Network mode puts the guest on a network the host routes directly, and that range is typical for it. UTM's docs describe the mode but do not state the range.
 
 ### Can I reach an MCP server on localhost from my Mac?
