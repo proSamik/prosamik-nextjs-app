@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
+import { withDualmark } from "@dualmark/nextjs";
 
 const nextConfig: NextConfig = {
     outputFileTracingRoot: process.cwd(),
+    // Blog posts are read from content/blogs at build and request time; make sure they ship with the server bundle.
+    outputFileTracingIncludes: {
+        '/blogs/[slug]': ['./content/blogs/**/*'],
+        '/md/[...path]': ['./content/blogs/**/*'],
+        '/llms.txt': ['./content/blogs/**/*'],
+        '/sitemap.xml': ['./content/blogs/**/*'],
+    },
     images: {
         remotePatterns: [
             {
@@ -52,4 +60,4 @@ const nextConfig: NextConfig = {
     productionBrowserSourceMaps: true,
 };
 
-export default nextConfig;
+export default withDualmark(nextConfig, { siteUrl: 'https://www.prosamik.com' });
