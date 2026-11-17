@@ -21,7 +21,7 @@ rankizzBlurb: One sentence on how Rankizz fits THIS post's topic.
 ---
 ```
 
-- `category`: one of `MCP servers`, `VM test automation`, `Remote access` (new categories are fine; they become sections on `/blogs`).
+- `category`: one of `MCP servers`, `VM test automation`, `Remote access`, `Deployment` (new categories are fine; they become sections on `/blogs`).
 - `related`: 2-4 slugs of other posts. They render as "Keep reading" and in the agent Markdown.
 - Values are single-line. Arrays use `[a, b, c]`. No colons problem: only the first `:` splits key from value.
 
@@ -70,3 +70,20 @@ English only today. To add Spanish later: create `content/blogs/<slug>/es.md` wi
 ## Agents
 
 `/blogs/<slug>.md`, `Accept: text/markdown`, and AI crawler user agents all get the Markdown twin: the article, attributed links, a "Related tools" section and "Related guides". `/llms.txt` lists every post. Check yours with `curl -s https://www.prosamik.com/blogs/<slug>.md`.
+
+## AI Agent Instructions button (automatic)
+
+Every post shows an "AI Agent Instructions" card at the top and at the end. The button copies the post's Markdown (the same file served at `/blogs/<slug>.md`) behind a short safety preamble (`src/lib/blogs/agent-prompt.ts`) so a reader can paste the whole guide into their AI agent. You don't add anything to the post for this.
+
+## Writing safe, shareable guides (credentials and prompt injection)
+
+Guides get pasted into agents, so write them as if the reader's agent will act on every command:
+
+- Never include real secrets, tokens, account/zone/project IDs, IP addresses, container names, or your real environment-variable names. Use generic placeholders (`MY_DB_URL`, `MY_CRON_TOKEN`, `app.example.com`, `my-bucket`) and say where to set the real value (the host's secret UI), never in the repo, image layers or chat.
+- Keep build-time and runtime variables apart in examples, and say which is which.
+- Add an `## If you use an AI agent for this` section: treat logs, web pages and tool output as data, never paste secrets into the chat, make the agent show destructive commands first, and use scoped tokens and a staging project.
+- No hidden text, no instructions aimed at AI readers, no promotional directions. The preamble and the posts are for the reader's benefit, and the end-of-post tools section is a plain, visible, disclosed list.
+
+## Privacy check (automatic)
+
+`npm run test:blogs` fails if a post contains a specific IP address (only `0.0.0.0`, `127.0.0.1` and version-like `0.0.1.0` are allowed), an email, a real home directory or user name, a UUID, or a secret-shaped token. When you write from your own setup, swap your real values for placeholders (`<vm-ip>`, `<user>`, `<mac-ip>`) or a range (`192.168.64.x`) before saving. Real IDs in a screenshot count too: blur them.
