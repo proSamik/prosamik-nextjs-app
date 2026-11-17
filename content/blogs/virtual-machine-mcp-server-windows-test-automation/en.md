@@ -3,7 +3,8 @@ title: How to Set Up a Virtual Machine MCP Server for Windows Test Automation
 description: A hypervisor-agnostic way to let an agent test Windows apps: architecture, test-case design, golden images, what runs where, and the limits of GUI agents.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 7
 readTime: 11 min
 primaryKeyword: virtual machine mcp server
 keywords: [virtual machine mcp server, windows vm test automation, ai agent gui testing, golden image, parallels vs utm vs vmware fusion, hyper-v mcp]
@@ -38,7 +39,7 @@ app under test
 
 Why the agent stays on the host: it holds your credentials, your repo and your model access. The VM should hold none of that. The VM holds the app and a desktop. The agent never needs to log in to the VM except through the MCP tools.
 
-I ran exactly this with a MacBook host, UTM, and a Windows 11 ARM guest at 192.168.64.13. The server was `windows-mcp 0.8.9` on port 8000, and a GET to `/mcp` returned `400 Bad Request: Missing session ID`, which is how I knew the path from host to VM worked. Anything below about other hypervisors comes from general knowledge and vendor docs, not from my runs.
+I ran exactly this with a MacBook host, UTM, and a Windows 11 ARM guest on UTM\'s Shared Network (a `192.168.64.x` address). The server was `windows-mcp 0.8.9` on port 8000, and a GET to `/mcp` returned `400 Bad Request: Missing session ID`, which is how I knew the path from host to VM worked. Anything below about other hypervisors comes from general knowledge and vendor docs, not from my runs.
 
 ## Pick a hypervisor
 
