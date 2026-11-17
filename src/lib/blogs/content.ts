@@ -2,15 +2,13 @@ import 'server-only';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_LOCALE, ENABLED_LOCALES, isLocale, type Locale } from '@/lib/i18n/config';
+import { extractFaqs, type BlogFaq } from './faq';
+
+export type { BlogFaq };
 
 // Posts live in content/blogs/<slug>/<locale>.md. English is required; other locales are optional
 // and each post falls back to English when a translation does not exist yet.
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blogs');
-
-export interface BlogFaq {
-    question: string;
-    answer: string;
-}
 
 export interface BlogPost {
     slug: string;
@@ -23,6 +21,8 @@ export interface BlogPost {
     publishedAt: string;
     updatedAt: string;
     readTime: string;
+    /** Optional explicit position in listings (lower = earlier). Unset posts follow, oldest first. */
+    order: number | null;
     primaryKeyword: string;
     keywords: string[];
     related: string[];
@@ -61,22 +61,6 @@ const list = (data: Record<string, string | string[]>, key: string): string[] =>
     return Array.isArray(value) ? value : value ? [value] : [];
 };
 
-/** Pulls `### question` + answer pairs out of the "## FAQ" section for schema.org FAQPage output. */
-export function extractFaqs(body: string): BlogFaq[] {
-    const lines = body.split(/\r?\n/);
-    const start = lines.findIndex((line) => /^##\s+(?:FAQ|Frequently asked questions)\s*$/i.test(line));
-    if (start === -1) return [];
-    const end = lines.findIndex((line, index) => index > start && /^##\s/.test(line));
-    const section = lines.slice(start + 1, end === -1 ? undefined : end).join('\n');
-    const faqs: BlogFaq[] = [];
-    for (const block of section.split(/^###\s+/m).slice(1)) {
-        const [question, ...answer] = block.split(/\r?\n/);
-        const answerText = answer.join('\n').trim();
-        if (question.trim() && answerText) faqs.push({ question: question.trim(), answer: answerText });
-    }
-    return faqs;
-}
-
 export function getBlogSlugs(): string[] {
     if (!existsSync(CONTENT_DIR)) return [];
     return readdirSync(CONTENT_DIR, { withFileTypes: true })
@@ -106,6 +90,7 @@ export function getBlogPost(slug: string, locale: Locale = DEFAULT_LOCALE): Blog
         publishedAt: text(data, 'publishedAt', file),
         updatedAt: text(data, 'updatedAt', file),
         readTime: text(data, 'readTime', file),
+        order: typeof data.order === 'string' && /^\d+$/.test(data.order) ? Number(data.order) : null,
         primaryKeyword: text(data, 'primaryKeyword', file),
         keywords: list(data, 'keywords'),
         related: list(data, 'related'),
@@ -120,5 +105,5 @@ export function getAllBlogPosts(locale: Locale = DEFAULT_LOCALE): BlogPost[] {
     return getBlogSlugs()
         .map((slug) => getBlogPost(slug, locale))
         .filter((post): post is BlogPost => post !== null)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.title.localeCompare(b.title));
+        .sort((a, b) => (a.order ?? 1000) - (b.order ?? 1000) || a.publishedAt.localeCompare(b.publishedAt) || a.title.localeCompare(b.title));
 }
