@@ -19,7 +19,7 @@ I ran the Windows 11 ARM guest, Shared Network, and the MCP server parts myself.
 
 ## Quick answer
 
-1. Use Shared Network unless you have a reason not to. The Mac reaches the guest at an address like `192.168.64.x`.
+1. Use Shared Network unless you have a reason not to. The Mac reaches the guest at an address like `192.168.x.x`.
 2. Take a snapshot of the clean, logged-in VM with the Windows MCP server already running.
 3. Before each test run, restore that snapshot, start the VM, find its IP, and check `curl http://<ip>:8000/mcp` returns `400 Bad Request: Missing session ID`.
 4. Point the agent at `http://<ip>:8000/mcp` and run the test prompt.
@@ -32,7 +32,7 @@ I ran the Windows 11 ARM guest, Shared Network, and the MCP server parts myself.
 |---|---|
 | Host | MacBook (macOS), Apple Silicon |
 | Hypervisor | UTM, Shared Network |
-| Guest | Windows 11 ARM64, Shared Network (a `192.168.64.x` address) |
+| Guest | Windows 11 ARM64, Shared Network (a `192.168.x.x` address) |
 | MCP server | windows-mcp 0.8.9, streamable HTTP on port 8000 |
 
 ## Choose a UTM network mode
@@ -57,7 +57,7 @@ The IP can change between boots, so discover it every run. Inside Windows, `ipco
 /Applications/UTM.app/Contents/MacOS/utmctl ip-address "Windows 11"
 ```
 
-I did not run these. The docs say `exec` needs the guest agent, and the Windows guide says the SPICE guest tools carry the network drivers, so install the guest tools first. If `ip-address` returns nothing on your setup, fall back to `arp -a` on the Mac and look for a `192.168.64.x` entry, or give the VM a stable address.
+I did not run these. The docs say `exec` needs the guest agent, and the Windows guide says the SPICE guest tools carry the network drivers, so install the guest tools first. If `ip-address` returns nothing on your setup, fall back to `arp -a` on the Mac and look for a `192.168.x.x` entry, or give the VM a stable address.
 
 Then verify the server is up before the agent starts. This is a gate, not a nicety, since a test that cannot reach the server tells you nothing about the app:
 
