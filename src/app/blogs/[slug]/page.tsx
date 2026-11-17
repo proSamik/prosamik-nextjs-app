@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AgentInstructionsButton from '@/components/blogs/AgentInstructionsButton';
+import BlogPostMotion from '@/components/blogs/BlogPostMotion';
 import CopyCodeButtons from '@/components/blogs/CopyCodeButtons';
 import PromoCards from '@/components/blogs/PromoCards';
 import { getBlogLocales, getBlogPost, getBlogSlugs } from '@/lib/blogs/content';
@@ -68,6 +69,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return (
         <article className="portfolio-page page-width blog-post">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBlogJsonLd(post)) }} />
+            <BlogPostMotion articleId={bodyId} />
             <Breadcrumbs items={[{ label: 'Blogs', href: '/blogs' }, { label: post.title }]} />
             <header className="blog-hero">
                 <p className="blog-kicker">{post.category}</p>
