@@ -39,7 +39,7 @@ app under test
 
 Why the agent stays on the host: it holds your credentials, your repo and your model access. The VM should hold none of that. The VM holds the app and a desktop. The agent never needs to log in to the VM except through the MCP tools.
 
-I ran exactly this with a MacBook host, UTM, and a Windows 11 ARM guest on UTM\'s Shared Network (a `192.168.64.x` address). The server was `windows-mcp 0.8.9` on port 8000, and a GET to `/mcp` returned `400 Bad Request: Missing session ID`, which is how I knew the path from host to VM worked. Anything below about other hypervisors comes from general knowledge and vendor docs, not from my runs.
+I ran exactly this with a MacBook host, UTM, and a Windows 11 ARM guest on UTM's Shared Network (a `192.168.x.x` address). The server was `windows-mcp 0.8.9` on port 8000, and a GET to `/mcp` returned `400 Bad Request: Missing session ID`, which is how I knew the path from host to VM worked. Anything below about other hypervisors comes from general knowledge and vendor docs, not from my runs.
 
 ## Pick a hypervisor
 
