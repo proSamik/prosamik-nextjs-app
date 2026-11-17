@@ -86,4 +86,4 @@ Guides get pasted into agents, so write them as if the reader's agent will act o
 
 ## Privacy check (automatic)
 
-`npm run test:blogs` fails if a post contains a specific IP address (only `0.0.0.0`, `127.0.0.1` and version-like `0.0.1.0` are allowed), an email, a real home directory or user name, a UUID, or a secret-shaped token. When you write from your own setup, swap your real values for placeholders (`<vm-ip>`, `<user>`, `<mac-ip>`) or a range (`192.168.64.x`) before saving. Real IDs in a screenshot count too: blur them.
+`npm run test:blogs` fails if a post contains a specific IP address (only `0.0.0.0`, `127.0.0.1` and version-like `0.0.1.0` are allowed), an email, a real home directory or user name, a UUID, or a secret-shaped token. When you write from your own setup, swap your real values for placeholders (`<vm-ip>`, `<user>`, `<mac-ip>`) or a generic range (`192.168.x.x`) before saving. Real IDs in a screenshot count too: blur them.
