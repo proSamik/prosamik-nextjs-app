@@ -4,6 +4,7 @@ description: Install a macOS MCP server, grant Accessibility and Screen Recordin
 category: MCP servers
 publishedAt: 2026-11-17
 updatedAt: 2026-11-17
+order: 6
 readTime: 11 min
 primaryKeyword: macos mcp
 keywords: [mac mcp server, macos computer use mcp, mcp server for mac, macos accessibility api mcp, peekaboo mcp, electron mcp server]
