@@ -3,7 +3,7 @@ title: How to Use a UTM MCP Server for macOS App Test Automation
 description: Run a macOS guest in UTM, enable SSH, install a macOS MCP server inside it, grant the permissions once by hand, and drive app tests from your host agent.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
 order: 2
 readTime: 11 min
 primaryKeyword: utm mcp server
@@ -21,7 +21,7 @@ I have not run this exact setup yet. The UTM, Apple and MCP server details are f
 
 1. Create a macOS VM in UTM (Virtualization, macOS 12+) and let it download the latest IPSW.
 2. Finish setup, create a throwaway user, and enable **Remote Login** in System Settings > General > Sharing.
-3. Find the guest IP (Shared Network, usually `192.168.64.x`) and SSH in from the host.
+3. Find the guest IP (Shared Network, usually `192.168.x.x`) and SSH in from the host.
 4. Install `uv` in the guest and run `uvx macos-mcp serve`.
 5. In the guest's own GUI, grant **Accessibility** and **Screen Recording** to the app that launches the server. This step cannot be skipped or done over SSH.
 6. Snapshot the VM, register the server in your host agent, and run a test prompt.
@@ -63,16 +63,16 @@ Find the address in the guest terminal:
 ipconfig getifaddr en0
 ```
 
-On the Shared Network UTM uses, guests typically land in `192.168.64.x`. Then, from the host:
+On the Shared Network UTM uses, guests typically land in `192.168.x.x`. Then, from the host:
 
 ```bash
-ssh testuser@192.168.64.X
+ssh testuser@<vm-ip>
 ```
 
 You should get a shell prompt after accepting the host key. Copy your key so the agent does not need a password:
 
 ```bash
-ssh-copy-id testuser@192.168.64.X
+ssh-copy-id testuser@<vm-ip>
 ```
 
 For comparison, the Windows and Linux equivalents are in [SSH into a Windows VM from Mac](/blogs/ssh-into-windows-vm-from-mac) and [SSH into a Linux VM from Mac](/blogs/ssh-into-linux-vm-from-mac).
@@ -96,7 +96,7 @@ uvx macos-mcp serve --transport streamable-http --host localhost --port 8000
 Keep it on `localhost` and reach it through an SSH tunnel from the host, rather than exposing port 8000 to the network:
 
 ```bash
-ssh -N -L 8000:localhost:8000 testuser@192.168.64.X
+ssh -N -L 8000:localhost:8000 testuser@<vm-ip>
 ```
 
 Then, on the host, check the endpoint. With Windows-MCP, `curl -v http://<ip>:8000/mcp` returned `400 Bad Request: Missing session ID`, which proved the endpoint was reachable. I expect a similar 4xx on a streamable HTTP MCP endpoint, but I have not seen `macos-mcp`'s exact response.
