@@ -15,7 +15,7 @@ rankizzBlurb: Rankizz researches keywords and tracks rankings and AI-search cita
 
 This guide shows you how to set up a Linux machine, virtual or physical, that an AI agent can test through a desktop-control MCP server, and how to design tests that give you the same answer twice. It is hypervisor-agnostic. For UTM-specific steps, read [the UTM guide](/blogs/utm-mcp-server-linux-test-automation). For installing the server itself, read [the Linux MCP server guide](/blogs/linux-mcp-server-ubuntu-desktop-control).
 
-This is a researched guide, checked against upstream docs on 2026-11-17. I have not run this Linux setup yet. I did run the Windows analogue (a UTM Windows 11 ARM64 guest on Shared Network (a `192.168.64.x` address), `windows-mcp` on port 8000), and the architecture below is the same.
+This is a researched guide, checked against upstream docs on 2026-11-17. I have not run this Linux setup yet. I did run the Windows analogue (a UTM Windows 11 ARM64 guest on Shared Network (a `192.168.x.x` address), `windows-mcp` on port 8000), and the architecture below is the same.
 
 ## Quick answer
 
@@ -45,7 +45,7 @@ The target decides your reset story, not your agent. I checked what each option 
 
 | Target | Reset | Network to the Mac | Notes |
 |---|---|---|---|
-| UTM (free) | `utmctl snapshot`, clone | Shared Network, `192.168.64.x` | Documented in [the UTM guide](/blogs/utm-mcp-server-linux-test-automation) |
+| UTM (free) | `utmctl snapshot`, clone | Shared Network, `192.168.x.x` | Documented in [the UTM guide](/blogs/utm-mcp-server-linux-test-automation) |
 | Parallels, VMware Fusion | Built-in snapshots | NAT or host-only | Paid; check ARM64 Ubuntu support for your version |
 | VirtualBox | Snapshots | NAT, host-only | ARM64 Mac host support is relatively new; verify |
 | Dedicated Ubuntu box | Disk image or reinstall | Same LAN, plain SSH | Real hardware, real kernel, no snapshots |
