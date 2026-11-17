@@ -3,7 +3,8 @@ title: How to Use a UTM MCP Server for Windows App Test Automation
 description: Use UTM as the test rig for an agent-driven Windows MCP server: pick the network mode, find the IP, reset with snapshots, script UTM from the Mac.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 1
 readTime: 10 min
 primaryKeyword: utm mcp server
 keywords: [utm mcp server, utm windows test automation, utmctl, utm snapshots, utm shared network, windows 11 arm utm]
@@ -31,7 +32,7 @@ I ran the Windows 11 ARM guest, Shared Network, and the MCP server parts myself.
 |---|---|
 | Host | MacBook (macOS), Apple Silicon |
 | Hypervisor | UTM, Shared Network |
-| Guest | Windows 11 ARM64, IP 192.168.64.13 |
+| Guest | Windows 11 ARM64, Shared Network (a `192.168.64.x` address) |
 | MCP server | windows-mcp 0.8.9, streamable HTTP on port 8000 |
 
 ## Choose a UTM network mode
@@ -61,7 +62,7 @@ I did not run these. The docs say `exec` needs the guest agent, and the Windows 
 Then verify the server is up before the agent starts. This is a gate, not a nicety, since a test that cannot reach the server tells you nothing about the app:
 
 ```bash
-IP=192.168.64.13
+IP=<vm-ip>
 curl -s -o /dev/null -w "%{http_code}\n" http://$IP:8000/mcp
 ```
 
