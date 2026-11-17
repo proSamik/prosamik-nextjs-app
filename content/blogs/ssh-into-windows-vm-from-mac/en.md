@@ -3,7 +3,8 @@ title: How to SSH into a Windows VM from a Mac (OpenSSH Server on Windows 11)
 description: Install OpenSSH Server on a Windows 11 VM, fix the stuck install and admin key gotchas, then SSH from your Mac to restart your MCP server and read logs.
 category: Remote access
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 10
 readTime: 9 min
 primaryKeyword: ssh into windows from mac
 keywords: [ssh into windows from mac, openssh server windows 11, administrators_authorized_keys, ssh windows vm, scp windows mac, sshd service not found]
@@ -12,14 +13,14 @@ subclipBlurb: Subclip is an AI video editor that can connect MCP servers, useful
 rankizzBlurb: Rankizz tracks whether your published guides rank and get cited by AI search, via its web app, REST API and MCP server.
 ---
 
-This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key login, so you can restart the Windows MCP server and read its logs without opening the VM window. You need a Windows 11 VM the Mac can reach (mine is a UTM VM at 192.168.64.13) and an Administrator PowerShell inside it. I will say plainly where I stopped: on my VM the OpenSSH Server install hung, and my notes do not show it finishing. So the install section gives the documented steps, then a troubleshooting section for that exact stall. The commands come from Microsoft's OpenSSH docs.
+This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key login, so you can restart the Windows MCP server and read its logs without opening the VM window. You need a Windows 11 VM the Mac can reach (mine is a UTM VM on the default `192.168.64.x` Shared Network) and an Administrator PowerShell inside it. I will say plainly where I stopped: on my VM the OpenSSH Server install hung, and my notes do not show it finishing. So the install section gives the documented steps, then a troubleshooting section for that exact stall. The commands come from Microsoft's OpenSSH docs.
 
 ## Quick answer
 
 1. In Administrator PowerShell on Windows: `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`
 2. `Start-Service sshd` then `Set-Service -Name sshd -StartupType 'Automatic'`
 3. Check the firewall rule `OpenSSH-Server-In-TCP` exists (setup normally creates it).
-4. On the Mac: `ssh <windows-user>@192.168.64.13`, accept the host key, enter the password.
+4. On the Mac: `ssh <windows-user>@<vm-ip>`, accept the host key, enter the password.
 5. Switch to key login. For an administrator account, put the public key in `C:\ProgramData\ssh\administrators_authorized_keys` and lock down its permissions with `icacls`.
 6. Add a `~/.ssh/config` entry so you can type `ssh winvm`.
 
@@ -28,7 +29,7 @@ This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key 
 | Item | Value |
 |---|---|
 | Host | MacBook, macOS, built-in OpenSSH client |
-| Guest | Windows 11 ARM64 in UTM, Shared Network, 192.168.64.13 |
+| Guest | Windows 11 ARM64 in UTM, Shared Network (a `192.168.64.x` address) |
 | Windows OpenSSH | Feature on Demand `OpenSSH.Server~~~~0.0.1.0` |
 | MCP server | windows-mcp, scheduled task `windows-mcp-server` |
 
@@ -94,10 +95,10 @@ The docs say installing the server creates that rule for port 22 automatically. 
 Test with the password first so you know the service works. Use your Windows account name and the VM IP (`ipconfig` in Windows shows it):
 
 ```bash
-ssh <windows-user>@192.168.64.13
+ssh <windows-user>@<vm-ip>
 ```
 
-You will be asked to trust the host key, then for your password. Per the docs the default shell is the Windows command prompt, so you will see something like `user@PCNAME C:\Users\user>`. If you use a Microsoft account, the user name can differ from your email, so check `whoami` in Windows.
+You will be asked to trust the host key, then for your password. Per the docs the default shell is the Windows command prompt, so you will see something like `<user>@<pc-name> C:\Users\<user>>`. If you use a Microsoft account, the user name can differ from your email, so check `whoami` in Windows.
 
 ## Step 5: Make PowerShell the default shell
 
@@ -122,7 +123,7 @@ Where the public key goes depends on the account type. A standard user uses `C:\
 Copy the key over, from the Mac:
 
 ```bash
-scp ~/.ssh/id_ed25519.pub <windows-user>@192.168.64.13:C:/Users/<windows-user>/mykey.pub
+scp ~/.ssh/id_ed25519.pub <windows-user>@<vm-ip>:C:/Users/<windows-user>/mykey.pub
 ```
 
 Then in an Administrator PowerShell on Windows, append it and fix the permissions. These are the commands from the docs, adapted to a local file:
@@ -141,7 +142,7 @@ A config entry shortens everything. On the Mac, edit `~/.ssh/config`:
 
 ```text
 Host winvm
-    HostName 192.168.64.13
+    HostName <vm-ip>
     User <windows-user>
     IdentityFile ~/.ssh/id_ed25519
 ```
@@ -159,7 +160,7 @@ ssh winvm 'Get-Content "$env:USERPROFILE\.windows-mcp\server.log" -Tail 50'
 ssh winvm 'Get-Content "$env:USERPROFILE\.windows-mcp\server.error.log" -Tail 50'
 ```
 
-Then confirm from the Mac: `curl -v http://192.168.64.13:8000/mcp` should return `400 Bad Request: Missing session ID`. The full server setup is in [the Windows MCP server guide](/blogs/windows-mcp-server-for-mac-utm-vm). One caution from the docs: a session opened with key authentication has no user credentials, so it cannot authenticate outward as you. That is fine for these commands. A task can behave differently from an interactive session, so check the result with `curl`.
+Then confirm from the Mac: `curl -v http://<vm-ip>:8000/mcp` should return `400 Bad Request: Missing session ID`. The full server setup is in [the Windows MCP server guide](/blogs/windows-mcp-server-for-mac-utm-vm). One caution from the docs: a session opened with key authentication has no user credentials, so it cannot authenticate outward as you. That is fine for these commands. A task can behave differently from an interactive session, so check the result with `curl`.
 
 ## Troubleshooting
 
@@ -189,7 +190,7 @@ Using only the shell and the SSH host alias "winvm":
 1. Run: ssh winvm 'Get-ScheduledTask -TaskName "windows-mcp-server"' and report its State.
 2. Run: ssh winvm 'Get-Content "$env:USERPROFILE\.windows-mcp\server.error.log" -Tail 20' and summarise any errors.
 3. If the task is not Running, run Start-ScheduledTask for it over SSH, wait 10 seconds,
-   then run: curl -s -o /dev/null -w "%{http_code}" http://192.168.64.13:8000/mcp
+   then run: curl -s -o /dev/null -w "%{http_code}" http://<vm-ip>:8000/mcp
    and report whether the code is 400.
 Do not change any other setting on the VM.
 ```
