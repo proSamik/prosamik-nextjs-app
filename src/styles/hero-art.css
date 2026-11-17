@@ -20,16 +20,22 @@
   .hero-art-slide:first-child{opacity:1;visibility:visible}
 }
 
-/* Wide screens: one calm band. Heading + buttons are one block, centered in the band; the card sits
-   right beside them (small gap), as tall as the heading block, never touching the nav. */
+/* Wide screens: heading, buttons and image live in ONE framed card, like a photo frame on a wall.
+   Phones keep the plain stacked layout (the frame wrapper disappears). */
+.hero-frame{display:contents}
 .hero-art-wrap{margin-top:24px}
+/* The flipping gradient word is clipped to its glyphs; italic strokes overhang the box, so leave room. */
+.hero-title .hero-flip-text{padding-right:.26em}
 @media(min-width:1000px){
   .device-story{min-height:0}
-  .device-story .hero-section{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:clamp(28px,3.4vw,52px);align-items:stretch;min-height:clamp(540px,calc(100vh - 170px),700px);padding-block:40px;pointer-events:auto}
+  .device-story .hero-section{min-height:0;padding-block:20px 48px;pointer-events:auto}
+  .device-story .hero-frame{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:clamp(28px,3.2vw,52px);align-items:center;min-height:clamp(480px,calc(100vh - 220px),640px);padding:clamp(28px,3.4vw,56px) clamp(32px,4vw,64px);background:#fff;border:1px solid #e6e6e6;border-radius:36px;box-shadow:0 46px 90px -42px #00000040,0 3px 12px #0000000d,inset 0 0 0 7px #fff,inset 0 0 0 8px #efefef}
   .device-story .hero-copy{width:auto;display:flex;flex-direction:column;justify-content:center}
   .device-story .hero-copy h1{margin:0 0 26px}
   .device-story .hero-actions{align-self:flex-start}
-  .device-story .hero-art-wrap{margin:0;display:flex;align-items:center;justify-content:flex-start}
-  .hero-art{width:min(100%,calc(clamp(320px,calc(100vh - 340px),560px) * 1.25));margin:0}
+  .device-story .hero-art-wrap{margin:0;display:flex;align-items:center;justify-content:center}
+  /* Inside the frame the image needs no card of its own. */
+  .hero-art{width:min(100%,calc(clamp(300px,calc(100vh - 400px),500px) * 1.25));margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:visible}
+  .hero-art-slide:focus-visible{outline-offset:6px;border-radius:16px}
 }
 @media(max-width:999px){.hero-art{width:min(100%,520px)}}
