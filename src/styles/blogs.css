@@ -118,3 +118,19 @@
 /* ---- post page reading progress ---- */
 .blog-progress{position:fixed;top:0;left:0;width:100%;height:3px;background:#111;transform-origin:0 50%;transform:scaleX(0);z-index:60;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.blog-index-head{position:static}.blog-progress{display:none}}
+
+/* ---- Pagination ---- */
+.blog-page-note{display:block;margin-top:10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.blog-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:56px 0 0;padding-top:24px;border-top:1px solid var(--line)}
+.blog-pagination ol{display:flex;align-items:center;gap:6px;list-style:none;margin:0;padding:0}
+.blog-pagination a,.blog-pagination .blog-page-step{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:40px;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;color:#111;text-decoration:none;transition:background .15s,border-color .15s,color .15s}
+.blog-pagination a:hover{border-color:#111}
+.blog-pagination a.is-current{background:#111;border-color:#111;color:#fff;pointer-events:none}
+.blog-pagination .blog-page-step.is-disabled{opacity:.35}
+.blog-pagination .blog-page-gap{min-width:24px;text-align:center;color:var(--muted)}
+@media(max-width:560px){.blog-pagination{justify-content:center}.blog-pagination .blog-page-step span{display:none}}
+
+/* ---- Post page: the hero stays put and the article slides over it (motion in BlogPostMotion) ---- */
+.blog-post .blog-hero{position:sticky;top:24px;z-index:0;will-change:transform,opacity}
+.blog-post .blog-layout{position:relative;z-index:1;background:#fff;margin:40px calc(-1 * clamp(14px,2vw,32px)) 0;padding:clamp(24px,3vw,40px) clamp(14px,2vw,32px) 24px;border-radius:32px 32px 0 0;box-shadow:0 -28px 60px -36px #00000033}
+@media(prefers-reduced-motion:reduce){.blog-post .blog-hero{position:static}}
