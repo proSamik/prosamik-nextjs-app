@@ -5,6 +5,7 @@ import { milestones, milestoneYears } from '@/utils/milestones';
 import { siteMetadata } from '@/utils/siteMetadata';
 import { getAllBlogPosts, getBlogLocales } from '@/lib/blogs/content';
 import { DEFAULT_LOCALE, languageAlternates, localizePath } from '@/lib/i18n/config';
+import { pageHref, totalPages } from '@/lib/blogs/pagination';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const randomThoughts = await listRandomThoughtSitemapEntries();
@@ -26,6 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'monthly',
         priority: 0.8,
     }));
+
+    // /blogs/page/2..N (page 1 is /blogs). Empty until there is more than one page of posts.
+    const blogPageRoutes: MetadataRoute.Sitemap = Array.from(
+        { length: totalPages(getAllBlogPosts(DEFAULT_LOCALE).length) - 1 },
+        (_, i) => ({ url: `${siteMetadata.siteUrl}${pageHref(i + 2)}`, lastModified: newestBlogUpdate, changeFrequency: 'weekly' as const, priority: 0.6 }),
+    );
 
     const blogRoutes: MetadataRoute.Sitemap = getAllBlogPosts(DEFAULT_LOCALE).map((post) => ({
         url: `${siteMetadata.siteUrl}${localizePath(`/blogs/${post.slug}`, DEFAULT_LOCALE)}`,
@@ -57,6 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
         ...staticRoutes,
         ...projectRoutes,
+        ...blogPageRoutes,
         ...blogRoutes,
         ...milestoneYearRoutes,
         ...milestoneRoutes,
