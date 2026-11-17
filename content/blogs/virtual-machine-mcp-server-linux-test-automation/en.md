@@ -3,7 +3,8 @@ title: How to Set Up a Virtual Machine MCP Server for Linux Test Automation
 description: Pick a hypervisor or a dedicated Ubuntu box, give it a desktop, and design agent-driven Linux GUI tests with evidence, golden images and flake control.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 9
 readTime: 12 min
 primaryKeyword: virtual machine mcp server
 keywords: [vm mcp server, linux test automation agent, xvfb mcp, headless ubuntu desktop, golden image vm testing, dedicated ubuntu machine mcp]
@@ -14,7 +15,7 @@ rankizzBlurb: Rankizz researches keywords and tracks rankings and AI-search cita
 
 This guide shows you how to set up a Linux machine, virtual or physical, that an AI agent can test through a desktop-control MCP server, and how to design tests that give you the same answer twice. It is hypervisor-agnostic. For UTM-specific steps, read [the UTM guide](/blogs/utm-mcp-server-linux-test-automation). For installing the server itself, read [the Linux MCP server guide](/blogs/linux-mcp-server-ubuntu-desktop-control).
 
-This is a researched guide, checked against upstream docs on 2026-11-17. I have not run this Linux setup yet. I did run the Windows analogue (a UTM Windows 11 ARM64 guest at `192.168.64.13`, `windows-mcp` on port 8000), and the architecture below is the same.
+This is a researched guide, checked against upstream docs on 2026-11-17. I have not run this Linux setup yet. I did run the Windows analogue (a UTM Windows 11 ARM64 guest on Shared Network (a `192.168.64.x` address), `windows-mcp` on port 8000), and the architecture below is the same.
 
 ## Quick answer
 
