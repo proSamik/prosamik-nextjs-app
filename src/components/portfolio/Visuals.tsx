@@ -16,7 +16,7 @@ export function Inspector({ browser = 'Chrome' }: { browser?: 'Chrome' | 'Safari
     return <div className={`inspector ${chrome ? 'chrome-inspector' : 'safari-inspector'}`} aria-hidden="true">
         <div className="window-dots"><i /><i /><i /><span>Rankizz</span></div>
         <div className="inspector-body">
-            <div className="browser-name"><Image className="browser-logo" src={portfolioAsset(`${browser.toLowerCase()}-icon.webp`)} alt="" width={40} height={40} />{browser} extension</div>
+            <div className="browser-name"><Image className="browser-logo" src={portfolioAsset(`${browser.toLowerCase()}-icon.webp`)} alt={`${browser} logo`} width={40} height={40} />{browser} extension</div>
             <strong>{chrome ? 'Know every site.' : 'SEO, in Safari.'}</strong>
             {chrome ? <>
                 <div className="domain-scores"><div className="domain-scores-heading"><span>Website</span><span>Ahrefs DA</span></div><div><span>example.com</span><b>42</b></div><div><span>example.org</span><b>68</b></div></div>
