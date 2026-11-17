@@ -9,7 +9,7 @@ export const OG_SIZE = { width: 1200, height: 630 } as const;
 
 const CATEGORY: Record<string, { ink: string; tint: string; glow: string }> = {
     'VM test automation': { ink: '#1d4ed8', tint: '#e8f0ff', glow: '#1d4ed833' },
-    'MCP servers': { ink: '#be123c', tint: '#ffe9ee', glow: '#f43f5e33' },
+    'MCP servers': { ink: '#111111', tint: '#ededed', glow: '#00000018' },
     'Remote access': { ink: '#15803d', tint: '#e6f6ec', glow: '#16a34a33' },
     Deployment: { ink: '#c2410c', tint: '#fff0e5', glow: '#e8590c38' },
 };
