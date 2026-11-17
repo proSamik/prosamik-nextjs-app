@@ -12,6 +12,7 @@ export default function DeviceStory({ intro }: { intro: ReactNode }) {
                 <HeroGlow className="hero-glow-card" />
                 <div className="hero-copy">{intro}</div>
                 <div className="hero-art-wrap"><HeroFlipArt /></div>
+                <div className="hero-ruler" aria-hidden="true"><i /></div>
             </div>
         </section>
     </div>;
