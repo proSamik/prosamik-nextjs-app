@@ -13,7 +13,7 @@ subclipBlurb: Subclip is an AI video editor that can connect MCP servers, useful
 rankizzBlurb: Rankizz tracks whether your published guides rank and get cited by AI search, via its web app, REST API and MCP server.
 ---
 
-This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key login, so you can restart the Windows MCP server and read its logs without opening the VM window. You need a Windows 11 VM the Mac can reach (mine is a UTM VM on the default `192.168.64.x` Shared Network) and an Administrator PowerShell inside it. I will say plainly where I stopped: on my VM the OpenSSH Server install hung, and my notes do not show it finishing. So the install section gives the documented steps, then a troubleshooting section for that exact stall. The commands come from Microsoft's OpenSSH docs.
+This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key login, so you can restart the Windows MCP server and read its logs without opening the VM window. You need a Windows 11 VM the Mac can reach (mine is a UTM VM on the default `192.168.x.x` Shared Network) and an Administrator PowerShell inside it. I will say plainly where I stopped: on my VM the OpenSSH Server install hung, and my notes do not show it finishing. So the install section gives the documented steps, then a troubleshooting section for that exact stall. The commands come from Microsoft's OpenSSH docs.
 
 ## Quick answer
 
@@ -29,7 +29,7 @@ This guide gets you from a Mac Terminal into a Windows 11 VM over SSH, with key 
 | Item | Value |
 |---|---|
 | Host | MacBook, macOS, built-in OpenSSH client |
-| Guest | Windows 11 ARM64 in UTM, Shared Network (a `192.168.64.x` address) |
+| Guest | Windows 11 ARM64 in UTM, Shared Network (a `192.168.x.x` address) |
 | Windows OpenSSH | Feature on Demand `OpenSSH.Server~~~~0.0.1.0` |
 | MCP server | windows-mcp, scheduled task `windows-mcp-server` |
 
