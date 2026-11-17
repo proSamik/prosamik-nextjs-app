@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     if (!post) return { title: 'Post not found' };
     const path = localizePath(`/blogs/${slug}`, post.locale);
     return {
-        title: { absolute: `${post.title} | prosamik` },
+        title: { absolute: post.seoTitle },
         description: post.description,
         keywords: [post.primaryKeyword, ...post.keywords],
         authors: [{ name: 'Samik Choudhury', url: siteMetadata.siteUrl }],
@@ -42,6 +42,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         },
         openGraph: {
             type: 'article',
+            siteName: siteMetadata.title,
             url: path,
             title: post.title,
             description: post.description,
