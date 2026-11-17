@@ -3,7 +3,8 @@ title: How to Set Up a Linux MCP Server to Control an Ubuntu Desktop
 description: Install a Linux desktop-control MCP server on Ubuntu, compare the real options, pick X11 over Wayland, and reach it from a Mac agent over an SSH tunnel.
 category: MCP servers
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 5
 readTime: 11 min
 primaryKeyword: linux mcp server
 keywords: [linux mcp, ubuntu mcp server, mcp server for linux desktop, computer use linux, linux computer use mcp, xdotool mcp]
@@ -109,7 +110,7 @@ Start it from a terminal in the desktop session. The server needs the session's 
 Three routes exist. I list them in the order I would try them.
 
 1. **SSH tunnel to the HTTP server (documented parts only).** Keep the bind on `127.0.0.1` and forward the port. See [SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac).
-2. **Direct HTTP on a private network.** Bind to the VM address with `--allowed-host` and a token. This mirrors my Windows setup, where the Mac reached `http://192.168.64.13:8000/mcp`.
+2. **Direct HTTP on a private network.** Bind to the VM address with `--allowed-host` and a token. This mirrors my Windows setup, where the Mac reached `http://<vm-ip>:8000/mcp`.
 3. **stdio over SSH or a bridge.** For stdio-only servers such as Hybrid Computer Use, a launch like `ssh user@host computer-use-linux mcp` or a bridge such as `supergateway` or `mcp-proxy` is possible. Upstream `supergateway` documents `npx -y supergateway --stdio "<cmd>" --outputTransport streamableHttp --port 8000` with the endpoint at `/mcp`. `mcp-proxy` documents `mcp-proxy --port=8080 -- <cmd>` and binds to `127.0.0.1` by default. I could not verify that either one works with a desktop-control server. The SSH stdio launch is unverified too, and it must also carry `DISPLAY`, `DBUS_SESSION_BUS_ADDRESS` and `XDG_RUNTIME_DIR`.
 
 For route 1, open the tunnel on the Mac:
