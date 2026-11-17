@@ -3,7 +3,8 @@ title: How to Use a UTM MCP Server for Linux App Test Automation
 description: Run an Ubuntu ARM64 guest in UTM on Apple Silicon, put a desktop-control MCP server inside it, and let a Mac agent test a Linux GUI app.
 category: VM test automation
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 3
 readTime: 11 min
 primaryKeyword: utm mcp server
 keywords: [utm mcp, utm ubuntu vm, utm linux guest, ubuntu on apple silicon, utmctl snapshot, mac linux vm test automation]
@@ -14,7 +15,7 @@ rankizzBlurb: Rankizz tracks whether your UTM and MCP how-to guides rank and get
 
 After this guide you can boot an Ubuntu guest in UTM on an Apple Silicon Mac, run a desktop-control MCP server inside it, and have an agent on the Mac open your Linux GUI app, click through a flow and report pass or fail. It is UTM-specific. For the general server install and the list of Linux MCP options, read [the Linux MCP server guide](/blogs/linux-mcp-server-ubuntu-desktop-control) first. For other hypervisors, see [the virtual machine guide](/blogs/virtual-machine-mcp-server-linux-test-automation).
 
-This is a researched guide, not a war story. Commands come from UTM's docs and the `computer-use-linux` README, checked 2026-11-17. I have not run this Linux setup yet. I did run the Windows version: a Windows 11 ARM64 guest in UTM on Shared Network at `192.168.64.13`, with `windows-mcp` on port 8000. The Linux flow below follows that shape.
+This is a researched guide, not a war story. Commands come from UTM's docs and the `computer-use-linux` README, checked 2026-11-17. I have not run this Linux setup yet. I did run the Windows version: a Windows 11 ARM64 guest in UTM on Shared Network (a `192.168.64.x` address), with `windows-mcp` on port 8000. The Linux flow below follows that shape.
 
 ## Quick answer
 
@@ -42,9 +43,9 @@ Ubuntu Desktop ARM64 ISOs vary by release. If you cannot find one for your relea
 
 ## Step 1: Create the Ubuntu VM
 
-Create the VM in UTM, mount the ARM64 ISO, give it at least 4 GB RAM and 40 GB disk, and finish the installer. Use a throwaway username, such as `mcptest`. Under Network, leave the mode on Shared Network.
+Create the VM in UTM, mount the ARM64 ISO, give it at least 4 GB RAM and 40 GB disk, and finish the installer. Use a throwaway username, such as `testuser`. Under Network, leave the mode on Shared Network.
 
-UTM's network page says Shared Network lets the host route traffic directly so guest and host services can reach each other, and it recommends it for new VMs. It does not state an IP range. In practice the guest lands on `192.168.64.x`, which matches my Windows VM at `192.168.64.13`.
+UTM's network page says Shared Network lets the host route traffic directly so guest and host services can reach each other, and it recommends it for new VMs. It does not state an IP range. In practice the guest lands on `192.168.64.x`, the same range my Windows VM got.
 
 ## Step 2: Install guest tools
 
@@ -114,7 +115,7 @@ Snapshot after the server works and before the agent touches anything. Restore a
 Open the tunnel from the Mac. SSH setup is in [SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac).
 
 ```bash
-ssh -N -L 5200:127.0.0.1:5200 mcptest@192.168.64.x
+ssh -N -L 5200:127.0.0.1:5200 <user>@192.168.64.x
 curl -i http://127.0.0.1:5200/mcp
 ```
 
