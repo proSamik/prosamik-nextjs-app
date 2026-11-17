@@ -3,7 +3,8 @@ title: How to Use RDP from a Mac to Control Linux
 description: Set up xrdp with XFCE on Ubuntu, connect from macOS with Windows App, fix the black screen, and know when GNOME Remote Desktop or VNC fits better.
 category: Remote access
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 12
 readTime: 10 min
 primaryKeyword: remote desktop mac to linux
 keywords: [rdp from mac to linux, xrdp ubuntu, windows app mac linux, xrdp xfce, xrdp black screen, gnome remote desktop]
@@ -70,7 +71,7 @@ sudo ufw status
 sudo ufw allow 3389/tcp
 ```
 
-If `ufw` says `inactive`, skip the second command. If you can, restrict the rule to your Mac's address with `sudo ufw allow from 192.168.64.1 to any port 3389 proto tcp`. I assumed `192.168.64.1` is the host address on UTM's Shared Network, which I have not checked. Look up the real one before you use it.
+If `ufw` says `inactive`, skip the second command. If you can, restrict the rule to your Mac's address with `sudo ufw allow from <mac-ip> to any port 3389 proto tcp`. On UTM's Shared Network the Mac is the host side of the virtual network, but I have not checked its address. Look up the real one (for example with `ipconfig getifaddr` on the Mac) before you use it.
 
 ## Step 5: Connect with Windows App on the Mac
 
@@ -78,7 +79,7 @@ Microsoft's Windows App is the macOS app that replaced Microsoft Remote Desktop.
 
 1. Install Windows App from the Mac App Store.
 2. Click `+`, then Add PC.
-3. Enter the Ubuntu IP in PC name, for example `192.168.64.12`.
+3. Enter the Ubuntu IP in PC name (the `<vm-ip>` you found with `ip -br addr`).
 4. Save, then double-click the entry.
 5. Accept the certificate warning on first connect.
 6. In the xrdp login screen, choose `Xorg`, then enter the Ubuntu username and password.
