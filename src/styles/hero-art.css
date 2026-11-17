@@ -30,10 +30,9 @@
   .device-story{min-height:0}
   .device-story .hero-section{min-height:0;padding-block:20px 48px;pointer-events:auto}
   .device-story .hero-frame{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:clamp(14px,1.8vw,28px);align-items:center;min-height:clamp(480px,calc(100vh - 220px),640px);padding:clamp(28px,3.4vw,56px) clamp(24px,3vw,48px) clamp(28px,3.4vw,56px) clamp(48px,6vw,96px);background:#fff;border:1px solid #e6e6e6;border-radius:36px;box-shadow:0 46px 90px -42px #00000040,0 3px 12px #0000000d,inset 0 0 0 7px #fff,inset 0 0 0 8px #efefef}
-  .device-story .hero-copy{width:auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+  .device-story .hero-copy{width:auto;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left}
   .device-story .hero-copy h1{margin:0 0 26px}
-  .device-story .hero-copy .hero-flip>span{justify-content:center}
-  .device-story .hero-actions{align-self:center;justify-content:center}
+  .device-story .hero-actions{align-self:flex-start;justify-content:flex-start}
   .device-story .hero-art-wrap{margin:0;display:flex;align-items:center;justify-content:flex-start}
   /* Inside the frame the image needs no card of its own. */
   .hero-art{width:min(100%,calc(clamp(300px,calc(100vh - 400px),500px) * 1.25));margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:visible}
@@ -43,12 +42,20 @@
 
 /* ---- Backdrop: soft colour washes + a faint black checkerboard grid (light theme only) ---- */
 .device-story{position:relative;isolation:isolate}
-.device-story::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+.device-story::before,.device-story::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+/* Blue (Desktop Apps) and orange (Extensions) washes, matching the flipping word colours. */
+.device-story::before{
   background:
-    repeating-conic-gradient(#000000 0 25%,transparent 0 50%) 0 0/120px 120px,
+    radial-gradient(52% 62% at 6% 4%,#e8590c33 0,transparent 70%),
+    radial-gradient(56% 66% at 96% 10%,#1d4ed833 0,transparent 70%),
+    radial-gradient(40% 40% at 60% 0%,#0ea5b71f 0,transparent 70%);
+  -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
+/* Black grid lines, faded out downwards. Lines only: no filled checks. */
+.device-story::after{
+  background:
     linear-gradient(#000 1px,transparent 1px) 0 0/60px 60px,
     linear-gradient(90deg,#000 1px,transparent 1px) 0 0/60px 60px;
-  opacity:.1;
+  opacity:.12;
   -webkit-mask-image:radial-gradient(110% 100% at 50% 0%,#000 0,transparent 72%);mask-image:radial-gradient(110% 100% at 50% 0%,#000 0,transparent 72%)}
 /* Images are on pure white; multiplying the whole slide lets the card gradient show through them. */
 .hero-art-slide{mix-blend-mode:multiply}
@@ -57,17 +64,12 @@
   .hero-art{background:linear-gradient(150deg,#fff 0%,#fafafa 100%)}
 }
 @media(min-width:1000px){
-  /* The framed card: gradient surface, a finer grid that fades out behind the text, glossy hairline edge. */
+  /* The framed card sits on top of the grid: a clean blue/orange gradient surface, no grid of its own. */
   .device-story .hero-frame{position:relative;overflow:hidden;
     background:
-      radial-gradient(75% 100% at 100% 0%,#00000014 0,transparent 60%),
-      linear-gradient(135deg,#ffffff 0%,#fbfbfb 100%)}
-  .device-story .hero-frame::before{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
-    background:
-      linear-gradient(#000 1px,transparent 1px) 0 0/44px 44px,
-      linear-gradient(90deg,#000 1px,transparent 1px) 0 0/44px 44px;
-    opacity:.14;
-    -webkit-mask-image:radial-gradient(75% 95% at 82% 45%,#000 0,transparent 75%);mask-image:radial-gradient(75% 95% at 82% 45%,#000 0,transparent 75%)}
+      radial-gradient(70% 100% at 100% 0%,#1d4ed81a 0,transparent 62%),
+      radial-gradient(60% 90% at 0% 100%,#e8590c1a 0,transparent 62%),
+      linear-gradient(135deg,#ffffff 0%,#fcfcfc 100%)}
   .device-story .hero-copy,.device-story .hero-art-wrap{position:relative}
   .hero-art{isolation:auto}
   /* No panel of its own: the image blends into the card (multiply) so the card gradient shows through. */
