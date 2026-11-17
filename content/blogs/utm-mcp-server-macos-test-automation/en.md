@@ -4,6 +4,7 @@ description: Run a macOS guest in UTM, enable SSH, install a macOS MCP server in
 category: VM test automation
 publishedAt: 2026-11-17
 updatedAt: 2026-11-17
+order: 2
 readTime: 11 min
 primaryKeyword: utm mcp server
 keywords: [utm macos vm, macos virtual machine on mac, utm macos guest, macos mcp in vm, apple virtualization framework, utm ssh macos]
