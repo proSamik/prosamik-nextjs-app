@@ -1,0 +1,35 @@
+/* Hero: a rounded product card (hairline border, soft shadow) beside the heading, like the Subclip
+   and Rankizz sites. The card stays put; the image inside it changes with the flipping word, on the
+   same 12s cycle as .hero-flip. The old image fades fully out before the new one fades in, so two
+   images are never shown on top of each other. */
+.hero-art{position:relative;width:min(100%,520px);aspect-ratio:5/4;margin-inline:auto;border-radius:28px;background:#fff;border:1px solid #e9e9e9;box-shadow:0 34px 70px -30px #00000033,0 2px 8px #0000000d;overflow:hidden}
+.hero-art-slide{position:absolute;inset:0;display:block;opacity:0;visibility:hidden;animation:hero-art-cycle 12s ease-in-out infinite both;-webkit-tap-highlight-color:transparent}
+.hero-art-slide:nth-child(2){animation-delay:-9s}
+.hero-art-slide:nth-child(3){animation-delay:-6s}
+.hero-art-slide:nth-child(4){animation-delay:-3s}
+.hero-art-slide img{display:block;width:100%;height:100%;object-fit:contain;user-select:none}
+.hero-art-slide:focus-visible{outline:2px solid #8a652e;outline-offset:-4px}
+@keyframes hero-art-cycle{
+  0%,19%{opacity:1;visibility:visible;transform:scale(1)}
+  22%{opacity:0;visibility:hidden;transform:scale(.985)}
+  22.01%,97%{opacity:0;visibility:hidden;transform:scale(.985)}
+  100%{opacity:1;visibility:visible;transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-art-slide{animation:none;opacity:0;visibility:hidden;transform:none}
+  .hero-art-slide:first-child{opacity:1;visibility:visible}
+}
+
+/* Wide screens: one calm band. Heading + buttons are one block, centered in the band; the card sits
+   right beside them (small gap), as tall as the heading block, never touching the nav. */
+.hero-art-wrap{margin-top:24px}
+@media(min-width:1000px){
+  .device-story{min-height:0}
+  .device-story .hero-section{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:clamp(28px,3.4vw,52px);align-items:stretch;min-height:clamp(540px,calc(100vh - 170px),700px);padding-block:40px;pointer-events:auto}
+  .device-story .hero-copy{width:auto;display:flex;flex-direction:column;justify-content:center}
+  .device-story .hero-copy h1{margin:0 0 26px}
+  .device-story .hero-actions{align-self:flex-start}
+  .device-story .hero-art-wrap{margin:0;display:flex;align-items:center;justify-content:flex-start}
+  .hero-art{width:min(100%,calc(clamp(320px,calc(100vh - 340px),560px) * 1.25));margin:0}
+}
+@media(max-width:999px){.hero-art{width:min(100%,520px)}}
