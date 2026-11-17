@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import AgentInstructionsButton from '@/components/blogs/AgentInstructionsButton';
 import CopyCodeButtons from '@/components/blogs/CopyCodeButtons';
 import PromoCards from '@/components/blogs/PromoCards';
 import { getBlogLocales, getBlogPost, getBlogSlugs } from '@/lib/blogs/content';
@@ -79,6 +80,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <span>{post.readTime} read</span>
                     <a href={`${localizePath(`/blogs/${slug}`, post.locale)}.md`} rel="alternate" type="text/markdown">Markdown for agents</a>
                 </p>
+                <AgentInstructionsButton slug={post.slug} placement="top" />
             </header>
             <div className="blog-layout">
                 <nav className="blog-toc" aria-label="On this page">
@@ -88,6 +90,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <div className="blog-body-column">
                     <div id={bodyId} className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />
                     <CopyCodeButtons containerId={bodyId} />
+                    <AgentInstructionsButton slug={post.slug} placement="bottom" />
                     <PromoCards post={post} />
                     {related.length > 0 && (
                         <nav className="blog-related" aria-label="Related guides">
