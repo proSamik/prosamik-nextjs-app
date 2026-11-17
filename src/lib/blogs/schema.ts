@@ -25,7 +25,7 @@ export function buildBlogJsonLd(post: BlogPost) {
             isPartOf: { '@type': 'Blog', name: 'Blogs by Samik Choudhury', url: `${siteMetadata.siteUrl}${localizePath('/blogs', post.locale)}` },
             author,
             publisher: author,
-            image: siteMetadata.defaultImage,
+            image: { '@type': 'ImageObject', url: `${url}/opengraph-image`, width: 1200, height: 630 },
         },
         {
             '@type': 'BreadcrumbList',
