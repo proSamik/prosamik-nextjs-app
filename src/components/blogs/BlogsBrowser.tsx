@@ -57,13 +57,9 @@ export default function BlogsBrowser({ items, tags, children }: { items: BlogLis
                     {query && <button type="button" className="blog-search-clear" onClick={() => setQuery('')} aria-label="Clear search"><X size={16} aria-hidden="true" /></button>}
                 </label>
                 <div className="blog-tags" role="group" aria-label="Filter by topic">
-                    <button type="button" className="blog-tag" data-tone="all" aria-pressed={tag === null} onClick={() => setTag(null)}>
-                        All <span>{items.length}</span>
-                    </button>
+                    <button type="button" className="blog-tag" aria-pressed={tag === null} onClick={() => setTag(null)}>All</button>
                     {tags.map((option) => (
-                        <button key={option.slug} type="button" className="blog-tag" data-tone={option.slug} aria-pressed={tag === option.slug} onClick={() => setTag(tag === option.slug ? null : option.slug)}>
-                            <i aria-hidden="true" />{option.name} <span>{option.count}</span>
-                        </button>
+                        <button key={option.slug} type="button" className="blog-tag" aria-pressed={tag === option.slug} onClick={() => setTag(tag === option.slug ? null : option.slug)}>{option.name}</button>
                     ))}
                 </div>
                 <p className="blog-results-note" role="status" aria-live="polite">
