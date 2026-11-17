@@ -38,7 +38,7 @@ Read the Security section before step 3. That server has no authentication.
 | Host | MacBook, macOS |
 | Hypervisor | UTM, network mode Shared Network |
 | Guest | Windows 11 ARM64 |
-| Guest IP | An address in the `192.168.64.x` range (find yours with `ipconfig`) |
+| Guest IP | An address in the `192.168.x.x` range (find yours with `ipconfig`) |
 | uv | 0.13.9, installed with the official PowerShell installer |
 | windows-mcp | 0.8.9 (depends on fastmcp) |
 | Mac agent | Claude Code, server entry named `windows-vm` |
@@ -101,7 +101,7 @@ New-NetFirewallRule -DisplayName "Windows MCP 8000" -Direction Inbound -Protocol
 
 ## Step 5: Check it from the Mac
 
-Get the guest IP from `ipconfig` in Windows (the IPv4 line). On UTM Shared Network mine was in the `192.168.64.x` range. Then on the Mac:
+Get the guest IP from `ipconfig` in Windows (the IPv4 line). On UTM Shared Network mine was in the `192.168.x.x` range. Then on the Mac:
 
 ```bash
 curl -v http://<vm-ip>:8000/mcp
