@@ -36,7 +36,8 @@ for (const slug of slugs) {
         assert.match(data.updatedAt, /^\d{4}-\d{2}-\d{2}$/);
         assert.ok(!Number.isNaN(Date.parse(data.updatedAt)), `${slug}: updatedAt is not a date`);
         assert.ok(data.updatedAt >= data.publishedAt, `${slug}: updatedAt is before publishedAt`);
-        assert.ok(data.description.length >= 60 && data.description.length <= 200, `${slug}: description length ${data.description.length}`);
+        assert.ok(data.description.length >= 90 && data.description.length <= 160, `${slug}: description should be 90-160 characters for search snippets, got ${data.description.length}`);
+        assert.ok(data.seoTitle && data.seoTitle.length >= 30 && data.seoTitle.length <= 60, `${slug}: seoTitle should be 30-60 characters, got ${data.seoTitle?.length}`);
         const faqs = extractFaqs(body);
         assert.ok(faqs.length >= 3, `${slug}: needs at least 3 FAQ entries for FAQPage schema, found ${faqs.length}`);
         for (const faq of faqs) assert.ok(faq.answer.length > 20, `${slug}: FAQ "${faq.question}" has an empty answer`);

@@ -17,6 +17,8 @@ export interface BlogPost {
     /** Locale the body is actually written in (differs from `locale` when falling back to English). */
     contentLocale: Locale;
     title: string;
+    /** Page <title>: kept to about 60 characters so search results don't truncate it. */
+    seoTitle: string;
     description: string;
     category: string;
     publishedAt: string;
@@ -86,6 +88,7 @@ export function getBlogPost(slug: string, locale: Locale = DEFAULT_LOCALE): Blog
         locale,
         contentLocale,
         title: text(data, 'title', file),
+        seoTitle: typeof data.seoTitle === 'string' && data.seoTitle ? data.seoTitle : text(data, 'title', file),
         description: text(data, 'description', file),
         category: text(data, 'category', file),
         publishedAt: text(data, 'publishedAt', file),
