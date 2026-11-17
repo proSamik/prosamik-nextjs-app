@@ -127,3 +127,36 @@
 .hero-title .hero-flip>span>svg{width:.78em;height:.78em;stroke-width:1.5;flex-shrink:0}
 .hero-title .hero-flip .flip-mcp svg{width:.78em;height:.78em}
 .hero-title .hero-flip>span{gap:.14em}
+
+/* ---- Card border extras (wide screens): viewfinder corners, a colour ring that follows the word, and a
+   timeline ruler with a playhead that crosses once per 15s cycle. All static or opacity/transform only. ---- */
+.hero-ruler{display:none}
+.glow-saas{--ring:#7c5ce0cc}
+.glow-desktop{--ring:#2563ebcc}
+.glow-extension{--ring:#e8590ccc}
+.glow-mobile{--ring:#16a34acc}
+.glow-mcp{--ring:#e11d48cc}
+@media(min-width:1000px){
+  .hero-glow-card>span{border-radius:inherit;box-shadow:inset 0 0 0 2px var(--ring)}
+  /* Camera viewfinder corner brackets, inside the photo mat. */
+  .device-story .hero-frame::before{content:"";position:absolute;inset:18px;pointer-events:none;opacity:.8;
+    background:
+      linear-gradient(#111,#111) top left/22px 2px no-repeat,
+      linear-gradient(#111,#111) top left/2px 22px no-repeat,
+      linear-gradient(#111,#111) top right/22px 2px no-repeat,
+      linear-gradient(#111,#111) top right/2px 22px no-repeat,
+      linear-gradient(#111,#111) bottom left/22px 2px no-repeat,
+      linear-gradient(#111,#111) bottom left/2px 22px no-repeat,
+      linear-gradient(#111,#111) bottom right/22px 2px no-repeat,
+      linear-gradient(#111,#111) bottom right/2px 22px no-repeat}
+  /* Video-timeline ruler along the bottom edge. */
+  .hero-ruler{display:block;position:absolute;left:64px;right:64px;bottom:26px;height:12px;pointer-events:none;overflow:hidden;
+    background:
+      repeating-linear-gradient(90deg,#0000003d 0 1px,transparent 1px 12px) bottom/100% 5px no-repeat,
+      repeating-linear-gradient(90deg,#00000066 0 1px,transparent 1px 60px) bottom/100% 10px no-repeat}
+  .hero-ruler>i{position:absolute;inset:0;transform:translateX(-100%);animation:hero-playhead 15s linear infinite both}
+  .hero-ruler>i::after{content:"";position:absolute;right:-1px;top:0;width:2px;height:100%;background:#111;border-radius:1px}
+  .hero-ruler>i::before{content:"";position:absolute;right:-3px;top:-1px;width:6px;height:6px;border-radius:50%;background:#111}
+}
+@keyframes hero-playhead{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.hero-ruler>i{animation:none;transform:translateX(-50%)}}
