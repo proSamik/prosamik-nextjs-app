@@ -83,6 +83,37 @@ export const projects: Project[] = [
         ],
     },
     {
+        slug: "vm-mcp-test-lab",
+        title: "VM MCP Test Lab",
+        type: "Guides & Setup",
+        description: "Letting an AI agent on my Mac drive Windows, Linux, and macOS virtual machines to test desktop apps",
+        problem: [
+            "I build on a Mac, but the apps I ship also have to work on Windows and Linux. Testing by hand meant booting a VM, clicking through the same flow again, and hoping I remembered every step. I wanted an AI agent on my Mac to do that clicking for me inside a virtual machine.",
+        ],
+        motivation: [
+            "MCP servers can give an agent a screen, a mouse, and a keyboard. If one runs inside a UTM virtual machine and the agent connects to it over the network, the agent can launch an app, follow a test script, and report what it saw. I started with Windows because that was the gap in my own testing, then researched the Linux and macOS equivalents.",
+            "I am also writing the whole thing down as a series of guides, with the exact commands and the errors I hit, because most of what I found was scattered across issue threads. The Windows MCP server guide is the starting point, and every guide also has a Markdown version so other agents can read it.",
+        ],
+        mistakes: [
+            "I assumed the install would be one command. The default Python version tried to build packages from source on Windows ARM and failed, then a second package failed for lack of the C++ linker. Pinning Python 3.12 and skipping the source build of one dependency fixed it, but it took about an hour of failed builds to find that out.",
+            "I also tried to SSH into the Windows VM and found that the OpenSSH Server feature was not installed and its download sat on a progress bar for a long time. I should have checked that Windows could reach Windows Update before blaming the command.",
+        ],
+        learnings: [
+            "Running the MCP server as a scheduled task that starts at login is what turns this from a demo into something I can rely on. Before that, the whole setup depended on a PowerShell window staying open.",
+            "An agent with control of a desktop is as powerful as it sounds. The server I ran has no authentication, so the network is the only protection. The guides tell readers to keep the VM on UTM's shared network, take a snapshot before a test run, use a throwaway account, and never forward the port.",
+        ],
+        achievements: [
+            "The Windows setup works end to end: a Windows 11 VM on my Mac runs a Windows MCP server at login, and the Mac can reach its MCP endpoint over the local network.",
+            "The Linux and macOS guides are researched from upstream documentation and I say so in each one; I have not run those setups yet. The guides cover the Windows MCP server, the Linux MCP server, the macOS MCP server, UTM and virtual machine test automation, SSH, RDP, and VNC versus RDP.",
+        ],
+        projectUrl: "https://www.prosamik.com/blogs",
+        storyLinks: [
+            { label: "Windows MCP server guide", url: "/blogs/windows-mcp-server-for-mac-utm-vm" },
+            { label: "Linux MCP server", url: "/blogs/linux-mcp-server-ubuntu-desktop-control" },
+            { label: "macOS MCP server", url: "/blogs/macos-mcp-server-computer-use" },
+        ],
+    },
+    {
         slug: "track-bad-habits",
         title: "Track Bad Habits",
         type: "iOS App",
