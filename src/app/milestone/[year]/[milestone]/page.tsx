@@ -80,7 +80,7 @@ export default async function MilestonePage({ params }: MilestonePageProps) {
     return <article className="portfolio-page page-width">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(milestoneJsonLd) }} />
         <Breadcrumbs items={[{ label: 'Journey', href: '/about' }, { label: `${item.yearRange.start} — ${item.yearRange.end}`, href: `/milestone/${item.year}` }, { label: item.event.title }]} />
-        <header className="chapter-hero"><div><span className="period-date">{item.yearRange.start} — {item.yearRange.end}</span><h1>{item.event.title}</h1><p>{summary}</p><div className="chapter-author"><Image src="/me-here.jpg" alt="" width={36} height={36} />Samik Choudhury</div></div><Notebook eager /></header>
+        <header className="chapter-hero"><div><span className="period-date">{item.yearRange.start} — {item.yearRange.end}</span><h1>{item.event.title}</h1><p>{summary}</p><div className="chapter-author"><Image src="/me-here.jpg" alt="Samik Choudhury" width={36} height={36} />Samik Choudhury</div></div><Notebook eager /></header>
         <div className="chapter-prose">{descriptionLines.map(({ nested, text }, index) => <p key={index} className={nested ? 'nested' : undefined}>{text}</p>)}<div className="skills-list" aria-label="Skills and lessons">{[...item.event.skills, ...(item.event.soft_skills || [])].map(skill => <span key={skill}>{skill.replace('#', '').replace(/([a-z])([A-Z])/g, '$1 $2')}</span>)}</div></div>
         <nav className="chapter-nav" aria-label="More chapters"><Link href={`/milestone/${item.year}`}>← Back to this period</Link>{next && <Link href={`/milestone/${next.year}/${next.slug}`}>Next chapter →</Link>}</nav>
     </article>;
