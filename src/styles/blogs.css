@@ -134,3 +134,37 @@
 .blog-post .blog-hero{position:sticky;top:24px;z-index:0;will-change:transform,opacity}
 .blog-post .blog-layout{position:relative;z-index:1;background:#fff;margin:40px calc(-1 * clamp(14px,2vw,32px)) 0;padding:clamp(24px,3vw,40px) clamp(14px,2vw,32px) 24px;border-radius:32px 32px 0 0;box-shadow:0 -28px 60px -36px #00000033}
 @media(prefers-reduced-motion:reduce){.blog-post .blog-hero{position:static}}
+
+/* Real logos in the "Tools I use" cards */
+.blog-promo-logo{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:36px}
+.blog-promo-logo img{height:30px;width:auto;max-width:70%;object-fit:contain;object-position:left center}
+.blog-promo-arrow{font-size:20px;color:#111}
+
+/* ---- Search and topic badges ---- */
+.blog-toolbar{position:sticky;top:12px;z-index:3;margin:0 0 8px;padding:14px 0 12px;background:#ffffffee;backdrop-filter:blur(8px)}
+.blog-search{display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border:1px solid #dcdcdc;border-radius:999px;background:#fff;color:#777;transition:border-color .15s,box-shadow .15s}
+.blog-search:focus-within{border-color:#111;box-shadow:0 0 0 4px #1111110f;color:#111}
+.blog-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:16px Arial,Helvetica,sans-serif;color:#111}
+.blog-search input::-webkit-search-cancel-button{display:none}
+.blog-search-clear{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:50%;background:#eee;color:#444;cursor:pointer}
+.blog-search-clear:hover{background:#111;color:#fff}
+.blog-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.blog-tag{--ink:#111;--tint:#f3f3f3;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border:1px solid #e2e2e2;border-radius:999px;background:#fff;color:#333;font:600 14px Arial,Helvetica,sans-serif;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .15s}
+.blog-tag i{width:8px;height:8px;border-radius:50%;background:var(--ink)}
+.blog-tag span{font-weight:400;font-size:12px;color:#888;transition:color .15s}
+.blog-tag:hover{border-color:var(--ink);background:var(--tint)}
+.blog-tag:active{transform:scale(.97)}
+.blog-tag[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.blog-tag[aria-pressed=true] i{background:#fff}
+.blog-tag[aria-pressed=true] span{color:#ffffffb3}
+.blog-tag[data-tone=vm-test-automation]{--ink:#1d4ed8;--tint:#e8f0ff}
+.blog-tag[data-tone=mcp-servers]{--ink:#be123c;--tint:#ffe9ee}
+.blog-tag[data-tone=remote-access]{--ink:#15803d;--tint:#e6f6ec}
+.blog-tag[data-tone=deployment]{--ink:#c2410c;--tint:#fff0e5}
+.blog-results-note{display:flex;align-items:center;gap:12px;min-height:22px;margin:10px 2px 0;font-size:14px;color:#666}
+.blog-results-note button,.blog-empty button{border:0;background:none;padding:0;color:#111;font:600 14px Arial,Helvetica,sans-serif;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.blog-empty{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:48px 4px;font-size:16px;color:#555}
+.blog-empty strong{font-size:20px;color:#111}
+@media(max-width:560px){.blog-tag{height:34px;padding:0 12px}}
+/* The pill around the input already shows the focus ring; drop the site-wide inner outline. */
+.portfolio-site .blog-search input:focus-visible{outline:none}
