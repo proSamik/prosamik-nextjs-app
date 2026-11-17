@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUpRight, ArrowUp } from 'lucide-react';
-import { portfolioSocials } from '@/utils/portfolio';
+import { portfolioAsset, portfolioSocials } from '@/utils/portfolio';
 import EmailLink from './EmailLink';
 
 export default function Footer() {
@@ -13,7 +13,7 @@ export default function Footer() {
                 <nav aria-label="Social profiles"><span>Find me</span>{portfolioSocials.map(s => <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer">{s.label}<ArrowUpRight size={14} /></a>)}</nav>
             </div>
             <div className="footer-bottom"><a href="#top">Back to top <ArrowUp size={14} /></a></div>
-            <Image className="footer-peek" src="/image/footer-peek.jpg" alt="" width={1280} height={480} loading="eager" sizes="(max-width: 700px) 80vw, 520px" />
+            <Image className="footer-peek" src={portfolioAsset('site/footer-peek-20261118.jpg')} alt="" width={1280} height={480} loading="eager" sizes="(max-width: 700px) 80vw, 520px" />
         </footer>
     );
 }
