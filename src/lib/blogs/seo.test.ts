@@ -11,6 +11,10 @@ test('index and paginated SEO copy stays within search-result limits', () => {
     }
 });
 
+test('titles carry no site-name suffix', () => {
+    for (const page of [1, 2, 3]) assert.ok(!/\|/.test(blogsTitle(page)), `title for page ${page} has a pipe suffix`);
+});
+
 test('paginated titles and descriptions are unique per page', () => {
     assert.notEqual(blogsTitle(1), blogsTitle(2));
     assert.notEqual(blogsTitle(2), blogsTitle(3));

@@ -32,6 +32,8 @@ for (const slug of slugs) {
         for (const key of ['title', 'description', 'category', 'publishedAt', 'updatedAt', 'readTime', 'primaryKeyword', 'subclipBlurb', 'rankizzBlurb']) {
             assert.ok(data[key], `${slug}: ${key} is required`);
         }
+        assert.ok(!/\|\s*prosamik/i.test(data.seoTitle), `${slug}: seoTitle should not carry a site-name suffix`);
+        if (data.title.startsWith('How to')) assert.ok(data.seoTitle.startsWith('How to'), `${slug}: a How-to post should keep "How to" in its seoTitle`);
         assert.match(data.publishedAt, /^\d{4}-\d{2}-\d{2}$/);
         assert.match(data.updatedAt, /^\d{4}-\d{2}-\d{2}$/);
         assert.ok(!Number.isNaN(Date.parse(data.updatedAt)), `${slug}: updatedAt is not a date`);
