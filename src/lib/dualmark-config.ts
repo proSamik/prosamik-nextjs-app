@@ -5,6 +5,7 @@ import { buildAgentMarkdown } from '@/lib/blogs/render';
 import { AUTHOR_DISCLOSURE, PROMO_PRODUCTS, utmUrl } from '@/lib/blogs/promo';
 import { projects } from '@/data/projects';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
+import { BLOGS_PER_PAGE, pageHref, paginate, totalPages } from '@/lib/blogs/pagination';
 import { siteMetadata } from '@/utils/siteMetadata';
 
 // One place that describes what agents can read: the blog collection, the project stories, and
@@ -47,6 +48,21 @@ export const dualmarkConfig: DualmarkNextConfig = {
         },
     },
     staticPages: [
+        // /blogs/page/2..N.md: the same listing, one page at a time (page 1 is /blogs).
+        ...Array.from({ length: totalPages(posts().length) - 1 }, (_, i) => {
+            const page = i + 2;
+            const pages = totalPages(posts().length);
+            return {
+                pattern: pageHref(page),
+                render: () =>
+                    [
+                        `# Blogs by Samik Choudhury, page ${page} of ${pages}`,
+                        `- URL: ${siteMetadata.siteUrl}${pageHref(page)}`,
+                        `- Full list on one page: ${siteMetadata.siteUrl}/blogs.md`,
+                        paginate(posts(), page, BLOGS_PER_PAGE).map((p) => `- [${p.title}](${siteMetadata.siteUrl}/blogs/${p.slug}.md): ${p.description}`).join('\n'),
+                    ].join('\n\n') + '\n',
+            };
+        }),
         {
             pattern: '/blogs',
             render: () =>
