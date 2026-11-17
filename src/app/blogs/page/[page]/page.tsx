@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import BlogsListing from '@/components/blogs/BlogsListing';
 import { getAllBlogPosts } from '@/lib/blogs/content';
 import { pageHref, parsePage, totalPages } from '@/lib/blogs/pagination';
+import { blogsDescription, blogsTitle } from '@/lib/blogs/seo';
 import { DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { siteMetadata } from '@/utils/siteMetadata';
 
@@ -21,12 +22,14 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const page = parsePage((await params).page);
     const pages = totalPages(getAllBlogPosts(DEFAULT_LOCALE).length);
-    if (!page || page < 2 || page > pages) return { title: 'Blogs — Samik Choudhury' };
+    if (!page || page < 2 || page > pages) return { title: { absolute: blogsTitle(1) } };
     const abs = (n: number) => `${siteMetadata.siteUrl}${pageHref(n)}`;
     return {
-        title: `Blogs, page ${page} of ${pages} — Samik Choudhury`,
-        description: `Page ${page} of ${pages} of Samik's hands-on guides: the exact commands and the errors I hit.`,
+        title: { absolute: blogsTitle(page) },
+        description: blogsDescription(page, pages),
         alternates: { canonical: pageHref(page), types: { 'text/markdown': `${pageHref(page)}.md` } },
+        openGraph: { type: 'website', siteName: siteMetadata.title, url: pageHref(page), title: blogsTitle(page), description: blogsDescription(page, pages) },
+        twitter: { card: 'summary_large_image', title: blogsTitle(page), description: blogsDescription(page, pages) },
         pagination: { previous: abs(page - 1), ...(page < pages ? { next: abs(page + 1) } : {}) },
     };
 }
