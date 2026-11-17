@@ -1,19 +1,20 @@
 /* Hero: a rounded product card (hairline border, soft shadow) beside the heading, like the Subclip
    and Rankizz sites. The card stays put; the image inside it changes with the flipping word, on the
-   same 12s cycle as .hero-flip. The old image fades fully out before the new one fades in, so two
-   images are never shown on top of each other. */
+   same 15s clock and the same flip as the .hero-flip words, so the picture moves with the text. */
 .hero-art{position:relative;width:min(100%,520px);aspect-ratio:5/4;margin-inline:auto;border-radius:28px;background:#fff;border:1px solid #e9e9e9;box-shadow:0 34px 70px -30px #00000033,0 2px 8px #0000000d;overflow:hidden}
-.hero-art-slide{position:absolute;inset:0;display:block;opacity:0;visibility:hidden;animation:hero-art-cycle 12s ease-in-out infinite both;-webkit-tap-highlight-color:transparent}
-.hero-art-slide:nth-child(2){animation-delay:-9s}
-.hero-art-slide:nth-child(3){animation-delay:-6s}
-.hero-art-slide:nth-child(4){animation-delay:-3s}
+.hero-art{perspective:1100px}
+.hero-art-slide{position:absolute;inset:0;display:block;backface-visibility:hidden;opacity:0;visibility:hidden;animation:hero-art-cycle 15s ease-in-out infinite both;-webkit-tap-highlight-color:transparent}
+.hero-art-slide:nth-child(2){animation-delay:-12s}
+.hero-art-slide:nth-child(3){animation-delay:-9s}
+.hero-art-slide:nth-child(4){animation-delay:-6s}
+.hero-art-slide:nth-child(5){animation-delay:-3s}
 .hero-art-slide img{display:block;width:100%;height:100%;object-fit:contain;user-select:none}
 .hero-art-slide:focus-visible{outline:2px solid #8a652e;outline-offset:-4px}
 @keyframes hero-art-cycle{
-  0%,19%{opacity:1;visibility:visible;transform:scale(1)}
-  22%{opacity:0;visibility:hidden;transform:scale(.985)}
-  22.01%,97%{opacity:0;visibility:hidden;transform:scale(.985)}
-  100%{opacity:1;visibility:visible;transform:scale(1)}
+  0%,15%{opacity:1;visibility:visible;transform:translateY(0) rotateX(0deg)}
+  20%{opacity:0;visibility:hidden;transform:translateY(-2.5%) rotateX(24deg)}
+  20.01%,95%{opacity:0;visibility:hidden;transform:translateY(2.5%) rotateX(-24deg)}
+  100%{opacity:1;visibility:visible;transform:translateY(0) rotateX(0deg)}
 }
 @media(prefers-reduced-motion:reduce){
   .hero-art-slide{animation:none;opacity:0;visibility:hidden;transform:none}
@@ -49,9 +50,6 @@
 .device-story::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
     linear-gradient(180deg,#fff0 55%,#fff 100%),
-    radial-gradient(52% 62% at 6% 4%,#e8590c33 0,#e8590c00 70%),
-    radial-gradient(56% 66% at 96% 10%,#1d4ed833 0,#1d4ed800 70%),
-    radial-gradient(40% 40% at 60% 0%,#0ea5b71f 0,#0ea5b700 70%),
     radial-gradient(110% 100% at 50% 0%,#fff0 0,#fff 72%),
     linear-gradient(#0000001f 1px,transparent 1px) 0 0/60px 60px,
     linear-gradient(90deg,#0000001f 1px,transparent 1px) 0 0/60px 60px,
@@ -64,8 +62,6 @@
   /* The framed card sits on top of the grid: a clean blue/orange gradient surface, no grid of its own. */
   .device-story .hero-frame{position:relative;overflow:hidden;
     background:
-      radial-gradient(70% 100% at 100% 0%,#1d4ed81a 0,transparent 62%),
-      radial-gradient(60% 90% at 0% 100%,#e8590c1a 0,transparent 62%),
       linear-gradient(135deg,#ffffff 0%,#fcfcfc 100%)}
   .device-story .hero-copy,.device-story .hero-art-wrap{position:relative}
   /* No panel of its own: the transparent image sits straight on the card. */
@@ -80,3 +76,52 @@
 .device-story .hero-section{padding-top:calc(84px + 18px)}
 @media(min-width:1000px){.device-story .hero-section{padding-top:calc(84px + 20px)}}
 @media(max-width:700px){.site-header.is-home{margin-bottom:-76px}.device-story .hero-section{padding-top:calc(76px + 18px)}}
+
+/* ---- Five flipping words, 3s each (15s cycle). Words, images and glow all share this clock. ---- */
+.hero-title .hero-flip>span{animation:hero-word-flip-5 15s ease-in-out infinite both}
+.hero-title .hero-flip>span:nth-child(1){animation-delay:0s}
+.hero-title .hero-flip>span:nth-child(2){animation-delay:-12s}
+.hero-title .hero-flip>span:nth-child(3){animation-delay:-9s}
+.hero-title .hero-flip>span:nth-child(4){animation-delay:-6s}
+.hero-title .hero-flip>span:nth-child(5){animation-delay:-3s}
+@keyframes hero-word-flip-5{
+  0%,15%{opacity:1;transform:translateY(0) rotateX(0deg)}
+  20%{opacity:0;transform:translateY(-.18em) rotateX(90deg)}
+  20.01%,95%{opacity:0;transform:translateY(.18em) rotateX(-90deg)}
+  100%{opacity:1;transform:translateY(0) rotateX(0deg)}
+}
+.flip-mcp{color:#be123c}
+.hero-title .hero-flip .flip-mcp{gap:.3em}
+.hero-title .hero-flip .flip-mcp svg{width:.5em;height:.5em;stroke:none;stroke-width:0;transform:none}
+.hero-title .flip-mcp{--c1:#be123c;--c2:#f43f5e}
+.hero-flip svg{fill:currentColor}
+.hero-flip .flip-saas svg,.hero-flip .flip-desktop svg,.hero-flip .flip-mobile svg,.hero-flip .flip-extension svg{fill:none}
+
+/* Colour glow behind the hero: one layer per word, matching that word's gradient. Opacity-only animation. */
+.hero-glow{position:absolute;inset:0;pointer-events:none}
+.hero-glow>span{position:absolute;inset:0;opacity:0;animation:hero-glow-cycle 15s linear infinite both}
+.hero-glow>span:nth-child(2){animation-delay:-12s}
+.hero-glow>span:nth-child(3){animation-delay:-9s}
+.hero-glow>span:nth-child(4){animation-delay:-6s}
+.hero-glow>span:nth-child(5){animation-delay:-3s}
+@keyframes hero-glow-cycle{0%,15%{opacity:1}20%{opacity:0}20.01%,95%{opacity:0}100%{opacity:1}}
+.glow-saas{--a:#5b3fd138;--b:#b26bd836}
+.glow-desktop{--a:#1d4ed838;--b:#0ea5b733}
+.glow-mobile{--a:#15803d38;--b:#65a30d33}
+.glow-extension{--a:#b4530938;--b:#e8590c36}
+.glow-mcp{--a:#be123c33;--b:#f43f5e33}
+/* Behind everything, over the grid. */
+.hero-glow-wall{z-index:-1}
+.hero-glow-wall>span{background:radial-gradient(52% 62% at 6% 4%,var(--a) 0,transparent 70%),radial-gradient(56% 66% at 96% 10%,var(--b) 0,transparent 70%)}
+/* Inside the framed card (wide screens only; absolute, so it never takes a grid cell). */
+.hero-glow-card{display:none;border-radius:inherit;overflow:hidden}
+@media(min-width:1000px){
+  .hero-glow-card{display:block}
+  .hero-glow-card>span{background:radial-gradient(70% 100% at 100% 0%,var(--b) 0,transparent 62%),radial-gradient(60% 90% at 0% 100%,var(--a) 0,transparent 62%)}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-title .hero-flip>span{animation:none;opacity:0;transform:none}
+  .hero-title .hero-flip>span:first-child{opacity:1}
+  .hero-glow>span{animation:none;opacity:0}
+  .hero-glow>span:first-child{opacity:1}
+}
