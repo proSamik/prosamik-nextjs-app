@@ -4,6 +4,7 @@ description: Compare UTM, Tart, Parallels, VMware Fusion and Lume for macOS gues
 category: VM test automation
 publishedAt: 2026-11-17
 updatedAt: 2026-11-17
+order: 8
 readTime: 12 min
 primaryKeyword: virtual machine mcp server
 keywords: [tart macos vm, macos vm golden image, lume macos vm, parallels macos vm mcp, macos ci virtual machine, ai agent test automation macos]
