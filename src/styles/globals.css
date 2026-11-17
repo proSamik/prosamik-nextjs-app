@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./portfolio.css";
+@import "./blogs.css";
+@import "./hero-art.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
