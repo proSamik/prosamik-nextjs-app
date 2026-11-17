@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { ArrowUpRight, Check, Plus, Globe, Monitor, GitBranch, Database, FileText, Copy, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Check, Plus, Globe, Monitor, GitBranch, Database, FileText, Copy, Sparkles, Terminal } from 'lucide-react';
 import { portfolioAsset } from '@/utils/portfolio';
 
 export function Laptop({ eager = false }: { eager?: boolean }) {
@@ -34,7 +34,7 @@ export function Notebook({ eager = false }: { eager?: boolean }) {
     return <div className="notebook-scene"><Image src={portfolioAsset('notebook-v4.webp')} alt="An open notebook with a pen: what I tried and what I learned" loading={eager ? "eager" : "lazy"} width={1290} height={1015} sizes="(max-width: 700px) 100vw, 55vw" /></div>;
 }
 
-const icons = { freescreenshot: Monitor, githubme: FileText, 'consistency-tracker': GitBranch, 'tweet-copier': Copy, onlinedb: Database, prosamik: Globe };
+const icons = { 'vm-mcp-test-lab': Terminal, freescreenshot: Monitor, githubme: FileText, 'consistency-tracker': GitBranch, 'tweet-copier': Copy, onlinedb: Database, prosamik: Globe };
 export function ProjectVisual({ slug, eager = false }: { slug: string; eager?: boolean }) {
     if (slug === 'subclip') return <div className="project-visual visual-laptop"><Laptop eager={eager} /></div>;
     if (slug === 'track-bad-habits') return <div className="project-visual visual-phone"><HabitPhone /></div>;
