@@ -2,6 +2,7 @@ import { siteMetadata } from '@/utils/siteMetadata';
 import { localizePath } from '@/lib/i18n/config';
 import type { BlogPost } from './content';
 import { postUrl } from './render';
+import { faqPlainText } from './faq';
 
 const author = { '@type': 'Person', name: 'Samik Choudhury', url: siteMetadata.siteUrl };
 
@@ -21,6 +22,7 @@ export function buildBlogJsonLd(post: BlogPost) {
             inLanguage: post.contentLocale,
             keywords: [post.primaryKeyword, ...post.keywords].join(', '),
             articleSection: post.category,
+            isPartOf: { '@type': 'Blog', name: 'Blogs by Samik Choudhury', url: `${siteMetadata.siteUrl}${localizePath('/blogs', post.locale)}` },
             author,
             publisher: author,
             image: siteMetadata.defaultImage,
@@ -40,7 +42,7 @@ export function buildBlogJsonLd(post: BlogPost) {
             mainEntity: post.faqs.map((faq) => ({
                 '@type': 'Question',
                 name: faq.question,
-                acceptedAnswer: { '@type': 'Answer', text: faq.answer.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[`*_]/g, '') },
+                acceptedAnswer: { '@type': 'Answer', text: faqPlainText(faq.answer) },
             })),
         });
     }
