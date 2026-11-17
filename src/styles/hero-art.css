@@ -89,7 +89,7 @@
 }
 .flip-mcp{color:#be123c}
 .hero-title .hero-flip .flip-mcp{gap:.3em}
-.hero-title .hero-flip .flip-mcp svg{width:.5em;height:.5em;stroke:none;stroke-width:0;transform:none}
+.hero-title .hero-flip .flip-mcp svg{stroke:none;stroke-width:0;transform:none}
 .hero-title .flip-mcp{--c1:#be123c;--c2:#f43f5e}
 .hero-flip svg{fill:currentColor}
 .hero-flip .flip-saas svg,.hero-flip .flip-desktop svg,.hero-flip .flip-mobile svg,.hero-flip .flip-extension svg{fill:none}
@@ -122,3 +122,8 @@
   .hero-glow>span{animation:none;opacity:0}
   .hero-glow>span:first-child{opacity:1}
 }
+
+/* Word icons sized to the flipping word's text (they were small). Same size for every word. */
+.hero-title .hero-flip>span>svg{width:.78em;height:.78em;stroke-width:1.5;flex-shrink:0}
+.hero-title .hero-flip .flip-mcp svg{width:.78em;height:.78em}
+.hero-title .hero-flip>span{gap:.14em}
