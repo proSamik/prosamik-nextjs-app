@@ -47,3 +47,28 @@ test('post order values are unique numbers', () => {
     assert.equal(new Set(orders).size, orders.length, 'duplicate order values');
     for (const value of orders) assert.match(value, /^\d+$/);
 });
+
+// Privacy guard: posts get pasted into agents and indexed, so they must never carry the author's real
+// addresses, machine/user names, emails, IDs or secret-shaped strings. Use placeholders (<vm-ip>, <user>),
+// ranges (192.168.64.x) or generic examples instead.
+const ALLOWED_IPS = new Set(['0.0.0.0', '127.0.0.1', '0.0.1.0']); // bind-all, loopback, a Windows feature version
+const FORBIDDEN: Array<[string, RegExp]> = [
+    ['email address', /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.[A-Za-z]{2,}/],
+    ['home directory with a real user name', /\/Users\/(?!<)[A-Za-z0-9._-]+|\/home\/(?!<)[A-Za-z0-9._-]+|C:\\Users\\(?![<\\])[A-Za-z0-9._-]+/],
+    ['UUID', /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i],
+    ['secret-shaped token', /\b(?:sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{12,}|AIza[0-9A-Za-z_-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,})/],
+    ['private key block', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
+];
+
+for (const slug of slugs) {
+    test(`${slug}: contains no personal identifiers`, () => {
+        const raw = readFileSync(path.join(dir, slug, 'en.md'), 'utf8');
+        for (const ip of raw.match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g) ?? []) {
+            assert.ok(ALLOWED_IPS.has(ip), `${slug}: contains a specific IP address (${ip}). Use <vm-ip> or a range like 192.168.64.x`);
+        }
+        for (const [label, pattern] of FORBIDDEN) {
+            const match = raw.match(pattern);
+            assert.ok(!match, `${slug}: contains a ${label} (${match?.[0]?.slice(0, 40)}). Replace it with a placeholder`);
+        }
+    });
+}
