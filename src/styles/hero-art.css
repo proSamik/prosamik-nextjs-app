@@ -51,8 +51,8 @@
     linear-gradient(#0000000f 1px,transparent 1px) 0 0/60px 60px,
     linear-gradient(90deg,#0000000f 1px,transparent 1px) 0 0/60px 60px;
   -webkit-mask-image:linear-gradient(180deg,#000 60%,transparent 100%);mask-image:linear-gradient(180deg,#000 60%,transparent 100%)}
-/* Images are on pure white; multiply lets the card gradient show through them. */
-.hero-art-slide img{mix-blend-mode:multiply}
+/* Images are on pure white; multiplying the whole slide lets the card gradient show through them. */
+.hero-art-slide{mix-blend-mode:multiply}
 .hero-art{isolation:isolate}
 @media(max-width:999px){
   .hero-art{background:linear-gradient(150deg,#fff 0%,#f6f6f6 55%,#eeeeee 100%)}
@@ -69,7 +69,8 @@
       linear-gradient(#00000012 1px,transparent 1px) 0 0/44px 44px,
       linear-gradient(90deg,#00000012 1px,transparent 1px) 0 0/44px 44px;
     -webkit-mask-image:radial-gradient(75% 95% at 80% 50%,#000 0,transparent 78%);mask-image:radial-gradient(75% 95% at 80% 50%,#000 0,transparent 78%)}
-  .device-story .hero-copy,.device-story .hero-art-wrap{position:relative;z-index:1}
+  .device-story .hero-copy,.device-story .hero-art-wrap{position:relative}
+  .hero-art{isolation:auto}
   /* No panel of its own: the image blends into the card (multiply) so the card gradient shows through. */
   .hero-art{background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
   .hero-art-slide:focus-visible{outline-offset:-4px;border-radius:26px}
