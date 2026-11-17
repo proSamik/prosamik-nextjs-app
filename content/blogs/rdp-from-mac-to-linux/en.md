@@ -28,7 +28,7 @@ The commands come from Ubuntu and xrdp docs and community write-ups, checked 202
 
 ## What you need
 
-You need an Ubuntu machine with a user that has a password, its IP address (`ip -br addr`), and a Mac on the same network. A UTM guest on Shared Network typically sits at `192.168.64.x`. SSH access ([SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac)) makes the setup easier, because you can paste commands from your Mac terminal.
+You need an Ubuntu machine with a user that has a password, its IP address (`ip -br addr`), and a Mac on the same network. A UTM guest on Shared Network typically sits at `192.168.x.x`. SSH access ([SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac)) makes the setup easier, because you can paste commands from your Mac terminal.
 
 RDP is a good fit when you want a native-feeling window with clipboard and dynamic resolution. If you need to see the existing local session instead, read the VNC section below.
 
