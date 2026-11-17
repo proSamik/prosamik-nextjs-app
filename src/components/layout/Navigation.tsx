@@ -16,6 +16,16 @@ export default function Navigation() {
     const open = openPath === pathname;
     const toggle = useRef<HTMLButtonElement>(null);
     const header = useRef<HTMLElement>(null);
+    // Home only: the header floats transparently over the hero, and turns solid once the page scrolls.
+    const isHome = pathname === '/';
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+        if (!isHome) return;
+        const update = () => setScrolled(window.scrollY > 24);
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+        return () => window.removeEventListener('scroll', update);
+    }, [isHome]);
     useEffect(() => {
         void getCalApi({ namespace: '30min' }).then(cal => cal('ui', { hideEventTypeDetails: false, layout: 'month_view' }));
     }, []);
@@ -28,7 +38,7 @@ export default function Navigation() {
         return () => { document.removeEventListener('keydown', dismiss); document.removeEventListener('pointerdown', outside); };
     }, [open]);
     return (
-        <header className="site-header" ref={header}>
+        <header className={`site-header${isHome ? ' is-home' : ''}${isHome && !scrolled ? ' is-transparent' : ''}`} ref={header}>
             <div className="site-header-inner">
                 <Link className="site-wordmark" href="/" aria-label="prosamik home" onClick={() => setOpenPath(null)}><Image src="/icon.png" alt="" width={38} height={38} /><span>prosamik</span></Link>
                 <nav id="primary-navigation" className={`site-navigation ${open ? 'is-open' : ''}`} aria-label="Main navigation">
