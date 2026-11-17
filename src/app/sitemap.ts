@@ -8,11 +8,13 @@ import { DEFAULT_LOCALE, languageAlternates, localizePath } from '@/lib/i18n/con
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const randomThoughts = await listRandomThoughtSitemapEntries();
+    // The index changes whenever any post does, so its lastmod is the newest post's updatedAt.
+    const newestBlogUpdate = getAllBlogPosts(DEFAULT_LOCALE).map((post) => post.updatedAt).sort().at(-1);
     const staticRoutes: MetadataRoute.Sitemap = [
         { url: siteMetadata.siteUrl, changeFrequency: 'weekly', priority: 1 },
         { url: `${siteMetadata.siteUrl}/about`, changeFrequency: 'monthly', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/projects`, changeFrequency: 'weekly', priority: 0.9 },
-        { url: `${siteMetadata.siteUrl}/blogs`, changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${siteMetadata.siteUrl}/blogs`, lastModified: newestBlogUpdate, changeFrequency: 'weekly', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/consistency`, changeFrequency: 'daily', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/consistency/github`, changeFrequency: 'daily', priority: 0.9 },
         { url: `${siteMetadata.siteUrl}/consistency/youtube`, changeFrequency: 'daily', priority: 0.9 },
