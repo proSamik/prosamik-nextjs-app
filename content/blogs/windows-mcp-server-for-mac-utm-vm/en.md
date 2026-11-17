@@ -3,7 +3,8 @@ title: How to Set Up a Windows MCP Server on a Mac (UTM Windows 11 VM)
 description: Turn a Windows 11 ARM VM in UTM into a Windows MCP server that your Mac agent controls over HTTP. Exact commands, the build errors I hit, and fixes.
 category: MCP servers
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 4
 readTime: 11 min
 primaryKeyword: windows mcp
 keywords: [windows mcp, windows mcp server, mcp server for windows, utm windows vm, windows-mcp mac, uvx windows-mcp]
@@ -37,7 +38,7 @@ Read the Security section before step 3. That server has no authentication.
 | Host | MacBook, macOS |
 | Hypervisor | UTM, network mode Shared Network |
 | Guest | Windows 11 ARM64 |
-| Guest IP | 192.168.64.13 |
+| Guest IP | An address in the `192.168.64.x` range (find yours with `ipconfig`) |
 | uv | 0.13.9, installed with the official PowerShell installer |
 | windows-mcp | 0.8.9 (depends on fastmcp) |
 | Mac agent | Claude Code, server entry named `windows-vm` |
@@ -100,16 +101,16 @@ New-NetFirewallRule -DisplayName "Windows MCP 8000" -Direction Inbound -Protocol
 
 ## Step 5: Check it from the Mac
 
-Get the guest IP from `ipconfig` in Windows (the IPv4 line). On UTM Shared Network mine was 192.168.64.13. Then on the Mac:
+Get the guest IP from `ipconfig` in Windows (the IPv4 line). On UTM Shared Network mine was in the `192.168.64.x` range. Then on the Mac:
 
 ```bash
-curl -v http://192.168.64.13:8000/mcp
+curl -v http://<vm-ip>:8000/mcp
 ```
 
 Expected output (trimmed):
 
 ```text
-* Connected to 192.168.64.13 (192.168.64.13) port 8000
+* Connected to <vm-ip> (<vm-ip>) port 8000
 > GET /mcp HTTP/1.1
 < HTTP/1.1 400 Bad Request
 {"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Bad Request: Missing session ID"}}
@@ -122,7 +123,7 @@ That error is good news. A plain GET is not a valid MCP request, so the server r
 Add the VM as an HTTP MCP server. In Claude Code, per the Claude Code docs:
 
 ```bash
-claude mcp add --transport http windows-vm http://192.168.64.13:8000/mcp
+claude mcp add --transport http windows-vm http://<vm-ip>:8000/mcp
 ```
 
 Or in `.mcp.json`:
@@ -132,7 +133,7 @@ Or in `.mcp.json`:
   "mcpServers": {
     "windows-vm": {
       "type": "http",
-      "url": "http://192.168.64.13:8000/mcp"
+      "url": "http://<vm-ip>:8000/mcp"
     }
   }
 }
