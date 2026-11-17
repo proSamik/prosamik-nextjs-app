@@ -3,7 +3,8 @@ title: How to SSH into a Linux VM from a Mac
 description: Install OpenSSH on Ubuntu, find the VM IP, log in from macOS with ed25519 keys, harden sshd, and tunnel to an MCP server bound to localhost.
 category: Remote access
 publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+updatedAt: 2026-11-18
+order: 11
 readTime: 8 min
 primaryKeyword: ssh into linux from mac
 keywords: [ssh into linux vm from mac, ubuntu openssh server, ssh-copy-id mac, ssh tunnel mcp, utm ubuntu ssh, ssh config mac]
@@ -44,14 +45,14 @@ You should see `active (running)`. If a login later says `Connection refused`, t
 ip -br addr
 ```
 
-Look for the line with state `UP` and an address such as `192.168.64.12/24`. In UTM with Shared Network, the guest is typically on `192.168.64.x`; my Windows guest was at `192.168.64.13`. You can also run `utmctl ip-address "Ubuntu"` on the Mac, which UTM's docs list, though I could not check its output format. UTM's network page says Shared Network lets the host and guest reach each other directly. A Host Only network blocks internet access, and Bridged puts the VM on your LAN.
+Look for the line with state `UP` and an address such as `192.168.64.x/24`. In UTM with Shared Network, the guest is typically on `192.168.64.x`; my Windows guest was in the same `192.168.64.x` range. You can also run `utmctl ip-address "Ubuntu"` on the Mac, which UTM's docs list, though I could not check its output format. UTM's network page says Shared Network lets the host and guest reach each other directly. A Host Only network blocks internet access, and Bridged puts the VM on your LAN.
 
 ## Step 3: SSH in from the Mac
 
 macOS ships with `ssh`. Use the username you created in Ubuntu.
 
 ```bash
-ssh mcptest@192.168.64.12
+ssh <user>@<vm-ip>
 ```
 
 On first connection you will see a fingerprint prompt: `Are you sure you want to continue connecting (yes/no/[fingerprint])?`. Type `yes`. Then enter the password. You should land at the Ubuntu shell prompt.
@@ -64,8 +65,8 @@ On the Mac:
 
 ```bash
 ssh-keygen -t ed25519 -C "mac-to-linux-vm"
-ssh-copy-id mcptest@192.168.64.12
-ssh mcptest@192.168.64.12
+ssh-copy-id <user>@<vm-ip>
+ssh <user>@<vm-ip>
 ```
 
 The last command should log you in without asking for the account password. It may ask for the key's passphrase if you set one. If it still asks for a password, check that `~/.ssh/authorized_keys` on the VM is not writable by others: `chmod go-w ~/.ssh/authorized_keys`.
@@ -74,8 +75,8 @@ The last command should log you in without asking for the account password. It m
 
 ```text
 Host linux-vm
-    HostName 192.168.64.12
-    User mcptest
+    HostName <vm-ip>
+    User <user>
     IdentityFile ~/.ssh/id_ed25519
     ServerAliveInterval 30
 ```
@@ -118,7 +119,7 @@ sudo sshd -t
 sudo systemctl restart ssh
 ```
 
-`sshd -t` prints nothing if the configuration is valid. Keep your current session open until a new login works. Optional extras: `PermitRootLogin no` and an `AllowUsers mcptest` line.
+`sshd -t` prints nothing if the configuration is valid. Keep your current session open until a new login works. Optional extras: `PermitRootLogin no` and an `AllowUsers <user>` line.
 
 ## Step 9: Tunnel to an MCP server on localhost
 
@@ -142,11 +143,11 @@ Using `ssh user@host computer-use-linux mcp` as a stdio launch is also possible 
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `ssh: connect to host 192.168.64.12 port 22: Connection refused` | `openssh-server` missing or stopped | `sudo apt install openssh-server`, `sudo systemctl enable --now ssh` |
+| `ssh: connect to host <vm-ip> port 22: Connection refused` | `openssh-server` missing or stopped | `sudo apt install openssh-server`, `sudo systemctl enable --now ssh` |
 | `ssh: connect to host ... port 22: Operation timed out` | Wrong IP, VM off, or `ufw` blocking | Recheck `ip -br addr`; `sudo ufw allow OpenSSH` |
 | `Unit ssh.service could not be found` | `openssh-server` is not installed | `sudo apt install openssh-server` (the Ubuntu unit is named `ssh`) |
 | `Permission denied (publickey)` | Key not installed, or permissions wrong | `ssh-copy-id`; `chmod 700 ~/.ssh`; `chmod 600 ~/.ssh/authorized_keys` |
-| `REMOTE HOST IDENTIFICATION HAS CHANGED!` | VM was rebuilt or IP reused | `ssh-keygen -R 192.168.64.12`, then reconnect |
+| `REMOTE HOST IDENTIFICATION HAS CHANGED!` | VM was rebuilt or IP reused | `ssh-keygen -R <vm-ip>`, then reconnect |
 | `bind [127.0.0.1]:5200: Address already in use` | Local port taken | Pick another local port, such as `-L 5201:127.0.0.1:5200` |
 | Tunnel works but `curl` hangs | MCP server not running | Start it in the desktop session |
 | Locked out after hardening | Password auth off, no working key | Use the VM console in UTM to fix the drop-in file |
