@@ -4,7 +4,7 @@ export const siteMetadata = {
     siteUrl: 'https://www.prosamik.com',
     twitterUsername: 'prosamik',
     defaultDescription: 'I am the guy who ships end-to-end product, started my journey as a Software Developer for a service based company now pivoted in the journey of an Indie Hacker',
-    defaultImage: 'https://www.prosamik.com/image/og-Image.png',
+    defaultImage: 'https://cdn.prosamik.com/portfolio/og/prosamik-og-20261118.jpg',
     skills: ['Product Development', 'Golang', 'NextJS', 'Tailwind CSS', 'Deployment'],
     currentRole: 'Building Products',
     jobTitle: 'Product Engineer', // Added for structured data
@@ -24,9 +24,9 @@ export const siteMetadata = {
         `https://x.com/prosamik`,
         `https://youtube.com/@prosamik`,
     ],
-    ogImageWidth: 2400, // Added for Open Graph
-    ogImageHeight: 600, // Added for Open Graph
-    ogImageAlt: 'proSamik - Tools and templates to save you time, effort, and money', // Added for Open Graph
-    ogImageType: 'image/png', // Added for Open Graph
-    ogImageSecureUrl: 'https://www.prosamik.com/image/og-Image.png', // Added for Open Graph
+    ogImageWidth: 1200, // 1200x630 (1.91:1) is the standard link-preview size; content keeps a safe margin
+    ogImageHeight: 630,
+    ogImageAlt: 'Samik Choudhury: I build and launch SaaS, desktop apps, mobile apps, extensions and MCP servers, including Subclip and Rankizz',
+    ogImageType: 'image/jpeg',
+    ogImageSecureUrl: 'https://cdn.prosamik.com/portfolio/og/prosamik-og-20261118.jpg',
 };
