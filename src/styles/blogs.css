@@ -160,3 +160,21 @@
 @media(max-width:560px){.blog-tag{height:34px;padding:0 12px}}
 /* The pill around the input already shows the focus ring; drop the site-wide inner outline. */
 .portfolio-site .blog-search input:focus-visible{outline:none}
+
+/* Newsletter signup (home page and the middle of each post) */
+.newsletter{display:grid;grid-template-columns:1fr 1fr;gap:32px 56px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:34px 38px}
+.newsletter-title{margin:0 0 8px;font-size:clamp(24px,2.6vw,32px)!important;line-height:1.15!important;letter-spacing:-.03em!important;font-weight:750}
+.newsletter-copy p{margin:0;color:#666;font-size:16px;line-height:1.6}
+.newsletter-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.newsletter-form label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.newsletter-form input:not(.newsletter-hp){min-height:50px;padding:0 14px;border:1px solid #cfcfcf;border-radius:6px;background:#fff;font:inherit;font-size:15px;color:#111;min-width:0}
+.newsletter-form input:not(.newsletter-hp):focus-visible{outline:2px solid #111;outline-offset:2px;border-color:#111}
+.newsletter-form .button{min-height:50px;padding:0 22px}
+.newsletter-hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+.newsletter-error{grid-column:1/-1;margin:0;color:#b42318;font-size:14px}
+.newsletter-done{margin:0;font-size:16px;color:#14532d;background:#ecfdf3;border:1px solid #a6f4c5;border-radius:8px;padding:14px 16px}
+.newsletter-inline{grid-template-columns:1fr;margin:3em 0;padding:26px 28px}
+.newsletter-inline .newsletter-form{grid-template-columns:1fr 1fr auto}
+.home-newsletter{padding-block:0 110px}
+@media(max-width:980px){.newsletter,.newsletter-inline .newsletter-form,.newsletter-form{grid-template-columns:1fr}.newsletter{padding:26px 22px}}
+.blog-body .newsletter-title{margin:0 0 8px;font-size:clamp(22px,2.4vw,28px)!important}.blog-body .newsletter-copy p{margin:0;font-size:16px;line-height:1.6}
