@@ -1,5 +1,5 @@
 import 'server-only';
-import { SlidingWindowLimiter } from './rate-limit';
+import { SlidingWindowLimiter } from './sliding-window';
 
 // Newsletter signup through a (self-hosted) Plunk instance. Plunk's /v1/track endpoint creates the
 // contact when it does not exist yet and applies `subscribed`, so one call adds the contact and
