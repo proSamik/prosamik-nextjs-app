@@ -1,26 +1,46 @@
 ---
-title: Cheapest Domain Registrar for Developers: How to Compare Real Cost
-seoTitle: Cheapest Domain Registrar: How to Choose for Developers
-description: Compare domain registrars by total cost, not the first-year price: renewals, transfer fees, WHOIS privacy and DNS, with Cloudflare, Porkbun and Namecheap.
+title: Cheapest Domain Registrar for Developers: Spaceship, Cloudflare, Porkbun, Namecheap
+seoTitle: Cheapest Domain Registrar: Spaceship vs Cloudflare
+description: My ranking of domain registrars for developers: Spaceship, Cloudflare, Porkbun, Namecheap. Compare renewals, WHOIS privacy, DNS and domain transfer rules.
 category: Deployment
 publishedAt: 2026-11-18
 updatedAt: 2026-11-18
 order: 30
-readTime: 8 min
+readTime: 12 min
 primaryKeyword: cheapest domain registrar
-keywords: [cheapest domain registrar, domain registrar for developers, cloudflare registrar, porkbun vs namecheap, domain renewal price]
+keywords: [cheapest domain registrar, spaceship domains, domain transfer, domain registrar for developers, cloudflare registrar, porkbun vs namecheap, domain renewal price]
 related: [transfer-domain-namecheap-to-another-registrar, host-nextjs-on-vps-with-coolify, hostinger-vs-hetzner-vps-self-hosting, move-nextjs-from-vercel-to-coolify]
 subclipBlurb: Subclip records and edits screen demos, so you can capture a registrar's checkout and DNS screens as a short walkthrough.
 rankizzBlurb: Rankizz tracks how your comparison pages rank and get cited by AI search, useful for pricing and registrar comparisons that change often.
 ---
 
-The cheapest domain registrar is the one with the lowest total cost over several years, not the lowest first-year price. Registration, renewal, transfer, WHOIS privacy and DNS can all be priced differently, and a low intro price often renews higher. This guide shows how to compare, and what Cloudflare Registrar, Porkbun and Namecheap state on their own pages.
+The cheapest domain registrar is the one with the lowest total cost over several years, not the lowest first-year price. Registration, renewal, transfer, WHOIS privacy and DNS can all be priced differently, and a low intro price often renews higher. This guide shows how to compare, gives my own ranking of Spaceship, Cloudflare, Porkbun and Namecheap, and covers how each provider handles domain transfers.
 
 I am not quoting current prices. They differ per extension and change often, so as of November 2026 check each registrar's pricing page for the exact TLD you want. What I verified is how each one structures its pricing.
 
 ## Quick answer
 
-For most developers: compare the renewal price of your exact extension at Cloudflare Registrar, Porkbun and Namecheap. Cloudflare says it sells domains at cost with no markup. Porkbun says its prices include ICANN fees and that WHOIS privacy is free. Pick the lowest renewal price that includes privacy, and prefer a registrar whose DNS you will actually use with your host.
+My ranking as a developer is #1 Spaceship, #2 Cloudflare, #3 Porkbun, #4 Namecheap. This is my personal ranking, not a price benchmark. Cloudflare ranks high for DNS, nameservers and R2, not because it is always the cheapest to register with. The rule that matters more than the ranking: the registrar and the DNS host can be different, so you can buy anywhere and point the nameservers to Cloudflare.
+
+
+The price rule: compare the renewal price of your exact extension at Cloudflare Registrar, Porkbun and Namecheap. Cloudflare says it sells domains at cost with no markup. Porkbun says its prices include ICANN fees and that WHOIS privacy is free. Pick the lowest renewal price that includes privacy, and prefer a registrar whose DNS you will actually use with your host.
+
+## My ranking and why
+
+| Rank | Registrar | Why it sits there |
+| --- | --- | --- |
+| 1 | Spaceship | My first choice. I could not fetch Spaceship's own pricing or transfer pages for this post (they returned an error), so I am not quoting its prices or fees here. Check its pricing page for your TLD. |
+| 2 | Cloudflare | At-cost registration per its docs, WHOIS redacted by default, and its DNS and nameservers are the strongest I use. R2 needs a Cloudflare account anyway. |
+| 3 | Porkbun | Free WHOIS privacy and free DNS management per its page, transfers that include a renewal year. |
+| 4 | Namecheap | Fine if you already have domains there, but I could not verify its current pricing, so I rank it last on what I can show. |
+
+This is a ranking by my experience and preference. As of November 2026, prices decide the final choice for a given extension, so check each pricing page.
+
+## Buy anywhere, use Cloudflare for DNS
+
+Cloudflare DNS management and nameservers are the strongest part of the stack. After you buy a domain at any registrar, you can add the domain to Cloudflare, then change the nameservers at the registrar to the two Cloudflare gives you. You get free DNS management there regardless of where the domain is registered. Cloudflare's transfer docs describe the same first step: the domain must show as Active in Cloudflare after you switch nameservers.
+
+You need a Cloudflare account anyway if you use R2 buckets, as in [Next.js with Cloudflare R2 as a CDN](/blogs/nextjs-cloudflare-r2-cdn-wrangler). So the practical setup is: register at whichever registrar is cheapest for your TLD, put DNS on Cloudflare, and keep the registrar only for renewal and transfer.
 
 ## Environment
 
@@ -72,7 +92,7 @@ Namecheap's transfer-out documentation, which I did fetch, covers how to leave: 
 
 ## Choose Cloudflare if
 
-- Your DNS is already on Cloudflare, or you want it there.
+- Your DNS is already on Cloudflare, or you want it there (and you need Cloudflare for R2 anyway).
 - You want to pay the registry price with no markup and have a supported TLD.
 - You want to keep registrar and DNS in one account.
 
@@ -100,6 +120,21 @@ Use a small table you fill in yourself, with numbers from each pricing page for 
 | Total | year 1 + 4 renewals + privacy | same | same |
 
 Check whether tax is added at checkout, and whether the price is in the currency you pay in. A registrar that looks cheap in USD can cost more once VAT or card fees apply. If you run several domains, repeat the table per extension, because .com, .dev and .app are priced separately.
+
+## Domain transfers at each provider
+
+A transfer moves the registration, not the website. Before any transfer, turn off the registrar lock, get the authorization code (also called EPP, auth or transfer code), and make sure the 60-day rules allow it. Do it ahead of renewal time and keep DNS working throughout. The step by step for leaving Namecheap is in [Transfer a domain from Namecheap to another registrar](/blogs/transfer-domain-namecheap-to-another-registrar).
+
+| Provider | Transfer in | Transfer out | Verified from |
+| --- | --- | --- | --- |
+| Cloudflare | Domain at least 60 days old and not transferred in the last 60 days; unlock it; get the auth code; domain must be Active in Cloudflare first; disable DNSSEC beforehand; most gTLD transfers add one year, some ccTLDs (for example `.uk`) add none and have no transfer fee; approval at the old registrar can take up to 5 business days | Not verified (the page I tried returned an error) | Cloudflare's transfer-to-Cloudflare docs |
+| Porkbun | Its page says most transfers include a one-year renewal; I could not load its transfer guide | Not verified | Porkbun's domains page only |
+| Namecheap | Not verified (page not available to me) | Unlock the domain and get the Auth Code from the Transfer Out section, as in the transfer guide | Namecheap's knowledge base, as used in the transfer post |
+| Spaceship | Not verified | Not verified | Could not fetch its pages |
+
+Cloudflare's docs state that changing the registrant name, organization or email triggers a 60-day transfer lock, so avoid editing those fields right before a planned transfer. For Spaceship, Porkbun and Namecheap I could not read the official transfer pages, so check their help centers for fees, supported extensions and lock behavior instead of trusting a blog post, including this one.
+
+Cloudflare's docs also warn that the auth code usually expires, so request it when you are ready, and that you must approve the transfer at the current registrar.
 
 ## Pointing the domain at your server
 
@@ -145,6 +180,12 @@ Many registrars discount the first year. Always compare the renewal price.
 ### Can I use another DNS provider with Cloudflare Registrar?
 Not while the domain is registered there, according to Cloudflare's transfer documentation.
 
+### Which registrar do you rank first?
+Spaceship first, then Cloudflare, Porkbun and Namecheap. It is my ranking, and I could not verify Spaceship's prices from its own pages, so compare renewals yourself.
+
+### Can I buy at one registrar and use Cloudflare DNS?
+Yes. Add the domain to Cloudflare and set the registrar's nameservers to the ones Cloudflare shows.
+
 ### Can I switch later?
 Yes, after the 60-day period, using an auth code. See [the transfer guide](/blogs/transfer-domain-namecheap-to-another-registrar).
 
@@ -154,4 +195,4 @@ Yes, after the 60-day period, using an auth code. See [the transfer guide](/blog
 - Use it: [Host a Next.js app on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify).
 - Server choice: [Hostinger vs Hetzner VPS](/blogs/hostinger-vs-hetzner-vps-self-hosting).
 
-Sources: developers.cloudflare.com/registrar, developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare, porkbun.com/products/domains, namecheap.com/support/knowledgebase (what should I do to transfer a domain from Namecheap), coolify.io/docs/get-started/deploy-your-first-app
+Sources (Spaceship and Namecheap pricing pages could not be fetched): developers.cloudflare.com/registrar, developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare, porkbun.com/products/domains, namecheap.com/support/knowledgebase (what should I do to transfer a domain from Namecheap), coolify.io/docs/get-started/deploy-your-first-app
