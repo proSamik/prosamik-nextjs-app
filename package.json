@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "next build",
-    "test:blogs": "node --experimental-strip-types --test ./src/lib/blogs/*.test.ts ./src/lib/i18n/*.test.ts ./src/utils/*.test.ts"
+    "test:blogs": "node --experimental-strip-types --test ./src/lib/blogs/*.test.ts ./src/lib/rate-limit.test.ts ./src/lib/i18n/*.test.ts ./src/utils/*.test.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.851.0",
