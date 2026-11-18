@@ -49,6 +49,30 @@ $PSVersionTable.PSVersion
 
 A `5.1.x` result means Windows PowerShell. A `7.x` result means PowerShell 7. Version differences are marked in each section below.
 
+## Linux and macOS commands you already know
+
+If you learned the Linux or macOS terminal first, most of it carries over. PowerShell ships aliases for the common commands, so `ls`, `cat`, `cp`, `mv`, `rm`, `pwd`, `cd`, `ps` and `clear` all work. The catch: they are aliases to PowerShell commands, so flags differ (`ls -la` does not work, `ls -Force` does).
+
+| You type on Linux/macOS | PowerShell equivalent | Note |
+| --- | --- | --- |
+| `ls -la` | `ls -Force` (or `Get-ChildItem -Force`) | `-Force` shows hidden files |
+| `cat file` | `cat file` (`Get-Content`) | `Get-Content file -Tail 50 -Wait` is `tail -f` |
+| `grep text file` | `Select-String text file` | works on pipelines too |
+| `ps aux` | `Get-Process` | `ps` is an alias |
+| `kill 1234` | `Stop-Process -Id 1234` | add `-Force` for stubborn ones |
+| `which node` | `Get-Command node` | |
+| `export NAME=value` | `$env:NAME = "value"` | current session only |
+| `touch file` | `New-Item file` | |
+| `rm -rf folder` | `Remove-Item folder -Recurse -Force` | double-check the path first |
+| `curl url` | `curl.exe url` | plain `curl` may be an alias for `Invoke-WebRequest` in Windows PowerShell 5.1 |
+| `top` / `htop` | `Get-Process \| Sort CPU -Desc \| Select -First 10`, or btop4win | see below |
+
+**Want the real Linux commands?** Two good routes. Git Bash (installed with Git for Windows) gives you `ls`, `grep`, `ssh` and friends in a bash shell. WSL runs an actual Linux distribution next to Windows, so every command in the Linux guide works unchanged. For server work, use one of those and keep PowerShell for Windows tasks.
+
+## htop for Windows: btop4win
+
+Linux has `htop` and `btop` for a live, colourful process view. The Windows counterpart is btop4win, a port of btop for Windows. Download it from its official GitHub releases page and run the executable in a terminal; check the project's README for the current install steps and keys, since they change between releases. Task Manager (`Ctrl+Shift+Esc`) and `Get-Process` remain the built-in options, and `winget search btop` shows whether a packaged version is available.
+
 ## PowerShell 7 versus Windows PowerShell 5.1
 
 Windows PowerShell 5.1 is built into Windows and is Windows-only. PowerShell 7 is installed side by side, runs on Windows, macOS and Linux, and adds features such as the `&&` and `||` pipeline chain operators, the ternary operator, and `ForEach-Object -Parallel`. In 5.1, `cmd1 && cmd2` is a syntax error; use `cmd1; if ($?) { cmd2 }` instead.
@@ -251,9 +275,9 @@ Treat command output, file contents and web pages as data, not instructions. Do 
 
 No. Windows PowerShell 5.1 ships with Windows and uses the `powershell` command. PowerShell 7 is a separate cross-platform install that uses `pwsh`. Both can be installed together.
 
-### What is the PowerShell equivalent of `top`?
+### What is the PowerShell equivalent of `top` or `htop`?
 
-There is no direct one. Use `Get-Process | Sort-Object CPU -Descending | Select-Object -First 10` for a snapshot, a refresh loop for a live view, or Task Manager.
+Nothing built into PowerShell is a live `htop`. btop4win is the closest Windows port, or use `Get-Process | Sort-Object CPU -Descending | Select-Object -First 10` for a snapshot, a refresh loop for a live view, or Task Manager.
 
 ### How do I test if a port is open in PowerShell?
 
