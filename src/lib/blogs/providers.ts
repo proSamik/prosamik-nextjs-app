@@ -25,6 +25,13 @@ export const PROVIDERS: Provider[] = [
     { name: 'btop4win', url: 'https://github.com/aristocratos/btop4win' },
     { name: 'Docker', url: 'https://www.docker.com' },
     { name: 'OpenSEO', url: 'https://github.com/every-app/open-seo' },
+    { name: 'RevenueCat', url: 'https://www.revenuecat.com' },
+    { name: 'App Store Connect', url: 'https://appstoreconnect.apple.com' },
+    { name: 'Google Search Console', url: 'https://search.google.com/search-console' },
+    { name: 'IndexNow', url: 'https://www.indexnow.org' },
+    { name: 'Trustpilot', url: 'https://www.trustpilot.com' },
+    { name: 'Plausible', url: 'https://plausible.io' },
+    { name: 'Umami', url: 'https://umami.is' },
     { name: 'Codex', url: 'https://openai.com/codex/' },
 ];
 
