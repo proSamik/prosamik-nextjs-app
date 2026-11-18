@@ -197,6 +197,8 @@ Allow SSH before you enable the firewall, or you can lock yourself out. Keep you
 
 The important caveat comes from both Docker and Coolify. Docker's documentation says published container ports are handled in the `nat` table, so traffic is diverted before it reaches the chains ufw uses, and your ufw rules can be ignored. Coolify's firewall page therefore says not to rely on plain UFW alone and to prefer your provider's firewall, or the community ufw-docker tool if there is none. Whatever you choose, test from outside the server with a port scan or a simple `curl`.
 
+So `ufw` is the inner layer, not the only one. Also create a firewall in your provider's dashboard (Hetzner Cloud Firewall, or the firewall in Hostinger's hPanel). It runs outside your server, so brute-force attempts and scans are blocked before they reach it and the server behind it is not taken down by that traffic. Keep both, with the same rules. To keep web ports closed entirely, front the server with a [Cloudflare Tunnel](/blogs/cloudflare-tunnel-guide).
+
 ## 10. Users and SSH hygiene
 
 ```bash
