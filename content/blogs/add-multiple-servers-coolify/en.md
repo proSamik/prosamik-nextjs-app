@@ -130,7 +130,7 @@ To create it, add the server as above but set **Advanced settings > Server role 
 
 - Use a dedicated key for Coolify and keep its private half only in Coolify.
 - Restrict the SSH rule to the Coolify server's IP. For a remote server attached to self-hosted Coolify, the docs list `22/tcp` from the Coolify server, and `80/tcp` and `443/tcp` only if the server receives public web traffic.
-- Prefer the provider firewall over plain UFW, because Docker's published ports can bypass UFW.
+- Use both firewall layers: the provider's dashboard firewall (it filters traffic outside the server, so attacks are stopped before they reach it) and `ufw`. Prefer the provider firewall for published Docker ports, because they can bypass UFW. For private server-to-server links, see [Tailscale](/blogs/tailscale-guide).
 - Do not expose database ports to all addresses.
 - Keep the server patched. Coolify has a server patching page for this.
 
