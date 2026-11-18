@@ -6,7 +6,7 @@ category: Deployment
 publishedAt: 2026-11-18
 updatedAt: 2026-11-18
 order: 47
-readTime: 11 min
+readTime: 12 min
 primaryKeyword: macos terminal commands
 keywords: [macos terminal commands, mac terminal for developers, zsh commands, homebrew commands, launchd vs cron, mac ssh command]
 related: [basic-linux-vps-commands-self-hosting, ssh-into-linux-vm-from-mac, windows-powershell-commands-for-developers, host-nextjs-on-vps-with-coolify]
@@ -29,6 +29,7 @@ lsof -i :3000           # who is using port 3000
 df -h                   # disk space per volume
 du -sh ~/Library/Caches # size of one folder
 brew update && brew upgrade
+ncdu ~                  # find what is eating disk space
 ```
 
 ## Environment
@@ -40,6 +41,23 @@ brew update && brew upgrade
 | Package manager | Homebrew (installed separately) |
 | Userland | BSD tools, so some flags differ from GNU/Linux |
 | Remote target | Any Linux VPS reachable over ssh |
+
+## Install the basics
+
+Terminal and zsh are already on your Mac. Install Homebrew first, then the tools this guide uses. Check the install command on the Homebrew site before running it, because it downloads and runs a script.
+
+```bash
+# 1. Command line tools (git, make, clang)
+xcode-select --install
+
+# 2. Homebrew: copy the current one-line installer from brew.sh, then confirm
+brew --version
+
+# 3. Handy tools used below
+brew install htop ncdu wget
+```
+
+`htop` is a friendlier `top`, and `ncdu` is a disk-usage browser you will want in the cleanup section.
 
 ## Files and folders
 
@@ -160,25 +178,42 @@ brew services list   # managed background services
 
 Homebrew's manual describes `brew upgrade -n` (or `--dry-run`) as showing what would be upgraded without doing it. Use that before a large upgrade, because upgrades can bump a major version of Node or Postgres. `brew services start <name>` starts a service now and registers it to launch at login.
 
-## Clean caches and free space
+## Free up disk space safely
 
-Use dry runs first. Homebrew supports them directly:
+Rule of thumb: measure first, preview second, delete third, and only delete things you can name. Never run `rm -rf` on a path you pasted without reading it, and never empty a folder you do not recognise.
 
-```bash
-brew cleanup -n          # show what would be removed
-brew cleanup             # remove stale lock files and outdated downloads
-brew autoremove -n       # unneeded dependencies, dry run
-```
-
-Per the Homebrew manual, `brew cleanup --prune=all` removes everything in the cache, not only old files. Developer caches are often the biggest wins:
+**Step 1: see where the space went.**
 
 ```bash
-du -sh ~/Library/Caches ~/.npm 2>/dev/null
-npm cache verify         # check the npm cache
-docker system df         # if Docker Desktop is installed
+df -h /System/Volumes/Data      # free space on your data volume
+ncdu ~                          # browse your home folder by size (q to quit)
+find ~ -type f -size +500M 2>/dev/null | head -20   # files over 500 MB
 ```
 
-Check the size, decide, then delete a specific cache folder yourself. Do not delete `~/Library/Caches` wholesale from a script. Apps rebuild their caches, but you may lose logins or slow down the next launch.
+**Step 2: clear the safe, rebuildable things.** These come back on their own, so deleting them only costs a slower next build.
+
+| What | Check the size | Clear it |
+| --- | --- | --- |
+| Homebrew downloads and old versions | `brew cleanup -n` | `brew cleanup` |
+| Unneeded Homebrew dependencies | `brew autoremove -n` | `brew autoremove` |
+| npm cache | `du -sh ~/.npm` | `npm cache clean --force` |
+| pnpm store | `pnpm store path` | `pnpm store prune` |
+| Yarn cache | `yarn cache dir` | `yarn cache clean` |
+| Docker images, containers, build cache | `docker system df` | `docker system prune` (add `-a` only if you accept re-downloading images) |
+| Xcode build products | `du -sh ~/Library/Developer/Xcode/DerivedData` | delete that folder in Finder or `rm -rf` the exact path |
+| Unavailable iOS simulators | `xcrun simctl list devices` | `xcrun simctl delete unavailable` |
+| Trash | Finder shows it | Finder, Empty Trash |
+
+**Step 3: decide about the big personal items yourself:** old Downloads, disk images (`.dmg`), screen recordings, forgotten project folders with `node_modules`, and old Xcode archives. `ncdu` and the `find` command above point at them. Move anything you might want to an external drive before deleting.
+
+```bash
+# node_modules folders are the usual hidden hog: list them with sizes, delete only the ones you recognise
+find ~/code -name node_modules -type d -prune -exec du -sh {} + 2>/dev/null | sort -h | tail -15
+```
+
+**Leave these alone:** `~/Library/Caches` as a whole (apps may log you out or slow down), `~/Library/Application Support` (that is app data, not cache), Docker volumes (they hold database data), and anything under `/System`. For a no-command option, open System Settings, General, Storage, which lists reclaimable items by category.
+
+Use `brew cleanup --prune=all` only if you want the whole Homebrew cache gone, not just old files.
 
 ## cron versus launchd
 
