@@ -43,7 +43,7 @@ export default function NewsletterSignup({ source, variant = 'card' }: { source:
                 <p>Self-hosting, MCP servers and AI agents, written from what I run. No spam, unsubscribe in one click.</p>
             </div>
             {status === 'done' ? (
-                <p className="newsletter-done" role="status">You&apos;re in. Check your inbox for a welcome note.</p>
+                <p className="newsletter-done" role="status">Done, we&apos;ll be in touch :)</p>
             ) : (
                 <form className="newsletter-form" onSubmit={onSubmit} noValidate={false}>
                     <label htmlFor={`${id}-name`}>Name</label>
