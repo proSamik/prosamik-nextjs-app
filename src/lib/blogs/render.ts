@@ -126,3 +126,5 @@ export function buildAgentMarkdown(post: BlogPost, related: BlogPost[]): string 
         .filter(Boolean)
         .join('\n\n') + '\n';
 }
+
+export { splitHtmlAtMiddle } from './split';
