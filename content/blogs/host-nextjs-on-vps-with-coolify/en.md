@@ -54,7 +54,9 @@ apt update && apt upgrade -y
 
 If you are new to these commands, [basic Linux VPS commands for self-hosting](/blogs/basic-linux-vps-commands-self-hosting) explains each one.
 
-Set up your firewall at the provider level if it offers one. Coolify's firewall page lists these ports for the server that runs Coolify:
+Use two firewall layers, not one: the provider's dashboard firewall (Hetzner Cloud Firewall, or the firewall in Hostinger's hPanel) and `ufw` on the server. The dashboard firewall runs outside your server, so traffic it blocks, like SSH brute-force attempts and port scans, is stopped before your server has to handle it, and the server behind it stays up. `ufw` only acts after packets arrive. For web traffic you can go further and put the server behind a [Cloudflare Tunnel](/blogs/cloudflare-tunnel-guide), so ports 80 and 443 can stay closed. Coolify's tunnel page warns that tunnels bypass firewall rules for that traffic, so keep SSH access under your control.
+
+Coolify's firewall page lists these ports for the server that runs Coolify:
 
 | Port | Purpose |
 | --- | --- |
