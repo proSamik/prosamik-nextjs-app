@@ -1,28 +1,64 @@
-// Sliding-window limiter kept in memory (per server process). It blunts loops and cheap bots; it is NOT
-// DDoS protection. Volumetric attacks must be stopped before they reach Node: keep the site behind
-// Cloudflare and add a rate-limiting rule for /api/newsletter there (see docs/newsletter.md).
-export interface Limit { limit: number; windowMs: number }
+type RateLimitOptions = {
+    windowMs: number;
+    max: number;
+};
 
-export class SlidingWindowLimiter {
-    private hits = new Map<string, number[]>();
-    private maxKeys: number;
-    constructor(maxKeys = 5000) { this.maxKeys = maxKeys; }
+type RateLimitResult = {
+    success: boolean;
+    remaining: number;
+    resetMs: number;
+};
 
-    /** Records a hit and returns true when the key is over its limit. */
-    hit(key: string, { limit, windowMs }: Limit, now = Date.now()): boolean {
-        const recent = (this.hits.get(key) ?? []).filter((time) => now - time < windowMs);
-        recent.push(now);
-        this.hits.set(key, recent);
-        if (this.hits.size > this.maxKeys) this.prune(windowMs, now);
-        return recent.length > limit;
-    }
+type Bucket = {
+    count: number;
+    resetAt: number;
+};
 
-    private prune(windowMs: number, now: number) {
-        for (const [key, times] of this.hits) if (times.every((time) => now - time >= windowMs)) this.hits.delete(key);
-        // Still too many live keys (a flood of unique callers): drop the oldest half rather than grow.
-        if (this.hits.size > this.maxKeys) {
-            let drop = Math.floor(this.hits.size / 2);
-            for (const key of this.hits.keys()) { if (drop-- <= 0) break; this.hits.delete(key); }
-        }
-    }
+const memoryBuckets = new Map<string, Bucket>();
+
+function getClientIp(headers: Headers): string {
+    const directIp = headers.get('cf-connecting-ip')
+        || headers.get('x-real-ip')
+        || headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+        || '0.0.0.0';
+
+    return directIp;
 }
+
+export function consumeRateLimit(key: string, options: RateLimitOptions): RateLimitResult {
+    const now = Date.now();
+    const bucket = memoryBuckets.get(key);
+
+    if (!bucket || bucket.resetAt <= now) {
+        const resetAt = now + options.windowMs;
+        memoryBuckets.set(key, { count: 1, resetAt });
+        return {
+            success: true,
+            remaining: options.max - 1,
+            resetMs: options.windowMs,
+        };
+    }
+
+    bucket.count += 1;
+    memoryBuckets.set(key, bucket);
+
+    const remaining = options.max - bucket.count;
+    if (remaining < 0) {
+        return {
+            success: false,
+            remaining: 0,
+            resetMs: Math.max(1, bucket.resetAt - now),
+        };
+    }
+
+    return {
+        success: true,
+        remaining,
+        resetMs: bucket.resetAt - now,
+    };
+}
+
+export function getIpFromHeaders(headers: Headers): string {
+    return getClientIp(headers);
+}
+
