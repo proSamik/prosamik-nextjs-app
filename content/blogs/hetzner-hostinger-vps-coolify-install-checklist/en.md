@@ -9,7 +9,7 @@ order: 49
 readTime: 10 min
 primaryKeyword: coolify install checklist
 keywords: [coolify install checklist, install coolify hetzner, install coolify hostinger, coolify vps setup, self host nextjs vps, coolify first login]
-related: [host-nextjs-on-vps-with-coolify, hostinger-vs-hetzner-vps-self-hosting, add-multiple-servers-coolify, basic-linux-vps-commands-self-hosting]
+related: [cloudflare-tunnel-guide, tailscale-guide, host-nextjs-on-vps-with-coolify, hostinger-vs-hetzner-vps-self-hosting]
 subclipBlurb: Subclip records and edits screen demos, so you can capture your own Coolify setup once and keep it as a short runbook clip.
 rankizzBlurb: Rankizz tracks how your published guides rank and get cited by AI search, which helps when a setup checklist is meant to be found.
 ---
@@ -20,7 +20,7 @@ It does not repeat the full walkthrough. For deploying a Next.js app after this,
 
 ## Quick answer
 
-Create an Ubuntu VPS with your SSH key, update it, create a non-root user, restrict the firewall, then run Coolify's official install script as root. Open the dashboard on port 8000, create the admin account immediately, set a domain with an A record, enable HTTPS, deploy one app, and set up backups. The official install command from the Coolify docs is:
+Create an Ubuntu VPS with your SSH key, update it, create a non-root user, set up the provider's dashboard firewall plus `ufw`, put Cloudflare Tunnel in front, then run Coolify's official install script as root. Open the dashboard on port 8000, create the admin account immediately, set a domain with an A record, enable HTTPS, deploy one app, and set up backups. The official install command from the Coolify docs is:
 
 ```bash
 curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
@@ -115,15 +115,20 @@ Open a second terminal and test `ssh <user>@<server-ip>`, then `sudo whoami`. On
 
 One catch: the Coolify docs say the automated install "requires root user access" and tell you to SSH in as root or a user with sudo privileges, noting the page does not fully resolve this. To avoid problems, run the installer as root, and keep your daily admin on the non-root user. Coolify's default connection to a server also uses root over SSH, so do not disable root key login before Coolify is working.
 
-## Checklist 7: firewall
+## Checklist 7: firewall (two layers)
 
-- [ ] Allow SSH first.
-- [ ] Allow ports for the Coolify proxy and dashboard.
+- [ ] Create a firewall in the provider's dashboard and attach it to the server.
+- [ ] Allow SSH first, then only the ports you use.
+- [ ] Also enable `ufw` on the server as the second layer.
 - [ ] Do not open ports you do not use.
+
+A firewall inside the server (`ufw`) is not enough on its own. Use the provider's dashboard firewall as well: Hetzner has Cloud Firewalls, and Hostinger has a VPS firewall in hPanel (I did not verify the Hostinger screens). The reason is where the rules run. A dashboard firewall is managed outside your server, so traffic it blocks is stopped before your server has to deal with it. That means brute-force attempts on SSH and random port scans are cut off at the provider, and your own server keeps running instead of burning CPU and logs on an attack. `ufw` only acts after packets have already reached the machine. Run both: the dashboard firewall as the outer wall, `ufw` as the inner one.
+
+Hetzner's documentation says a Cloud Firewall restricts a server's incoming and outgoing traffic, that anything not covered by a rule is blocked, that with no rules inbound is blocked and outbound is allowed, and that Cloud Firewalls are free. Limits listed include 5 firewalls per server and 500 rules per firewall.
 
 Coolify's firewall documentation lists these TCP ports: 22 for SSH, 80 for HTTP and certificate generation through the Coolify proxy, 443 for HTTPS through the proxy, and 8000 for direct access to the dashboard. Ports 6001 and 6002 are for real-time updates and the web terminal when using direct IP access, and the page says 8000, 6001 and 6002 can be closed once a domain works. It also says not to open ports your server does not use.
 
-You can apply these rules in the provider's firewall (Hetzner Firewalls are part of the create-server form) or on the server with `ufw`:
+Mirror the same rules in `ufw`:
 
 ```bash
 ufw allow 22/tcp
@@ -134,9 +139,22 @@ ufw enable
 ufw status
 ```
 
-Allow 22 before `ufw enable`, or you lock yourself out. A caution from general Docker behavior, which I did not test here: Docker publishes container ports by writing its own iptables rules, so a `ufw` rule may not block a published container port. A provider-level firewall is the safer layer.
+Allow 22 before `ufw enable`, or you lock yourself out. A caution from general Docker behavior, which I did not test here: Docker publishes container ports by writing its own iptables rules, so a `ufw` rule may not block a published container port. That is one more reason the provider-level firewall matters. Once you use a tunnel (next section), you can drop 80, 443 and 8000 from both layers.
 
-## Checklist 8: install Coolify
+## Checklist 8: Cloudflare Tunnel from day one
+
+- [ ] Put the domain on Cloudflare (nameservers) before you deploy anything.
+- [ ] Create a tunnel and run `cloudflared` on the server.
+- [ ] Publish the Coolify dashboard and your apps through the tunnel.
+- [ ] Close ports 80, 443 and 8000 in both firewalls.
+
+Start with Cloudflare Tunnel on the first day, not after the first incident. Your site sits behind the Cloudflare proxy anyway, and a tunnel makes the server connect out to Cloudflare, so you can block all inbound web traffic. Cloudflare's docs describe it this way: `cloudflared` starts an outbound connection from your origin to Cloudflare's network, so you can block all inbound traffic and the origin is reachable only through Cloudflare. Your server's real IP stops being a target for direct attacks, because nothing answers on it.
+
+In the Cloudflare dashboard go to Networking, Tunnels, create a tunnel, run the install command it shows on your server, then add a Published application route whose service URL points at your local service (for example the app container or the Coolify proxy). The server must be able to reach Cloudflare on port 7844 outbound. Coolify has its own tunnel guides (all resources, a single resource, server SSH access, full HTTPS/TLS), and recommends the all-resources option for beginners. Follow the full walkthrough in [the Cloudflare Tunnel guide](/blogs/cloudflare-tunnel-guide).
+
+Know the trade-offs. Coolify's tunnel page warns that tunnels bypass your firewall rules, so you cannot rely on separate firewall tools for that traffic, that traffic is routed through Cloudflare's servers, and that certificates are only trusted by Cloudflare. Keep SSH reachable by a way you control (a key-only SSH rule restricted to your own IP in the dashboard firewall, or [Tailscale](/blogs/tailscale-guide)), so a tunnel problem never locks you out of the server.
+
+## Checklist 9: install Coolify
 
 - [ ] Run the official install script as root.
 - [ ] Wait for the installer to print the dashboard address.
@@ -147,7 +165,7 @@ curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
 
 This is the command given in the Coolify installation docs. Read what a script does before piping it to a shell, and run it only from the official docs page. When it finishes, the dashboard is at `http://<server-ip>:8000`. Add `--preview` or `--nightly` after `bash -s --` only if you want those channels; the docs warn that nightly builds can include breaking changes.
 
-## Checklist 9: first-login security
+## Checklist 10: first-login security
 
 - [ ] Create the admin account immediately.
 - [ ] Use a strong unique password and enable two-factor authentication if offered.
@@ -157,7 +175,7 @@ The docs say to create your admin account as soon as installation finishes, beca
 
 The docs also say to back up `/data/coolify/source/.env`, which holds secrets such as `APP_KEY` that you need to restore Coolify. Copy it somewhere private, not into a repo.
 
-## Checklist 10: domain and DNS
+## Checklist 11: domain and DNS
 
 - [ ] Create an A record for your dashboard or app hostname.
 - [ ] Verify it resolves to the server.
@@ -171,7 +189,7 @@ dig @<public-resolver> +short app.example.com A
 
 The output should be your server IP. In my own setups Cloudflare is the strongest place to manage DNS: after buying a domain at any registrar you can point the nameservers to Cloudflare for free DNS management, and you need Cloudflare for R2 buckets anyway. If you proxy through Cloudflare, check the Coolify docs for the TLS mode you need before turning the proxy on.
 
-## Checklist 11: HTTPS
+## Checklist 12: HTTPS
 
 - [ ] Set your domain in Coolify using an `https://` URL.
 - [ ] Confirm ports 80 and 443 are open.
@@ -181,7 +199,7 @@ The Coolify DNS page says that if DNS resolves correctly but HTTPS fails, check 
 
 I did not verify the exact UI path for setting the dashboard domain, because the DNS page links to a separate Domains guide. Follow "Set the Coolify dashboard domain" in the Coolify docs, then close ports 8000, 6001 and 6002 once the domain works.
 
-## Checklist 12: deploy a first app
+## Checklist 13: deploy a first app
 
 - [ ] Create a project and an environment.
 - [ ] Add a small app from a Git repository.
@@ -190,7 +208,7 @@ I did not verify the exact UI path for setting the dashboard domain, because the
 
 Start with a tiny app, not your main one. Add a health route that returns 200, as described in [Coolify healthchecks for Next.js](/blogs/coolify-healthcheck-nextjs-docker-railpack). When the deployment succeeds and the site loads over HTTPS, the base setup is done.
 
-## Checklist 13: backups
+## Checklist 14: backups
 
 - [ ] Enable provider server backups or snapshots if you want whole-machine recovery.
 - [ ] Back up Coolify's own configuration (`/data/coolify/source/.env`).
