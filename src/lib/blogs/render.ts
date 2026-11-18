@@ -1,3 +1,4 @@
+import { linkProviders } from './providers';
 import 'server-only';
 import { Marked, Renderer, type Tokens } from 'marked';
 import { siteMetadata } from '@/utils/siteMetadata';
@@ -77,7 +78,7 @@ export function renderPostHtml(post: BlogPost): string {
             html: ({ text }: Tokens.HTML | Tokens.Tag) => escapeHtml(text),
         },
     });
-    return marked.parse(resolvePromoLinks(post.body, post.slug), { async: false });
+    return linkProviders(marked.parse(resolvePromoLinks(post.body, post.slug), { async: false }));
 }
 
 /** The two tools each post promotes, with copy written for this post's topic. */
