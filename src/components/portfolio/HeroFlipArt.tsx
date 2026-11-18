@@ -59,7 +59,7 @@ export default function HeroFlipArt() {
         <div className="hero-art">
             {slides.map((slide, index) => (
                 <a key={slide.id} className={`hero-art-slide hero-art-${slide.id}`} href={slide.href} target="_blank" rel="noopener noreferrer" aria-label={slide.label}>
-                    <Image src={portfolioAsset(`hero/${slide.id}-${slide.v}.webp`)} alt={slide.alt} width={1280} height={1024} sizes="(max-width: 700px) 92vw, 46vw" loading="eager" fetchPriority={index === 0 ? 'high' : 'auto'} />
+                    <Image src={portfolioAsset(`hero/${slide.id}-${slide.v}.webp`)} alt={slide.alt} width={1280} height={1024} sizes="(max-width: 700px) 92vw, 46vw" loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'low'} />
                 </a>
             ))}
         </div>
