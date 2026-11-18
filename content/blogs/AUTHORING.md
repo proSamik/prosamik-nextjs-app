@@ -87,3 +87,9 @@ Guides get pasted into agents, so write them as if the reader's agent will act o
 ## Privacy check (automatic)
 
 `npm run test:blogs` fails if a post contains a specific IP address (only `0.0.0.0`, `127.0.0.1` and version-like `0.0.1.0` are allowed), an email, a real home directory or user name, a UUID, or a secret-shaped token. When you write from your own setup, swap your real values for placeholders (`<vm-ip>`, `<user>`, `<mac-ip>`) or a generic range (`192.168.x.x`) before saving. Real IDs in a screenshot count too: blur them.
+
+## Sources and provider links
+
+- Do not add a "Sources" line or section. Verify facts from official docs, but readers do not see a source list.
+- Name an external provider or tool (Hetzner, Cloudflare, Sentry, ...) in plain prose. The site links the first prose mention of each one to its official site with `rel="nofollow"` automatically (`src/lib/blogs/providers.ts`). Add a row there for a new provider; never hand-write provider homepage links.
+- Firewall advice for any VPS post: use the provider's dashboard firewall (it filters outside the server, so attacks are stopped before they reach it) and `ufw` as a second layer.
