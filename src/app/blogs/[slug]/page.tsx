@@ -7,7 +7,8 @@ import BlogPostMotion from '@/components/blogs/BlogPostMotion';
 import CopyCodeButtons from '@/components/blogs/CopyCodeButtons';
 import PromoCards from '@/components/blogs/PromoCards';
 import { getBlogLocales, getBlogPost, getBlogSlugs } from '@/lib/blogs/content';
-import { getToc, postUrl, renderPostHtml } from '@/lib/blogs/render';
+import NewsletterSignup from '@/components/NewsletterSignup';
+import { getToc, postUrl, renderPostHtml, splitHtmlAtMiddle } from '@/lib/blogs/render';
 import { buildBlogJsonLd } from '@/lib/blogs/schema';
 import { DEFAULT_LOCALE, OPEN_GRAPH_LOCALE, languageAlternates, localizePath } from '@/lib/i18n/config';
 import { siteMetadata } from '@/utils/siteMetadata';
@@ -62,7 +63,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const post = getBlogPost(slug, DEFAULT_LOCALE);
     if (!post) notFound();
 
-    const html = renderPostHtml(post);
+    const [firstHalf, secondHalf] = splitHtmlAtMiddle(renderPostHtml(post));
     const toc = getToc(post.body);
     const related = post.related.flatMap((relatedSlug) => getBlogPost(relatedSlug, post.locale) ?? []);
     const bodyId = 'blog-article-body';
@@ -91,7 +92,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     {toc.map((item) => <a key={item.id} href={`#${item.id}`}>{item.title}</a>)}
                 </nav>
                 <div className="blog-body-column">
-                    <div id={bodyId} className="blog-body" dangerouslySetInnerHTML={{ __html: html }} />
+                    <div id={bodyId} className="blog-body">
+                        <div dangerouslySetInnerHTML={{ __html: firstHalf }} />
+                        {secondHalf && <NewsletterSignup source={`blog/${post.slug}`} variant="inline" />}
+                        {secondHalf && <div dangerouslySetInnerHTML={{ __html: secondHalf }} />}
+                    </div>
                     <CopyCodeButtons containerId={bodyId} />
                     <AgentInstructionsButton slug={post.slug} placement="bottom" />
                     <PromoCards post={post} />
