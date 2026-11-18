@@ -1,4 +1,5 @@
 import 'server-only';
+import { SlidingWindowLimiter } from './rate-limit';
 
 // Newsletter signup through a (self-hosted) Plunk instance. Plunk's /v1/track endpoint creates the
 // contact when it does not exist yet and applies `subscribed`, so one call adds the contact and
@@ -28,15 +29,15 @@ export function parseNewsletterInput(body: unknown): { ok: true; value: Newslett
     return { ok: true, value: { name, email, source: /^[a-z0-9/_:.-]+$/i.test(source) ? source : 'site' } };
 }
 
-// Small per-process limiter: enough to blunt a loop on one instance. Put a real limit (Cloudflare rules)
-// in front for anything serious.
-const hits = new Map<string, number[]>();
-export function isRateLimited(key: string, limit = 5, windowMs = 10 * 60 * 1000, now = Date.now()): boolean {
-    const recent = (hits.get(key) ?? []).filter((time) => now - time < windowMs);
-    recent.push(now);
-    hits.set(key, recent);
-    if (hits.size > 5000) for (const [mapKey, times] of hits) if (times.every((time) => now - time >= windowMs)) hits.delete(mapKey);
-    return recent.length > limit;
+const limiter = new SlidingWindowLimiter();
+/** Layered limits: per IP, per email address (stops mail-bombing one inbox), and a global ceiling. */
+export function isRateLimited(ip: string, email?: string): boolean {
+    const checks: boolean[] = [
+        limiter.hit(`ip:${ip}`, { limit: 5, windowMs: 10 * 60 * 1000 }),
+        limiter.hit('global', { limit: 120, windowMs: 60 * 1000 }),
+    ];
+    if (email) checks.push(limiter.hit(`email:${email}`, { limit: 3, windowMs: 60 * 60 * 1000 }));
+    return checks.some(Boolean);
 }
 
 function plunkConfig() {
