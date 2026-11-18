@@ -151,5 +151,3 @@ Yes. Move the app with a redeploy to a new server and keep database backups. See
 - The domain side: [Cheapest domain registrar for developers](/blogs/cheapest-domain-registrar-for-developers).
 
 If you publish comparison pages like this, [Rankizz](rankizz:inline-comparison-tracking) tracks how a page ranks and gets cited by AI search.
-
-Sources: hetzner.com/cloud, docs.hetzner.com/cloud/servers/overview, hostinger.com/vps-hosting, coolify.io/docs/get-started/installation, coolify.io/docs/knowledge-base/server/introduction, coolify.io/docs/knowledge-base/server/firewall

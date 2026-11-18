@@ -166,5 +166,3 @@ Yes, tools exist, but I did not verify exact flags. Use Xcode's Organizer or che
 - A backend for your app: [Deploy an MCP server in Next.js on Coolify](/blogs/deploy-mcp-server-nextjs-coolify).
 
 If you need a short demo video of your app for App Review notes or your landing page, [Subclip](subclip:inline-demo-recording) records and edits screen demos.
-
-Sources: https://developer.apple.com/documentation/xcode/distributing-your-app-for-beta-testing-and-releases, https://developer.apple.com/help/app-store-connect/create-an-app-record/add-a-new-app, https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/submit-for-review, https://developers.openai.com/codex/cli

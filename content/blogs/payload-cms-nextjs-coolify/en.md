@@ -189,5 +189,3 @@ The Payload Docker guide uses it for a slim runner image. Without it you need th
 - [Coolify healthcheck for Next.js](/blogs/coolify-healthcheck-nextjs-docker-railpack)
 - [Move a Next.js app from Vercel to Coolify](/blogs/move-nextjs-from-vercel-to-coolify)
 - [Postgres backups in Coolify](/blogs/postgres-backups-coolify)
-
-Sources: https://payloadcms.com/docs/production/deployment, https://coolify.io/docs

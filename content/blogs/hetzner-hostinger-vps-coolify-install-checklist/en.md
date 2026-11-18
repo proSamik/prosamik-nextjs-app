@@ -253,5 +253,3 @@ Yes. Once Coolify is installed on one VPS, add others from the dashboard. Coolif
 ## Next steps
 
 Deploy your first app with [host Next.js on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify), compare providers in [Hostinger vs Hetzner](/blogs/hostinger-vs-hetzner-vps-self-hosting), add capacity with [add multiple servers to Coolify](/blogs/add-multiple-servers-coolify), and learn the shell in [basic Linux VPS commands](/blogs/basic-linux-vps-commands-self-hosting).
-
-Sources: coolify.io/docs/get-started/installation, coolify.io/docs/knowledge-base/server/firewall, coolify.io/docs/knowledge-base/dns-configuration, docs.hetzner.com/cloud/servers/getting-started/creating-a-server.

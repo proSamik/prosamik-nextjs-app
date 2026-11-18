@@ -194,5 +194,3 @@ Through the PostHog MCP server, yes, within the access you grant it.
 - Build a validating proxy: [a safe events route in Next.js](/blogs/nextjs-trace-events-route).
 - Compare vendors: [New Relic vs Sentry](/blogs/new-relic-vs-sentry-nextjs-coolify).
 - Plan the move: [Vercel observability alternatives](/blogs/vercel-observability-alternatives).
-
-Sources: https://posthog.com/docs/error-tracking/installation/nextjs, https://posthog.com/docs/advanced/proxy/nextjs, https://posthog.com/docs/model-context-protocol

@@ -194,5 +194,3 @@ Run `codex mcp list`, or type `/mcp` in the Codex TUI.
 - A full task with Codex: [Launch an iOS app with Codex](/blogs/launch-ios-app-app-store-with-codex).
 
 If you track how guides like this get cited by AI search, [Rankizz](rankizz:inline-guide-tracking) is a workspace for that, and it offers an MCP server you could connect the same way.
-
-Sources: https://developers.openai.com/codex/mcp, https://developers.openai.com/codex/cli

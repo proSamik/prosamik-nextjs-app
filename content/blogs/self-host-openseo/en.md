@@ -191,5 +191,3 @@ The docs say at least 4 GiB of memory available to Docker.
 - More self-hosting: [Self-host Plunk with Amazon SES](/blogs/self-host-plunk-amazon-ses).
 
 If you want to track how a published guide like this one ranks or gets cited by AI search, [Rankizz](rankizz:inline-guide-tracking) is a hosted workspace for that.
-
-Sources: https://github.com/every-app/open-seo, https://github.com/every-app/open-seo/blob/main/docs/SELF_HOSTING_DOCKER.md, https://github.com/every-app/open-seo/blob/main/docs/DATAFORSEO_API_KEY.md

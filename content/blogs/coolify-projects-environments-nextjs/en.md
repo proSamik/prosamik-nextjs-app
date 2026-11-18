@@ -163,5 +163,3 @@ Mine is a separate resource beside the app. Keep one database per environment.
 - Install and deploy first: [Host a Next.js app on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify).
 - Spread across machines: [Add multiple servers to Coolify](/blogs/add-multiple-servers-coolify).
 - Coming from Vercel: [Move a Next.js app from Vercel to Coolify](/blogs/move-nextjs-from-vercel-to-coolify).
-
-Sources: coolify.io/docs/get-started/concepts, coolify.io/docs/get-started/deploy-your-first-app, coolify.io/docs/knowledge-base/environment-variables, coolify.io shared variables documentation

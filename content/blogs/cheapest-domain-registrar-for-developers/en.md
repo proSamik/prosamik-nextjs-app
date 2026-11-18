@@ -22,7 +22,6 @@ I am not quoting current prices. They differ per extension and change often, so 
 
 My ranking as a developer is #1 Spaceship, #2 Cloudflare, #3 Porkbun, #4 Namecheap. This is my personal ranking, not a price benchmark. Cloudflare ranks high for DNS, nameservers and R2, not because it is always the cheapest to register with. The rule that matters more than the ranking: the registrar and the DNS host can be different, so you can buy anywhere and point the nameservers to Cloudflare.
 
-
 The price rule: compare the renewal price of your exact extension at Cloudflare Registrar, Porkbun and Namecheap. Cloudflare says it sells domains at cost with no markup. Porkbun says its prices include ICANN fees and that WHOIS privacy is free. Pick the lowest renewal price that includes privacy, and prefer a registrar whose DNS you will actually use with your host.
 
 ## My ranking and why
@@ -194,5 +193,3 @@ Yes, after the 60-day period, using an auth code. See [the transfer guide](/blog
 - Leaving a registrar: [Transfer a domain from Namecheap to another registrar](/blogs/transfer-domain-namecheap-to-another-registrar).
 - Use it: [Host a Next.js app on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify).
 - Server choice: [Hostinger vs Hetzner VPS](/blogs/hostinger-vs-hetzner-vps-self-hosting).
-
-Sources (Spaceship and Namecheap pricing pages could not be fetched): developers.cloudflare.com/registrar, developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare, porkbun.com/products/domains, namecheap.com/support/knowledgebase (what should I do to transfer a domain from Namecheap), coolify.io/docs/get-started/deploy-your-first-app

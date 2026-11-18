@@ -161,5 +161,3 @@ A narrow token plus approval for risky actions. Prompts alone are not a control.
 - Backups: [Coolify backups to S3 or R2](/blogs/coolify-backups-s3-r2).
 - Pick a registrar: [Cheapest domain registrar for developers](/blogs/cheapest-domain-registrar-for-developers).
 - Host the app: [Host Next.js on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify).
-
-Sources: https://developers.cloudflare.com/workers/wrangler/commands/general/, https://developers.cloudflare.com/workers/wrangler/commands/workers/, https://developers.cloudflare.com/workers/wrangler/commands/r2/, https://developers.cloudflare.com/api/resources/dns/subresources/records/methods/list/

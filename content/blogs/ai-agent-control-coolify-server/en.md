@@ -174,5 +174,3 @@ Yes in principle, see [Coolify backups to S3 or R2](/blogs/coolify-backups-s3-r2
 - Add servers: [Add multiple servers in Coolify](/blogs/add-multiple-servers-coolify).
 - Back up data: [Coolify backups to S3 or R2](/blogs/coolify-backups-s3-r2).
 - Read logs: [Next.js logs in Coolify](/blogs/nextjs-logs-in-coolify).
-
-Sources: https://coolify.io/docs/core/security/credentials/api-tokens, https://coolify.io/docs/api/permissions, https://coolify.io/docs/api-reference/authorization, https://coolify.io/docs/api-reference/api/

@@ -164,5 +164,3 @@ No. A server marked as a build server cannot be selected as a deployment destina
 - Organise what runs where: [Coolify projects and environments](/blogs/coolify-projects-environments-nextjs).
 - Server basics: [Basic Linux VPS commands](/blogs/basic-linux-vps-commands-self-hosting).
 - Choosing a provider: [Hostinger vs Hetzner VPS](/blogs/hostinger-vs-hetzner-vps-self-hosting).
-
-Sources: coolify.io/docs/knowledge-base/server/introduction, coolify.io/docs/core/infrastructure/servers/add-server, coolify.io/docs/knowledge-base/server/openssh, coolify.io/docs/knowledge-base/server/build-server, coolify.io/docs/knowledge-base/server/firewall

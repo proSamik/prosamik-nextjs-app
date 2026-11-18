@@ -270,5 +270,3 @@ Use WSL if you want the same commands as your Linux server. Use PowerShell for W
 ## Next steps
 
 Read [basic Linux VPS commands for self-hosting](/blogs/basic-linux-vps-commands-self-hosting) for the server side, the [macOS Terminal equivalent](/blogs/macos-terminal-commands-for-developers) if you also use a Mac, and [host Next.js on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify) for a first deployment. For connecting to a Windows machine from a Mac, see [SSH into a Windows VM from a Mac](/blogs/ssh-into-windows-vm-from-mac).
-
-Sources: learn.microsoft.com/powershell/module/scheduledtasks/register-scheduledtask, learn.microsoft.com/powershell/module/nettcpip/test-netconnection, learn.microsoft.com/windows/package-manager/winget.

@@ -209,5 +209,3 @@ SSH to the server and run `docker logs --tail 200 -f <your-app-container>`.
 - Catch failed rollouts earlier: [Coolify healthcheck for Next.js](/blogs/coolify-healthcheck-nextjs-docker-railpack).
 
 If you document runbooks with screen clips, [Subclip](subclip:inline-runbook-clip) can record the log view and its AI editor cleans up the take.
-
-Sources: https://coolify.io/docs/applications/operations, https://coolify.io/docs/core/observability/log-drains/overview, https://coolify.io/docs/knowledge-base/monitoring

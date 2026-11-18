@@ -239,5 +239,3 @@ It defaults to 20 per user and database pair. Keep it below Postgres' `max_conne
 - Keep deploys safe: [Coolify healthcheck for Next.js](/blogs/coolify-healthcheck-nextjs-docker-railpack).
 
 If you want to track how a guide like this ranks or gets cited by AI search, [Rankizz](rankizz:inline-guide-tracking) is a workspace for that.
-
-Sources: pgbouncer.org/config.html, pgbouncer.org/features.html, node-postgres.com/apis/pool, prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections/pgbouncer, coolify.io/docs/databases/postgresql, docs.useplunk.com/self-hosting/environment-variables.

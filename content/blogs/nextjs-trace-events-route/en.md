@@ -285,5 +285,3 @@ Possibly, if the path name looks like tracking. PostHog's docs recommend an app-
 - Another protected route: [Deploy an MCP server in Next.js on Coolify](/blogs/deploy-mcp-server-nextjs-coolify)
 
 If you want to see how a guide performs after you publish it, [Rankizz](rankizz:inline-guide-tracking) tracks rankings and AI-search citations.
-
-Sources: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation, https://nextjs.org/docs/app/guides/instrumentation, https://posthog.com/docs/advanced/proxy/nextjs, https://posthog.com/docs/libraries/next-js

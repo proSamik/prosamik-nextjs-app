@@ -154,5 +154,3 @@ The narrowest that works. Start read-only and widen only for steps that need it.
 - Give Codex tools: [Add an MCP server to Codex CLI](/blogs/codex-mcp-server-setup).
 - Cron basics: [Coolify cron jobs for Next.js](/blogs/coolify-cron-jobs-nextjs-scheduled-tasks).
 - Sending mail: [Self-host Plunk with Amazon SES](/blogs/self-host-plunk-amazon-ses).
-
-Sources: https://developers.openai.com/codex/app/automations, https://developers.openai.com/codex/noninteractive, https://developers.openai.com/codex/cli

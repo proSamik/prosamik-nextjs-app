@@ -208,5 +208,3 @@ Yes for migrations. `DIRECT_DATABASE_URL` must bypass any connection pooler.
 - Protect the database: [Postgres backups in Coolify](/blogs/postgres-backups-coolify).
 
 If you publish a self-hosting guide, [Rankizz](rankizz:inline-guide-tracking) can track how it ranks and whether AI search cites it.
-
-Sources: docs.useplunk.com/self-hosting/introduction, docs.useplunk.com/self-hosting/docker, docs.useplunk.com/self-hosting/environment-variables, docs.useplunk.com/self-hosting/email-setup, docs.aws.amazon.com/ses/latest/dg/request-production-access.html.

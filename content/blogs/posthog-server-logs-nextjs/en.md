@@ -215,5 +215,3 @@ Keep them as a fallback. See [Next.js logs in Coolify](/blogs/nextjs-logs-in-coo
 - [A safe events route in Next.js](/blogs/nextjs-trace-events-route)
 - [Next.js logs in Coolify](/blogs/nextjs-logs-in-coolify)
 - [Vercel Log Drains for Next.js](/blogs/vercel-log-drains-nextjs)
-
-Sources: https://posthog.com/docs/logs, https://posthog.com/docs/logs/installation, https://posthog.com/docs/logs/installation/nodejs, https://posthog.com/docs/libraries/next-js, https://nextjs.org/docs/app/guides/instrumentation

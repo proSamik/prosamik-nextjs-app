@@ -197,5 +197,3 @@ Container logs and a log drain on your own host. See [Vercel Observability alter
 - If you self-host: [Next.js logs in Coolify](/blogs/nextjs-logs-in-coolify) and [Move a Next.js app from Vercel to Coolify](/blogs/move-nextjs-from-vercel-to-coolify).
 
 If you share the Add Drain flow with a team, [Subclip](subclip:inline-drain-walkthrough) can record the walkthrough and its AI editor tidies the clip.
-
-Sources: https://vercel.com/docs/drains, https://vercel.com/docs/drains/using-drains, https://vercel.com/docs/drains/security, https://vercel.com/docs/drains/reference/logs

@@ -188,5 +188,3 @@ No. It only proves a file was created. Restore it and check your data.
 - The platform setup: [Move a Next.js app from Vercel to Coolify](/blogs/move-nextjs-from-vercel-to-coolify).
 
 If you document your restore drill as a runbook, [Subclip](subclip:inline-restore-drill) can record the terminal session and its AI editor trims the take.
-
-Sources: coolify.io/docs/databases/backups, coolify.io/docs/databases/postgresql, postgresql.org/docs/current/app-pgrestore.html.

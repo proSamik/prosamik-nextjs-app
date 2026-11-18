@@ -351,5 +351,3 @@ Allow SSH first, keep one session open, and test a second login before closing t
 - Add another machine: [Add multiple servers to Coolify](/blogs/add-multiple-servers-coolify).
 - Local machine commands: [macOS Terminal commands](/blogs/macos-terminal-commands-for-developers) and [Windows PowerShell commands](/blogs/windows-powershell-commands-for-developers).
 - Pick a provider: [Hostinger vs Hetzner VPS](/blogs/hostinger-vs-hetzner-vps-self-hosting).
-
-Sources: docs.docker.com/engine/manage-resources/pruning, coolify.io/docs/knowledge-base/server/automated-cleanup, coolify.io/docs/get-started/installation, coolify.io/docs/knowledge-base/server/firewall, coolify.io/docs/knowledge-base/server/openssh, ubuntu.com/server/docs/how-to/security/firewalls, docs.docker.com/engine/network/packet-filtering-firewalls

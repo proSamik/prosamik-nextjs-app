@@ -198,5 +198,3 @@ Close it once the dashboard works through a domain, as Coolify's firewall page s
 - Server basics: [Basic Linux VPS commands for self-hosting](/blogs/basic-linux-vps-commands-self-hosting).
 
 If you document runbooks with screen clips, [Subclip](subclip:inline-first-deploy-clip) can record the first deploy and its AI editor cleans up the take.
-
-Sources: coolify.io/docs/get-started/installation, coolify.io/docs/applications/nextjs, coolify.io/docs/knowledge-base/server/firewall, coolify.io/docs/get-started/deploy-your-first-app, coolify.io/docs/builds/packs/overview, coolify.io/docs/knowledge-base/environment-variables

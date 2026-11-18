@@ -279,5 +279,3 @@ macOS uses BSD versions of many tools, so flags differ for `sed -i`, `du`, `date
 ## Next steps
 
 If you manage servers from this Mac, read [basic Linux VPS commands for self-hosting](/blogs/basic-linux-vps-commands-self-hosting) for the server side, [SSH into a Linux VM from a Mac](/blogs/ssh-into-linux-vm-from-mac) for keys and config, and [host Next.js on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify) to put those commands to work. On Windows, see [PowerShell commands for developers](/blogs/windows-powershell-commands-for-developers).
-
-Sources: docs.brew.sh/Manpage, Apple Developer Documentation "Scheduling Timed Jobs" (BPSystemStartup).

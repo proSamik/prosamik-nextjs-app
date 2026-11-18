@@ -232,5 +232,3 @@ No. Keep it private and scope the token to it.
 - Pool connections to the database you are backing up: [PgBouncer with self-hosted Postgres](/blogs/pgbouncer-self-hosted-postgres-nextjs).
 
 If you publish infra guides like this, [Rankizz](rankizz:inline-guide-tracking) can track how they rank and get cited by AI search.
-
-Sources: coolify.io/docs/api-reference/authorization, coolify.io/docs/api-reference/permissions, developers.cloudflare.com/r2/buckets/object-lifecycles, developers.cloudflare.com/workers/wrangler/commands/r2, coolify.io/docs/knowledge-base/s3/introduction, coolify.io/docs/core/s3-storage/r2, coolify.io/docs/databases/backups, developers.cloudflare.com/r2/api/s3/api/.

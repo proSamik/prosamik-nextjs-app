@@ -154,5 +154,3 @@ At Cloudflare, most gTLD transfers add a year at the current price. Check your d
 - Leaving Vercel too: [Move a Next.js app from Vercel to Coolify](/blogs/move-nextjs-from-vercel-to-coolify).
 
 If you keep runbooks as screen clips, [Subclip](subclip:inline-transfer-runbook) can record the transfer steps and its AI editor cleans up the take.
-
-Sources: namecheap.com/support/knowledgebase/article.aspx/258/84/what-should-i-do-to-transfer-a-domain-from-namecheap, developers.cloudflare.com/registrar/get-started/transfer-domain-to-cloudflare

@@ -155,5 +155,3 @@ No. Most small apps need recent logs, one retained destination and analytics.
 - [A first-party events route in Next.js](/blogs/nextjs-trace-events-route)
 
 If you publish comparisons like this, [Rankizz](rankizz:inline-guide-tracking) is an SEO and AI-search workspace that tracks how a published guide ranks and whether AI search cites it.
-
-Sources: https://vercel.com/docs/observability, https://vercel.com/docs/drains, https://coolify.io/docs/core/observability/log-drains/overview, https://coolify.io/docs/applications/operations, https://nextjs.org/docs/app/guides/open-telemetry, https://posthog.com/docs/logs/installation/nodejs

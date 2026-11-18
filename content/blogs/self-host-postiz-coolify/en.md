@@ -166,5 +166,3 @@ Coolify lists it as a service. I could not verify deployment steps from Coolify'
 - Get a server ready: [Host a Next.js app on a VPS with Coolify](/blogs/host-nextjs-on-vps-with-coolify).
 - Organise resources: [Coolify projects and environments](/blogs/coolify-projects-environments-nextjs).
 - Protect the data: [Postgres backups in Coolify](/blogs/postgres-backups-coolify).
-
-Sources: https://docs.postiz.com/installation/docker-compose, https://docs.postiz.com/self-host/configuration/reference, https://coolify.io/docs/services/postiz

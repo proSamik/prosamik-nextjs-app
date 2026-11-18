@@ -141,5 +141,3 @@ For errors and basic server logs, often yes. It has its own cost threshold, cove
 - Compare against Vercel's tools: [Vercel observability alternatives](/blogs/vercel-observability-alternatives).
 - Send logs from the app: [Next.js server logs to PostHog](/blogs/posthog-server-logs-nextjs).
 - Accept events safely: [a safe events route in Next.js](/blogs/nextjs-trace-events-route).
-
-Sources: https://coolify.io/docs/core/observability/log-drains/overview, https://sentry.io/pricing/, https://newrelic.com/pricing
