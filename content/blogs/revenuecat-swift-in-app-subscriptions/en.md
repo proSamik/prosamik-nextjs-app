@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your app page ranks and gets cited by AI search
 
 With RevenueCat's SDK, selling a subscription in SwiftUI takes four calls: configure, fetch offerings, purchase a package and check the entitlement. This guide shows each step. Do the store and dashboard setup first in [the payments setup guide](/blogs/launch-mobile-app-with-payments-revenuecat), and check RevenueCat's current SDK docs because method names evolve.
 
+::youtube[8LA1O_ykskA] How to Implement RevenueCat in iOS Apps (with Supabase)
+
 ## Quick answer
 
 Add the package with Swift Package Manager, call `Purchases.configure(withAPIKey:)` at launch with your public SDK key, load `Purchases.shared.offerings()`, purchase a package, then unlock features when `customerInfo.entitlements["pro"]?.isActive == true`.
