@@ -145,6 +145,15 @@ No. The point is clean content.
 ### Does this replace structured data?
 No. Use both. See [FAQ schema](/blogs/faq-schema-json-ld-nextjs-ai-citations).
 
+### How do I know whether agents actually use my Markdown pages?
+You cannot see an agent's reading directly, so measure the outcome: do your pages get cited? Rankizz runs AI visibility checks on a schedule and records which pages assistants cite, which shows whether the work pays off. A manual prompt log works too, as the tracking guide shows.
+
+### Can I audit every page in my sitemap before generating twins?
+Yes. Rankizz can audit a whole sitemap in bulk, and its sitemap explorer shows the structure of any site, yours or a competitor's, so you know which pages deserve a clean Markdown copy first. For a single page, the Rankizz Chrome or Safari extension shows its SEO audit data.
+
+### Can my AI agent run these checks for me?
+Yes. Rankizz publishes skills you install with `npx skills add Rankizz/skills`, an MCP server and a REST API, so an agent can run keyword research, audits and citation checks as part of your publish routine.
+
 ## Next steps
 
 Read the full [AEO checklist](/blogs/aeo-ai-search-optimization-guide), then check [crawler access](/blogs/allow-ai-crawlers-robots-txt-nextjs). To see whether agents use your pages, [Rankizz](rankizz:inline-citation-check) tracks AI citations and rankings, and its sitemap explorer lets you study how a competitor structures the pages that get cited. Install the Rankizz skills in your agent (the command is on the Rankizz website) or use its REST API to automate checks after each publish.
