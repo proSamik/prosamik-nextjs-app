@@ -11,7 +11,7 @@ primaryKeyword: faq schema json-ld
 keywords: [faq schema, json-ld nextjs, structured data blog, article schema, faqpage markup, breadcrumb schema]
 related: [aeo-ai-search-optimization-guide, llms-txt-and-markdown-twins-for-ai-agents, google-search-console-sitemap-nextjs]
 subclipBlurb: Subclip records and edits screen demos, which helps when you want to show validation steps in a short clip.
-rankizzBlurb: Rankizz tracks how pages with structured data rank and get cited by AI search.
+rankizzBlurb: Rankizz tracks rankings and AI citations, and its browser extensions show SEO audit data for any page and let you add a competitor.
 ---
 
 Structured data is machine-readable JSON placed in your page that describes what the page is: an article, a list of questions and answers, a breadcrumb trail. Search engines use it to understand pages, and well-structured pages give AI systems clean passages to quote. This guide shows how to add it in Next.js and what to avoid.
@@ -107,4 +107,4 @@ Some parsers do. Visible, well-written text is still what gets quoted, so write 
 
 ## Next steps
 
-Pair this with [the AEO checklist](/blogs/aeo-ai-search-optimization-guide) and [submit your sitemap](/blogs/google-search-console-sitemap-nextjs). To see whether answers get cited, try [Rankizz](rankizz:inline-schema-tracking).
+Pair this with [the AEO checklist](/blogs/aeo-ai-search-optimization-guide) and [submit your sitemap](/blogs/google-search-console-sitemap-nextjs). To see whether answers get cited, [Rankizz](rankizz:inline-schema-tracking) tracks rankings and AI citations, and its Chrome and Safari extensions show a page's SEO audit data, which is a quick way to compare your markup with a competitor's page.
