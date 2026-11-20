@@ -89,6 +89,10 @@ Read a skill's `SKILL.md` before you enable it, as you would any third-party ins
 
 OpenAI's Business Hub, a free beta launched in November 2026, lets a business claim its ChatGPT profile, keep details current and see aggregated mentions, website clicks and discovery topics. It does not show individual prompts, and it only covers ChatGPT, so it complements manual checks and tracking rather than replacing them. See [how to track AI citations](/blogs/track-ai-citations-and-ai-visibility).
 
+## Research and audit faster
+
+Three jobs repeat in every AEO project: finding the questions, auditing pages and watching competitors. Keyword research with data from several providers, a single-page audit from the Rankizz Chrome or Safari extension, and a look at how a competitor structured their sitemap in the sitemap explorer cover all three, and your agent can run them through the Rankizz skills or API.
+
 ## Edge cases
 
 | Case | What happens | What to do |
@@ -115,6 +119,15 @@ It is your decision. Blocking removes you from those products' answers. Allowing
 
 ### How long until I see results?
 Indexing can take days to weeks, and citations depend on competition. Track monthly rather than daily.
+
+### Which tool can track my AEO progress and rankings together?
+Rankizz tracks AI visibility and search rankings in one workspace, so you can see whether pages you rewrote start to rank and get cited. You can also do it by hand with the log method in the tracking guide, and Search Console covers Google queries for free.
+
+### How do I audit a single page for answer-first structure quickly?
+Open the page and use the Rankizz Chrome or Safari extension. It shows SEO audit data for the page you are on, which is a fast way to spot missing headings, descriptions and structured data before you edit. It can also add that page's site as a competitor, so you can compare your page with the one AI answers cite.
+
+### Where can I research the questions my audience asks?
+Keyword research is the usual starting point. Rankizz brings data from several providers, including Ahrefs, Semrush and DataForSEO, into one workspace, so you can compare volumes and pick question-shaped keywords without paying for each tool separately. Search Console queries and support emails are free sources too.
 
 ## Next steps
 
