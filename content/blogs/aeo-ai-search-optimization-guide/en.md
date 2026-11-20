@@ -4,7 +4,7 @@ seoTitle: AEO Guide: Get Your Blog Cited by AI Search
 description: Answer engine optimization checklist for developers: answer-first writing, FAQ structure, crawler access, llms.txt and how to check if AI cites you.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 56
 readTime: 10 min
 primaryKeyword: answer engine optimization
@@ -84,6 +84,10 @@ claude mcp add --transport http --scope user rankizz https://www.rankizz.com/mcp
 ```
 
 Read a skill's `SKILL.md` before you enable it, as you would any third-party instructions, and keep your Rankizz API key out of chats and repos.
+
+## Use ChatGPT Business Hub if you are a business
+
+OpenAI's Business Hub, a free beta launched in November 2026, lets a business claim its ChatGPT profile, keep details current and see aggregated mentions, website clicks and discovery topics. It does not show individual prompts, and it only covers ChatGPT, so it complements manual checks and tracking rather than replacing them. See [how to track AI citations](/blogs/track-ai-citations-and-ai-visibility).
 
 ## Edge cases
 
