@@ -11,7 +11,7 @@ primaryKeyword: indexnow nextjs
 keywords: [indexnow, indexnow nextjs, bing indexing, submit url to bing, instant indexing, search engine ping]
 related: [google-search-console-sitemap-nextjs, aeo-ai-search-optimization-guide, allow-ai-crawlers-robots-txt-nextjs]
 subclipBlurb: Subclip records and edits screen demos, useful for a short clip of the publish and ping flow.
-rankizzBlurb: Rankizz tracks whether newly submitted pages show up in rankings and AI answers.
+rankizzBlurb: Rankizz tracks rankings and AI citations after pages are indexed, with a REST API for scripted checks.
 ---
 
 IndexNow is an open protocol that lets you tell participating search engines the moment a URL is added, updated or deleted, instead of waiting for them to re-crawl. Bing and several other engines support it. Google does not use IndexNow, so keep using Search Console for Google. This guide sets it up in Next.js.
@@ -88,4 +88,4 @@ A sitemap lists everything occasionally, while IndexNow pushes specific changes 
 
 ## Next steps
 
-Set up [Search Console and the sitemap](/blogs/google-search-console-sitemap-nextjs), then follow the [AEO checklist](/blogs/aeo-ai-search-optimization-guide). Once pages are indexed, [Rankizz](rankizz:inline-indexnow) can track how they rank and get cited.
+Set up [Search Console and the sitemap](/blogs/google-search-console-sitemap-nextjs), then follow the [AEO checklist](/blogs/aeo-ai-search-optimization-guide). Once pages are indexed, [Rankizz](rankizz:inline-indexnow) can track how they rank and get cited, and its REST API lets you wire that check into the same deploy script that sends your IndexNow ping.
