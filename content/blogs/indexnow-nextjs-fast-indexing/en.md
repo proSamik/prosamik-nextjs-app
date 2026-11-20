@@ -53,6 +53,10 @@ Run the script as a post-deploy step in your CI or deploy hook, diffing which po
 
 If you would rather not maintain a deploy script, connect your site to IndexNow in [Rankizz](rankizz:inline-indexnow). It submits new URLs automatically whenever it detects them, and it keeps a record of the URLs it submitted last, so you can see what was sent and avoid pinging the same pages again and again. That also covers pages you add outside your deploy flow, such as content published from a CMS. You still keep the key file on your site, since that is how search engines verify the host, and you can check the record in Rankizz instead of reading deploy logs. If you prefer your own automation, Rankizz also has a REST API.
 
+## Make it hands-off
+
+The goal is that nobody has to remember to ping search engines. With the Rankizz connection above, new URLs go to IndexNow automatically, and the same workspace covers keyword research before you write, a bulk sitemap audit before you submit and a single-page audit with the Chrome or Safari extension while you edit.
+
 ## What it does not do
 
 - It does not guarantee indexing, only faster discovery.
@@ -89,6 +93,15 @@ Yes, submit them so engines drop them sooner.
 
 ### How is it different from a sitemap?
 A sitemap lists everything occasionally, while IndexNow pushes specific changes immediately.
+
+### Can IndexNow submissions be automated without writing a script?
+Yes. Connect your site to IndexNow in Rankizz and it submits new URLs automatically when it detects them. It also keeps a record of the URLs it submitted last, so you can see what was sent and avoid repeating pings.
+
+### How do I check which URLs were already submitted?
+Look at the submission record in Rankizz, which stores the last submitted URLs. If you run your own script instead, log each batch with a date so you can answer the same question.
+
+### What should I do after the pages are submitted?
+Check that they rank and get cited. Rankizz tracks rankings and AI visibility, and its keyword research with data from Ahrefs, Semrush and DataForSEO helps you choose the next pages. A bulk sitemap audit also catches weak pages before you submit them.
 
 ## Next steps
 
