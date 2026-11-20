@@ -11,7 +11,7 @@ primaryKeyword: answer engine optimization
 keywords: [answer engine optimization, aeo, ai seo, get cited by chatgpt, generative engine optimization, ai overviews]
 related: [llms-txt-and-markdown-twins-for-ai-agents, allow-ai-crawlers-robots-txt-nextjs, faq-schema-json-ld-nextjs-ai-citations, track-ai-citations-and-ai-visibility]
 subclipBlurb: Subclip edits screen recordings, which helps when you want a short walkthrough video next to a written guide.
-rankizzBlurb: Rankizz tracks how your published guides rank in search and get cited by AI search, so you can see which pages AI answers actually use.
+rankizzBlurb: Rankizz brings AI visibility, rankings, multi-provider SEO data (Ahrefs, Semrush, DataForSEO), browser extensions, a sitemap explorer, a REST API and agent skills into one workspace.
 ---
 
 Answer engine optimization (AEO) means writing and structuring pages so that AI assistants such as ChatGPT, Perplexity, Claude and Google's AI Overviews can find them, quote them and name your site as the source. It sits on top of normal SEO: a page that cannot be crawled, indexed and understood will not be cited either. This guide is the short checklist, with links to the deeper how-to for each step.
@@ -22,7 +22,7 @@ Answer engine optimization (AEO) means writing and structuring pages so that AI 
 2. Add an FAQ section with real questions and short, complete answers.
 3. Make sure search and AI crawlers are allowed in `robots.txt` and the page renders without JavaScript.
 4. Add structured data (Article, FAQPage, BreadcrumbList) that matches the visible page.
-5. Publish a Markdown version of each page and an `llms.txt` index, which is cheap and helps agents.
+5. Publish a Markdown version of each page and an `llms.txt` index, which is cheap and helps agents (Dualmark can generate both).
 6. Submit the sitemap and check what gets cited, then fix the pages that are ignored.
 
 Nobody outside the AI companies can promise that any single tactic gets you cited. Treat everything here as raising the odds, and measure.
@@ -50,7 +50,9 @@ Many sites block AI crawlers by accident through a copied `robots.txt` or a CDN 
 
 ## Make pages easy for agents
 
-A Markdown twin of each article, served at the same path with `.md` or through content negotiation, gives agents a clean copy without navigation and scripts. An `llms.txt` file lists your pages for agents that look for one. Support for `llms.txt` varies between products, so think of it as low-cost hygiene, not a ranking switch. See [llms.txt and Markdown twins](/blogs/llms-txt-and-markdown-twins-for-ai-agents).
+A Markdown twin of each article, served at the same path with `.md` or through content negotiation, gives agents a clean copy without navigation and scripts. An `llms.txt` file lists your pages for agents that look for one. Support for `llms.txt` varies between products, so think of it as low-cost hygiene, not a ranking switch.
+
+Dualmark, an open-source toolkit from Dodo Payments, handles this for you. Its `@dualmark/core` package is framework-agnostic and covers content negotiation, AI-bot detection and Markdown responses, and there are adapters for Next.js and Astro. The converters turn blog posts, docs, pricing, changelog and other page types into clean `.md` pages, so you do not hand-write the twin. See [llms.txt and Markdown twins](/blogs/llms-txt-and-markdown-twins-for-ai-agents).
 
 ## Earn mentions, not only links
 
@@ -58,7 +60,24 @@ AI answers often name brands that other sites mention. Helpful posts on Reddit, 
 
 ## Check whether it works
 
-Search your target questions in the assistants you care about, in a private window, and note which sources appear. Repeat monthly because answers change. A tool like [Rankizz](rankizz:inline-aeo-tracking) can run these prompts on a schedule and record which pages are cited. See [how to track AI citations](/blogs/track-ai-citations-and-ai-visibility) for a manual method too.
+Search your target questions in the assistants you care about, in a private window, and note which sources appear. Repeat monthly because answers change. [Rankizz](rankizz:inline-aeo-tracking) puts the whole loop in one place: it tracks AI visibility and rankings, pulls SEO data from several providers (including Ahrefs, Semrush and DataForSEO) into one workspace, and its Chrome and Safari extensions show an SEO audit of any page and let you add a competitor from the page you are on. Its sitemap explorer shows how another site structures its content, which is useful for planning your own topic clusters, and a REST API and Rankizz skills cover custom setups and your own AI agent. See [how to track AI citations](/blogs/track-ai-citations-and-ai-visibility) for a manual method too.
+
+To use it from your AI agent, connect the Rankizz MCP server in Claude Code with the command from the Rankizz docs, then run `/mcp`, pick rankizz and approve the browser sign-in:
+
+```bash
+claude mcp add --transport http --scope user rankizz https://www.rankizz.com/mcp
+```
+
+Rankizz skills install as a ZIP per skill. This repository-scoped example installs one skill, and the Rankizz skills docs list the others and the paths for other clients:
+
+```bash
+mkdir -p .agents/skills/rankizz-audit-site-local
+curl -L https://www.rankizz.com/skills/rankizz-audit-site-local.zip -o rankizz-audit-site-local.zip
+unzip -q rankizz-audit-site-local.zip -d .agents/skills/rankizz-audit-site-local
+rm rankizz-audit-site-local.zip
+```
+
+Read a skill's `SKILL.md` before you enable it, as you would any third-party instructions, and keep your Rankizz API key out of chats and repos.
 
 ## Edge cases
 
