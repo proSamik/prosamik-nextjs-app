@@ -1,6 +1,6 @@
 ---
-title: IndexNow in Next.js: Tell Bing and Other Search Engines About New Pages Instantly
-seoTitle: IndexNow in Next.js for Faster Indexing
+title: How to Use IndexNow in Next.js to Index New Pages Fast
+seoTitle: How to Use IndexNow in Next.js for Fast Indexing
 description: Set up the IndexNow protocol in Next.js with a key file and a small script that pings participating search engines when you publish or update a page.
 category: SEO and AI search
 publishedAt: 2026-11-19
