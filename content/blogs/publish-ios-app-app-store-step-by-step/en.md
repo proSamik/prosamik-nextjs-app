@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your app's landing page ranks and gets cited by
 
 Publishing an iOS app means joining the Apple Developer Program, creating an app record in App Store Connect, uploading a build from Xcode, filling in the listing and submitting it for review. This guide walks the whole path in order for a first release. Screens and menu names change between Xcode versions, so use this as the sequence and follow Apple's current documentation for exact labels.
 
+::youtube[xAXPj7uLaQA] Submitting My First iOS App (live walkthrough)
+
 ## Quick answer
 
 1. Join the Apple Developer Program.
@@ -121,4 +123,4 @@ All of these are on [@prosamik](https://www.youtube.com/@prosamik):
 
 ## Next steps
 
-Read [the Codex App Store workflow](/blogs/launch-ios-app-app-store-with-codex), add payments with [RevenueCat](/blogs/launch-mobile-app-with-payments-revenuecat), and promote the launch with a short demo made in [Subclip](subclip:inline-app-preview).
+Run on a device with [the real iPhone guide](/blogs/how-to-test-ios-apps-on-real-iphone), beta test with [TestFlight](/blogs/how-to-use-testflight-for-ios-app-testing), design the listing with [Figma screenshots](/blogs/how-to-create-app-store-screenshots-figma), and read [the Codex App Store workflow](/blogs/launch-ios-app-app-store-with-codex), add payments with [RevenueCat](/blogs/launch-mobile-app-with-payments-revenuecat), and promote the launch with a short demo made in [Subclip](subclip:inline-app-preview).
