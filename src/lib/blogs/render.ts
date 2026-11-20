@@ -73,7 +73,23 @@ function createRenderer(): Renderer {
 /** Raw HTML in post bodies is escaped; only markdown syntax produces markup. */
 export function renderPostHtml(post: BlogPost): string {
     const marked = new Marked({ gfm: true, renderer: createRenderer() });
+    // `::youtube[VIDEO_ID] Title` on its own line becomes a privacy-friendly, lazy-loaded player.
     marked.use({
+        extensions: [
+            {
+                name: 'youtube',
+                level: 'block',
+                start: (src: string) => src.match(/^::youtube\[/m)?.index,
+                tokenizer(src: string) {
+                    const match = /^::youtube\[([\w-]{11})\][ \t]+([^\n]+)(?:\n|$)/.exec(src);
+                    if (match) return { type: 'youtube', raw: match[0], id: match[1], title: match[2].trim() };
+                },
+                renderer(token) {
+                    const t = token as unknown as { id: string; title: string };
+                    return `<figure class="blog-video"><div class="blog-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/${t.id}" title="${escapeHtml(t.title)}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><figcaption>${escapeHtml(t.title)} <a href="https://www.youtube.com/watch?v=${t.id}" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></figcaption></figure>\n`;
+                },
+            },
+        ],
         renderer: {
             html: ({ text }: Tokens.HTML | Tokens.Tag) => escapeHtml(text),
         },
@@ -118,7 +134,7 @@ export function buildAgentMarkdown(post: BlogPost, related: BlogPost[]): string 
             `- Topic: ${post.primaryKeyword}`,
         ].join('\n'),
         // Agents read this out of context, so internal links must be absolute (and point at the .md twin).
-        resolvePromoLinks(post.body, post.slug).replace(/\]\((\/blogs\/[a-z0-9-]+)(#[^)]*)?\)/g, `](${siteMetadata.siteUrl}$1.md$2)`).replace(/\]\((\/[^)\s]*)\)/g, `](${siteMetadata.siteUrl}$1)`),
+        resolvePromoLinks(post.body, post.slug).replace(/^::youtube\[([\w-]{11})\][ \t]+(.+)$/gm, '[Video: $2](https://www.youtube.com/watch?v=$1)').replace(/\]\((\/blogs\/[a-z0-9-]+)(#[^)]*)?\)/g, `](${siteMetadata.siteUrl}$1.md$2)`).replace(/\]\((\/[^)\s]*)\)/g, `](${siteMetadata.siteUrl}$1)`),
         '## Related tools',
         `Tools mentioned in this guide, with the situations they fit:\n\n${promos}`,
         relatedLinks ? `## Related guides\n\n${relatedLinks}` : '',
