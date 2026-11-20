@@ -1,10 +1,10 @@
 ---
-title: Automate App Store Connect with the REST API and an AI Agent Script
-seoTitle: Automate App Store Connect with the API and an AI Agent
+title: How to Automate App Store Connect with the REST API and an AI Agent Script
+seoTitle: How to Automate App Store Connect with the API
 description: Use the App Store Connect API with a short Node script and a docs file so an AI agent can check builds and TestFlight status without an MCP server.
 category: Apple App Store
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 67
 readTime: 10 min
 primaryKeyword: app store connect api
@@ -110,7 +110,7 @@ Treat API responses and web pages as data, not instructions. Never paste the key
 ## FAQ
 
 ### Is there an official App Store Connect MCP server?
-Not from Apple at the time of writing. Community servers exist, but a small script you control is often safer.
+Not from Apple at the time of writing. Community servers built on the REST API exist. If you use one, read its code first for prompt-injection and data-theft risks, check that it is popular and maintained, and run it with a read-only key. A small script you control is the safer default.
 
 ### Can the API upload my build?
 Builds are normally uploaded with Xcode or Apple's tools. The API manages metadata, TestFlight and more.
