@@ -50,19 +50,25 @@ In your analytics, filter referrers for AI products' domains and for sessions wh
 
 Manual checks do not scale past a few dozen prompts. [Rankizz](rankizz:inline-ai-visibility-check) can run a prompt set on a schedule and store which sources were cited. It also brings data from several SEO providers (Ahrefs, Semrush and DataForSEO) into one place, has a sitemap explorer for studying the structure of sites that win citations, a REST API for custom integrations, and skills you install into your AI agent with a command from the Rankizz website. OpenSEO and similar products offer related checks. Whatever you choose, keep the prompt list under your control and review costs before large runs.
 
-To use it from your AI agent, connect the Rankizz MCP server in Claude Code with the command from the Rankizz docs, then run `/mcp`, pick rankizz and approve the browser sign-in:
+To use it from your AI agent, install the Rankizz skills with the skills CLI, which supports Claude Code, Codex, Cursor and many other agents:
+
+```bash
+npx skills add Rankizz/skills                                  # choose interactively
+npx skills add Rankizz/skills --skill rankizz-research-keywords
+```
+
+Or install from npm into Claude Code (`.claude/skills`) or Codex (`.agents/skills`):
+
+```bash
+npx @rankizz/skills                                            # all skills, current project
+npx @rankizz/skills rankizz-research-keywords --global         # one skill, personal
+npx @rankizz/skills --agent codex
+```
+
+For live data, connect the Rankizz MCP server. In Claude Code run the command below, then `/mcp`, pick rankizz and approve the browser sign-in. Headless clients can use a personal API key instead, and MCP and API calls need a credit balance of at least 10 credits.
 
 ```bash
 claude mcp add --transport http --scope user rankizz https://www.rankizz.com/mcp
-```
-
-Rankizz skills install as a ZIP per skill. This repository-scoped example installs one skill, and the Rankizz skills docs list the others and the paths for other clients:
-
-```bash
-mkdir -p .agents/skills/rankizz-audit-site-local
-curl -L https://www.rankizz.com/skills/rankizz-audit-site-local.zip -o rankizz-audit-site-local.zip
-unzip -q rankizz-audit-site-local.zip -d .agents/skills/rankizz-audit-site-local
-rm rankizz-audit-site-local.zip
 ```
 
 Read a skill's `SKILL.md` before you enable it, as you would any third-party instructions, and keep your Rankizz API key out of chats and repos.
