@@ -79,6 +79,10 @@ claude mcp add --transport http --scope user rankizz https://www.rankizz.com/mcp
 
 Read a skill's `SKILL.md` before you enable it, as you would any third-party instructions, and keep your Rankizz API key out of chats and repos.
 
+## Research and audit faster
+
+Tracking tells you where you stand, and three tools help you improve: keyword research to choose prompts, a bulk audit of your sitemap to find weak pages, and a single-page audit from the Rankizz Chrome or Safari extension for the page you are editing. The extension can also add a competitor from the page you are viewing, so you can follow who gets cited instead of you.
+
 ## Edge cases
 
 | Case | What happens | What to do |
@@ -109,6 +113,15 @@ It helps, because many assistants use search results, but it is not a guarantee.
 
 ### What should I fix first if I am never cited?
 Crawler access, then the first sentence under each heading, then third-party mentions.
+
+### Can I automate AI visibility tracking instead of checking by hand?
+Yes. Rankizz runs your prompt set on a schedule and records which sources assistants cite, so a monthly manual check becomes a standing report. A REST API is available if you want the numbers in your own dashboard.
+
+### Can my AI agent run these checks and keyword research?
+Yes. Install the Rankizz skills with `npx skills add Rankizz/skills`, or connect its MCP server, and your agent can run keyword research, audits and visibility checks for you. Remember that MCP and API calls need a credit balance.
+
+### Where does the data behind the keywords and rankings come from?
+Rankizz pulls from several providers, including Ahrefs, Semrush and DataForSEO, and shows them in one workspace. That saves you from stitching three exports together, though you should still sanity-check any single number.
 
 ## Next steps
 
