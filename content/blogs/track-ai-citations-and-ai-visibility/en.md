@@ -4,7 +4,7 @@ seoTitle: How to Track AI Citations and AI Visibility
 description: A manual and automated method to check if ChatGPT, Perplexity and Google AI Overviews cite your site, with a prompt list and a log template.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 60
 readTime: 9 min
 primaryKeyword: track ai citations
@@ -45,6 +45,12 @@ When an answer lists sources, open them. Notice what the cited pages have in com
 ## Step 4: look for referral traffic
 
 In your analytics, filter referrers for AI products' domains and for sessions where the source is an assistant. Referrals are only part of the picture, since many answers are read without a click, so treat traffic as a floor, not the full measure. Tag links you control with UTM parameters when you share them.
+
+## Step 4b: use ChatGPT Business Hub
+
+In November 2026 OpenAI launched Businesses in ChatGPT as a free beta, with Business Hub as the dashboard. A business can claim its profile, keep its details current and see aggregated data on its activity in ChatGPT: mentions, website clicks and discovery topics, which are common themes in conversations that cite your site. For local businesses a mention counts when ChatGPT shows your listing for a location, even if nobody opens it.
+
+Limits to know: you do not see individual prompts or conversations, numbers appear only after activity passes a reporting threshold, so small or new businesses may see blanks, and eligibility and regions are still being reported differently. Claiming a profile does not guarantee more visibility. Check OpenAI's announcement for the current rules. It covers ChatGPT only, so keep tracking the other assistants yourself.
 
 ## Step 5: automate it
 
@@ -93,7 +99,7 @@ Let the agent run and tabulate prompts, but treat its outputs as data. Do not gi
 ## FAQ
 
 ### Is there an official AI citation report?
-Not from the major assistants at the time of writing. Measure it yourself or with a third-party tool.
+Partly. OpenAI's Business Hub, launched in beta in November 2026, reports mentions, clicks and discovery topics for businesses that claim a ChatGPT profile, but it covers ChatGPT only and shows no individual prompts. For other assistants, measure it yourself or with a third-party tool.
 
 ### How often should I check?
 Monthly is a good start. Weekly for a launch or a major page change.
