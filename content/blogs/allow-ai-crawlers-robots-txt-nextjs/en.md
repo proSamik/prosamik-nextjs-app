@@ -1,10 +1,10 @@
 ---
-title: robots.txt for AI Crawlers in Next.js: Allow GPTBot, ClaudeBot and PerplexityBot on Purpose
-seoTitle: robots.txt for AI Crawlers in Next.js
+title: How to Allow AI Crawlers in robots.txt: GPTBot, ClaudeBot and PerplexityBot in Next.js
+seoTitle: How to Allow AI Crawlers in robots.txt (Next.js)
 description: Decide which AI crawlers to allow, write the robots.txt in Next.js, avoid accidental CDN blocks and verify that bots receive real HTML.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 58
 readTime: 8 min
 primaryKeyword: robots.txt ai crawlers
