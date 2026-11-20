@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your app's landing page ranks and gets cited by
 
 An iPad app is usually the same project as your iPhone app with a layout that uses the larger screen. Most developers ship one universal app that runs on both. This guide covers enabling iPad support, making the layout adapt, preparing screenshots and the App Store settings that change.
 
+::youtube[Cfjh_jeP_zQ] Mac Catalyst vs Designed for iPad
+
 ## Quick answer
 
 Add iPad to the target's supported destinations, use adaptive SwiftUI layouts (`NavigationSplitView`, size classes, flexible grids), test on iPad simulators in portrait, landscape and split view, upload iPad screenshots in App Store Connect and submit as usual.
