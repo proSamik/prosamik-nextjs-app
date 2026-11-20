@@ -4,7 +4,7 @@ seoTitle: Google Search Console and Sitemap for Next.js
 description: Verify your domain in Google Search Console, generate a sitemap in Next.js, submit it, inspect URLs and fix common indexing statuses without paying for tools.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 61
 readTime: 10 min
 primaryKeyword: google search console sitemap
@@ -50,9 +50,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 List only canonical, indexable, `200` URLs. Leave out redirects, `noindex` pages and duplicates. Use real `lastModified` dates, since Google ignores them if they always change.
 
-## Step 3: reference and submit it
+## Step 3: put the sitemap in robots.txt, then submit it
 
-Make sure `robots.txt` contains a `Sitemap:` line (see [the crawler guide](/blogs/allow-ai-crawlers-robots-txt-nextjs)). In Search Console open **Sitemaps**, enter `sitemap.xml` and submit. The status should become **Success** and show the number of discovered URLs. A sitemap helps discovery but does not guarantee indexing.
+Crawlers request `robots.txt` before anything else, so it is the first place they can learn where your sitemap is. Add the full, absolute sitemap URL with a `Sitemap:` line. It is not tied to a user-agent group, can appear anywhere in the file, and you can list more than one.
+
+```text
+User-agent: *
+Allow: /
+
+Sitemap: https://www.example.com/sitemap.xml
+```
+
+In Next.js, generate it from `app/robots.ts` by returning the `sitemap` field:
+
+```ts
+import type { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+    return {
+        rules: { userAgent: '*', allow: '/' },
+        sitemap: 'https://www.example.com/sitemap.xml',
+    };
+}
+```
+
+Then open `https://www.example.com/robots.txt` in a browser and confirm the `Sitemap:` line shows your real production domain, not `localhost` or a preview URL. This also lets crawlers other than Google and Bing, including AI crawlers, find your pages without any submission. See [the crawler guide](/blogs/allow-ai-crawlers-robots-txt-nextjs) for the rest of the file.
+
+Then submit it in Search Console: open **Sitemaps**, enter `sitemap.xml` and submit. The status should become **Success** and show the number of discovered URLs. A sitemap helps discovery but does not guarantee indexing.
 
 ## Step 4: inspect important URLs
 
@@ -81,7 +105,7 @@ If your site runs behind Cloudflare or a [Tunnel](/blogs/cloudflare-tunnel-guide
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| Sitemap "Couldn't fetch" | Wrong URL or blocked | Open it in a browser, check status and robots |
+| Sitemap "Couldn't fetch" | Wrong URL or blocked | Open it in a browser, check status, and check the `Sitemap:` line in robots.txt |
 | 0 URLs discovered | Empty or invalid XML | Validate the output |
 | Verification fails | TXT record not live | Wait, check the record name and value |
 | Pages missing after weeks | Thin or duplicate content | Strengthen content and internal links |
