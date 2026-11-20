@@ -48,8 +48,8 @@
 .blog-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3f3f3;border:1px solid #e8e8e8;border-radius:4px;padding:.12em .4em}
 .blog-code{position:relative;margin:1.2em 0;border-radius:8px;background:#f6f6f6;color:#1f2328;border:1px solid #e6e6e6;overflow:hidden}
 .blog-code::before{content:attr(data-lang);position:absolute;top:0;left:0;padding:6px 12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8a8a8a;font-family:Arial,Helvetica,sans-serif}
-.blog-code pre{margin:0;padding:32px 16px 14px;overflow-x:auto;font-size:14px;line-height:1.65;tab-size:2;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
-.blog-code code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;background:none;border:0;padding:0;font-size:inherit;color:inherit}
+.blog-code pre{margin:0;padding:32px 16px 14px;overflow-x:auto;font-size:14px;line-height:1.65;tab-size:2;white-space:pre;overflow-wrap:normal;word-break:normal}
+.blog-code code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre;background:none;border:0;padding:0;font-size:inherit;color:inherit}
 .blog-copy{position:absolute;top:6px;right:8px;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;background:#fff;color:#555;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .blog-copy:hover{background:#111;color:#fff;border-color:#111}
 .blog-copy[data-state=check]{background:#15803d;color:#fff;border-color:#15803d}
