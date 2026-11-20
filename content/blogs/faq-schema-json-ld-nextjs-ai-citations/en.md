@@ -1,10 +1,10 @@
 ---
-title: FAQ Schema and JSON-LD in Next.js: Structured Data That Helps Search and AI Answers
-seoTitle: FAQ Schema and JSON-LD in Next.js for AI Answers
+title: How to Add FAQ Schema and JSON-LD in Next.js for Search and AI Answers
+seoTitle: How to Add FAQ Schema and JSON-LD in Next.js
 description: Add Article, FAQPage and BreadcrumbList JSON-LD to a Next.js blog, keep it matching the page, validate it and learn what Google does and does not show.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 59
 readTime: 9 min
 primaryKeyword: faq schema json-ld
