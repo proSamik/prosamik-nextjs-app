@@ -4,7 +4,7 @@ seoTitle: Why Build Free Tools Even If They Don't Convert
 description: Free tools earn links, search traffic, trust and reviews even when few users pay. Learn what to build, what to measure and how to link to your product.
 category: Growth
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-21
 order: 65
 readTime: 7 min
 primaryKeyword: free tools marketing
@@ -25,7 +25,7 @@ Build free tools for search traffic, links, trust and reviews, not for direct sa
 - **Search traffic.** People search "convert X to Y" and "X generator", often with clear intent and low competition.
 - **Backlinks.** Useful tools get linked from forums, docs and other sites without outreach.
 - **Trust.** A product that helps for free feels safer to try.
-- **Review moments.** A successful result is the best time to ask for a rating. See [the review prompt guide](/blogs/get-five-star-reviews-with-free-tools).
+- **Review moments.** People who just got a free result are glad to give feedback, so a well-timed review request after success collects good reviews. See [how to get 5-star reviews with free tools](/blogs/get-five-star-reviews-with-free-tools).
 - **Learning.** Search queries and usage show what your audience struggles with.
 
 ## Why it often does not convert
@@ -46,6 +46,10 @@ Pick tasks near your product's topic so the visitors are plausible customers. A 
 ## Link to the product honestly
 
 Add one plain mention below the result, for example "Want to automate this? See our product." Do not gate the result behind an email. Disclose that you made both.
+
+## Ask for a review after the result
+
+A free tool is the best moment to ask for a review. The visitor has just received something useful for nothing, so they are grateful and more likely to leave honest feedback. Show a small, dismissible request only after a successful result, such as a copy or a download, and never when the tool errors or returns nothing. Ask once per visitor and send them to one review page that matters for your product. The full pattern, with a code sketch and the rules review platforms set, is in [how to get 5-star reviews automatically with free tools](/blogs/get-five-star-reviews-with-free-tools).
 
 ## What to measure
 
@@ -78,6 +82,9 @@ Yes if each takes days, not weeks. A few good ones beat many mediocre ones.
 
 ### Should I ask for an email before showing results?
 It lowers use and trust. Offer the newsletter after the result instead.
+
+### How do I get reviews from free tool users?
+Ask right after a successful result, once per visitor, with a short dismissible prompt. People who just received something useful for free are more likely to respond. See [the 5-star review guide](/blogs/get-five-star-reviews-with-free-tools).
 
 ### How do I find tool ideas?
 Look at search queries, support questions and tasks your users do before opening your product.
