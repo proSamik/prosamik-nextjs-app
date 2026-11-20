@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your app landing page ranks and gets cited by A
 
 To charge for digital features in an iOS app you use Apple's in-app purchase system, and RevenueCat sits on top as a service that handles receipts, subscription status and analytics for you. This guide covers the setup order: Apple's business agreements, products in App Store Connect, the RevenueCat project, and a sandbox test. The Swift code is in [the next guide](/blogs/revenuecat-swift-in-app-subscriptions).
 
+::youtube[dKrKa27ECQg] How to Connect RevenueCat to App Store Connect - Complete Setup Guide
+
 ## Quick answer
 
 1. Accept the Paid Apps Agreement and add bank and tax details in App Store Connect.
