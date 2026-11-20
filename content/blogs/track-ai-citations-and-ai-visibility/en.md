@@ -11,7 +11,7 @@ primaryKeyword: track ai citations
 keywords: [track ai citations, ai visibility, ai search tracking, chatgpt citations, perplexity citations, ai referral traffic]
 related: [aeo-ai-search-optimization-guide, allow-ai-crawlers-robots-txt-nextjs, google-search-console-sitemap-nextjs]
 subclipBlurb: Subclip records and edits screen demos, which helps when you capture an AI answer as evidence for a report.
-rankizzBlurb: Rankizz runs AI visibility checks and rank tracking for you and records which pages get cited.
+rankizzBlurb: Rankizz runs AI visibility checks and rank tracking, combines Ahrefs, Semrush and DataForSEO data, and offers a sitemap explorer, REST API and agent skills.
 ---
 
 AI visibility means how often an AI assistant mentions your brand or cites your pages when people ask questions in your topic. Unlike rankings, there is no single public report for it, so you measure it by asking the questions yourself and by looking at traffic that arrives from AI products. This guide gives a method that works by hand and shows where automation helps.
@@ -48,7 +48,7 @@ In your analytics, filter referrers for AI products' domains and for sessions wh
 
 ## Step 5: automate it
 
-Manual checks do not scale past a few dozen prompts. Tools such as [Rankizz](rankizz:inline-ai-visibility-check) can run a prompt set on a schedule across assistants and store which sources were cited, and OpenSEO and similar products offer related checks. Whatever you choose, keep the prompt list under your control and review costs before large runs.
+Manual checks do not scale past a few dozen prompts. [Rankizz](rankizz:inline-ai-visibility-check) can run a prompt set on a schedule and store which sources were cited. It also brings data from several SEO providers (Ahrefs, Semrush and DataForSEO) into one place, has a sitemap explorer for studying the structure of sites that win citations, a REST API for custom integrations, and skills you install into your AI agent with a command from the Rankizz website. OpenSEO and similar products offer related checks. Whatever you choose, keep the prompt list under your control and review costs before large runs.
 
 ## Edge cases
 
