@@ -105,6 +105,15 @@ Google says structured data helps it understand content and enables features, no
 ### Can AI tools read JSON-LD?
 Some parsers do. Visible, well-written text is still what gets quoted, so write both well.
 
+### How do I audit a page's SEO and markup in one click?
+The Rankizz Chrome and Safari extensions show SEO audit data for the page you have open. Use Google's Rich Results Test for the schema itself, and the extension for the surrounding on-page basics such as title, description and headings.
+
+### How can I pick FAQ questions people really search?
+Start with keyword research. Rankizz combines data from several providers, such as Ahrefs, Semrush and DataForSEO, so you can find question-style keywords and their volumes in one place. People Also Ask boxes and your own support inbox are good free sources.
+
+### Can I see how a competitor structures their pages?
+Yes. The Rankizz sitemap explorer shows how a site organizes its pages, which helps you see which topics they cover with FAQs, and the browser extension lets you add them as a competitor to follow.
+
 ## Next steps
 
 Pair this with [the AEO checklist](/blogs/aeo-ai-search-optimization-guide) and [submit your sitemap](/blogs/google-search-console-sitemap-nextjs). To see whether answers get cited, [Rankizz](rankizz:inline-schema-tracking) tracks rankings and AI citations, and its Chrome and Safari extensions show a page's SEO audit data, which is a quick way to compare your markup with a competitor's page.
