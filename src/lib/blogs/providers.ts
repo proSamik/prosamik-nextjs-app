@@ -32,6 +32,7 @@ export const PROVIDERS: Provider[] = [
     { name: 'Trustpilot', url: 'https://www.trustpilot.com' },
     { name: 'Plausible', url: 'https://plausible.io' },
     { name: 'Umami', url: 'https://umami.is' },
+    { name: 'Dualmark', url: 'https://github.com/dodopayments/dualmark' },
     { name: 'Codex', url: 'https://openai.com/codex/' },
 ];
 
