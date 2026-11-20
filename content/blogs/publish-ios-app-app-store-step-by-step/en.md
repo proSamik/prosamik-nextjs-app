@@ -4,7 +4,7 @@ seoTitle: How to Publish an iOS App on the App Store (Step by Step)
 description: A beginner path to publish an iOS app: developer account, bundle ID, App Store Connect record, Xcode archive, TestFlight, listing, review and release.
 category: Apple App Store
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-21
 order: 66
 readTime: 12 min
 primaryKeyword: publish ios app app store
@@ -24,6 +24,8 @@ Publishing an iOS app means joining the Apple Developer Program, creating an app
 4. Upload the archive and test it in TestFlight.
 5. Complete the listing: screenshots, description, privacy answers, age rating, pricing.
 6. Submit for review, then release manually or automatically.
+
+Prefer to watch first? [Submitting My First iOS App (live walkthrough)](https://www.youtube.com/watch?v=xAXPj7uLaQA) shows the whole flow on screen, and [the 8-minute submission checklist](https://www.youtube.com/watch?v=EcPdP5dnBa8) covers what to prepare. Both are from [my YouTube channel](https://www.youtube.com/@prosamik).
 
 ## What you need
 
@@ -53,7 +55,7 @@ In App Store Connect open **Apps**, choose **New App**, and pick a platform, nam
 
 ## Step 4: upload and test
 
-In the Organizer window select the archive and choose **Distribute App** to upload to App Store Connect. Processing takes a few minutes. Then use TestFlight: add yourself as an internal tester and install the build on a real device. Fix crashes before reviewers see them.
+In the Organizer window select the archive and choose **Distribute App** to upload to App Store Connect. Processing takes a few minutes. If Xcode's upload fails, [4 ways to upload iOS apps to App Store Connect](https://www.youtube.com/watch?v=KlkAi9ieboQ) lists alternatives. Then use TestFlight: add yourself as an internal tester and install the build on a real device ([how to use TestFlight](https://www.youtube.com/watch?v=NDiRMxNdEX8)). Fix crashes before reviewers see them, and if the app crashes only in TestFlight, see [why your iOS app crashes in TestFlight](https://www.youtube.com/watch?v=b6fksIMklUk).
 
 ## Step 5: complete the listing
 
@@ -66,13 +68,15 @@ In the Organizer window select the archive and choose **Distribute App** to uplo
 | Pricing and availability | Price tier and countries |
 | Review information | Contact details and demo account if sign-in is needed |
 
-Make sure the demo account, if any, works on the day of review.
+Make sure the demo account, if any, works on the day of review. For screenshots, [how to create App Store screenshots fast with Figma](https://www.youtube.com/watch?v=RDbkDFaxaq4) walks through the process.
 
 ## Step 6: submit and release
 
 Choose the build, answer the export compliance and content questions, and **Submit for Review**. Review often takes a day or two but can vary. If rejected, read the message in Resolution Center, fix the cited issue and resubmit. Choose manual release if you want control over the launch time.
 
 ## Common rejection reasons
+
+The [App Store Review Guidelines: common mistakes](https://www.youtube.com/watch?v=c9HLIGu8TLo) video goes through the most frequent ones.
 
 | Reason | Fix |
 | --- | --- |
@@ -103,6 +107,17 @@ No, building and signing iOS apps requires Xcode on a Mac.
 
 ### Do I need TestFlight?
 Not required, but strongly advised to catch problems first.
+
+## Video walkthroughs
+
+All of these are on [@prosamik](https://www.youtube.com/@prosamik):
+
+- [Submitting My First iOS App (live walkthrough)](https://www.youtube.com/watch?v=xAXPj7uLaQA)
+- [Complete App Store Submission Checklist in 8 Minutes](https://www.youtube.com/watch?v=EcPdP5dnBa8)
+- [4 Ways to Upload iOS Apps to App Store Connect](https://www.youtube.com/watch?v=KlkAi9ieboQ)
+- [How to Use TestFlight for iOS App Testing](https://www.youtube.com/watch?v=NDiRMxNdEX8)
+- [App Store Review Guidelines: Avoid These Common Mistakes](https://www.youtube.com/watch?v=c9HLIGu8TLo)
+- [App Store Success: 5 Things I Wish I Knew](https://www.youtube.com/watch?v=yRTt41xykEM)
 
 ## Next steps
 
