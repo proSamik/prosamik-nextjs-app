@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your Mac app's landing page ranks and gets cite
 
 You can sell a Mac app in two main ways: through the Mac App Store using Apple's in-app purchase and Apple's payment system, or direct from your own website with a notarized app and your own payment provider. The choice changes your fees, your sandbox rules, your update flow and your customer relationship. This guide compares them and lists the steps for each.
 
+::youtube[GL1Q9ZC_7tQ] Convert iOS App to macOS with SwiftUI
+
 ## Quick answer
 
 Pick the Mac App Store for easy discovery, built-in payments and automatic updates, accepting Apple's commission and sandbox rules. Pick direct distribution for more control and different fees, accepting that you handle licensing, payments, updates and notarization yourself. Many developers do both.
