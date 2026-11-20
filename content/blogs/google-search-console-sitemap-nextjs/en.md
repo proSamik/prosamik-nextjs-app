@@ -1,6 +1,6 @@
 ---
-title: Google Search Console and Sitemap for Next.js: Verify, Submit and Fix Indexing
-seoTitle: Google Search Console and Sitemap for Next.js
+title: How to Set Up Google Search Console and a Sitemap for Next.js
+seoTitle: How to Set Up Search Console and Sitemap in Next.js
 description: Verify your domain in Google Search Console, generate a sitemap in Next.js, submit it, inspect URLs and fix common indexing statuses without paying for tools.
 category: SEO and AI search
 publishedAt: 2026-11-19
