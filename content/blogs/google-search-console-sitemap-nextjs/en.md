@@ -11,7 +11,7 @@ primaryKeyword: google search console sitemap
 keywords: [google search console, sitemap nextjs, submit sitemap, url inspection, indexing issues, dns verification]
 related: [aeo-ai-search-optimization-guide, indexnow-nextjs-fast-indexing, allow-ai-crawlers-robots-txt-nextjs, cloudflare-tunnel-guide]
 subclipBlurb: Subclip records and edits screen demos, a good fit for a short walkthrough of the Search Console setup.
-rankizzBlurb: Rankizz connects ranking and AI-search tracking to the pages you submit, so you can see which ones perform.
+rankizzBlurb: Rankizz tracks rankings after indexing and includes a sitemap explorer for studying how other sites structure their SEO.
 ---
 
 Google Search Console is Google's free tool for seeing how your site appears in search. You verify that you own the site, submit a sitemap so Google finds your pages, and use reports to fix what blocks indexing. This guide covers the full setup for a Next.js site, step by step.
@@ -106,4 +106,4 @@ Only key new pages, once each.
 
 ## Next steps
 
-Add [IndexNow](/blogs/indexnow-nextjs-fast-indexing) for other search engines, follow the [AEO checklist](/blogs/aeo-ai-search-optimization-guide), and use [Rankizz](rankizz:inline-rank-tracking) to follow rankings after pages are indexed.
+Add [IndexNow](/blogs/indexnow-nextjs-fast-indexing) for other search engines, follow the [AEO checklist](/blogs/aeo-ai-search-optimization-guide), and use [Rankizz](rankizz:inline-rank-tracking) to follow rankings after pages are indexed. Its sitemap explorer lets you look at how another site's sitemap and SEO structure are organized before you design yours, and its Chrome and Safari extensions show audit data for any page.
