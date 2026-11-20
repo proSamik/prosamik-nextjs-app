@@ -16,6 +16,8 @@ rankizzBlurb: Rankizz tracks how your pages rank and get cited, and reviews are 
 
 The easiest way to collect good reviews is to ask at the moment a person has just succeeded. Phones already do this: after a task completes, the app asks "enjoying the app?" and shows the rating box. You can copy that on a website with a free tool: when the user downloads, copies or views a good result, show a small review request. When there is no result, show nothing.
 
+::youtube[SfOeUJ6q3H4] iOS App Reviews: How to Ask Users at the Right Time
+
 ## Quick answer
 
 1. Build a free tool that produces a result in one step.
