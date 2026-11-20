@@ -11,7 +11,7 @@ primaryKeyword: robots.txt ai crawlers
 keywords: [robots.txt ai crawlers, gptbot, claudebot, perplexitybot, google-extended, allow ai crawlers nextjs]
 related: [aeo-ai-search-optimization-guide, llms-txt-and-markdown-twins-for-ai-agents, google-search-console-sitemap-nextjs]
 subclipBlurb: Subclip records and edits screen demos, which helps document a crawler test for a teammate.
-rankizzBlurb: Rankizz checks how your pages rank and get cited by AI search once crawlers can reach them.
+rankizzBlurb: Rankizz tracks rankings and AI citations, and its browser extensions give an on-page SEO audit and let you add a competitor.
 ---
 
 AI companies run crawlers with their own user agents, and your `robots.txt` decides which of them may fetch your pages. Many sites block them by accident, through a copied template or a CDN "bot protection" setting. This guide shows how to choose on purpose, write the file in Next.js and verify the result.
@@ -102,4 +102,4 @@ Yes, with path rules, but use authentication for anything truly private.
 
 ## Next steps
 
-Read the [AEO checklist](/blogs/aeo-ai-search-optimization-guide) and add [an llms.txt file](/blogs/llms-txt-and-markdown-twins-for-ai-agents). [Rankizz](rankizz:inline-ai-visibility) can show whether the allowed crawlers lead to citations.
+Read the [AEO checklist](/blogs/aeo-ai-search-optimization-guide) and add [an llms.txt file](/blogs/llms-txt-and-markdown-twins-for-ai-agents). [Rankizz](rankizz:inline-ai-visibility) can show whether the allowed crawlers lead to citations, and its Chrome and Safari extensions give a quick on-page SEO audit of any URL, including a competitor's, while you check access rules.
