@@ -1,10 +1,10 @@
 ---
-title: llms.txt and Markdown Twins in Next.js: Make Every Post Readable by AI Agents
-seoTitle: llms.txt and Markdown Twins in Next.js for AI Agents
+title: How to Add llms.txt and Markdown Twins in Next.js for AI Agents
+seoTitle: How to Add llms.txt and Markdown Pages in Next.js
 description: Publish llms.txt and a clean Markdown copy of each page in Next.js, served by .md URL or Accept header, free of secrets and injected instructions.
 category: SEO and AI search
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 57
 readTime: 8 min
 primaryKeyword: llms.txt
