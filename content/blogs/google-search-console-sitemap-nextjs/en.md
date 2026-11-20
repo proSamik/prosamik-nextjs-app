@@ -101,6 +101,10 @@ New pages are found faster when other indexed pages link to them. Use the Keep r
 
 If your site runs behind Cloudflare or a [Tunnel](/blogs/cloudflare-tunnel-guide), make sure bot protection does not challenge Googlebot, or Google will see a challenge page instead of your content. URL Inspection's live test reveals this.
 
+## Audit the sitemap in bulk
+
+Search Console tells you how Google sees your URLs, but not whether the pages themselves are good. Run a bulk audit of the sitemap with Rankizz to find missing titles, thin content and errors, use its sitemap explorer to study how a competitor organized theirs, and open single pages with the Chrome or Safari extension for a quick audit while you fix them.
+
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
@@ -127,6 +131,15 @@ Not strictly, but it is quick to add and helps discovery.
 
 ### Should I request indexing for every page?
 Only key new pages, once each.
+
+### How do I audit every URL in my sitemap, not just a few?
+Use a bulk sitemap audit. Rankizz can audit the pages in a sitemap in one run, which surfaces missing titles, thin pages and errors faster than inspecting URLs one by one in Search Console. Use URL Inspection for the final word on how Google sees a page.
+
+### How can I see how another site structured its sitemap?
+The Rankizz sitemap explorer shows the SEO structure someone else designed, such as how they group sections and how many pages each holds. It is a useful reference before you plan your own architecture.
+
+### Is there a faster way to check one page's SEO?
+Yes. The Rankizz Chrome and Safari extensions show SEO audit data for the page you have open, and you can add a competitor from there. It saves a trip through several tabs for a quick check.
 
 ## Next steps
 
