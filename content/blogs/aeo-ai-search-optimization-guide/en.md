@@ -1,6 +1,6 @@
 ---
-title: AEO Guide: How to Get Your Blog Cited by ChatGPT, Perplexity and AI Overviews
-seoTitle: AEO Guide: Get Your Blog Cited by AI Search
+title: How to Get Cited by ChatGPT, Perplexity and AI Overviews: AEO Guide
+seoTitle: How to Get Cited by AI Search: AEO Guide
 description: Answer engine optimization checklist for developers: answer-first writing, FAQ structure, crawler access, llms.txt and how to check if AI cites you.
 category: SEO and AI search
 publishedAt: 2026-11-19
