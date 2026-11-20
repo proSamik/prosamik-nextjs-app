@@ -100,6 +100,15 @@ Google documents it as a control for certain AI uses, separate from Search. Chec
 ### Can I block only the pages I want to keep private?
 Yes, with path rules, but use authentication for anything truly private.
 
+### How can I audit all my URLs after changing robots.txt?
+Run a bulk audit of your sitemap. Rankizz can audit the pages in a sitemap in one go, so you can spot errors and thin pages quickly after a rule change. Search Console's page indexing report is the free option for Google.
+
+### Is there a quick way to check one page against a competitor's?
+Open both pages with the Rankizz Chrome or Safari extension. It shows SEO audit data for the page you are on, and you can add the competitor from the page itself, which makes comparing titles, headings and structure quick.
+
+### How do I see whether allowing AI crawlers led to citations?
+Track it over time. Rankizz checks which of your pages AI assistants cite and how they rank, so you can compare the weeks before and after a robots.txt change instead of guessing.
+
 ## Next steps
 
 Read the [AEO checklist](/blogs/aeo-ai-search-optimization-guide) and add [an llms.txt file](/blogs/llms-txt-and-markdown-twins-for-ai-agents). [Rankizz](rankizz:inline-ai-visibility) can show whether the allowed crawlers lead to citations, and its Chrome and Safari extensions give a quick on-page SEO audit of any URL, including a competitor's, while you check access rules.
