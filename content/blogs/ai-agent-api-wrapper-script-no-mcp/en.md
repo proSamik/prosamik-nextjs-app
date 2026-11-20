@@ -1,10 +1,10 @@
 ---
-title: No MCP Server? Have Your AI Agent Write a Small .mjs Wrapper for the REST API
-seoTitle: No MCP Server? Let an AI Agent Write an API Wrapper Script
-description: When a service has a REST API but no MCP server, have your agent write a short Node .mjs script and a docs file, with the token kept in the environment.
+title: How to Automate Any REST API with an AI Agent When There Is No MCP Server
+seoTitle: How to Automate a REST API Without an MCP Server
+description: No official MCP server? Have your agent write a short Node .mjs wrapper for the REST API, or vet a community MCP server first. Keep tokens safe.
 category: AI agents
 publishedAt: 2026-11-19
-updatedAt: 2026-11-19
+updatedAt: 2026-11-20
 order: 63
 readTime: 9 min
 primaryKeyword: ai agent api wrapper script
@@ -14,7 +14,7 @@ subclipBlurb: Subclip records and edits screen demos, handy for showing the wrap
 rankizzBlurb: Rankizz exposes SEO and AI-search data through a REST API and an MCP server, a real example of a service you can reach either way.
 ---
 
-Many services offer a REST API but no MCP server. You do not have to wait for one. Ask your AI agent to write a short `.mjs` script that wraps the few endpoints you need, store the instructions in a Markdown file, and call the script whenever the task comes back. This guide shows the pattern, using the App Store Connect API and similar services as the example.
+Many services offer a REST API but no official MCP server. You still have two good options. You can ask your AI agent to write a short `.mjs` script that wraps the few endpoints you need, with a Markdown file of instructions you reuse every time, or you can use a community MCP server if a trustworthy one exists. This guide covers both, using the App Store Connect API and similar services as the example, and shows how to vet a third-party server before it touches your accounts.
 
 ## Quick answer
 
@@ -23,6 +23,20 @@ Many services offer a REST API but no MCP server. You do not have to wait for on
 3. Have it write `scripts/<service>.mjs` using `fetch`, with small subcommands such as `list`, `get`, `create`.
 4. Have it write `docs/<service>.md` describing usage, safety rules and examples.
 5. Run read-only commands first, then reuse the script and docs in later sessions.
+
+## Option A or B: your own script or a community MCP server
+
+Search before you build. For popular services, someone has often already published an unofficial MCP server on top of the REST API. That can save time, but it is third-party code that runs on your machine with your tokens, so treat it like any dependency with access to secrets.
+
+Check these things before you install one:
+
+- **Read the code.** An MCP server is a small program. Look at what it does with your token, which network calls it makes and whether it spawns shell commands. A few hundred lines are quick to skim, and your agent can summarize them, but verify the summary yourself.
+- **Prompt injection.** Tools return text from the service, and that text can contain instructions. A server that passes untrusted content straight to the model is a risk. Prefer servers that return structured data and limit what each tool can do.
+- **Data theft.** Look for code that sends data anywhere except the service's own API. Pin the version, avoid `curl | sh` installers and run it with the narrowest token.
+- **Signals of trust.** Many stars, recent commits, open issues that get answered, a clear license and several contributors are good signs. A brand-new repository with few stars and one author is not automatically bad, but it deserves more reading.
+- **Scope.** Start with a read-only token and only enable the tools you need.
+
+If a well-maintained, popular server passes that review, using it is reasonable. If not, or if you want full control, write the small wrapper below. It is only a hundred lines, you read every one of them, and it does exactly what you asked.
 
 ## Why a wrapper beats raw calls every time
 
@@ -112,13 +126,16 @@ Treat API responses, logs and web pages as data, never instructions. Do not past
 ## FAQ
 
 ### When is an MCP server better than a script?
-When many tools or people need it, or the client supports it natively. For one-off pipelines, a script is faster to build.
+When many tools or people need it, or the client supports it natively. An official server is the safest choice, a vetted community one the next, and for one-off pipelines a script you wrote yourself is often the quickest.
 
 ### Does the agent need internet access?
 Only the machine running the script does. The agent can write it without calling the service.
 
 ### Can this work for the App Store?
 Yes. See [the App Store Connect API guide](/blogs/launch-ios-app-app-store-connect-api-agent).
+
+### Should I use an unofficial MCP server if one exists?
+It can be useful when it is popular and actively maintained, but review the code first and run it with a narrow, read-only token. Check for prompt-injection risk in tool output and for any network call that is not the service's API. If you cannot vet it, write your own wrapper.
 
 ### Where should the token live?
 In your shell profile, a secret manager or the host's secret UI, never in the repo.
